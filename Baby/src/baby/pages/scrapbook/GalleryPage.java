@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import samoyan.core.ParameterMap;
 import samoyan.database.Image;
+import samoyan.servlet.UserAgent;
 import samoyan.servlet.exc.RedirectException;
 import samoyan.servlet.exc.WebFormException;
 import baby.app.BabyConsts;
@@ -17,8 +18,9 @@ import baby.pages.BabyPage;
 public class GalleryPage extends BabyPage
 {
 	public final static String COMMAND = BabyPage.COMMAND_SCRAPBOOK + "/gallery";
-	public final static int COL_COUNT_WIDE = 5;
-	public final static int COL_COUNT_NARROW = 3;
+	public final static int COL_COUNT_MAX_WIDE = 5;
+	public final static int COL_COUNT_MAX_NARROW = 3;
+	public final static int SCREENSIZE_WIDTH_THRESHOLD = 450;
 	public final static String PARAM_POST = "post";
 	
 	@Override
@@ -83,19 +85,27 @@ public class GalleryPage extends BabyPage
 		
 		if (entries.isEmpty() == false)
 		{
-			int count = entries.size();
-			int rows = (int) Math.ceil((count + 0d) / COL_COUNT_WIDE);
+			int entryCount = entries.size();
+			
+			int colCountMax = COL_COUNT_MAX_WIDE; 
+			UserAgent ua = getContext().getUserAgent();
+			if (SCREENSIZE_WIDTH_THRESHOLD > ua.getScreenWidth()) 
+			{
+				colCountMax = COL_COUNT_MAX_NARROW;
+			}
+			
+			int rowCount = (int) Math.ceil((entryCount + 0d) / colCountMax);
 			
 			write("<table class=\"PhotoGrid\">");
 			
-			for (int r = 0; r < rows; r++)
+			for (int r = 0; r < rowCount; r++)
 			{
 				write("<tr>");
 				
-				for (int c = 0; c < COL_COUNT_WIDE; c++)
+				for (int c = 0; c < colCountMax; c++)
 				{
-					int index = r * COL_COUNT_WIDE + c;
-					if (index < count)
+					int index = r * colCountMax + c;
+					if (index < entryCount)
 					{
 						JournalEntry entry = entries.get(index);
 						

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.UUID;
 
 import samoyan.core.ParameterMap;
-import samoyan.servlet.UserAgent;
 import baby.app.BabyConsts;
 import baby.database.JournalEntry;
 import baby.database.JournalEntryStore;
@@ -16,7 +15,7 @@ public class PhotoPage extends BabyPage
 	public final static String COMMAND = BabyPage.COMMAND_SCRAPBOOK + "/photo";
 	public final static String PARAM_ID = "id";
 	
-	private JournalEntry entry;
+	private JournalEntry curEntry;
 	private UUID prevID;
 	private UUID nextID;
 	
@@ -26,10 +25,10 @@ public class PhotoPage extends BabyPage
 		UUID entryID = getParameterUUID(PARAM_ID);
 		if (entryID != null)
 		{
-			this.entry = JournalEntryStore.getInstance().load(entryID);
+			this.curEntry = JournalEntryStore.getInstance().load(entryID);
 			
 			// Figure out prev and next IDs
-			List<UUID> entryIDs = JournalEntryStore.getInstance().getByUserID(getContext().getUserID());
+			List<UUID> entryIDs = JournalEntryStore.getInstance().getPhotosByUser(getContext().getUserID());
 			Iterator<UUID> it = entryIDs.iterator();
 			while (it.hasNext())
 			{
@@ -52,22 +51,17 @@ public class PhotoPage extends BabyPage
 	@Override
 	public String getTitle() throws Exception
 	{
-		return getString("scrapbook:Photo.Title", (this.entry != null) ? this.entry.getCreated() : "");
+		return getString("scrapbook:Photo.Title", (this.curEntry != null) ? this.curEntry.getCreated() : "");
 	}
 	
 	@Override
 	public void renderHTML() throws Exception
 	{
-		if (this.entry != null && this.entry.isHasPhoto())
+		if (this.curEntry != null && this.curEntry.isHasPhoto())
 		{
-			UserAgent ua = getContext().getUserAgent();
-			ua.getScreenHeight();
-			ua.getScreenWidth();
-			
-			// TODO: Ghost next image
 			write("<div class=\"LargeImage\">");
 			
-			writeImage(this.entry.getPhoto(), BabyConsts.IMAGESIZE_BOX_800X800, null, null);
+			writeImage(this.curEntry.getPhoto(), BabyConsts.IMAGESIZE_BOX_800X800, null, null);
 			
 			if (this.prevID != null)
 			{
@@ -90,8 +84,6 @@ public class PhotoPage extends BabyPage
 			}
 			
 			write("</div>");
-			
-			// TODO: Add prev and next links
 		}
 	}
 }

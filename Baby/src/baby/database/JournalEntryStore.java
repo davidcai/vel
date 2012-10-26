@@ -51,6 +51,13 @@ public class JournalEntryStore extends DataBeanStore<JournalEntry>
 		return queryByColumn("UserID", userID, "Created", false);
 	}
 	
+	public List<UUID> getPhotosByUser(UUID userID) throws Exception
+	{
+		return Query.queryListUUID(
+				"SELECT ID FROM JournalEntries WHERE UserID=? AND HasPhoto=1 ORDER BY Created DESC", 
+				new ParameterList().plus(userID));
+	}
+	
 	public List<UUID> getByDate(UUID userID, Date from, Date to) throws Exception
 	{
 		return Query.queryListUUID(
