@@ -1,11 +1,12 @@
 *.class
 
 # Files #
-#*.jar
+*.jar
 *.war
 *.ear
 *.log
 *.swp
+*.dll
 
 # Directories
 bin/
