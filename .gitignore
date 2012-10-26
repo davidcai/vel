@@ -1,6 +1,13 @@
 *.class
 
-# Package Files #
-*.jar
+# Files #
+#*.jar
 *.war
 *.ear
+*.log
+*.swp
+
+# Directories
+bin/
+classes/
+logs/
