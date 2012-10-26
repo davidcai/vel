@@ -1,0 +1,238 @@
+"ID"	"ISO2"	"ISO3"	"Name"	"PhonePrefix"
+"7055b88f-75c5-4b85-ab3e-d1fe2c8f449a"	"AF"	"AFG"	"Afghanistan"	93
+"8101bf02-de41-44e4-a48f-b95ffab0032c"	"AL"	"ALB"	"Albania"	355
+"0ee0ef31-a38f-45af-872c-672f3301c395"	"DZ"	"DZA"	"Algeria"	213
+"68d8c74a-0717-4553-b3d8-d85a4df9d73a"	"AS"	"ASM"	"American Samoa"	1684
+"9e4eba5b-53b6-4199-851c-f233b5369089"	"AD"	"AND"	"Andorra"	376
+"fac63909-a020-4402-ac9a-c54fbb0b4722"	"AO"	"AGO"	"Angola"	244
+"c59f230a-3dd8-49a7-8b32-6969496539c7"	"AI"	"AIA"	"Anguilla"	1264
+"28ffca3e-d29d-47ef-9c31-a871ae0c9276"	"AQ"	"ATA"	"Antarctica"	672
+"be3a184e-98bd-4e13-95d8-6d60092f93cd"	"AG"	"ATG"	"Antigua and Barbuda"	1268
+"e3a2e0c2-3246-42f7-9860-919c73c967ae"	"AR"	"ARG"	"Argentina"	54
+"4f7d9897-86ef-4aaa-8790-88b8a121eadb"	"AM"	"ARM"	"Armenia"	374
+"bdae0c4b-3792-4a04-9481-122c278c107d"	"AW"	"ABW"	"Aruba"	297
+"0036ce57-913a-42cd-bbf7-5396e6728317"	"AU"	"AUS"	"Australia"	61
+"8dcd4bbc-c8da-4ac3-93d8-4ed3129898ca"	"AT"	"AUT"	"Austria"	43
+"51f831a7-f92c-4af5-85f0-d98ae1ff0f33"	"AZ"	"AZE"	"Azerbaijan"	994
+"4e830d4d-da58-4801-b63f-42252cc61bea"	"BS"	"BHS"	"Bahamas"	1242
+"4444f339-9e9a-4e2e-82a2-c2a82903abb1"	"BH"	"BHR"	"Bahrain"	973
+"6f5eeaec-9916-409d-9972-120df66839e0"	"BD"	"BGD"	"Bangladesh"	880
+"6546a680-c50c-44a0-9e68-c5166d9f8c36"	"BB"	"BRB"	"Barbados"	1246
+"2c439477-49b1-4b60-be35-11a9983ce66a"	"BY"	"BLR"	"Belarus"	375
+"aa6a92c1-3f8b-4e32-8347-7f3bf08f94e9"	"BE"	"BEL"	"Belgium"	32
+"dde9e1ef-1ce6-4c80-880c-28eacb374100"	"BZ"	"BLZ"	"Belize"	501
+"82ac0f17-0818-4b97-8321-290272dec916"	"BJ"	"BEN"	"Benin"	229
+"110cd4bd-5988-40d5-a7e2-8a19c746f764"	"BM"	"BMU"	"Bermuda"	1441
+"1e24da26-26cf-4bdb-8cf8-9c9786bbba75"	"BT"	"BTN"	"Bhutan"	975
+"4fdec5b2-d92f-4c45-a3b6-dfeb25c347f0"	"BO"	"BOL"	"Bolivia"	591
+"15f0bace-cfc1-4c25-936c-8a48d83c6ca4"	"BA"	"BIH"	"Bosnia and Herzegovina"	387
+"1b2670cc-9e2c-44bc-9f12-4a3abd3875ab"	"BW"	"BWA"	"Botswana"	267
+"306d0e2d-ea55-47b4-a30d-00acb563d4a5"	"BR"	"BRA"	"Brazil"	55
+"04db2f4f-aa28-45ca-9f88-8ef7229f61a7"	"IO"	"IOT"	"British Indian Ocean Territory"	
+"0d695e1e-aa67-4635-af28-3770addf4676"	"VG"	"VGB"	"British Virgin Islands"	1284
+"61347a24-9f93-424a-82f8-04e0d9c127ac"	"BN"	"BRN"	"Brunei"	673
+"a0279941-09d0-495c-85e0-cac1c6c090d2"	"BG"	"BGR"	"Bulgaria"	359
+"9543429f-828c-42dd-8431-8832d1735369"	"BF"	"BFA"	"Burkina Faso"	226
+"abab0136-dd85-4c15-82e2-32d0c8638458"	"MM"	"MMR"	"Burma (Myanmar)"	95
+"191ab779-e10a-4131-979e-a8b4cb8cc20e"	"BI"	"BDI"	"Burundi"	257
+"f2c13cc4-fe00-411c-8e5d-9013f9a708c4"	"KH"	"KHM"	"Cambodia"	855
+"54fab621-d94c-4cc7-ad71-d4c13040df6f"	"CM"	"CMR"	"Cameroon"	237
+"ac3a912c-4d18-4391-be86-cd7afd99ebaa"	"CA"	"CAN"	"Canada"	1
+"832d7021-5196-4a89-8c6c-1d4e51282da4"	"CV"	"CPV"	"Cape Verde"	238
+"b5da7897-7652-4037-92c9-e5342b149671"	"KY"	"CYM"	"Cayman Islands"	1345
+"ee20702d-804d-4905-9a26-75a7c121054f"	"CF"	"CAF"	"Central African Republic"	236
+"7f3a5e10-f84a-47f5-9e0b-236c2433894d"	"TD"	"TCD"	"Chad"	235
+"d8116fc5-2e59-4dca-995c-35d2f4c70a3f"	"CL"	"CHL"	"Chile"	56
+"b52dcbc1-acc3-4244-884b-eede9ff798f3"	"CN"	"CHN"	"China"	86
+"fb811d9a-7bb3-48c7-a12a-c900960803ad"	"CX"	"CXR"	"Christmas Island"	61
+"af576111-297a-4c28-802d-3257a7c1b590"	"CC"	"CCK"	"Cocos (Keeling) Islands"	61
+"e26eaaf0-34a5-431a-9ac5-8418876e0fcf"	"CO"	"COL"	"Colombia"	57
+"79506bd1-e98e-453d-88b5-b604be76a017"	"KM"	"COM"	"Comoros"	269
+"0f3a3f0f-5a37-4b93-b37d-f86e4c0572c6"	"CK"	"COK"	"Cook Islands"	682
+"147b0927-2a54-47ec-930a-6f68d2d0ccb0"	"CR"	"CRC"	"Costa Rica"	506
+"c85063a1-d2b8-47f8-ac99-7be45da52246"	"HR"	"HRV"	"Croatia"	385
+"80f6c6fe-bf9b-4d27-943e-d7ed7343f150"	"CU"	"CUB"	"Cuba"	53
+"94f9b42e-8cb6-45a2-9e91-acd202e45a66"	"CY"	"CYP"	"Cyprus"	357
+"52d07da0-38c1-4f83-b0e4-791865a50d78"	"CZ"	"CZE"	"Czech Republic"	420
+"9a542243-b764-4d3f-82da-aad54559967e"	"CD"	"COD"	"Democratic Republic of the Congo"	243
+"7f31038a-ca10-4ba3-aa34-e9ebd98f26e6"	"DK"	"DNK"	"Denmark"	45
+"d7e0316b-2958-419f-800d-f9fb61020c8b"	"DJ"	"DJI"	"Djibouti"	253
+"f41d934c-63cc-4e9e-9d4e-5bd45bb4ed00"	"DM"	"DMA"	"Dominica"	1767
+"d6ff2a84-e7cd-4f76-8f49-48dd6cdab7aa"	"DO"	"DOM"	"Dominican Republic"	1809
+"6e58072c-6dea-4e53-b46a-fc45de681d48"	"EC"	"ECU"	"Ecuador"	593
+"3376f6df-5155-47df-8674-8bbd839f673d"	"EG"	"EGY"	"Egypt"	20
+"aa9dc0cc-8fcf-4a07-ac55-c652449176ea"	"SV"	"SLV"	"El Salvador"	503
+"4589a7f2-7b7d-49fd-a13f-bf18a1587cb3"	"GQ"	"GNQ"	"Equatorial Guinea"	240
+"c7cc79e1-6849-4a6b-ad9b-e3e4c9e2202f"	"ER"	"ERI"	"Eritrea"	291
+"ac69a794-dd85-4479-861d-bbd83d9ae5c6"	"EE"	"EST"	"Estonia"	372
+"6232224c-6009-4804-8a63-e7f870edb8ee"	"ET"	"ETH"	"Ethiopia"	251
+"64fdf115-9ffe-40fd-906a-14db3eaf4682"	"FK"	"FLK"	"Falkland Islands"	500
+"61b57c93-bd58-4772-8a88-28e7a9193c0b"	"FO"	"FRO"	"Faroe Islands"	298
+"21fb451c-4532-407b-9293-9056ec5b5510"	"FJ"	"FJI"	"Fiji"	679
+"ab91ca1a-752c-48e5-b3e6-bc6adda71b09"	"FI"	"FIN"	"Finland"	358
+"fbc59e3f-15b6-4f60-9afd-e25a1846241f"	"FR"	"FRA"	"France"	33
+"97af4e3e-dfe3-4be7-8d85-c131e941591d"	"PF"	"PYF"	"French Polynesia"	689
+"2beff96f-7524-41ec-ab89-f7449afdc805"	"GA"	"GAB"	"Gabon"	241
+"44cd6aa8-87ab-4017-8cc2-58f57c8946dd"	"GM"	"GMB"	"Gambia"	220
+"5c0c9ae2-9528-4f17-a40b-ebc11ba81d04"	"GE"	"GEO"	"Georgia"	995
+"a17f1f8d-36aa-47f9-b9d5-45d3c9e1c912"	"DE"	"DEU"	"Germany"	49
+"2b22a09f-1f29-416b-9d48-a28ca64da295"	"GH"	"GHA"	"Ghana"	233
+"02fdcac7-f158-4dbb-ba18-dbfa6230a392"	"GI"	"GIB"	"Gibraltar"	350
+"bf3463a6-29ef-4e77-a2dc-2dee4a328fab"	"GR"	"GRC"	"Greece"	30
+"a48837d4-00ab-4c71-82de-b4f2e8b30d5b"	"GL"	"GRL"	"Greenland"	299
+"c58ef2f8-931b-4446-8a6b-3bc159cbfae7"	"GD"	"GRD"	"Grenada"	1473
+"6c23d0c7-5b75-415e-bbd4-df101b21ce31"	"GU"	"GUM"	"Guam"	1671
+"bd396972-87a2-4fa5-bc9b-2a425dd3d486"	"GT"	"GTM"	"Guatemala"	502
+"6bf91f1e-07c2-47f0-9ad2-d7f1223029bb"	"GN"	"GIN"	"Guinea"	224
+"64a00a68-066f-47aa-91dd-e22c6eb2783e"	"GW"	"GNB"	"Guinea-Bissau"	245
+"52ec5fcd-2266-41ce-acbf-b6fc1dc473ae"	"GY"	"GUY"	"Guyana"	592
+"a8d97a16-7b6f-463f-985b-d9aafe444793"	"HT"	"HTI"	"Haiti"	509
+"d5ecf551-f1a4-4ec0-8d8e-2bdd5c3e18a3"	"VA"	"VAT"	"Holy See (Vatican City)"	39
+"ba4add67-149a-486d-84ca-63501dccc37f"	"HN"	"HND"	"Honduras"	504
+"eed18786-9a38-4ab8-86a9-f24bb15e0398"	"HK"	"HKG"	"Hong Kong"	852
+"10878980-a96b-4cf0-b100-806e88794610"	"HU"	"HUN"	"Hungary"	36
+"1ba595f7-4994-45e2-a503-7f366c534206"	"IS"	"IS"	"Iceland"	354
+"95f6998f-4ad6-4eaa-af44-c3d72ac5387d"	"IN"	"IND"	"India"	91
+"19215a84-1af3-4e5c-8861-9b9a28c973bf"	"ID"	"IDN"	"Indonesia"	62
+"2d41a901-ec77-4d4d-9b7a-dd2323adcbcf"	"IR"	"IRN"	"Iran"	98
+"e706ed9d-4c67-4543-b3fc-f831c4a8c06e"	"IQ"	"IRQ"	"Iraq"	964
+"211fd901-3d3b-4187-8985-63080f50af52"	"IE"	"IRL"	"Ireland"	353
+"77208792-063b-4946-84b5-0937d3db0571"	"IM"	"IMN"	"Isle of Man"	44
+"5769226a-d7dc-447f-ab10-6705c4626535"	"IL"	"ISR"	"Israel"	972
+"74572d34-6d46-48b9-9bf0-e636d18d8b7d"	"IT"	"ITA"	"Italy"	39
+"a44d6570-c58b-4be3-a8e7-a37a750b86e1"	"CI"	"CIV"	"Ivory Coast"	225
+"e4cf7d6b-8813-41b5-b2da-9634095b0f34"	"JM"	"JAM"	"Jamaica"	1876
+"68a59a90-b317-442e-b1f5-d893fc932856"	"JP"	"JPN"	"Japan"	81
+"5f9de261-c5ec-444c-825b-04419225a15d"	"JE"	"JEY"	"Jersey"	
+"f9b2ad0c-ff9f-411d-a0e8-920601990f4c"	"JO"	"JOR"	"Jordan"	962
+"02fca643-2982-4943-a1a4-e1f1d3004627"	"KZ"	"KAZ"	"Kazakhstan"	7
+"f2bd78d2-0aab-41cd-b11e-1cc2d9772d7b"	"KE"	"KEN"	"Kenya"	254
+"9d186a53-50f9-4ae8-9ee0-59c2a8ffb868"	"KI"	"KIR"	"Kiribati"	686
+"e2a5c02f-63c8-43e4-81a8-41341f5eb812"			"Kosovo"	381
+"006b209d-59e3-4788-bb9d-af5e4763abdf"	"KW"	"KWT"	"Kuwait"	965
+"fe8fed4a-fc4c-45e1-9cd3-d770bbe4fe3f"	"KG"	"KGZ"	"Kyrgyzstan"	996
+"2df472ca-e586-417c-aa2a-09f9bb1a9bdc"	"LA"	"LAO"	"Laos"	856
+"a7f89b10-437b-4b45-9530-35153fa8f012"	"LV"	"LVA"	"Latvia"	371
+"2e781e2e-ced1-45ab-8ef7-c711c712d671"	"LB"	"LBN"	"Lebanon"	961
+"d217b761-a17d-40a8-ba78-2aa7996f58bd"	"LS"	"LSO"	"Lesotho"	266
+"e434b174-7ad1-4fa9-99a9-8a7192b1f672"	"LR"	"LBR"	"Liberia"	231
+"421ab5db-2e28-461d-a2e9-8f3f0c601fd7"	"LY"	"LBY"	"Libya"	218
+"2c1fcd73-a48a-48bc-a52a-facb56ce062c"	"LI"	"LIE"	"Liechtenstein"	423
+"3a586139-37e5-4b47-978b-103781ad7594"	"LT"	"LTU"	"Lithuania"	370
+"53ec7ce6-bc33-4bb2-875d-06f2b2005e4b"	"LU"	"LUX"	"Luxembourg"	352
+"38438118-10ac-4dce-bb75-6e71a3ba41e6"	"MO"	"MAC"	"Macau"	853
+"04c591b2-045f-4b7e-9134-25450b6b076c"	"MK"	"MKD"	"Macedonia"	389
+"d9a8dbd8-aebe-4eec-b6b7-0850c5918e62"	"MG"	"MDG"	"Madagascar"	261
+"411c0840-99d2-44da-a2e1-10886029df9e"	"MW"	"MWI"	"Malawi"	265
+"0ccb01b6-c3ec-4ac4-ae26-43b89e2ea696"	"MY"	"MYS"	"Malaysia"	60
+"5de3a1dd-14c7-4613-aa66-87f6bf4325fa"	"MV"	"MDV"	"Maldives"	960
+"fc0e24d2-52cd-438f-a638-3b0cdb8b968f"	"ML"	"MLI"	"Mali"	223
+"7ba50e97-f2b5-49e4-8fce-30fc32ffc321"	"MT"	"MLT"	"Malta"	356
+"49325f1a-c680-4981-b708-aa831c8ffbb3"	"MH"	"MHL"	"Marshall Islands"	692
+"3c61fa49-93fc-4e2c-a50a-35d85b941ee2"	"MR"	"MRT"	"Mauritania"	222
+"3351fc0f-7c9f-474d-b692-e5ff091eb0fd"	"MU"	"MUS"	"Mauritius"	230
+"74fd4256-a242-46cc-985f-60a02711719d"	"YT"	"MYT"	"Mayotte"	262
+"d542e0dc-cc2b-4ee3-8a67-55892c88cff4"	"MX"	"MEX"	"Mexico"	52
+"9ebf820e-5f0e-4201-bbd1-3bf7c7174367"	"FM"	"FSM"	"Micronesia"	691
+"df8566c3-1fad-4c38-a359-c2f67d2462d8"	"MD"	"MDA"	"Moldova"	373
+"520403cd-958b-4520-aab9-1c660d73dfd8"	"MC"	"MCO"	"Monaco"	377
+"37c8b478-bd2c-4c3b-a6da-c85920dc828a"	"MN"	"MNG"	"Mongolia"	976
+"6b844ceb-6143-42c1-8b94-9de4de7a8938"	"ME"	"MNE"	"Montenegro"	382
+"9f75e181-341e-458e-8593-2002b9e02edd"	"MS"	"MSR"	"Montserrat"	1664
+"47eed550-255e-45b3-94a5-9c7f9cd9e2b7"	"MA"	"MAR"	"Morocco"	212
+"52e3e38b-5b19-4793-8dcc-dfd05cbd9bc3"	"MZ"	"MOZ"	"Mozambique"	258
+"022be211-2faf-4414-ba0d-6bd70c40087a"	"NA"	"NAM"	"Namibia"	264
+"afad8b5f-714a-41d6-8240-5f41c6932cc5"	"NR"	"NRU"	"Nauru"	674
+"69dc7125-f7d1-4476-b928-f05c990de450"	"NP"	"NPL"	"Nepal"	977
+"56418c49-8d88-4623-8ed8-cd8d9fe8f502"	"NL"	"NLD"	"Netherlands"	31
+"db51bbc3-fb46-412d-bbca-eea4971b61c2"	"AN"	"ANT"	"Netherlands Antilles"	599
+"5299cd61-0da1-4ff6-87bb-5da2a3eabd98"	"NC"	"NCL"	"New Caledonia"	687
+"489ea031-208a-475e-b7cd-9564d87dfd99"	"NZ"	"NZL"	"New Zealand"	64
+"aeb49aee-3528-449e-831c-e3efc9782357"	"NI"	"NIC"	"Nicaragua"	505
+"872fd029-3336-4d72-8c46-594f2fddf19c"	"NE"	"NER"	"Niger"	227
+"46b65d57-71a1-4eda-9d34-4daf8780a638"	"NG"	"NGA"	"Nigeria"	234
+"e392113a-788c-4e82-aa4d-50bfd171f737"	"NU"	"NIU"	"Niue"	683
+"15570758-46d3-472f-a701-f6e2af9b5c33"		"NFK"	"Norfolk Island"	672
+"bcc1c9a3-7929-4faa-92db-22a3a12463f0"	"KP"	"PRK"	"North Korea"	850
+"0ed0e1d0-86d7-4b41-be21-5478a64e0416"	"MP"	"MNP"	"Northern Mariana Islands"	1670
+"f0f77972-a0b7-4c25-93b3-03120f22c91e"	"NO"	"NOR"	"Norway"	47
+"3bb52fde-e4ed-41c3-8072-ff3732fe0133"	"OM"	"OMN"	"Oman"	968
+"dcb98a85-3155-4965-93e4-92bac310f173"	"PK"	"PAK"	"Pakistan"	92
+"69cbcf07-0c45-48b4-aa14-d5954ef1d921"	"PW"	"PLW"	"Palau"	680
+"a4bacc96-0e09-424c-b299-b71714ca2699"			"Palestine"	970
+"2a52e712-670a-4ddc-9ce7-bd8a3014397a"	"PA"	"PAN"	"Panama"	507
+"1746d386-1fe6-4c85-9187-5d017d22254c"	"PG"	"PNG"	"Papua New Guinea"	675
+"b50ffac3-fcfe-47df-b8b0-819af21b05cd"	"PY"	"PRY"	"Paraguay"	595
+"6189b79c-c1d5-4e1c-af2a-1838ea5416d3"	"PE"	"PER"	"Peru"	51
+"549305d1-4ba8-4eb4-8efe-005a3b4b255d"	"PH"	"PHL"	"Philippines"	63
+"13a4b5e6-b8fc-48a9-8b42-3d4b68aaa4dc"	"PN"	"PCN"	"Pitcairn Islands"	870
+"67a43fa6-d882-4d11-97b4-e4cc52790371"	"PL"	"POL"	"Poland"	48
+"5431cd6a-650c-4414-a248-894d1f5f698c"	"PT"	"PRT"	"Portugal"	351
+"06ba0e62-0817-425f-818a-3f92062082f3"	"PR"	"PRI"	"Puerto Rico"	1
+"bd91d6b5-e350-4766-b3d9-9bbb43c4bb5f"	"QA"	"QAT"	"Qatar"	974
+"ae62d906-1813-4c48-849e-ec39656f05b0"	"CG"	"COG"	"Republic of the Congo"	242
+"7c9ddd2f-28b6-4489-a53f-32833bbaef28"	"RO"	"ROU"	"Romania"	40
+"f87adc26-f5a7-4f74-9e1d-8259be859f98"	"RU"	"RUS"	"Russia"	7
+"ed55788a-5185-4c78-9d55-e9426a226c81"	"RW"	"RWA"	"Rwanda"	250
+"0ef093be-4943-4085-9754-c4ab26d7e412"	"BL"	"BLM"	"Saint Barthelemy"	590
+"4c58bc6b-bca4-4cea-86a2-4acc992cb6bd"	"SH"	"SHN"	"Saint Helena"	290
+"11e62253-5ddb-45df-82f4-2dabf058d1f0"	"KN"	"KNA"	"Saint Kitts and Nevis"	1869
+"b4f2739d-32c9-4b59-970c-55a0558bbd83"	"LC"	"LCA"	"Saint Lucia"	1758
+"67f8306b-f418-4b13-843d-a9249c6ecfc5"	"MF"	"MAF"	"Saint Martin"	1599
+"d264efd8-6e0d-441b-a358-2ce2a8715c27"	"PM"	"SPM"	"Saint Pierre and Miquelon"	508
+"368adc20-513a-4760-8bf6-213ffc9e2ed8"	"VC"	"VCT"	"Saint Vincent and the Grenadines"	1784
+"a60c5498-4e52-47b2-b62a-33264dc947b4"	"WS"	"WSM"	"Samoa"	685
+"07a3abe9-0505-4a81-a4b8-1e881f5dcb88"	"SM"	"SMR"	"San Marino"	378
+"fafd4aa9-e337-47ca-8a47-541651fbb84e"	"ST"	"STP"	"Sao Tome and Principe"	239
+"04f4d011-2f0d-4ddd-9998-5b113124fdf2"	"SA"	"SAU"	"Saudi Arabia"	966
+"af923cac-e293-4031-b8ac-f972282d4150"	"SN"	"SEN"	"Senegal"	221
+"1e1de52a-f946-43cf-9ea8-ecb138de80b1"	"RS"	"SRB"	"Serbia"	381
+"d6f1f583-52db-4fcf-85fb-25b0ccd49c78"	"SC"	"SYC"	"Seychelles"	248
+"3671afa3-f3a1-4e96-9c97-20899d0b7180"	"SL"	"SLE"	"Sierra Leone"	232
+"b6f60b53-0ff0-4c72-8f95-293dd6602a0d"	"SG"	"SGP"	"Singapore"	65
+"3fb93732-586b-4a61-9a66-3bfe0dc52ce3"	"SK"	"SVK"	"Slovakia"	421
+"c095457f-90d0-4e8f-99f0-17189505be1c"	"SI"	"SVN"	"Slovenia"	386
+"d4db495a-4c4c-4924-82f8-cd41d45b42fd"	"SB"	"SLB"	"Solomon Islands"	677
+"3e2900a6-90fd-4f40-9144-edc25648c304"	"SO"	"SOM"	"Somalia"	252
+"97ee0e43-8e58-49f2-90a4-258fcc6578e4"	"ZA"	"ZAF"	"South Africa"	27
+"0370b04c-71ab-46eb-83e2-349700b54684"	"KR"	"KOR"	"South Korea"	82
+"46d67b50-bc81-11e1-afa7-0800200c9a66"	"SS"	"SSD"	"South Sudan"	211
+"25d8088f-18dd-4c87-b8e9-8a8757dfff9f"	"ES"	"ESP"	"Spain"	34
+"57f428c5-8e33-42b4-8808-0e99e6b3ea7b"	"LK"	"LKA"	"Sri Lanka"	94
+"9831ca14-8a16-4415-b287-d5c6de9336f2"	"SD"	"SDN"	"Sudan"	249
+"dd815cba-7cf8-415d-b9b5-4bf9cac43c53"	"SR"	"SUR"	"Suriname"	597
+"6b567ecd-991d-44d8-8def-ab9086e087e6"	"SJ"	"SJM"	"Svalbard"	
+"870e8faa-d11a-453c-9d6f-fd2d14b3d977"	"SZ"	"SWZ"	"Swaziland"	268
+"b730bc8e-cabc-4909-ac8e-4b4660667d03"	"SE"	"SWE"	"Sweden"	46
+"c803eed9-4b63-4e67-9ca7-abc7a968c1e5"	"CH"	"CHE"	"Switzerland"	41
+"26257f01-a698-4d2b-8f92-7c7959719143"	"SY"	"SYR"	"Syria"	963
+"852d4951-c694-47de-8200-0a49e3ba0e0c"	"TW"	"TWN"	"Taiwan"	886
+"fac59d0f-dd5a-4f49-b987-1af73c5d46a7"	"TJ"	"TJK"	"Tajikistan"	992
+"fe625822-2653-4bae-8e99-bbbea2eb6905"	"TZ"	"TZA"	"Tanzania"	255
+"599ec939-218a-49eb-8b44-e8999418ea64"	"TH"	"THA"	"Thailand"	66
+"6073c636-0371-458e-ac92-34ee1d30eeda"	"TL"	"TLS"	"Timor-Leste"	670
+"a8793d9d-ad31-45d9-9402-6f8610ee155f"	"TG"	"TGO"	"Togo"	228
+"b8976583-521c-4580-aef7-4a09fe09c931"	"TK"	"TKL"	"Tokelau"	690
+"13f5bbff-80e5-4584-9c56-eadb45a2001d"	"TO"	"TON"	"Tonga"	676
+"bc726036-88af-4368-84b1-92c37672879d"	"TT"	"TTO"	"Trinidad and Tobago"	1868
+"2e91e8b7-39c8-48bc-aca8-19953a5678c0"	"TN"	"TUN"	"Tunisia"	216
+"5e50892a-b55a-4725-8372-beb02a2efa64"	"TR"	"TUR"	"Turkey"	90
+"903d6581-da04-496b-8ed2-0c47e37e2e3e"	"TM"	"TKM"	"Turkmenistan"	993
+"ac967b4a-1726-4b7b-a9a6-33c6cdb139bd"	"TC"	"TCA"	"Turks and Caicos Islands"	1649
+"90f2fa0f-1efe-4f26-bcd4-23e921922c3e"	"TV"	"TUV"	"Tuvalu"	688
+"86aeed49-49fe-483e-88ce-aa0ac4a3a5c5"	"UG"	"UGA"	"Uganda"	256
+"b3c31010-93c8-40b5-a573-42de01eff75a"	"UA"	"UKR"	"Ukraine"	380
+"de342c84-7dea-4245-9683-207ea6f00ee9"	"AE"	"ARE"	"United Arab Emirates"	971
+"6b1d82fb-6a32-48db-906f-c306ecb3c239"	"GB"	"GBR"	"United Kingdom"	44
+"c44e4c37-1a89-44b2-9b9a-5761ee2c0bc4"	"US"	"USA"	"United States"	1
+"c319eb43-e564-46b5-a392-06dd336d3307"	"UY"	"URY"	"Uruguay"	598
+"2f6b1b8f-563e-4c76-9fec-1444074170db"	"VI"	"VIR"	"US Virgin Islands"	1340
+"eba33e07-a4c9-4778-b64c-cbd6d8ffa89a"	"UZ"	"UZB"	"Uzbekistan"	998
+"2d8b1634-49bd-4da9-b1dc-56ede9295f8a"	"VU"	"VUT"	"Vanuatu"	678
+"370f59e3-b4f5-48e7-9dc6-9d1c95429642"	"VE"	"VEN"	"Venezuela"	58
+"259fdaf6-7195-4740-b2a3-306bd861b3ab"	"VN"	"VNM"	"Vietnam"	84
+"f999952a-10bf-4305-b6e0-be2c5919d34c"	"WF"	"WLF"	"Wallis and Futuna"	681
+"2f7a8e76-cd24-4d4d-87a4-3bfa05b3c6c6"	"EH"	"ESH"	"Western Sahara"	
+"17b68f80-e8d2-4e0c-9a92-5c339e93d186"	"YE"	"YEM"	"Yemen"	967
+"cb5ac882-a4c6-4425-ad45-8167edb743cc"	"ZM"	"ZMB"	"Zambia"	260
+"18bf6cfa-5208-4b56-8d43-609ee0ab6d62"	"ZW"	"ZWE"	"Zimbabwe"	263

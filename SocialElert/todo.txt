@@ -1,0 +1,13 @@
+
+- Add CreatedBy, DateCreated, DateUpdated columns on the DataStore.save level (good for tracking activity e.g.: reports and helps in querying user relevant information e.g.: service areas, facilities, etc.)
+- ScheduleProceduresPage: both standard and custom procedures should be displayed according to the service areas of the scheduler who added the procedure
+- PhysiciansPage: display only physicians for the service areas associated with the scheduler (probably, we need another screen where physicians are linked to service areas)   
+- change to + button instead 'Add' on ScheduleProceduresPage 
+- Physicians are currently added on Admin-->Users screen and associated with Physicians group.
+- REFERER_URL should be generalized (perhaps, back button on relevant pages will take you to the referer)
+- when removing entities like user, procedure, facility, need to iterate the linked tables e.g.: ProceduresLink, PhysiciansLink, etc. to remove the links prior to removing the entity
+  currently remove from SchedulePhysicians table and PhysiciansLink table is not handled on Physicians user group member removal
+- Add checkbox and remove button to ScheduleProceduresPage and SchedulePhysiciansPage
+- the link to physician on SchedulePhysicianPage should point to a readonly physician info page (need to add one)
+
+

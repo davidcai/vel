@@ -1,0 +1,81 @@
+enable communications between roles: e.g. scheduler->patient, scheduler->doctor, etc.
+  show messages+replies on user's roles.
+
+
+KP requests:
++ option to select all checkboxes in tables, unless for delete.
+- graphs to be more 3D. check Google graph control.
+- clarify to the patient how to respond to earlier SMS messages (FAQ?)
+- when creating elert: allow empty procedure field.
+  need way to semantically differentiate between "cancellation" and "blank opening".
+  must make it clear that entering procedure make sense due to resource matching.
+- ability to record elert without exact time of day (i.e. entering only a date)
+- Option for scheduler to send msg to patient when the scheduler is changing/deleting the patient's sub.
+  confirmation window before deletion.
+- Physician role/tab
+- elert notif templates (allow schedulers to edit notifs before sending)
+  
+- VerifySubscriptionPage (in scheduler view)
+  - show when the subscription was created
+  - show and allow to change service area, but only one of home service areas
+- New opening page:
+  - validate that physicians chosen cover necessary specialties for the procedures chosen
+- Unresolved openings
+  - depict perishable in table.
+  - highlighting of important data (red)
+? option to "resend eLert". remove older eLert + its open notifs?. Create new one.
+
+= FAQ: add TOC links at top of page
+= in email eLerts. indicate "reply with only YES/NO to indicate availability" instead of the generic "reply with codes"
+= sending messages to patients doesn't seem to work.
+- governor: invite patients/scheduler/governor page. Send Welcome email with username/password. See script doc for text of this email.
+    scheduler: can invite patients
+    extend Admin level page. allow limiting roles/groups, setting default msg/title.
+= Scheduler procedures page: need to sort alphabetically. Break by proc type. show all proc types.
+  - screen A: for each service area, list all proc types with # of linked procedures to the service area. link to screen B
+  - screen B: allow mapping all procs of proc type to the facilities of the service area.
+  - need to be integrated in guided setup
+  = scheduler: removed san diego from home service areas, still seeing procs in mapping.
+    happens because procs are still linked to SD with wt=0 and method returns them.
+= governor to see list of service areas and assign schedulers to them.
+  do not allow scheduler to choose their own home service area.
+  (0) invitation form for governor to invite scheduler to a certain home/neighboring service area. also enter NUID.
+- Custom procedures need to be mapped to a service area.
+= mandate at least one home service area. but only if there's at least one service area defined in system.
+  otherwise, give msg in various screens that setting service area is needed.
+
+NTH
+- Patient home page: If no subscriptions entered yet by patient, give explanation of the system (FAQ)
+  "What's an eLert?" "How does an eLert work?", etc.
+  then point user to the new subscription page
+
+NOTIFS:
+- consolidate the code that generates the notifs into one class/control. use page containment. (now repeated in WallPage)
+- ConfirmNotif: include map of facility on Wall and in email
+- Twitter message:
+  - If Dr name(s) is too long, use the "no doctor" version of msg to save chars.
+
+UI
+- single color icons in linkbars. Use black icon-set.
+  need to have ResourcePage to serve images. Allow sub-app to override and redirect icons.
+  this way, can control the standard icons of pencil, etc.
+- H2 headers for procedure types in scheduler and governor procedures pages
+
+- usability issue:
+  when creating new subscription, step 5, when indicating availability, need to auto-select the radio button.
+  same when entering "original date". auto select the radio button.
+
+- When terminating user, need to make sure that their eLerts are not considered for appointments.
+  also mark their record as DELETED in their profile page (of scheduler view)
+
+NICE TO HAVE:
+=============
+
+- For patient:
+  - page of Facility. show map. link from various places, esp. subscription.
+  - page of Service Area to show map with facilities therein.
+
+- Cartoon like FAQ on how to use the system. Show when logging in first.
+  "What is My eLert?"
+  "How does it work?"
+  "Where do I start?"

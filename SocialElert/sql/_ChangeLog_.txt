@@ -1,0 +1,27 @@
+Date		Engineer			Table				Description																
+=========== =================== ===================	=======================================================================
+2012-06-18	Yaniv									Added table UsersEx
+2012-06-21  Ilya                					Add Rank column to ResourcesLink table
+2012-07-1   Ilya                					Modified ResourceLink: add ID and Name column, add indexes by (ProcedureID) and by (ResourceID,ProcedureID)
+2012-07-4   Ilya                					Add ServiceAreasLink table
+
+2012-07-9   Ilya                					Add: PhysicianFacilityLink, ProcedureFacilityLink, ResourceProcedureLink, ServiceAreaUserLink
+                                					Remove: PhysiciansLink, ProceduresLink, ResourcesLink, ServiceAreasLink, ScheduleProcedures, SchedulePhysicians
+                                					Alter: Procedures --> add 'Custom' column
+2012-07-10	Yaniv									Removed columns Name and ID from ResourceProcedureLink
+2012-07-10	Yaniv									Removed columns Name and ID from PhysicianFacilityLink
+2012-07-10	Yaniv									Removed columns Name and ID from ServiceAreaUserLink
+2012-07-10	Yaniv									Removed columns Name and ID from ProcedureFacilityLink
+2012-07-11	Yaniv									Procedures: removed col Video, added cols CommonName and ShortDesc, unclustered primary key, removed redundant index by ID
+2012-07-12	Yaniv									Added tables Subscriptions, SubscriptionProcedureLink, SubscriptionPhysicianLink
+2012-07-13  Ilya                					Add: ProcedureOpenings, ProcedureOpeningLink, PhysicianOpeningLink
+2012-07-14	Yaniv									Renamed ProcedureOpenings to Openings, changed length of Room column to 16
+2012-07-16	Yaniv									Added column+index NUID to UsersEx. Removed clustering on primary key.
+2012-07-17	Yaniv									Added table PhysicianProcedureTypeLink
+2012-07-17	Yaniv									Added table SubscriptionFacilityLink
+2012-07-18	Yaniv									Removed column FacilityID from Subscriptions table
+2012-07-19	Yaniv									Added table Elerts
+2012-07-20	Yaniv									Added Closed, OriginalDuration columns to Openings; Added Finalized column to Subscriptions
+2012-07-25	Yaniv				Elerts				Added columns ReplyDate, Decision, DecisionDate, OpeningDate. Renamed column Sent to SentDate. Added indexes.
+2012-07-30	Yaniv				Openings			Added columns RegionID, ServiceAreaID, SchedulerID. Removed foreign keys. Added indexes.
+2012-07-30	Yaniv				Facilities			Removed foreign keys

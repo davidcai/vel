@@ -1,0 +1,16 @@
+Date		Engineer			Description																
+=========== =================== =======================================================================
+2012-06-12	Yaniv				Added Actions, Events and Notifications tables
+2012-06-12	Yaniv				Renamed table EmailAddress to EmailAddresses
+2012-06-12	Yaniv				Removed table OutgoingSMS
+2012-06-18	Yaniv				Added index by PermissionID
+2012-06-19	Yaniv				Added column LastActive(bigint) to Users table
+2012-06-29	Yaniv				Added column ReqCtx(text) to LogEntries
+2012-06-30	Yaniv				Added table Trackbacks
+2012-07-04	Yaniv				Removed table Events
+2012-07-07	Yaniv				In Props: removed column LinkedTable, combined LinkedID+Name columns into a unique and clustered index
+2012-07-16	Yaniv				Changed length of S1,S2,S3,S4 columns in LogEntries from 64 to 256
+2012-07-25	Yaniv				Removed table Actions
+2012-07-28	Yaniv				Removed columns Cookie, CookieCreated, LastLogin, RememberLogin from Users. Renamed UserName column to LoginName.
+2012-07-28	Yaniv				Added table AuthTokens.
+2012-07-30	Yaniv				Removed column Flags from Users. Instead, added Terminated and Suspended.

@@ -1,0 +1,46 @@
+Healthy Beginnings baby article to always show first.
+
+Governor interface:
+home screen: show stats (num article per section,city, etc.).
+hb editor:
+- list page to break/sort articles by week range
+Resources: page to view/edit/lock the content of an article. (for author)
+on crawl of resources, need to remove ones that are no longer relevant. Delete all before crawl?
+
+ArticleStore: caching for all queries. Clear after save/remove.
+automatic cached query using DatabeanStore.cachedQuery(). clear all on remove and store.
+Need smarter cache indexing. allowing multiple keys for invalidation. using naming convention with x|y|z.
+  convention for db: Table.ColA=ValA|Table.ColB=ValB|Table.ColC=* . Clear on Save (for dirty columns) and Remove (must load object for that).
+
+Info list pages (HB, resources): Search box.
+
+Need _back_ functionality. support chaining? Look into window.session store. see http://code.google.com/p/sessionstorage/
+
+colors: take pink from right side at https://healthy.kaiserpermanente.org/health/poc?uri=center:pregnancy&article=4A746296-B263-11E0-BD0B-9455E08826EE
+ASK LUIZ what it takes to demo the app w/o publication. Do we need apple dev acct or can he do it from his end?
+
+brent feedback:
+journal: timeline across the top
+pinkpad app calendar with icons: day, month, list views.
+categories for articles. can then let user browser by category.
+
+Checklists:
+- db structure
+  Checkitem: id, userid(or null), text, checklistid (or null if custom for user)
+  Checklist: id, title, description, timeline from/to.
+  CheckitemUserLink: checkitemid, userid (checked)
+  ChecklistUserLink: checklistid, userid (collapsed)
+- Authoring form
+- TODO tab with form for mom.
+
+print capability of the journal. or export to PDF.
+
+Integrate the "Birth plan". It's a document the mother should fill out and send to her doctor.
+can be done electronically, or printed/mailed to doctor.
+
+kick counter: special screen with timer of 60 seconds to help mom count.
+
+compressed "upload only" version of image upload control: don't show thumbnail, don't show "upload new", size.
+allow to pass in the imagesize spec string for the thumbnail. Can then make it 32x32.
+
+design "notebook" style for journal. lines, margins, etc.

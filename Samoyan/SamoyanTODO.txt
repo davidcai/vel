@@ -1,0 +1,464 @@
+
+- Import users:
+  - verification: must check that inputed fields are not shorter/longer than minimum/maximum allowed, e.g. id/password, etc.
+  - consolidate with InviteUsers page.
+  - save last msg on user/fed object. retrieve when next using form.
+
+Retina Images:
+- allow uploading images to app via web interface. e.g. icon to be served by "/cmd/subcmd"
+  need way to export this data though so can transfer to another installation.
+  can store images linked to Federation object with name=uri.
+- call "full" sizer before saving or after uploading.
+  currently, doing this in getParameterImage(name, w,h)
+  or take from dimensions of db field def.
+  need to worry about retina images requiring 2x the normal size. must have enough raw pixels.
+  
+- More admin permissions: Edit permissions, Assign groups, System configuration, Edit other admins
+  create Administrators, Technical Support group.
+- Add Dr NUID (all KP employees) and specialty (physicians) into profile page.
+- look into Perforce
+= Button control:
+  - feature to require Confirmation. "Remove" -> "Wait [3]" -> "Confirm [10]" -> "Remove"
+    apply to various delete buttons
+= ZHIBIT: if no SEO, do not list in Google. SiteMapXML page and robots tag.
+
+= quiet time
+
+
+- integrate tyntec.com as a SMS provider.
+
+------------------------
+
+- Take LESS colors/font from Federation object rather than code. Create customize screen for admin. Allow app to extend with additional LESS vars.
+
+- phone verification: do not ask for verification if same mobile # was verified already.
+- mini content management system: allow admin to edit FAQ, help files etc. similar to Zhibit free form pages.
+  how can we support templates (Apache Velocity?) with it?
+- internal support ticket system.
+
+- Notifications: field "StatusDate" is multi-purpose. Need SentDate, DeliveredDate, ToSendDate in addition to StatusDate.
+
+- Notif infrastructure
+  - On Action received, new notif added: remove future unsent notifs on same eventID, (but not same BatchID?)
+    e.g. "appt is no longer avail" should suppress future "elert" notifs.
+  - or BEFORE SENDING NOTIF, check there are no later-dated Sent/Delivered with same EventID.
+    Also need to check there are no later-dated actions.
+  - Need to know notif ID when performing action.
+    - Need to post _notif_ rather than actual params. -- or post in addition to params.
+    - Then load params from notif table in request context. -- then no need to do this.
+    - post back _notif_ in ActionListControl and on _action_, can perform deletion of future notifs.
+  - When adding x.co link to short text, use only the _notif_ param.
+
+- Mark labels of required fields. redo TwoColControl to support label column and datacolumn (webPage). with chaining. including "required()".
+  - various write methods of WebPage to return "this". Will allow writing into data column
+? TypeAheadControl to be its own InputControl class.
+- inline form validation with JS:
+  - re-enable JS code in document.ready.
+  - Support bubble over INPUT with message where there's inline error. Add "msg" param to control.setRegExp
+  - TypeAhead to allow forcing requirement that text must have corresponding key. then show inlineerror.
+  - set RegExp and Mandatory in various forms.
+  - Need to support conditional checks: e.g. if "Enabled" is checked, then username,password,etc. fields are mandatory.
+
+- GuidedSetup infrastructure.
+  - in WelcomePage, set default guided setup pages to: profile, mobile, phone. only if channels are enabled.
+  - Customizable Start and Complete messages (via inheritance)
+
+- insert trackback #0001 only into messages that are actionable. E.g. the phone verification SMS should not include this.
+
+- Help section: must be role based: e.g. only governors to see governor help pages.
+
+- "quiet time." default to 10pm-6am and give users the option to change.
+
+- Orphaned records:
+  - When referring to a table, need to pass to it that it is being referred by a column on another table.
+  - On the table itself, need to mark it as "removeOrphaned". do not on the relationship.
+  - When deleting from a table linking to another, need to call checkOrphans on the other table.
+  - Relevant tables: ProcedureTypes, Regions, Permissions, Resources
+- Link management in a new Links table: Key1, Key2, Weight, RelationshipName
+  RelationshipName column to be the name of the linktable.
+  Indexes to be Name+key1, Name+Key2.
+  Links to be managed inside a LinkBean object. then can add/remove/retain UUIDs to/from the list and save it.
+  support all kinds of relationships: 1 to 1, 1 to N, non/owner, N to M, lock delete
+
+- patient "Push notif" page (opt in/out of all push notifs):
+  elaborate more on the description
+- Patient alertTimeline:
+  - add on/off switch per channel
+
+--------------------
+Mid term features
+--------------------
+
+- SmartPhone nav menu to drop down from top of page.
+
+- additional email-to-sms carriers at http://www.makeuseof.com/tag/email-to-sms/
+- IE7:
+  - doesn't like "inherit" in CSS.
+  - set cellspacing=0 cellpadding=0 on tables. esp. top tab bar, and controls. can use jquery for that.
+- buttons should be placed inside the 2 col form in the input column, i.e. aligned with the edit boxes.
+
+? Force unique "email" for a user. Need to enforce in invite/import as well. Can then simplify PasswordReset
+  Maybe have option in admin console for this.
+
+? Add @variables to LESS for user-agent tags. Can then use "guards" in LESS for conditionals instead of the use of classes on the BODY tag.
+  same with @uri instead of BODY[uri^='']
+  same with @screen-width, @screen-height, etc.
+  ? then can remove condition of user-agent in SocialElert.LessPage and move it into the LESS file.
+
+- use text/plain in emails as alternative to HTML content. call renderText in parallel to renderSimpleHTML
+
+- Page authorization should be centralized in Dispatcher (allow attaching filter), but still allow pages to designate own security checks.
+  have admin screen to define security on pages by command prefix.
+
+- POST redirect: support param _method_=POST when channel!=web
+- Use _method_=post&_auth_=... in email/sms/etc. links to the notification page that do not require login
+  make valid for short time only
+
+Voxeo:
+- writeEncodeDate/DateTime/DateOrTime in voice to use long version of date.
+  - use SAY-AS for writing dates
+
+- Deprecate use of ViewTableControl in favor of DataTableControl.
+
+- Patient.ProcedureSearch: tree-view of procedure types > procedures
+
+Database:
+  ? Add getRelated methods on DataBean level, e.g. patient.getPrescriptions
+    - DataBean to support loadReferred("PropName") to perform loading of bean.
+      also support loadReferredMany to return List of bean.
+      Can then have user.loadGroups(), area.loadRegion()
+    - Also, getReferred("PropName") to return IDs rather than load the objects.
+    - PropDef.refersTo("Table", "ViaLinkTable") will allow doing get/load of related objects.
+  - Permissions to be linked to Users and Groups separately in two different link tables.
+    then can handle deletion of relationships automatically.
+    but not auto-removal of orphaned permissions since those can be linked to the other table.
+  ? automatically manage "Removed" flag on objects. when removing an object with references, mark it as "Removed".
+    don't return it in queries.
+    example: user.terminated, procedure that's been removed, etc.
+    bean to support .isRemoved(). disallow save/open on such a bean.
+    but only if column "Removed" is defined. otherwise, throw exception when can't remove.
+
+Mobile:
+- bottom bar has room for only 5 tab icons. reduce size if more.
+- Back button in title area.
+
+- If can't locate trackback, need to give error msg back to user.
+  - need to know locale so can send error msg.
+    ? lookup user by mobile phone number / Twitter handle / etc., take locale from there. Default to server locale if not found.
+
+- ContactInfoPage:
+  - Need to verify all channels: e.g. Facebook requires app install, Twitter requires follow, Email requires code, etc.
+    - TwitterPage: wizard. Verify that can follow the user. specific step to ask user to press "Follow".
+    - EmailPage: wizard with verification. Ask for password to confirm identity.
+  - Because of that, can't edit field if the channel is inactive (admin setting)
+
+- security:
+  - Invalidate all user's auth tokens when changing password, or somehow encrypt password hash in authtoken and compare on auth.
+    May need longer auth token to store this. But then need to modify AuthTokens table.
+  - UUID cookies are subject to brute force attacks
+    - encrypt session cookie with bcrypt: set cookie to UUID+bcrypt(UUID), validate in RequestContext. Must work very fast though because happens on every request.
+  - user object to have property "secret" to be used for encryption/hashing. init on creation of user record: 16 random chars.
+  - Social eLert typeaheads need to be restricted, at the very least to logged in users.
+
+notifs to be able to return "originator", e.g. email address+name, phone number, etc. to show in outgoing notifs.
+  will allow sending message from Doctor to Patient.
+  default to Setup.getAppTitle
+  SmsServer.sendMessage to accept originator name as param, and/or add default originator in EmailServer.
+  make it work in SMS too. Esp. in AT&T "FRM:Social eLert".
+
+CONTROLS:
+- RichEdit control does not work on mobile devices. Find solution (e.g. text to HTML)
+  "You may lose formatting if you edit this field on this device"
+- Typeahead: on selection of choice, if there are more than one matches (i.e. choice is substring of another), the dropdown remains visible. 
+- DatePicker, TimePicker.
+- ViewTableControl:
+  - support "compressing" columns on phones = merge two columns into one
+  - more paging options: numeric paging, etc.
+  - sorting icons for column headers.
+- ActionListControl: action links in email to be "mailto://...?body=YES"
+  need to set correct addressee (with trackback), subject (with "Re:") and body.
+
+- generalize searchByText in DataBeanStore. Use regexp instead of LIKE %text%
+
+- Admin pages:
+  - report: user alert timeline prefs. naive impl may be slow. need to consider fed level prefs, if that of user is not defined.
+  _ AdHocMessage form: with JS, hide/show subject field based on email checkbox.
+
+
+? on general exception: dispatcher to treat it as webform exception with "general error"
+
+- WelcomeNotif (on signup): allow recipient to respond "LOCK" if they did not open the account.
+  - Similarly for password/email/username change notifs
+
+- "Email this report"
+  - screen for composing email.
+  - execute report page with Channel.EMAIL, put content into richedit. allow user to edit.
+  - automatically add own's email address as recipient.
+  - how can render graph images? Switch from Google chart to http://www.jfree.org/jfreechart ?
+    see http://stackoverflow.com/questions/265777/what-is-the-best-open-source-java-charting-library-other-than-jfreechart
+  - Embed images inline in the email.
+- "Export to Excel"
+
+Notifications:
+- channel timeline:
+  - admin config screen: if disabling channel, use jquery to fade out the checkboxes in the same row.
+  - allow channel disabling in user timeline page as well. or global on/off switch for all notif channels at once.
+- admin:EventTrailPage
+- unify TaskManager and Executors. keep stats for UnifiedExecutor. also allow naming the threads, setting priority, etc.
+- security check on incoming messages: verify sender matches user of notif. e.g. the FROM email address, or the caller ID phone number. 
+? separate table for NotifSchedule to hold notifID, futureSendDate. will remain small instead of querying big table.
+
+--------------------
+Longer term features
+--------------------
+
+- disable spellchecking on certain edit fields, e.g. login id. esp. on iphone.
+
+Generic WALL concept
+- need way to record outgoing notifs and incoming actions on the user's wall in conversation view.
+  - also for admin to see conversations
+  - idea: page to support method getEventID. If returned, save interaction to database (new Wall table?) after successful POST commit with action,
+    and after GET render for push channels only. can return DoseID for example.
+  - outgoing notif / incoming actions admin reports to run over system log?
+- Need additional push channel: Wall. User can't customize its timeline. take from global setting.
+  allow admin to "lock" channels: user can't customize timeline. useful for Wall,Email.
+  - Wall channel to use renderSimpleHTML.
+  ? Wall database table? Or rely on Notification table record?
+  - also need to render replies to the Wall. so for example, asking for reason for skipping drug.
+
+_ on error, autofocus on the edit box with the error.
+_ new concept for errors:
+  - mark all fields with error
+  - popup a box above/below them with the error message when focus in on them
+
+IMAGES:
+- ImagePage to store rendering of new sizes on the Image object. Retrieve on next request.
+  Image object to support multiple layers.
+- when printing image tag, if the layer exists, use the width/height of the image as width/height of IMG tag.
+
+Merge ImportUsersPage with InviteUsersPage. Instead of "Recipients" can also have CSV file.
+
+DataBeanStore:
+- method to cache something that is sensitive to a certain col=value combo.
+  then all getByProcedureID can be cached.
+  need to keep flag on the column that it is an "index". detect changes on insert/save. then invalidate cache.
+  getByColumn("ProcedureID", UUID) to Check if column is an index, only then use cache.
+- Using UUID as clustered primary key causes insertion not to be at end of table, causing paging problems.
+  Need a sequencial ID field as the clustered index, or no clustering at all.
+- Caching for getAllIDs requires invalidatePrefix due to sort column.
+  Can happens in other situations as well (for caching indexes?). Restore usage of invalidatePrefix? Will make it incompatible with MemCache.
+  But will still be able to send invalidations between servers if keeping current cache system.
+  need to invalidate on insert, remove, or update of sort column. Mandate sort column to be defined as index column.
+- LinkStore
+  - Implement PermissionLink as LinkStore? But linking to either UserID or GroupID. Will need two tables.
+  - LinkStore: weight column to support UUID, integer, string.
+- Caching for queryByColumn. consider sort column as well.
+  cacheKey = "bean.colquery:SORTCOL=+-.INDEXCOL=VALUE"
+  invalidateRegEx?
+
+IMAGES
+- Image upload control
+  - link for "edit" (cropping)
+  _ support drag and drop
+  _ auto-upload with progress bar
+- get/validateParameterImage to check that user owns "current" image. See !$! markers.
+- when setting NULL on an image, its version number reverts to 0. need to keep Version on Prop table instead.
+  can then compare versions when setting property, to prevent unnecessary writes.
+
+- Breadcrumb management. Track the pages a user visits, and offer BACK/CANCEL buttons that can take him to the previous step.
+  esp. needed on iphone.
+  - Need to keep queue of crumbs in session memory.
+    allow various pages to insert themselves into queue. or do automatically for GET requests.
+  - on GET, if page rendered (i.e. no redirect) - add to breadcrumbs.
+    Allow page to override isBreadcrumb() then don't and/or allow page to return its breadcrumb URL
+    do not add page if already at top of queue
+  - do not render BACK/CANCEL buttons when queue is empty.
+  - breadcrumbs should be based on sessionID, not userID
+    need to worry about multiple-windows on same session (open link in new tab). Will break this model.
+  - Allow special URL /go-back?steps=2 to extract from queue and redirect user.
+    - Reimplement Cancel button and GoBackRedirect to both point to this page
+  
+
+- SMS Proxy
+  = Can we have different callbacks for different program IDs? get brent to contact their support. or do so myself.
+  - implement as Samoyan app, or
+    allow any one server/federation to serve as SMS Proxy. Then all others can point to it.
+  - accept from app by http post: msg text, recipient phone#, locale, callback URL, credentials.
+  - generate unique 4-digit code for phone number. append it to msg text as #1234.
+  - on incoming, detect 4-digit code, then call callback URL with response text as additional param. pass same credentials.
+  - if no 4-digit code, accept if only one msg (that was unanswered) was sent to this phone# in last X minutes.
+    otherwise, send back error message, on same locale, asking the user to re-respond with the code first.
+    "Attention! Your msg was NOT processed because we couldn't identify the msg you replied to. Please re-reply to the original msg and
+     prepend its 4-digit code before your reply, e.g. "1234 Yes".
+  - keep multiple provider settings. forward msg based on phone# (e.g. US provider, Europe provider, etc.)
+  ? know to use email to send/receive messages. will then need to pass in recipient's mobile provider
+
+
+x checkbox submittal: be able to figure out a checkbox is unchecked after submit.
+  in essence have 3 states: unsent, checked, unchecked.
+
+- delivery failure management.
+  - keep table DeliveryFailures to hold Channel, Address, FailingSince, ?FailCount, Diagnostic.
+  - update in Notifier on failures and on success (delete record)
+  - Preempt messages before sending, if failing for too long.
+  - For email and SMS.
+
+
+- SMS/Phone Countries: do not send SMS or phone calls to countries not supported by providers
+  - link SMS provider to countries they can operate on.
+  - limit phone edit fields in ContactInfoPage. if only one country, can hide prefix dropdown.
+  - check when sending SMS, phone calls.
+
+- CountryStore / phones:
+  - Keep Phone number validating RegEx in Countries table. USA = [0-9]{10}. validate in validatePhone and before sending SMS/calls.
+  - Also keep format, USA = (###) ###-####, israel = 0##-###-####.
+    create method writePhone
+- Profile page to ask for Country, state. Need StateStore CSV.
+
+- Controls
+  - need control that can browse hierarchies with json. TreeViewer with fetch into DOM on demand.
+  - have typeahead generate jquery events onChange(key, value). then can catch them and populate other control.
+  - need FooterControl to mirror the TopBar.
+    ? can then move colors defs to controls from #header, #footer.
+
+IMAP reader:
+  ?reader to also use persistence: download emails, write to db, then multiple processors to analyze.
+  Option for email reader thread to delete messages from the inbox/sent folders of the email server.
+  have store IO and connection timeouts in database. default to 60 and 20 secs.
+
+log:
+  log "request exception" events. also redirects.
+  graphs as display option
+  show severity icons next to log entry names.
+
+- Full auditing: when, who updated which property of what object.
+
+- Move "allow remember me" to fed object from inheritance.
+- Restrict Configuration pages to "System Configuration" permission only. Do not allow Admins to set this permission.
+  Separate the config screens into another tab
+- Admin screen for user beans: list/edit all properties (same as in Zhibit)
+
+Notifications:
+- remove fed.getOpenMarketDemoPrefix
+- let users customize channel delivery per event type (=command)
+  - Need table to keep user + command + channels relationship
+  - profile screen to allow user to subscribe/unsubscribe from notif types per channel
+    - Need webpage to return metaTitle (name of the event such as "Password change notification")
+  - allow users to UNSUBSCRIBE/STOP by replying to the notif. Then disable the channel for this notif type.
+    - need to update footer of EmailEnvelope with this explanation.
+  - also, always accept OK for notifs. then preempt future notifs of same event.
+
+TaskManager:
+  support pause/resume, run now.
+  delay initial launch of tasks by at least 1 minute after system startup.
+  keep props per task, including last execution time. then delay startup accordingly.
+
+- move remainder of non-boot application/platform.properties to a database object,
+  - keep only database props, host, ports, debug, ssl, possibly add Server.Name
+    update application.properties file in all projects.
+  - import/export of settings (all properties on local server + federation object)
+  ? better caching for federation object (static var) to reduce need to access cache hashmap.
+    on save, set the static var, and clear the cache as well (the latter will affect other servers)
+    on load, use static copy if no more than 1sec passed since it was cached
+    props inside the object to keep local copies in addition to hashmap.
+- cache to automatically control its size based on avail mem. or init it after db init.
+    thread to run every one sec, check mem status, clear 1/4 elements and gc, if over max.
+    if max==0, disable cache. force 50%-90% range.
+    keep 35% of total mem, or 50MB, whichever is greater, free.
+
+Federation support:
+  Servers table to keep intranet IP of server
+  Each server to have HeartBeat recurring task to store currentTime in Servers table (LastHeartbeat)
+  Cache.invalidate to send notifs to other live servers using IP address in Servers table. 
+    or keep SMPP session between all servers. Send cache invalidation this way.
+  support federation working on same Notifications table. make sure messages are not sent twice.
+  special handling of Server.getFederal. send special notifs when federal changed. then can cache better.
+  PostedFileOutputStream: need to persist the temp file to the database, not the file system, since consecutive requests can arrive to a different server.
+  Captchas rely on cache. Need to move to more persistent storage, or use bcrypt to pass result to client side.
+
+- Support Upgrade process for both app and platform.
+  allow plugging in upgradeProcesses to run in order. in-process, bg-job.
+
+NotifRunner: embed CSS in emails inline. See !$! marker
+
+- create Veloxicom website based on our platform.
+  allow visitors to play with a sample application using their email, SMS, etc.
+
+- additional channels: WhatsApp.com, Skype chat.
+
+
+=====
+
+Core components of system to be developed:
+  wall
+  comments
+  + sms engine: http://sms411.net/how-to-send-email-to-a-phone/ , http://www.data24-7.com/textat.php
+  + two-way notifications (conversation)
+  + log engine
+  API protocol: web service
+  Twitter integration
+  Fb: send messages, fb app development, auth.
+  Google graph wrapper
+  + JAI - image
+  + sending email
+  + voice
+  admin reports
+  alert timeline. per event type, or at least when action due, or not (e.g. no need for voice call if no action due)
+  option to require pincode to receive voice, im, sms, etc. Can be implemented in envelope class of these notifs.
+    when received pin, do not ask again for session length
+  mobile UI
+  redesign UI. look and feel. controls.
+  native mobile app.
+  + CSS inheritance
+
+- XML encode of quotes in OpenMarket XML
+
+calendar picker for mass notif. use jquery's?
+
+- DataBean
+  - need smarter cache management for relationships.
+    // when condition changes, need to clean up cache based on orig and new values of condition column
+	// when sort order changes, need to clean up cache based on orig value of condition column
+	// when removing, need to clean up cache based on orig value of condition column
+	// when inserting, need to clean up cache based on new value of condition column
+  - DataBeanStore to support transaction (JDBC commit)
+  - remove concept of "invariant" column? not used anymore for caching.
+? Integrate internal user management with Tomcat as JAAS/LoginModule.
+- support other database engines (MySQL). issues to consider: data encryption, full-text indexing, scalability.
+  - tool to extract schema into ANSI-SQL
+- support NOT permissions, e.g. "!System administrator". take precedence over white list.
+
+- stay consistent with memcached api. https://github.com/memcached/memcached/blob/ab0c0537eb1b225263f4ec45ce3133c5de9a94dc/doc/protocol.txt
+  data must be serialized. can't store objects.
+- implement common /contact-us pages. link to it from /help page or from TopBarControl directly
+- "Join" page and "login" object to support Name or First+Last Name or No Name options, or Both.
+- admin screens to show stats of Notifier: count sent, in queue, #threads, etc.
+- more meta tags for page, esp. for SEO, FB. see http://www.quotes.uk.com/web-design/meta-tags.php
+_ support for input type=number, tel where supported (e.g. iPhone)
+- task to delete user records that never logged in after X days (i.e. did not accept invitation).
+  add message in outgoing invitation: "This invitation will be open for 30 days, if you do not want to join at this time, do nothing".
+  problematic, becasue can for example, delete Doctors who are linked to other object although never logged in.
+
+- support for aggregated report of pending events, e.g. "Pool all my alerts, send me aggregate report at 18:00"
+
+native video streaming. keep vids in DB like images.
+
+google analytics
+Open mHealth
+gaming aspects: badges, score for adherence, etc.
+
+- iPhone
+  - popup window to ask user to "Add to home page".
+  - allow switching to classic mode via user agent override
+  - help balloons don't work correctly. use alert instead?
+  - integrate jqtouch.js
+  - checkout appcelerator.com, phonegap or www.sencha.com/products/touch/
+
+_ control infrastructure from Capricorn
+  - google graph control
+_ integration with FB Connect. FB graph API support.
+  FB connect plugin.
+  on login, create new user "fb_1234567" if needed, otherwise, login
+  disallow fb_ prefix for normal registration
+  - requestcontext to have: isFacebookApp, isFacebookTab, etc.
+  

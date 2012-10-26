@@ -1,0 +1,76 @@
+- Implement voice rendering for MMM notif
+
+- In PersonalInfo extra page: MRN should be allowed to be less than 12 digits (remove leading 0's).
+  also fix help balloon to "medical record number". See My eLert for code.
+
+- keep UsersExtended table, like in Social eLert.
+  - No need for Patients table.
+  - Doctors: name, address, phone, email, mobile, notif.
+  - link all Rx, etc. to User object, not to Patient object.
+
+- System was offline for a few days. When went back online, reminders were sent for each day system was offline, flooding the inbox.
+  need to handle such cases. Generate doses, but do not send reminders? 
+
+  - admin screens to be in their own admin tab: mind-admin/page
+    ? admin entry screen for drugs. later, import from FirstDataBank CD or web service.
+    - aggregate adherence report
+  - After registration, direct new users to screen where they can finalize registration as
+    patient or doctor. Create Patient or Doctor object based on choice.
+    Move code from WelcomePage to the new registration process.
+    Doctors must be verified by phone # or email against KP databases.
+  - on initial login: welcome message, have guided setup.
+  - Rx list page:
+    - show schedule. combine with doses and next dose in one column.
+    - if no checkbox selected when pushing button, give error message.
+    = show adherence % or star rating with link to full report.
+    - allow to halt schedule, resume.
+    - show interactions only for drugs that had been taken in last 30 days.
+    - automatically hide/archive Rx that are not used for 30 days.
+      option to allow user to see archived Rxs.
+  - (0) Have TableViewControl with cached dataset.
+    - when cache is not available, give message that page should be refreshed.
+      - auto refresh and scroll to position when method=GET
+    - implement in +DoseList, Search Database page, admin Logins Page, RX list page.
+    - verify that it works with adding edit fields.
+    + on error, need to expand to previous position.
+  - when user removes Rx, do not delete but rather disable and hide from display.
+    ok to delete if none of the doses are resolved.
+  - on initial sms/IM/email message: send help message with how to respond: "yes,no reason,zzz 1h,zzz 8pm,zzz 30m,help"
+  - my meds, my doctors, my adherence report
+  - 10pm to 5am: give notice that it's night notif. "Are you sure?"
+  - Patient response page: allow to resolve Dose
+    - allow to resolve as DONT REMEMBER
+    = if this is the last dose, give user chance to renew/add more doses.
+      nth: remember the original #doses and have that as default amount when renewing.
+    = option to "I'm done with this medication, stop future reminders". 
+    = option to Snooze/Remind me later.
+    = better UI for the above options
+    = give "Thank you" message when event is closed and reason is given.
+      "Login to your account" if not logged in. Otherwise, back to doselist.
+    - option for user to select 4-digit PIN code to enter when resolving while not logged in
+    = (3) links from email to directly post Taken or Skipped. accept param with GET.
+    - (2) in SmartPhone, show buttons on top of page to prevent need to scroll.
+    - report abuse: allow msg receiver to disable the account if his number was added maliciously.
+  - doses to have index e.g. "Dose #1" to be included in notifs.
+    keep counter on Rx and increment on each generation of dose.
+  = email notifs
+    - Implement CommonNotif class with header/footer/body/frame/beacon/unsub link
+    - PatientNotif: implement getLocale to take locale from patient. have setting in profile. init in welcomepage.
+  - iPhone needs <Back] button in pages where user gets stuck.
+  - CSS cleanup:
+    - move CSS of controls to controls.css. include in common envelope.
+    - NavTreeControl:
+      detect iOS<5 and show tabs on top, not "fixed". Also don't hide them on focus.
+      padding at bottom of page only if fixing the nav tabs. in common.js, detect TabBar with fixed pos, then add padding to BODY=height of bar.
+  - when logged in, root page should list the 3 tabs and explain each, esp on iphone when clicking top-left banner. 
+  = edit Rx page:
+    - in Rx nickname: add checkbox next to "privacy", if unchecked, make nick same as medication name.
+      if checked, mandate a nickname.
+      on focus, if empty, enter first 3 letters of med name with * (e.g. "cop*" for "copaxone")
+    - do not let edit Rx name, Dose Info if doses already created.
+    - Help strings under each section of page.
+  _ if giving access to KP, put "DEMO" icons/messages in pages where functionality is not 100% ready.
+  - Rx refill:
+    - when Rx is about to run out, send Refill event to user.
+      if answer="Mail order", issue order to mail-order pharmacy.
+    - when Rx actually runs out, give option to add doses (if user refilled rx himself, i.e. not via mail)

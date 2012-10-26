@@ -1,0 +1,689 @@
+// ---------- Mixins ----------
+.Light25 () {
+	background-image: url('light-25.png');
+	background-repeat: repeat;
+	background-position: top left;
+}
+.Light50 () {
+	background-image: url('light-50.png');
+	background-repeat: repeat;
+	background-position: top left;
+}
+.GradientLight25 () {
+	background-image: url('gradient-light-25.png');
+	background-repeat: repeat-x;
+	background-position: top left;
+	background-size: 1px 100%;
+}
+.HalfLight25 () {
+	background-image: url('half-light-25.png');
+	background-repeat: repeat-x;
+	background-position: top left;
+	background-size: 1px 100%;
+}
+
+.box-sizing (@box) {
+	box-sizing: @box; -moz-box-sizing: @box; -ms-box-sizing: @box; -webkit-box-sizing: @box;
+}
+.border-radius (@radius) {
+	border-radius: @radius;
+	-moz-border-radius: @radius;
+	-webkit-border-radius: @radius;
+}
+
+
+// ---------- Basic tags ----------
+*				{.box-sizing(border-box);}
+HTML,BODY		{height:100%;width:100%;}
+BODY {
+	margin:0px;padding:0px;
+	font: @font-normal;
+	line-height: 1.4;
+	color: @color-text;
+	background-color: @color-background;
+	visibility: visible !important;
+	&.SmartPhone {
+		-webkit-text-size-adjust:100%;
+	}
+}
+H1				{font: @font-huge; padding:0px; margin:0px 0px 10px 0px; color: @color-hover;}
+.SmartPhone H1	{font: @font-large; margin:0px 0px 5px 0px;}
+H2				{font: @font-large; padding:0px; margin:10px 0px 10px 0px; color: @color-accent;}
+H3				{font: @font-large; font-weight: bold; padding:0px; margin:10px 0px 10px 0px; color: @color-text;}
+BIG				{font: @font-large;}
+SMALL			{font: @font-small;}
+.NOBR			{white-space: nowrap;}
+NOSCRIPT		{display:block; width:100%;}
+NOSCRIPT > DIV	{width:100%; height: 24px; color: white; font-weight:bold; background:red; padding:3px; text-align:center;}
+IMG				{border: none;}
+PRE				{padding: 0px; margin: 0px;}
+HR				{margin: 0px; border: 0px; border-top: 1px solid @color-text-light;}
+A				{color: @color-link; &:hover {color: @color-hover;}}
+.NoShow			{position: absolute; top:-9999px;}
+TEXTAREA		{resize: none;}
+
+.SmartPhone IMG	{max-width:100%;height:auto;}
+.Faded			{opacity:.5;}
+*[align=center]	{text-align:center;margin-left:auto;margin-right:auto;}
+*[align=right]	{text-align:right;}
+*[align=left]	{text-align:left;}
+.NoDisplay		{display:none;}
+
+#overridescreen {
+	overflow:scroll;margin:auto;border:15px solid rgba(0,0,0,.5);
+	border-radius: 20px 20px;
+	.box-sizing(content-box);
+}
+
+// ---------- Table ----------
+TABLE				{text-align: left; border-spacing :0px;}
+TR					{vertical-align:top;}
+TR[valign=top]	{vertical-align:top;}
+TR[valign=middle]	{vertical-align:middle;}
+TR[valign=bottom]	{vertical-align:bottom;}
+TD[align=left], TH[align=left] {text-align:left;}
+TD[align=right], TH[align=right] {text-align:right;}
+TD[align=center], TH[align=center] {text-align:center;}
+TD,TH				{padding:2px 4px; margin:0px; text-align: left; font-weight: normal;}
+.SmartPhone TD, .SmartPhone TH {padding: 2px 2px;}
+TH					{white-space: nowrap;}
+TD:first-child, TH:first-child {padding-left: 0px;}
+TD:last-child, TH:last-child {padding-right: 0px;}
+TR:first-child > TD, TR:first-child > TH {padding-top: 0px;}
+TR:last-child > TD, TR:last-child > TH {padding-bottom: 0px;}
+
+// ---------- TwoColForm ----------
+.TwoColForm 	> TBODY > TR > TH:first-child {
+	text-align: right;
+	white-space: nowrap;
+	width: 1%;
+	color: @color-text-light;
+}
+.SmartPhone .TwoColForm 	> TBODY > TR > TH:first-child {
+	text-align: left;
+}
+
+// ---------- View table ----------
+.ViewTable {
+	width: 100%;
+	> TBODY > TR {
+		&.Shaded {
+			background-color: @color-background-editbox;
+		}
+		&:first-child  {
+			background-color: @color-text-light;
+			color: @color-background;
+			font-weight: bold;
+			.GradientLight25;
+		}
+		&:last-child  {
+			background-color: transparent;
+			font: @font-small;
+			> TD {
+				border-top: solid 2px @color-text-light;
+			}
+		}
+//		> TH:first-child {
+//			color: @color-text-light;
+//		}
+//		&:first-child > TH:first-child {
+//			color: @color-background;
+//			color: inherit;
+//		}
+	}
+}
+
+// ---------- Input ----------
+INPUT[type="text"],INPUT[type="password"],INPUT[type="date"],INPUT[type="number"],INPUT[type="datetime-local"],INPUT[type="tel"], TEXTAREA, SELECT {
+	border: solid 1px @color-text-light;
+	background-color: @color-background-editbox;
+	.GradientLight25;
+	font: @font-normal;
+//	font-family: inherit;
+//	font-size: inherit;
+	padding: 2px;
+	.border-radius(0px 0px);
+	margin: 1px 0px;
+	color: @color-text;
+	&:-moz-placeholder {
+		color: @color-text-light;
+	}
+	&::-webkit-input-placeholder {
+		color: @color-text-light;
+	}
+	&.PlaceHolder {
+		color: @color-text-light;
+	}
+	&:focus {
+		border-color: @color-accent;
+		box-shadow: 0 0 10px fade(@color-accent, 50%);
+		outline: medium none;
+	}
+}
+// Chrome does not support background image on SELECT
+.Chrome SELECT {
+	background-image: none;
+}
+SELECT {
+	padding: 1px 0px;
+}
+INPUT[type="checkbox"], INPUT["type=radio"] {
+	padding: 0px;
+}
+
+INPUT[type="submit"],INPUT[type="button"] {
+	.border-radius(8px 8px);
+	border: solid 1px @color-background-dark;
+	.HalfLight25;
+	padding: 1px 10px;
+	color: @color-background;
+	background-color: @color-accent;
+	font: @font-normal;
+//	font-family: inherit;
+//	font-size: inherit;
+	font-weight: bold;
+	&:hover {
+		text-decoration:underline;
+		background-color: lighten(@color-accent, 10%);
+	}
+	&.Strong {
+		background-color: @color-accent-alert;
+		&:hover {
+			background-color: lighten(@color-accent-alert, 10%);
+		}
+	}
+	&.Subdued {
+		background-color: @color-text-light;
+		&:hover {
+			background-color: lighten(@color-text-light, 10%);
+		}
+	}
+}
+.MSIE INPUT[type=submit], .MSIE INPUT[type="button"] {
+	padding: 2px 10px;
+}
+
+.RichEditCtrl {
+	IFRAME {
+		border: solid 1px @color-text-light;
+		background-color: @color-background-editbox;
+		.GradientLight25;
+		margin-bottom: 2px;
+	}
+	IMG {
+		margin-right: 1px;
+		border: solid 1px black;
+		background-color: @color-background-editbox;
+		cursor: hand; cursor: pointer;
+		&:hover {
+			background-color: @color-hover;
+		}
+	}
+}
+
+.PhoneInput {
+	display: inline-block;
+}
+
+.Error, .InlineError {
+//	display: inline-block;
+	border-color: @color-error !important;
+//	border-width: 1px;
+//	border-style: solid;
+	background-color: @color-background-editbox-error !important;
+}
+SPAN.Error {
+	display: inline-block;
+	border-width: 1px;
+	border-style: solid;
+}
+
+DIV.ErrorMessage {
+	background-color: @color-error;
+	color: @color-background;
+	margin-bottom:10px;
+	padding: 2px;
+}
+DIV.WarningMessage {
+	background-color: @color-background-warning;
+	color: @color-text;
+	margin-bottom:10px;
+	padding: 2px;
+}
+DIV.InfoMessage {
+	background-color: @color-accent;
+	color: @color-background;
+	margin-bottom:10px;
+	padding: 2px;
+}
+
+// ---------- Image uploader ----------
+
+.ImageUploader {
+	IMG {
+		display:none; border: solid 1px #999999; width: 78px; height: 78px; padding: 2px;
+	}
+	SPAN {
+		display:none;
+	}
+	&.StateEmpty .Empty {display:inline;}
+	&.StateCurrent .Current {display:inline;}
+	&.StateNew .New {display:inline;}
+	&.StateUploaded .Uploaded {display:inline;}
+	.Actions > SPAN {
+		cursor: hand; cursor: pointer; padding-left: 18px; padding-right: 10px; background: no-repeat center left;
+		&[upload] {background-image: url("imgupload-upload.png");}
+		&[delete] {background-image: url("imgupload-delete.png");}
+		&[undo] {background-image: url("imgupload-undo.png");}
+		&:hover {text-decoration: underline; color:@color-hover;}
+		&.NoHover {
+			cursor: auto;
+			&:hover {text-decoration:none; color: @color-text;}
+		}
+	}
+}
+
+// ---------- Captcha ----------
+.Captcha {
+	border: solid 1px @color-text-light;
+	margin-top: 2px;
+}
+
+// ---------- Type ahead ----------
+.TypeAheadPopup	{
+	position: absolute;
+	border: 1px solid @color-text-light;
+	box-shadow: 1px 1px 4px 0px @color-background-dark;
+	background: @color-background;
+	> DIV {
+		padding: 2px;
+		&.Hover {
+			background-color: @color-background-editbox;
+			cursor: default;
+		}
+	}
+}
+
+// ---------- Link toolbar ----------
+.LinkToolbar {
+	width: 100%;
+	border-top: 1px solid @color-background-dark;
+	border-bottom: 1px solid @color-background-dark;
+	margin-bottom: 15px;
+	padding: 4px 0px;
+	TD > A, TD > SPAN {
+		text-decoration: none;
+		margin-right: 15px;
+	}
+	TD > A:hover {
+		text-decoration: underline;
+	}
+}
+
+// ---------- Tab control ----------
+.TabCtrl {
+	width: 100%;
+	margin-bottom: 15px;
+	TD {
+		padding: 0px;
+	}
+	A {
+		text-decoration: none;
+	}
+	.TabFront {
+		border: solid 1px @color-text; border-bottom: none;
+		padding: 2px 5px 10px 5px;
+//		.border-radius(4px 4px);
+	}
+	.TabBack {
+		border: solid 1px @color-text-light; border-bottom: solid 1px @color-text;
+		padding: 2px 5px 2px 5px;
+//		.border-radius(4px 4px);
+		background-color: @color-background-editbox;
+		.GradientLight25;
+	}
+	.TabSep {
+		border-bottom: solid 1px @color-text;
+	}
+}
+
+// ---------- Top bar ----------
+.TopBar {
+	height: 100%;
+	width: 100%;
+	TD {
+		padding: 0px;
+		margin: 0px;
+		white-space: nowrap;
+	}
+	A {
+		text-decoration: none;
+		font-weight: bold;
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+	.Logo {
+		padding-top: 2px;
+		font: @font-huge;
+		width:1px;
+		padding-right: 15px;
+	}
+	.Tabs {
+		width: 1px;
+		height: 100%;
+		TABLE {
+			height: 100%;
+			> TBODY > TR > TD {
+				padding: 2px 15px;
+				border-left: solid 1px lighten(@color-negative-background, 10%);
+				border-right: solid 1px darken(@color-negative-background, 10%);
+				text-align: center;
+				font: @font-small;
+				&.Current {
+					background: url('tab-current.png') bottom center no-repeat;
+				}
+			}
+		}
+	}
+	.Links {
+		padding-top: 2px;
+		text-align:right;
+		font: @font-small;
+		A {
+			color: inherit;
+			font-weight: normal;
+		}
+	}
+	.SearchBox {
+		background-image: url("search-go.png");
+		background-position: center right;
+		background-repeat: no-repeat;
+		background-color: inherit;
+		.border-radius(8px 8px);
+		padding: 0px 16px 0px 5px;
+		margin-top: 10px;
+//		font-family: inherit;
+//		font-size: inherit;
+		width: 120px;
+		color: inherit;
+	}
+}
+.SmartPhone .TopBar {
+	height: auto;
+	.Tabs TABLE {
+		height: auto;
+		width: 100%;
+		position: fixed;
+		bottom: 0px;
+		left: 0px;
+		background-color: @color-text;
+		.HalfLight25;
+		z-index: 999999;
+		TD {
+			padding: 2px 2px;
+			border: none;
+			&.Current {
+				background: none;
+				.Light50;
+			}
+			A {
+				color: @color-background;
+			}
+		}
+	}
+}
+.SmartPhone .TopBarPlaceHolder {
+	height: 60px;
+}
+.BlackBerry_5 .TopBar .Tabs TABLE {
+	bottom: -16px;
+}
+
+// ---------- Tooltip ----------
+.Tooltip {
+	border-bottom-width: 1px;
+	border-bottom-style: dotted;
+	border-bottom-color: inherit;
+	color: inherit;
+	outline: none;
+	cursor: help;
+	text-decoration: none;
+	position: relative;
+	display: inline-block;
+	SPAN {
+		display: none;
+		position: absolute;
+		border: solid 1px @color-text;
+		color: @color-text;
+		background-color: #ffffaa;
+		background-color: rgba(255,255,136,.85);
+		word-wrap: break-word;
+		white-space: normal;
+		font-weight: normal;
+		top: 2em;
+//		right: 0px;
+		z-index: 999999;
+		margin-left: 0px;
+		width: 250px;
+		padding: 2px;
+		font: @font-small;
+		text-align: left;
+	}
+	&:hover SPAN {
+		display: block;
+	}
+}
+.Tooltip.Right SPAN {
+	right: 0px;
+}
+.SmartPhone .Tooltip {
+	&:hover SPAN {
+		display: none;
+	}
+	&.Hover SPAN {
+		display: block !important;
+	}
+}
+
+// ---------- ControlArray ----------
+.CtrlArr {
+	.RemoveBtn {
+		padding: 2px 0px 0px 18px;
+		background: url("ctrlarr-remove.png") no-repeat left center;
+		cursor: hand; cursor: pointer;
+		visibility: hidden;
+		font: @font-small;
+		margin-top: 2px;
+		display: inline-block;
+		&:hover {text-decoration:underline;}
+	}
+	TR:hover .RemoveBtn {
+		visibility: visible;
+	}
+	.AddBtn {
+		padding: 2px 0px 0px 18px;
+		background: url("ctrlarr-add.png") no-repeat left center;
+		cursor: hand; cursor: pointer;
+		font: @font-small;
+		margin-bottom: 2px;
+		display: inline-block;
+		&:hover {text-decoration:underline;}
+	}
+}
+.Mobile .CtrlArr .RemoveBtn {
+	visibility:visible !important;
+}
+
+// ---------- Nav tree ----------
+.NavTree {
+	UL						{list-style-type:none;padding:0px;margin:0px;font-weight:bold;}
+	UL UL					{list-style-type:square;list-style-position:inside;margin:0px 0px 10px 0px;font-weight:normal;}
+	UL UL > LI				{padding-left:10px;}
+}
+.SmartPhone .NavTree {
+	UL UL		{list-style-type:none; border:1px solid @color-text-light; border-radius: 12px; margin: 0px 5px 10px 5px;}
+	UL UL > LI	{
+		padding: 0px;
+		A {
+			padding: 0px;
+			background: url("navtree-right-arrow.png") no-repeat right center;
+			padding: 8px 20px 8px 10px;
+			text-decoration:none;
+			display:block;
+			border-bottom: solid 1px @color-text-light;
+		}
+		&:last-child > A {
+			border-bottom-left-radius:12px;
+			border-bottom-right-radius:12px;
+			border-bottom: none;
+		}
+		&:first-child > A {
+			border-top-left-radius:12px;
+			border-top-right-radius:12px;
+		}
+	}
+}
+
+// ---------- Days of month chooser ----------
+.DaysOfMonthChooser {
+	border: solid 1px @color-text-light;
+	TD {
+		text-align:right;
+		&.DOW {
+			border-bottom: solid 1px @color-text-light; font: @font-small;
+		}
+		&.Selected {
+			background-color: @color-accent; color: @color-background;
+		}
+		&.Disabled {
+			color: @color-background-dark;
+		}
+		&.Month {
+			background-color: @color-text-light; color: @color-background; text-align: center;
+			.GradientLight25;
+		}
+	}
+	&.Enabled TD {
+		&.Day.Enabled:hover, &.DOW:hover, &.Month:hover {
+			color: @color-hover; text-decoration: underline; cursor: hand; cursor: pointer;
+		}
+	}
+}
+
+// ---------- Console ----------
+.Console {
+	background: black;
+	color: white;
+	font: 8pt courier new, monospace;
+	border: groove 3px @color-text-light;
+	padding: 5px;
+	overflow: scroll;
+	height: 500px;
+	display: block;
+	word-wrap: break-word;
+	width: 800px;
+}
+.SmartPhone .Console {
+	width: auto;
+	font-size: 6pt;
+}
+
+// ---------- Web envelope ----------
+
+.Inner {width: 1000px; margin:auto; height: 100%; padding: 0px;}
+.Mobile .Inner {width:100%; margin: 0px;}
+
+#layout {
+	width: 100%;
+	height: 100%;
+}
+.SmartPhone #layout {
+	height: auto;
+}
+
+#header {
+	height: @header-height;
+	vertical-align: top;
+	color: @color-negative-text;
+	background-color: @color-negative-background;
+	A {
+		color: @color-negative-text;
+		&:hover {
+			color: @color-negative-hover;
+		}
+	}
+	H1 {
+		color: inherit;
+		font-weight: bold; padding: 0px; margin: 0px;
+	}
+	.GradientLight25;
+	> TD {
+		padding: 0px;
+		height: @header-height;
+	}
+}
+
+#middle {
+	padding: 0px;
+}
+
+#footer {
+	height: @footer-height; 
+	font: @font-small;
+	color: @color-negative-text;
+	background-color: @color-negative-background;
+	A {
+		color: @color-negative-text;
+		&:hover {
+			color: @color-negative-hover;
+		}
+	}
+	.GradientLight25;
+	> TD {
+		padding: 10px 0px;
+		height: @footer-height;
+	}
+}
+.SmartPhone #footer {
+	margin-top:5px;
+}
+
+#page, #navbar {
+	vertical-align:top;
+	padding: 15px 10px;
+}
+#navbar {
+	width:200px; min-width:200px;
+	.NavTree {
+		margin-top: 10px;
+	}
+}
+.SmartPhone {
+	#header, #page {
+		width: 100%;
+		padding: 1px 1px;
+		height: auto;
+	}
+	#navbar {
+		width: 100%;min-width:0px;
+		font: @font-large;
+		height: auto;
+		padding: 5px 1px;
+	}
+}
+#welcome {
+	SMALL {
+		color: @color-text-light;
+	}
+	margin-bottom: 5px;
+}
+
+/*
+#navbar .NavTree A					{color: @color-text;}
+#navbar .NavTree A:hover				{color: @color-hover;}
+.SmartPhone #navbar .NavTree UL UL	{background-color:#cccccc;}
+#navbar .NavTree UL UL LI				{color: @color-text;}
+#navbar .NavTree UL LI				{color: #82C936;}
+*/
+

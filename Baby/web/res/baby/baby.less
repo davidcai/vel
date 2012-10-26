@@ -1,0 +1,89 @@
+UL.Journal {
+	list-style: none;
+	display: block;
+	padding: 0;
+	margin: 1em 0 0;
+	border-top: solid 1px #CCC;
+
+	LI {
+		display: block;
+		padding: 1em 0 0;
+		
+		A {
+			text-decoration: none;
+		}
+		
+		.EntryPhoto IMG {
+			padding: 0.5em 0 0;
+		}
+	}
+}
+
+TABLE.PhotoGrid TD {
+	text-align: center;
+}
+
+.LargeImage {
+	position: relative;
+	display: inline-block;
+	
+	.PrevWrapper, .NextWrapper {
+		position: absolute;
+		top: 50%;
+		
+		.Prev, .Next {
+			position: relative;
+			display: none;
+			top: -40px;
+			height: 80px;
+			width: 33px;
+			background: transparent no-repeat center center;
+			outline: none;
+		}
+	
+		.Prev {
+			background-image: url("/baby/res/baby/image-prev.png");
+		}
+		
+		.Next {
+			background-image: url("/baby/res/baby/image-next.png");
+		}
+	}
+	.PrevWrapper {
+		left: 0;
+	}
+	.NextWrapper {
+		right: 0;
+	}
+	
+	&:hover {
+		.Prev, .Next {
+			display: block;
+		}
+	}
+}
+.MSIE_7 .LargeImage {
+	display: inline;
+}
+
+.TimelineBar {
+	A {
+		width: 15px;
+		margin-right: 4px;
+		font-size: 8pt;
+		display: inline-block;
+		background-color: @color-background-dark;
+		text-align:center;
+		padding: 10px 1px;
+		text-decoration: none;
+		color: inherit;
+		&.Current {
+			background: @color-accent;
+			color: @color-background;
+		}
+		&:hover {
+			background: @color-hover;
+			color: @color-background;
+		}
+	}
+}

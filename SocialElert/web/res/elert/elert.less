@@ -1,0 +1,326 @@
+// Mixins
+.border-radius (@radius) {
+	border-radius: @radius;
+	-moz-border-radius: @radius;
+	-webkit-border-radius: @radius;
+}
+.GradientLight25 () {
+	background-image: url('../gradient-light-25.png');
+	background-repeat: repeat-x;
+	background-position: top left;
+	background-size: 1px 100%;
+}
+
+// General
+.TopBar .Tabs TD {
+	IMG {
+		display: none;
+	}
+	BR {
+		display: none;
+	}
+	A:hover {
+		text-decoration: none;
+	}
+	font: @font-normal;
+	vertical-align: middle;
+}
+.SmartPhone .TopBar .Tabs TD {
+	IMG {
+		display: inline-block;
+	}
+	BR {
+		display: inline;
+	}
+	font: @font-small;
+}
+
+INPUT[type=submit] {
+	padding: 4px 14px;
+	.GradientLight25;
+	.border-radius(0px);
+	&:hover {
+		text-decoration: none;
+	}
+}
+.MSIE INPUT[type=submit] {
+	padding: 5px 14px;
+}
+
+.NavTree {
+	UL {
+		font: @font-large;
+	}
+	UL UL {
+		font: @font-normal;
+	}
+}
+.SmartPhone .NavTree {
+	UL UL {
+		font: @font-large;
+	}	
+}
+H1 {
+	color: @color-text;
+	text-transform:capitalize;
+}
+
+INPUT.Strong[type="submit"],INPUT.Strong[type="button"] {
+	background-color: @color-accent;
+	&:hover {
+		background-color: lighten(@color-accent, 10%);
+	}
+}
+INPUT.Subdued[type="submit"],INPUT.Subdued[type="button"] {
+	background-color: @color-accent;
+	&:hover {
+		background-color: lighten(@color-accent, 10%);
+	}
+}
+
+.DaysOfMonthChooser {
+	font: @font-small;
+}
+
+#middle {
+	background: url("middle-bg.png") repeat-x top left;
+}
+
+IMG[src*="/square150/"] {
+	border: 1px solid @color-text-light;
+	padding: 2px;
+}
+
+#header .Tabs > TABLE > TBODY > TR > TD {
+	font: @font-normal;
+}
+.SmartPhone #header .Tabs > TABLE > TBODY > TR > TD {
+	font: @font-small;
+}
+
+// Root page
+BODY[uri="/"] {
+	#navbar, H1 {
+		display:none;
+	}
+	#middle {
+		background: url("shadedarea-bg.png") repeat-x top left;
+	}
+	#header {
+		background: @color-background;
+		color: @color-text;
+		A {
+			color: @color-text;
+			&:hover {
+				color: @color-hover;
+			}
+		}
+		.Tabs > TABLE > TBODY > TR > TD {
+			border-left: solid 1px @color-background-dark;
+			border-right: solid 1px @color-text-light;
+		}
+//		.Links {
+//			display: none;
+//		}
+		#LinkLogin, #LinkRegister {
+			display: none;
+		}
+	}
+	#footer {
+		background: @color-negative-background;
+	}
+	.ShadedArea {
+		height: 280px;
+		color: @color-negative-text;
+		.Pitch {
+			text-shadow: 0 1px 0 darken(@color-negative-text, 50%);
+			H1 {
+				display: block;
+				font: @font-huge;
+				margin-bottom: 10px; margin-top: 5px;
+				color: @color-negative-text;
+				text-transform: none;
+			}
+			BIG {
+				font: @font-large;
+			}
+		}
+	}
+	.LoginBox {
+		text-shadow: none;
+		width: 100%; height: 200px;
+		padding: 15px 30px;
+		color: @color-text;
+		//background-color: @color-background;
+		background-color: @color-light-green;
+		border: 1px solid @color-text-light;
+		.border-radius(10px 10px);
+	}
+}
+BODY.SmartPhone[uri="/"] {
+	#header {
+		.Tabs > TABLE > TBODY > TR > TD {
+			border: none;
+		}
+	}
+	.ShadedArea {
+		background-color: @color-negative-background;
+		H1 {
+			font: @font-large;
+			text-transform: none;
+		}
+		BIG {
+			font: @font-normal;
+		}
+	}
+	.LoginBox {
+		.border-radius(0px);
+		border: none;
+	}
+}
+.MSIE_7 {
+	#header, #footer {
+		background: @color-negative-background;
+	}
+}
+
+.SchedulerLegend {
+	margin-top: 25px;
+	font: @font-small;
+}
+
+.MiniCalendar {
+	text-align: center;
+	width: 60px;
+	border: solid 1px @color-text;
+	font: @font-huge;
+	> DIV {
+		background-color: @color-text;
+		color: @color-background;
+		font: @font-normal;
+		font-weight: bold;
+		padding: 1px 1px 2px 1px;
+	}
+}
+.SmartPhone .MiniCalendar {
+	text-align: left;
+	width: 100%;
+	border: none;
+	background-color: @color-text;
+	color: @color-background;
+	font: @font-normal;
+	.border-radius(4px 4px);
+	padding: 1px 4px;
+	A {
+		color: @color-background;
+		&:hover {
+			color: @color-hover;
+		}
+	}
+}
+
+// Chat bubbles
+.Bubble {
+	position:relative;
+	padding:8px;
+	/* css3 */
+	-webkit-border-radius:8px;
+	-moz-border-radius:8px;
+	.border-radius(8px);
+	margin: 2px 0px 5px 10px;
+	background: @color-light-green;
+	&:before {
+		content:"";
+		position:absolute;
+		border-style:solid;
+		display:block; 
+		top:10px; /* controls vertical position */
+		left:-10px; /* value = - border-left-width - border-right-width */
+		border-width:5px 10px 5px 0px;
+		border-color:transparent @color-light-green;
+	}
+	&.Alt {
+		background: @color-light-blue;
+		&:before {
+			border-color:transparent @color-light-blue;
+		}
+	}
+}
+
+// Elert count
+.ElertCount {
+    .border-radius(12px 12px);
+    display: inline-block;
+    font: @font-small;
+    min-width: 20px;
+    padding: 2px;
+    text-align: center;
+	color: @color-negative-text;
+	&.Accepted {
+		background-color: @color-negative-background; // 6C9C38
+	}
+	&.Declined {
+		background-color: spin(@color-negative-background, -80); // 9C4738
+	}
+	&.DidNotReply {
+		background-color: hsl(hue(@color-negative-background), 0%, lightness(@color-negative-background)); // 6B6B6B
+	}
+}
+
+// BigCalendar
+.BigCalendar {
+	border: solid 1px @color-text-light;
+	TD {
+		text-align: center;
+		padding: 0px;
+		&.Day {
+			font: @font-huge;
+			> * {
+				padding: 2px 2px 5px 2px;
+				display: block;
+				width: 60px; height: 60px;
+			}
+			A {
+				text-decoration: none;
+				color: @color-text;
+				&:hover {
+					color: @color-background;
+					background-color: @color-hover;
+				}
+			}
+			.Number {
+				text-align: right;
+				font: @font-small;
+			}
+			border-right: solid 1px @color-text-light;
+			border-top: solid 1px @color-text-light;
+			&:last-child {
+				border-right: none;
+			}
+		}
+		&.DOW {
+			font: @font-small;
+		}
+		&.Selected {
+			background-color: @color-accent; color: @color-background;
+		}
+		&.Disabled {
+			color: @color-background-dark;
+		}
+		&.Month {
+			background-color: @color-text-light; color: @color-background; text-align: center;
+			.GradientLight25;
+			A {
+				color: @color-background;
+				font: @font-small;
+				text-decoration: none;
+				&:hover {
+					color: @color-hover;
+				}
+			}
+		}
+	}
+}
+.SmartPhone .BigCalendar TD.Day > * {
+	width: 40px; height: 40px;
+}

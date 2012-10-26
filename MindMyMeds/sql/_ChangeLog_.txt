@@ -1,0 +1,3 @@
+Date		Engineer			Description																
+=========== =================== =======================================================================
+2012-06-12	Yaniv				Deleted the Reminders table altogether

@@ -1,0 +1,51 @@
+#chatbox {
+	width: 600px;
+	margin-bottom: 10px;
+}
+.SmartPhone #chatbox {width:100%; font-size: 80%;}
+#chatbox TD {padding: 0px;}
+
+.Bubble {
+	position:relative;
+	padding:8px;
+	background:#ccc;
+	/* css3 */
+	-webkit-border-radius:8px;
+	-moz-border-radius:8px;
+	border-radius:8px;
+	margin: 2px 0px;
+}
+.Bubble.Left {
+	background:#dea;
+	margin-left:10px;
+	margin-right:80px;
+}
+.SmartPhone .Bubble.Left {
+	margin-right:0px;
+}
+.Bubble.Right {
+	background:#bbe;
+	margin-right:10px;
+	margin-left:80px;
+}
+.SmartPhone .Bubble.Right {
+	margin-left:0px;
+}
+.Bubble:before {
+	content:"";
+	position:absolute;
+	border-style:solid;
+    display:block; 
+	top:10px; /* controls vertical position */
+}
+.Bubble.Right:before {
+    left:auto;
+	right:-10px; /* value = - border-left-width - border-right-width */
+	border-width:5px 0px 5px 10px;
+	border-color:transparent #bbe;
+}
+.Bubble.Left:before {
+	left:-10px; /* value = - border-left-width - border-right-width */
+	border-width:5px 10px 5px 0px;
+	border-color:transparent #dea;
+}

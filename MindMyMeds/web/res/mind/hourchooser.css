@@ -1,0 +1,29 @@
+.Hour {
+	width: 48px;
+	height: 48px;
+	color: #999999;
+	border: 1px solid #cccccc;
+	text-align: center;
+	border-radius: 0px;
+	padding-top: 6px;
+}
+.Hour[m] {
+	color: #333333;
+	background-color: #eeeeee;
+}
+.Hour[m] SPAN {
+	font-weight: bold;
+}
+.Hour:hover {
+	border: 1px solid #333333;
+	cursor: default;
+}
+.SmartPhone .Hour:hover {
+	border: 1px solid #cccccc;
+}
+.HourTable TD {
+	padding: 2px;
+}
+.HourTable TD:first-child {
+	padding-left: 0px;
+}
