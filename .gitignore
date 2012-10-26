@@ -14,3 +14,4 @@ jre-bin/
 classes/
 lib/
 logs/
+.svn/
