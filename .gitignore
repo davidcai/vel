@@ -10,5 +10,7 @@
 
 # Directories
 bin/
+jre-bin/
 classes/
+lib/
 logs/
