@@ -16,7 +16,9 @@ import samoyan.servlet.Dispatcher;
 import baby.crawler.CrawlExecutor;
 import baby.database.ArticleStore;
 import baby.database.JournalEntryStore;
+import baby.database.MeasureStore;
 import baby.database.MotherStore;
+import baby.database.UnitTypeStore;
 import baby.pages.content.ContentHomePage;
 import baby.pages.content.EditHealthBegPage;
 import baby.pages.content.HealthBegListPage;
@@ -54,6 +56,8 @@ public class BabyController extends Controller
 		result.add(JournalEntryStore.getInstance());
 		result.add(MotherStore.getInstance());
 		result.add(ArticleStore.getInstance());
+		result.add(UnitTypeStore.getInstance());
+		result.add(MeasureStore.getInstance());
 
 		return result;
 	}
