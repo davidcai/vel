@@ -1,6 +1,6 @@
 *.class
 
-# Files #
+# Files
 *.jar
 *.war
 *.ear
@@ -8,6 +8,8 @@
 *.swp
 *.dll
 .project
+deployment.properties
+platform.properties
 
 # Directories
 bin/
