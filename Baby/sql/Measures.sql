@@ -12,6 +12,9 @@ CREATE TABLE [Measures](
 	[Label] [nvarchar](64) NOT NULL, 
 	[UnitTypeID] [binary](16) NOT NULL,
 	[ForMother] [bit] NOT NULL, 
+	[ForPreconception] [bit] NOT NULL, 
+	[ForPregnancy] [bit] NOT NULL, 
+	[ForInfancy] [bit] NOT NULL, 
 	[MinValue] [int] NULL, 
 	[MaxValue] [int] NULL, 
 	[DefValue] [int] NULL,  
@@ -29,3 +32,11 @@ GO
 ALTER TABLE [Measures] ADD  CONSTRAINT [DF_Measures_ForMother]  DEFAULT ((0)) FOR [ForMother]
 GO
 
+ALTER TABLE [Measures] ADD  CONSTRAINT [DF_Measures_ForPreconception]  DEFAULT ((0)) FOR [ForPreconception]
+GO
+
+ALTER TABLE [Measures] ADD  CONSTRAINT [DF_Measures_ForPregnancy]  DEFAULT ((0)) FOR [ForPregnancy]
+GO
+
+ALTER TABLE [Measures] ADD  CONSTRAINT [DF_Measures_ForInfancy]  DEFAULT ((0)) FOR [ForInfancy]
+GO
