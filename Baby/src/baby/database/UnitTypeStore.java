@@ -1,5 +1,8 @@
 package baby.database;
 
+import java.util.List;
+import java.util.UUID;
+
 import samoyan.database.DataBeanStore;
 import samoyan.database.TableDef;
 
@@ -31,5 +34,10 @@ public class UnitTypeStore extends DataBeanStore<UnitType>
 		td.defineCol("ImperialLabel", String.class).size(0, UnitType.MAXSIZE_IMPERIAL_LABEL);
 
 		return td;
+	}
+	
+	public List<UUID> getAll() throws Exception
+	{
+		return getAllBeanIDs("ImperialLabel", true);
 	}
 }

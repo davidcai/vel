@@ -1,12 +1,12 @@
 package baby.pages.content;
 
-import baby.pages.BabyPage;
 import samoyan.controls.NavTreeControl;
 import samoyan.database.User;
 import samoyan.database.UserStore;
 import samoyan.servlet.EnvelopeTab;
 import samoyan.servlet.RequestContext;
 import samoyan.servlet.WebPage;
+import baby.pages.BabyPage;
 
 public class ContentTab extends EnvelopeTab
 {
@@ -20,6 +20,8 @@ public class ContentTab extends EnvelopeTab
 		navCtrl.addHeader(outputPage.getString("content:Nav.Articles"));
 		navCtrl.addPage(HealthBegListPage.COMMAND, null);
 		navCtrl.addPage(ResourceListPage.COMMAND, null);
+		navCtrl.addPage(UnitTypeListPage.COMMAND, null);
+		navCtrl.addPage(MeasureListPage.COMMAND, null);
 		
 		return navCtrl;
 	}
