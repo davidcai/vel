@@ -30,8 +30,8 @@ public class UnitTypeStore extends DataBeanStore<UnitType>
 	{
 		TableDef td = TableDef.newInstance("UnitTypes", this);
 
-		td.defineCol("MetricLabel", String.class).size(0, UnitType.MAXSIZE_METRIC_LABEL);
-		td.defineCol("ImperialLabel", String.class).size(0, UnitType.MAXSIZE_IMPERIAL_LABEL);
+		td.defineCol("MetricLabel", String.class).size(0, UnitType.MAXSIZE_LABEL);
+		td.defineCol("ImperialLabel", String.class).size(0, UnitType.MAXSIZE_LABEL);
 
 		return td;
 	}

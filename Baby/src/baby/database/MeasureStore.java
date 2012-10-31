@@ -40,8 +40,18 @@ public class MeasureStore extends DataBeanStore<Measure>
 		return td;
 	}
 	
-	public List<UUID> getMeasures(boolean forMother) throws Exception
+	public List<UUID> getAll() throws Exception
 	{
-		return queryByColumn("ForMother", forMother, "Label", true);
+		return getAllBeanIDs("Label", true);
+	}
+	
+	public List<UUID> getMotherMeasures() throws Exception
+	{
+		return queryByColumn("ForMother", true, "Label", true);
+	}
+	
+	public List<UUID> getBabyMeasures() throws Exception
+	{
+		return queryByColumn("ForMother", false, "Label", true);
 	}
 }

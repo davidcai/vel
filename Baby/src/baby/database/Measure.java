@@ -7,7 +7,9 @@ import samoyan.database.DataBean;
 public class Measure extends DataBean
 {
 	public static final int MAXSIZE_LABEL = 64;
-	
+	public static final int MINVALUE = 0;
+	public static final int MAXVALUE = 99999;
+
 	public UUID getUnitTypeID()
 	{
 		return (UUID) get("UnitTypeID");
@@ -66,5 +68,35 @@ public class Measure extends DataBean
 	public void setDefValue(Integer defValue)
 	{
 		set("DefValue", defValue);
+	}
+
+	public boolean isForPreconception()
+	{
+		return (Boolean) get("ForPreconception");
+	}
+
+	public void setForPreconception(boolean forPreconception)
+	{
+		set("ForPreconception", forPreconception);
+	}
+
+	public boolean isForPregnancy()
+	{
+		return (Boolean) get("ForPregnancy");
+	}
+
+	public void setForPregnancy(boolean forPregnancy)
+	{
+		set("ForPregnancy", forPregnancy);
+	}
+
+	public boolean isForInfancy()
+	{
+		return (Boolean) get("ForInfancy");
+	}
+
+	public void setForInfancy(boolean forInfancy)
+	{
+		set("ForInfancy", forInfancy);
 	}
 }
