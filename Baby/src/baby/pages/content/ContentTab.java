@@ -20,7 +20,6 @@ public class ContentTab extends EnvelopeTab
 		navCtrl.addHeader(outputPage.getString("content:Nav.Articles"));
 		navCtrl.addPage(HealthBegListPage.COMMAND, null);
 		navCtrl.addPage(ResourceListPage.COMMAND, null);
-		navCtrl.addPage(UnitTypeListPage.COMMAND, null);
 		navCtrl.addPage(MeasureListPage.COMMAND, null);
 		navCtrl.addPage(ChecklistListPage.COMMAND, null);
 		

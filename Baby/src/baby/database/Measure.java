@@ -1,24 +1,13 @@
 package baby.database;
 
-import java.util.UUID;
-
 import samoyan.database.DataBean;
 
 public class Measure extends DataBean
 {
 	public static final int MAXSIZE_LABEL = 64;
-	public static final int MINVALUE = 0;
-	public static final int MAXVALUE = 99999;
-
-	public UUID getUnitTypeID()
-	{
-		return (UUID) get("UnitTypeID");
-	}
-
-	public void setUnitTypeID(UUID unitTypeID)
-	{
-		set("UnitTypeID", unitTypeID);
-	}
+	public static final int MAXSIZE_UNIT = 16;
+	public static final int MAXSIZE_MINMAX = 7;
+	public static final int MAXSIZE_METRIC_TO_IMPERIAL = 9;
 
 	public String getLabel()
 	{
@@ -40,34 +29,64 @@ public class Measure extends DataBean
 		set("ForMother", forMother);
 	}
 
-	public Integer getMinValue()
+	public Integer getMetricMin()
 	{
-		return (Integer) get("MinValue");
+		return (Integer) get("MetricMin");
 	}
 
-	public void setMinValue(Integer minValue)
+	public void setMetricMin(Integer metricMin)
 	{
-		set("MinValue", minValue);
+		set("MetricMin", metricMin);
 	}
 
-	public Integer getMaxValue()
+	public Integer getMetricMax()
 	{
-		return (Integer) get("MaxValue");
+		return (Integer) get("MetricMax");
 	}
 
-	public void setMaxValue(Integer maxValue)
+	public void setMetricMax(Integer metricMax)
 	{
-		set("MaxValue", maxValue);
+		set("MetricMax", metricMax);
 	}
 
-	public Integer getDefValue()
+	public String getMetricUnit()
 	{
-		return (Integer) get("DefValue");
+		return (String) get("MetricUnit");
 	}
 
-	public void setDefValue(Integer defValue)
+	public void setMetricUnit(String metricUnit)
 	{
-		set("DefValue", defValue);
+		set("MetricUnit", metricUnit);
+	}
+
+	public String getImperialUnit()
+	{
+		return (String) get("ImperialUnit");
+	}
+
+	public void setImperialUnit(String imperialUnit)
+	{
+		set("ImperialUnit", imperialUnit);
+	}
+
+	public Float getMetricToImperialAlpha()
+	{
+		return (Float) get("MetricToImperialAlpha");
+	}
+
+	public void setMetricToImperialAlpha(Float metricToImperialAlpha)
+	{
+		set("MetricToImperialAlpha", metricToImperialAlpha);
+	}
+
+	public Float getMetricToImperialBeta()
+	{
+		return (Float) get("MetricToImperialBeta");
+	}
+
+	public void setMetricToImperialBeta(Float metricToImperialBeta)
+	{
+		set("MetricToImperialBeta", metricToImperialBeta);
 	}
 
 	public boolean isForPreconception()

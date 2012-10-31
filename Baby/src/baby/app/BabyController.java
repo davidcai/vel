@@ -23,7 +23,6 @@ import baby.database.ChecklistUserLinkStore;
 import baby.database.JournalEntryStore;
 import baby.database.MeasureStore;
 import baby.database.MotherStore;
-import baby.database.UnitTypeStore;
 import baby.pages.content.ChecklistListPage;
 import baby.pages.content.ContentHomePage;
 import baby.pages.content.EditChecklistPage;
@@ -32,8 +31,6 @@ import baby.pages.content.HealthBegListPage;
 import baby.pages.content.MeasureListPage;
 import baby.pages.content.ResourceListPage;
 import baby.pages.content.SectionTypeAhead;
-import baby.pages.content.UnitTypeListPage;
-import baby.pages.content.UnitTypeTypeAhead;
 import baby.pages.info.ArticlePage;
 import baby.pages.info.HealthyBeginningsPage;
 import baby.pages.info.InformationHomePage;
@@ -66,7 +63,6 @@ public class BabyController extends Controller
 		result.add(JournalEntryStore.getInstance());
 		result.add(MotherStore.getInstance());
 		result.add(ArticleStore.getInstance());
-		result.add(UnitTypeStore.getInstance());
 		result.add(MeasureStore.getInstance());
 		result.add(ChecklistStore.getInstance());
 		result.add(CheckItemStore.getInstance());
@@ -127,9 +123,7 @@ public class BabyController extends Controller
 		Dispatcher.bindPage(SectionTypeAhead.COMMAND, 			SectionTypeAhead.class);
 		Dispatcher.bindPage(HealthBegListPage.COMMAND, 			HealthBegListPage.class);
 		Dispatcher.bindPage(ResourceListPage.COMMAND, 			ResourceListPage.class);
-		Dispatcher.bindPage(UnitTypeListPage.COMMAND, 			UnitTypeListPage.class);
 		Dispatcher.bindPage(MeasureListPage.COMMAND, 			MeasureListPage.class);
-		Dispatcher.bindPage(UnitTypeTypeAhead.COMMAND, 			UnitTypeTypeAhead.class);
 		Dispatcher.bindPage(ChecklistListPage.COMMAND, 			ChecklistListPage.class);
 		Dispatcher.bindPage(EditChecklistPage.COMMAND, 			EditChecklistPage.class);
 

@@ -30,12 +30,17 @@ public class MeasureStore extends DataBeanStore<Measure>
 	{
 		TableDef td = TableDef.newInstance("Measures", this);
 
-		td.defineCol("UnitTypeID", UUID.class).invariant().ownedBy("UnitTypes");
 		td.defineCol("Label", String.class).size(0, Measure.MAXSIZE_LABEL);
 		td.defineCol("ForMother", Boolean.class);
-		td.defineCol("MinValue", Integer.class);
-		td.defineCol("MaxValue", Integer.class);
-		td.defineCol("DefValue", Integer.class);
+		td.defineCol("ForPreconception", Boolean.class);
+		td.defineCol("ForPregnancy", Boolean.class);
+		td.defineCol("ForInfancy", Boolean.class);
+		td.defineCol("MetricUnit", String.class).size(0, Measure.MAXSIZE_UNIT);
+		td.defineCol("ImperialUnit", String.class).size(0, Measure.MAXSIZE_UNIT);
+		td.defineCol("MetricMin", Integer.class).size(0, Measure.MAXSIZE_MINMAX);
+		td.defineCol("MetricMax", Integer.class).size(0, Measure.MAXSIZE_MINMAX);
+		td.defineCol("MetricToImperialAlpha", Float.class).size(0, Measure.MAXSIZE_METRIC_TO_IMPERIAL);
+		td.defineCol("MetricToImperialBeta", Float.class).size(0, Measure.MAXSIZE_METRIC_TO_IMPERIAL);
 
 		return td;
 	}
@@ -45,13 +50,8 @@ public class MeasureStore extends DataBeanStore<Measure>
 		return getAllBeanIDs("Label", true);
 	}
 	
-	public List<UUID> getMotherMeasures() throws Exception
+	public List<UUID> getAll(boolean forMother) throws Exception
 	{
-		return queryByColumn("ForMother", true, "Label", true);
-	}
-	
-	public List<UUID> getBabyMeasures() throws Exception
-	{
-		return queryByColumn("ForMother", false, "Label", true);
+		return queryByColumn("ForMother", forMother, "Label", true);
 	}
 }
