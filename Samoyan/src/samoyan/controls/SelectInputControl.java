@@ -21,12 +21,14 @@ public class SelectInputControl extends TextInputControl
 		this.options = new ArrayList<Option>();
 	}
 
-	public void addOption(String label, Object value)
+	public SelectInputControl addOption(String label, Object value)
 	{
 		Option opt = new Option();
 		opt.label = label;
 		opt.value = value.toString();
 		this.options.add(opt);
+		
+		return this;
 	}
 	
 	public void render()

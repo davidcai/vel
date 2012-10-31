@@ -22,10 +22,11 @@ public final class MasterApp
 		Dispatcher.bindPage(HelpPage.COMMAND,					HelpPage.class);
 
 		Dispatcher.bindPage(OverrideUserAgentPage.COMMAND,		OverrideUserAgentPage.class);
+		Dispatcher.bindPage(ControlsUnitTestPage.COMMAND,		ControlsUnitTestPage.class);
 		
 		Dispatcher.bindPage(LessStylesheetPage.COMMAND,			LessStylesheetPage.class);
 		
 		// Notifs
-		Dispatcher.bindPage(JoinNotif.COMMAND,				JoinNotif.class);
+		Dispatcher.bindPage(JoinNotif.COMMAND,					JoinNotif.class);
 	}
 }
