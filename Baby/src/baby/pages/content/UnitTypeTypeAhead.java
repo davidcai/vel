@@ -29,7 +29,5 @@ public class UnitTypeTypeAhead extends TypeAhead
 				addOption(ut.getID(), imperial + "/" + metric);
 			}
 		}
-		
-		super.doQuery(q);
 	}
 }
