@@ -26,6 +26,7 @@ import baby.pages.content.MeasureListPage;
 import baby.pages.content.ResourceListPage;
 import baby.pages.content.SectionTypeAhead;
 import baby.pages.content.UnitTypeListPage;
+import baby.pages.content.UnitTypeTypeAhead;
 import baby.pages.info.ArticlePage;
 import baby.pages.info.HealthyBeginningsPage;
 import baby.pages.info.InformationHomePage;
@@ -107,6 +108,7 @@ public class BabyController extends Controller
 		Dispatcher.bindPage(ResourceListPage.COMMAND, 			ResourceListPage.class);
 		Dispatcher.bindPage(UnitTypeListPage.COMMAND, 			UnitTypeListPage.class);
 		Dispatcher.bindPage(MeasureListPage.COMMAND, 			MeasureListPage.class);
+		Dispatcher.bindPage(UnitTypeTypeAhead.COMMAND, 			UnitTypeTypeAhead.class);
 
 		// Profile
 		Dispatcher.bindPage(MedicalCenterPage.COMMAND, 			MedicalCenterPage.class);

@@ -4,8 +4,7 @@ import samoyan.database.DataBean;
 
 public class UnitType extends DataBean
 {
-	public static final int MAXSIZE_METRIC_LABEL = 32;
-	public static final int MAXSIZE_IMPERIAL_LABEL = 32;
+	public static final int MAXSIZE_LABEL = 32;
 	
 	public String getMetricLabel()
 	{
