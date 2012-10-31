@@ -6,6 +6,7 @@ import java.util.UUID;
 import samoyan.core.ParameterMap;
 import samoyan.core.Util;
 import samoyan.database.Image;
+import baby.controls.TimelineControl;
 import baby.database.Article;
 import baby.database.ArticleStore;
 import baby.database.Mother;
@@ -52,60 +53,23 @@ public class HealthyBeginningsPage extends BabyPage
 		List<UUID> articleIDs = ArticleStore.getInstance().queryBySectionAndTimeline(Article.SECTION_HEALTHY_BEGINNINGS, stage.toInteger());
 				
 		// Render timeline
-		boolean smartPhone = getContext().getUserAgent().isSmartPhone();
 		if (stage.isPreconception())
 		{
 			writeEncode(getString("information:HealthyBeginnings.FoundResourcesPreconception", articleIDs.size()));
-			write("<br><br>");
 		}
 		else if (stage.isPregnancy())
 		{
-			// 40 weeks
 			writeEncode(getString("information:HealthyBeginnings.FoundResourcesPregnancy", articleIDs.size(), stage.getPregnancyWeek()));
-			write("<br><br>");
-			write("<div class=TimelineBar>");
-			for (int i=1; i<=Stage.MAX_WEEKS; i++)
-			{
-				write("<a href=\"");
-				write(getPageURL(getContext().getCommand(), new ParameterMap(PARAM_STAGE, String.valueOf(Stage.pregnancy(i).toInteger()))));
-				write("\"");
-				if (i==stage.getPregnancyWeek())
-				{
-					write(" class=Current");
-				}
-				write(">");
-				writeEncodeLong(i);
-				write("</a>");
-				if (smartPhone && (i==13 || i==26))
-				{
-					write("<br>");
-				}
-			}
-			write("</div>");
-			write("<br>");
 		}
 		else if (stage.isInfancy())
 		{
-			// 12 months
 			writeEncode(getString("information:HealthyBeginnings.FoundResourcesInfancy", articleIDs.size(), stage.getInfancyMonth()));
-			write("<br><br>");
-			write("<div class=TimelineBar>");
-			for (int i=1; i<=Stage.MAX_MONTHS; i++)
-			{
-				write("<a href=\"");
-				write(getPageURL(getContext().getCommand(), new ParameterMap(PARAM_STAGE, String.valueOf(Stage.infancy(i).toInteger()))));
-				write("\"");
-				if (i==stage.getInfancyMonth())
-				{
-					write(" class=Current");
-				}
-				write(">");
-				writeEncodeLong(i);
-				write("</a>");
-			}
-			write("</div>");
-			write("<br>");
 		}
+		write("<br><br>");
+		new TimelineControl(this, stage)
+			.setStageParamName(PARAM_STAGE)
+			.render();
+		write("<br>");
 		
 		// Render articles
 		write("<table width=\"100%\"><col width=\"1%\"><col width=\"99%\">");

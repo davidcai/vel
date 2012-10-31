@@ -30,7 +30,7 @@ public final class EditHealthBegPage extends BabyPage
 		}
 		else
 		{
-			return getString("content:EditHealthBegPage.Title");
+			return getString("content:EditHealthBeg.Title");
 		}
 	}
 	
@@ -46,28 +46,27 @@ public final class EditHealthBegPage extends BabyPage
 	
 	@Override
 	public void renderHTML() throws Exception
-	{
-		
+	{	
 		writeFormOpen();
 		
 		TwoColFormControl twoCol = new TwoColFormControl(this);
 		
-		twoCol.writeRow(getString("content:EditHealthBegPage.ArticleTitle"));
+		twoCol.writeRow(getString("content:EditHealthBeg.ArticleTitle"));
 		twoCol.writeTextInput("title", this.article.getTitle(), 80, Article.MAXSIZE_TITLE);
 		
-		twoCol.writeRow(getString("content:EditHealthBegPage.Summary"));
+		twoCol.writeRow(getString("content:EditHealthBeg.Summary"));
 		twoCol.writeTextAreaInput("summary", this.article.getSummary(), 80, 2, Article.MAXSIZE_SUMMARY);
 
-		twoCol.writeRow(getString("content:EditHealthBegPage.Body"));
+		twoCol.writeRow(getString("content:EditHealthBeg.Body"));
 		twoCol.writeRichEditField("body", this.article.getHTML(), 80, 10);
 
-		twoCol.writeRow(getString("content:EditHealthBegPage.Image"));
+		twoCol.writeRow(getString("content:EditHealthBeg.Image"));
 		twoCol.writeImageInput("image", this.article.getPhoto());
 
-		twoCol.writeRow(getString("content:EditHealthBegPage.Options"));
-		twoCol.writeCheckbox("pinned", getString("content:EditHealthBegPage.Pinned"), this.article.getPriority()>0);
+		twoCol.writeRow(getString("content:EditHealthBeg.Options"));
+		twoCol.writeCheckbox("pinned", getString("content:EditHealthBeg.Pinned"), this.article.getPriority()>0);
 		
-		twoCol.writeRow(getString("content:EditHealthBegPage.Timeline"));
+		twoCol.writeRow(getString("content:EditHealthBeg.Timeline"));
 
 		SelectInputControl from = new SelectInputControl(twoCol, "from");
 		populateTimelineCombo(from);
@@ -75,7 +74,7 @@ public final class EditHealthBegPage extends BabyPage
 		from.render();
 		
 		twoCol.write(" ");
-		twoCol.writeEncode(getString("content:EditHealthBegPage.Through"));
+		twoCol.writeEncode(getString("content:EditHealthBeg.Through"));
 		twoCol.write(" ");
 				
 		SelectInputControl to = new SelectInputControl(twoCol, "to");
@@ -103,14 +102,14 @@ public final class EditHealthBegPage extends BabyPage
 		Stage stage;
 		select.addOption("", 0);
 
-		select.addOption(getString("content:EditHealthBegPage.Preconception"), Stage.preconception().toInteger());
+		select.addOption(getString("content:EditHealthBeg.Preconception"), Stage.preconception().toInteger());
 		for (int i=1; i<=40; i++)
 		{
-			select.addOption(getString("content:EditHealthBegPage.Pregnancy", i), Stage.pregnancy(i).toInteger());
+			select.addOption(getString("content:EditHealthBeg.Pregnancy", i), Stage.pregnancy(i).toInteger());
 		}
 		for (int i=1; i<=12; i++)
 		{
-			select.addOption(getString("content:EditHealthBegPage.Infancy", i), Stage.infancy(i).toInteger());
+			select.addOption(getString("content:EditHealthBeg.Infancy", i), Stage.infancy(i).toInteger());
 		}
 	}
 	
@@ -141,7 +140,7 @@ public final class EditHealthBegPage extends BabyPage
 			}
 			if (from.toInteger() > to.toInteger())
 			{
-				throw new WebFormException(new String[] {"from", "to"}, getString("content:EditHealthBegPage.InvalidTimeline"));
+				throw new WebFormException(new String[] {"from", "to"}, getString("content:EditHealthBeg.InvalidTimeline"));
 			}
 		}
 	}

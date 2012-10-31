@@ -36,7 +36,7 @@ public final class StagePage extends BabyPage
 		}
 		else if (mother.getDueDate()!=null)
 		{
-			initial = "pregnany";
+			initial = "pregnancy";
 		}
 
 		writeEncode(getString("babyprofile:Stage.Help", Setup.getAppTitle(getLocale())));

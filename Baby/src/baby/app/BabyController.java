@@ -8,6 +8,7 @@ import samoyan.core.image.ShrinkToFitSizer;
 import samoyan.database.DataBean;
 import samoyan.database.DataBeanStore;
 import samoyan.database.ImageStore;
+import samoyan.database.LinkStore;
 import samoyan.database.PermissionStore;
 import samoyan.database.UserGroup;
 import samoyan.database.UserGroupStore;
@@ -15,11 +16,17 @@ import samoyan.servlet.Controller;
 import samoyan.servlet.Dispatcher;
 import baby.crawler.CrawlExecutor;
 import baby.database.ArticleStore;
+import baby.database.CheckItemStore;
+import baby.database.CheckItemUserLinkStore;
+import baby.database.ChecklistStore;
+import baby.database.ChecklistUserLinkStore;
 import baby.database.JournalEntryStore;
 import baby.database.MeasureStore;
 import baby.database.MotherStore;
 import baby.database.UnitTypeStore;
+import baby.pages.content.ChecklistListPage;
 import baby.pages.content.ContentHomePage;
+import baby.pages.content.EditChecklistPage;
 import baby.pages.content.EditHealthBegPage;
 import baby.pages.content.HealthBegListPage;
 import baby.pages.content.MeasureListPage;
@@ -61,10 +68,24 @@ public class BabyController extends Controller
 		result.add(ArticleStore.getInstance());
 		result.add(UnitTypeStore.getInstance());
 		result.add(MeasureStore.getInstance());
+		result.add(ChecklistStore.getInstance());
+		result.add(CheckItemStore.getInstance());
 
 		return result;
 	}
 
+	
+	@Override
+	protected List<LinkStore> getLinkStores()
+	{
+		List<LinkStore> result = new ArrayList<LinkStore>();
+		
+		result.add(ChecklistUserLinkStore.getInstance());
+		result.add(CheckItemUserLinkStore.getInstance());
+
+		return result;
+	}
+	
 	@Override
 	protected void initController() throws Exception
 	{
@@ -109,6 +130,8 @@ public class BabyController extends Controller
 		Dispatcher.bindPage(UnitTypeListPage.COMMAND, 			UnitTypeListPage.class);
 		Dispatcher.bindPage(MeasureListPage.COMMAND, 			MeasureListPage.class);
 		Dispatcher.bindPage(UnitTypeTypeAhead.COMMAND, 			UnitTypeTypeAhead.class);
+		Dispatcher.bindPage(ChecklistListPage.COMMAND, 			ChecklistListPage.class);
+		Dispatcher.bindPage(EditChecklistPage.COMMAND, 			EditChecklistPage.class);
 
 		// Profile
 		Dispatcher.bindPage(MedicalCenterPage.COMMAND, 			MedicalCenterPage.class);

@@ -14,9 +14,8 @@ Need smarter cache indexing. allowing multiple keys for invalidation. using nami
 
 Info list pages (HB, resources): Search box.
 
-Need _back_ functionality. support chaining? Look into window.session store. see http://code.google.com/p/sessionstorage/
+(2) BACK BREADCRUMBS: Need _back_ functionality. support chaining? Look into window.session store. see http://code.google.com/p/sessionstorage/
 
-colors: take pink from right side at https://healthy.kaiserpermanente.org/health/poc?uri=center:pregnancy&article=4A746296-B263-11E0-BD0B-9455E08826EE
 ASK LUIZ what it takes to demo the app w/o publication. Do we need apple dev acct or can he do it from his end?
 
 brent feedback:
@@ -24,23 +23,35 @@ journal: timeline across the top
 pinkpad app calendar with icons: day, month, list views.
 categories for articles. can then let user browser by category.
 
-Checklists:
-- db structure
-  Checkitem: id, userid(or null), text, checklistid (or null if custom for user)
-  Checklist: id, title, description, timeline from/to.
-  CheckitemUserLink: checkitemid, userid (checked)
-  ChecklistUserLink: checklistid, userid (collapsed)
-- Authoring form
-- TODO tab with form for mom.
+Checklists (mom form)
+- improve design style
+- collapse lists with >>. send via ajax
 
-print capability of the journal. or export to PDF.
+Dr visits:
+- make part of journal
+- attach checklists to a visit based on timeline. including: birth plan.
+- attach suggested questions(article) to a visit based on timeline.
 
 Integrate the "Birth plan". It's a document the mother should fill out and send to her doctor.
 can be done electronically, or printed/mailed to doctor.
 
-kick counter: special screen with timer of 60 seconds to help mom count.
+print capability of the journal. or export to PDF.
+
+kick counter: special screen with timer of 60 seconds to help mom count. button counter.
 
 compressed "upload only" version of image upload control: don't show thumbnail, don't show "upload new", size.
 allow to pass in the imagesize spec string for the thumbnail. Can then make it 32x32.
 
 design "notebook" style for journal. lines, margins, etc.
+
+
+(1) INTERNAL MESSAGING:
+- InternalMessage table: id, subject, fromUserID, toUserID, date created, read flag, important flag, content (html), attachments.
+- Compose page. FFpage functionality later.
+- Inbox page
+- View message page.
+- Notifications (SMS, voice, email): "you have a message on My eLert, login to view"
+- Admin AdHoc page: add "Internal msg" as option.
+
+
+

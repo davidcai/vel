@@ -22,6 +22,7 @@ public class ContentTab extends EnvelopeTab
 		navCtrl.addPage(ResourceListPage.COMMAND, null);
 		navCtrl.addPage(UnitTypeListPage.COMMAND, null);
 		navCtrl.addPage(MeasureListPage.COMMAND, null);
+		navCtrl.addPage(ChecklistListPage.COMMAND, null);
 		
 		return navCtrl;
 	}
