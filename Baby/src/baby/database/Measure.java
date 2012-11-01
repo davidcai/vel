@@ -21,7 +21,7 @@ public class Measure extends DataBean
 
 	public boolean isForMother()
 	{
-		return (Boolean) get("ForMother");
+		return (Boolean) get("ForMother", false);
 	}
 
 	public void setForMother(boolean forMother)
@@ -91,7 +91,7 @@ public class Measure extends DataBean
 
 	public boolean isForPreconception()
 	{
-		return (Boolean) get("ForPreconception");
+		return (Boolean) get("ForPreconception", false);
 	}
 
 	public void setForPreconception(boolean forPreconception)
@@ -101,7 +101,7 @@ public class Measure extends DataBean
 
 	public boolean isForPregnancy()
 	{
-		return (Boolean) get("ForPregnancy");
+		return (Boolean) get("ForPregnancy", false);
 	}
 
 	public void setForPregnancy(boolean forPregnancy)
@@ -111,7 +111,7 @@ public class Measure extends DataBean
 
 	public boolean isForInfancy()
 	{
-		return (Boolean) get("ForInfancy");
+		return (Boolean) get("ForInfancy", false);
 	}
 
 	public void setForInfancy(boolean forInfancy)

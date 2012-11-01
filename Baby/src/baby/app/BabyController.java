@@ -29,6 +29,7 @@ import baby.pages.content.EditChecklistPage;
 import baby.pages.content.EditHealthBegPage;
 import baby.pages.content.HealthBegListPage;
 import baby.pages.content.MeasureListPage;
+import baby.pages.content.MeasurePage;
 import baby.pages.content.ResourceListPage;
 import baby.pages.content.SectionTypeAhead;
 import baby.pages.info.ArticlePage;
@@ -124,6 +125,7 @@ public class BabyController extends Controller
 		Dispatcher.bindPage(HealthBegListPage.COMMAND, 			HealthBegListPage.class);
 		Dispatcher.bindPage(ResourceListPage.COMMAND, 			ResourceListPage.class);
 		Dispatcher.bindPage(MeasureListPage.COMMAND, 			MeasureListPage.class);
+		Dispatcher.bindPage(MeasurePage.COMMAND, 				MeasurePage.class);
 		Dispatcher.bindPage(ChecklistListPage.COMMAND, 			ChecklistListPage.class);
 		Dispatcher.bindPage(EditChecklistPage.COMMAND, 			EditChecklistPage.class);
 

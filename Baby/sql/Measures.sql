@@ -10,7 +10,6 @@ GO
 CREATE TABLE [Measures](
 	[ID] [binary](16) NOT NULL,
 	[Label] [nvarchar](64) NOT NULL, 
-	[UnitTypeID] [binary](16) NOT NULL,
 	[ForMother] [bit] NOT NULL, 
 	[ForPreconception] [bit] NOT NULL, 
 	[ForPregnancy] [bit] NOT NULL, 

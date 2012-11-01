@@ -33,16 +33,6 @@ public class MeasureListPage extends BabyPage
 		new LinkToolbarControl(this)
 			.addLink(getString("content:MeasureList.NewMeasure"), getPageURL(MeasurePage.COMMAND), "icons/basic1/pencil_16.png")
 			.render();
-		
-		writeFormOpen();
-		
-	
-
-		write("<br>");
-		
-		writeSaveButton(PARAM_SAVE, null);
-		
-		writeFormClose();
 	}
 	
 	@Override
