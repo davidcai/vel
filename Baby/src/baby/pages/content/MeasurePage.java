@@ -173,6 +173,8 @@ public class MeasurePage extends BabyPage
 		{
 			write("&nbsp;");
 			writeRemoveButton(PARAM_REMOVE);
+			
+			writeHiddenInput(PARAM_ID, this.measure.getID().toString());
 		}
 		
 		writeFormClose();

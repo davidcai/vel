@@ -1,26 +1,20 @@
 package baby.pages.content;
 
+import java.util.List;
+import java.util.UUID;
+
+import samoyan.controls.DataTableControl;
 import samoyan.controls.LinkToolbarControl;
+import samoyan.core.ParameterMap;
+import baby.database.Measure;
+import baby.database.MeasureStore;
 import baby.pages.BabyPage;
 
 public class MeasureListPage extends BabyPage
 {
 	public static final String COMMAND = BabyPage.COMMAND_CONTENT + "/measure-list";
 	
-	public static final String PARAM_IDS = "ids";
-	public static final String PARAM_ID_PREFIX = "id_";
-	public static final String PARAM_LABEL_PREFIX = "label_";
-	public static final String PARAM_METRIC_UNIT_PREFIX = "metricUnit_";
-	public static final String PARAM_IMPERIAL_UNIT_PREFIX = "imperialUnit_";
-	public static final String PARAM_FOR_MOM_PREFIX = "forMom_";
-	public static final String PARAM_PRECONCEPTION_PREFIX = "preconception_";
-	public static final String PARAM_PREGNANCY_PREFIX = "pregnancy_";
-	public static final String PARAM_INFANCY_PREFIX = "infancy_";
-	public static final String PARAM_METRIC_MIN_PREFIX = "metricMin_";
-	public static final String PARAM_METRIC_MAX_PREFIX = "metricMax_";
-	public static final String PARAM_METRIC_TO_IMPERIAL_ALPHA_PREFIX = "metricToImperialAlpha_";
-	public static final String PARAM_METRIC_TO_IMPERIAL_BETA_PREFIX = "metricToImperialBeta_";
-	public static final String PARAM_SAVE = "save";
+	public static final String PARAM_ID = "id";
 	
 	@Override
 	public void validate() throws Exception
@@ -33,6 +27,63 @@ public class MeasureListPage extends BabyPage
 		new LinkToolbarControl(this)
 			.addLink(getString("content:MeasureList.NewMeasure"), getPageURL(MeasurePage.COMMAND), "icons/basic1/pencil_16.png")
 			.render();
+		
+		List<UUID> measureIDs = MeasureStore.getInstance().getAll();
+		if (measureIDs.isEmpty())
+		{
+			writeEncode(getString("content:MeasureList.NoMeasuresDefined"));
+			return;
+		}
+		
+		new DataTableControl<UUID>(this, "measures", measureIDs)
+		{
+			@Override
+			protected void defineColumns() throws Exception
+			{
+				column(getString("content:MeasureList.Label"));
+				column(getString("content:MeasureList.ForMom"));
+				column(getString("content:MeasureList.Preconception"));
+				column(getString("content:MeasureList.Pregnancy"));
+				column(getString("content:MeasureList.Infancy"));
+				column(getString("content:MeasureList.Unit"));
+			}
+
+			@Override
+			protected void renderRow(UUID id) throws Exception
+			{
+				Measure m = MeasureStore.getInstance().load(id);
+				
+				cell();
+				writeLink(m.getLabel(), getPageURL(MeasurePage.COMMAND, new ParameterMap(PARAM_ID, m.getID().toString())));
+				
+				cell();
+				if (m.isForMother())
+				{
+					writeEncode(getString("content:MeasureList.Yes"));
+				}
+				
+				cell();
+				if (m.isForPreconception())
+				{
+					writeEncode(getString("content:MeasureList.Yes"));
+				}
+				
+				cell();
+				if (m.isForPregnancy())
+				{
+					writeEncode(getString("content:MeasureList.Yes"));
+				}
+				
+				cell();
+				if (m.isForInfancy())
+				{
+					writeEncode(getString("content:MeasureList.Yes"));
+				}
+				
+				cell();
+				writeEncode(getString("content:MeasureList.MetricImperial", m.getMetricUnit(), m.getImperialUnit()));
+			}
+		}.render();
 	}
 	
 	@Override
