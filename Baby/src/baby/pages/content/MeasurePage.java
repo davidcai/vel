@@ -11,6 +11,7 @@ import baby.pages.BabyPage;
 public class MeasurePage extends BabyPage
 {
 	public static final String COMMAND = BabyPage.COMMAND_CONTENT + "/measure";
+	
 	public static final String PARAM_ID = "id";
 	public static final String PARAM_LABEL = "label";
 	public static final String PARAM_FOR_MOM = "forMom";
@@ -23,6 +24,7 @@ public class MeasurePage extends BabyPage
 	public static final String PARAM_METRIC_MAX = "metricMax";
 	public static final String PARAM_METRIC_TO_IMPERIAL_ALPHA = "metricToImperialAlpha";
 	public static final String PARAM_METRIC_TO_IMPERIAL_BETA = "metricToImperialBeta";
+	
 	public static final String PARAM_SAVE = "save";
 	public static final String PARAM_REMOVE = "remove";
 	
@@ -120,8 +122,6 @@ public class MeasurePage extends BabyPage
 	@Override
 	public void renderHTML() throws Exception
 	{
-		getParameterUUID(PARAM_ID);
-		
 		writeFormOpen();
 		
 		TwoColFormControl twoCol = new TwoColFormControl(this);
@@ -131,10 +131,14 @@ public class MeasurePage extends BabyPage
 		twoCol.write("<br>");
 		twoCol.writeCheckbox(PARAM_FOR_MOM, getString("content:Measure.ForMom"), this.measure.isForMother());
 		
+		twoCol.writeSpaceRow();
+		
 		twoCol.writeRow(getString("content:Measure.Stages"));
 		twoCol.writeCheckbox(PARAM_PRECONCEPTION, getString("content:Measure.Preconception"), this.measure.isForPreconception());
 		twoCol.writeCheckbox(PARAM_PREGNANCY, getString("content:Measure.Pregnancy"), this.measure.isForPregnancy());
 		twoCol.writeCheckbox(PARAM_INFANCY, getString("content:Measure.Infancy"), this.measure.isForInfancy());
+		
+		twoCol.writeSpaceRow();
 		
 		twoCol.writeRow(getString("content:Measure.MetricUnit"));
 		twoCol.writeTextInput(PARAM_METRIC_UNIT, this.measure.getMetricUnit(), 16, Measure.MAXSIZE_UNIT);
@@ -142,17 +146,23 @@ public class MeasurePage extends BabyPage
 		twoCol.writeRow(getString("content:Measure.ImperialUnit"));
 		twoCol.writeTextInput(PARAM_IMPERIAL_UNIT, this.measure.getImperialUnit(), 16, Measure.MAXSIZE_UNIT);
 		
+		twoCol.writeSpaceRow();
+		
 		twoCol.writeRow(getString("content:Measure.MetricMin"));
 		twoCol.writeNumberInput(PARAM_METRIC_MIN, this.measure.getMetricMin(), 7, 0, Measure.MAXVAL_MINMAX);
 
 		twoCol.writeRow(getString("content:Measure.MetricMax"));
 		twoCol.writeNumberInput(PARAM_METRIC_MAX, this.measure.getMetricMax(), 7, 0, Measure.MAXVAL_MINMAX);
 		
+		twoCol.writeSpaceRow();
+		
 		twoCol.writeRow(getString("content:Measure.MetricToImperialAlpha"));
 		twoCol.writeTextInput(PARAM_METRIC_TO_IMPERIAL_ALPHA, this.measure.getMetricToImperialAlpha(), 7, Measure.MAXSIZE_METRIC_TO_IMPERIAL);
 		
 		twoCol.writeRow(getString("content:Measure.MetricToImperialBeta"));
 		twoCol.writeTextInput(PARAM_METRIC_TO_IMPERIAL_BETA, this.measure.getMetricToImperialBeta(), 7, Measure.MAXSIZE_METRIC_TO_IMPERIAL);
+		twoCol.write("<br>");
+		twoCol.writeEncode(getString("content:Measure.MetricToImperialFormula"));
 		
 		twoCol.render();
 		
