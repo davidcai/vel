@@ -8,6 +8,7 @@ public class Measure extends DataBean
 	public static final int MAXSIZE_UNIT = 16;
 	public static final int MAXSIZE_MINMAX = 7;
 	public static final int MAXSIZE_METRIC_TO_IMPERIAL = 9;
+	public static final int MAXVAL_MINMAX = 9999999;
 
 	public String getLabel()
 	{
@@ -31,7 +32,7 @@ public class Measure extends DataBean
 
 	public Integer getMetricMin()
 	{
-		return (Integer) get("MetricMin");
+		return (Integer) get("MetricMin", 0);
 	}
 
 	public void setMetricMin(Integer metricMin)
@@ -41,7 +42,7 @@ public class Measure extends DataBean
 
 	public Integer getMetricMax()
 	{
-		return (Integer) get("MetricMax");
+		return (Integer) get("MetricMax", 0);
 	}
 
 	public void setMetricMax(Integer metricMax)
@@ -71,7 +72,7 @@ public class Measure extends DataBean
 
 	public Float getMetricToImperialAlpha()
 	{
-		return (Float) get("MetricToImperialAlpha");
+		return (Float) get("MetricToImperialAlpha", 0f);
 	}
 
 	public void setMetricToImperialAlpha(Float metricToImperialAlpha)
@@ -81,7 +82,7 @@ public class Measure extends DataBean
 
 	public Float getMetricToImperialBeta()
 	{
-		return (Float) get("MetricToImperialBeta");
+		return (Float) get("MetricToImperialBeta", 1f);
 	}
 
 	public void setMetricToImperialBeta(Float metricToImperialBeta)
