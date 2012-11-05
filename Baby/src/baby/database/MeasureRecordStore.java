@@ -1,6 +1,7 @@
 package baby.database;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import samoyan.database.DataBeanStore;
@@ -30,10 +31,16 @@ public class MeasureRecordStore extends DataBeanStore<MeasureRecord>
 	{
 		TableDef td = TableDef.newInstance("MeasureRecords", this);
 
+		td.defineCol("UserID", UUID.class).invariant().ownedBy("Users");
 		td.defineCol("MeasureID", UUID.class).invariant().ownedBy("Measures");
 		td.defineCol("MetricValue", Integer.class);
 		td.defineCol("Created", Date.class);
 
 		return td;
+	}
+
+	public List<UUID> getByUserID(UUID userID) throws Exception
+	{
+		return queryByColumn("UserID", userID, "Created", false);
 	}
 }

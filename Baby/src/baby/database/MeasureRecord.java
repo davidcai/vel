@@ -7,6 +7,16 @@ import samoyan.database.DataBean;
 
 public class MeasureRecord extends DataBean
 {
+	public UUID getUserID()
+	{
+		return (UUID) get("UserID");
+	}
+
+	public void setUserID(UUID userID)
+	{
+		set("UserID", userID);
+	}
+
 	public UUID getMeasureID()
 	{
 		return (UUID) get("MeasureID");

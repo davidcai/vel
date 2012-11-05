@@ -9,6 +9,7 @@ GO
 
 CREATE TABLE [MeasureRecords](
 	[ID] [binary](16) NOT NULL,
+	[UserID] [binary](16) NOT NULL, 
 	[MeasureID] [binary](16) NOT NULL, 
 	[MetricValue] [int] NOT NULL,
 	[Created] [bigint] NOT NULL, 
@@ -21,6 +22,12 @@ CREATE TABLE [MeasureRecords](
 GO
 
 SET ANSI_PADDING OFF
+GO
+
+CREATE NONCLUSTERED INDEX [IX_MeasureRecords_UserID] ON [MeasureRecords] 
+(
+	[UserID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
 GO
 
 CREATE NONCLUSTERED INDEX [IX_MeasureRecords_MeasureID] ON [MeasureRecords] 
