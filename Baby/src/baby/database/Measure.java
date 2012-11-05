@@ -119,4 +119,18 @@ public class Measure extends DataBean
 	{
 		set("ForInfancy", forInfancy);
 	}
+	
+	public Integer toImperial(int metricValue)
+	{
+		int imperial = Math.round(this.getMetricToImperialAlpha() + this.getMetricToImperialBeta() * metricValue);
+		
+		return imperial;
+	}
+	
+	public Integer toMetric(int imperialValue)
+	{
+		int metric = Math.round((imperialValue - this.getMetricToImperialAlpha()) / this.getMetricToImperialBeta());
+		
+		return metric;
+	}
 }
