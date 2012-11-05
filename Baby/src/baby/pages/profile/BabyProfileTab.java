@@ -14,6 +14,7 @@ public class BabyProfileTab extends ProfileTab
 		navCtrl.addHeader(outputPage.getString("babyprofile:Nav.Settings"));
 		navCtrl.addPage(ConsolidatedProfilePage.COMMAND, null);
 		navCtrl.addPage(StagePage.COMMAND, null);
+		navCtrl.addPage(BabiesPage.COMMAND, null);
 						
 		return navCtrl;
 	}

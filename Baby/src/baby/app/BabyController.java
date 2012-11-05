@@ -40,6 +40,7 @@ import baby.pages.master.LessStylesheetPage;
 import baby.pages.master.LoginPage;
 import baby.pages.master.RootPage;
 import baby.pages.master.WelcomePage;
+import baby.pages.profile.BabiesPage;
 import baby.pages.profile.BabyProfileHomePage;
 import baby.pages.profile.ConsolidatedProfilePage;
 import baby.pages.profile.MedicalCenterPage;
@@ -135,6 +136,7 @@ public class BabyController extends Controller
 		Dispatcher.bindPage(ConsolidatedProfilePage.COMMAND, 	ConsolidatedProfilePage.class);
 		Dispatcher.bindPage(BabyProfileHomePage.COMMAND, 		BabyProfileHomePage.class);
 		Dispatcher.bindPage(UnitsPage.COMMAND, 					UnitsPage.class);
+		Dispatcher.bindPage(BabiesPage.COMMAND, 				BabiesPage.class);
 		
 		// Create groups and permissions
 		String[] specs = {	BabyConsts.GROUP_GOVERNORS,			BabyConsts.PERMISSION_CONTENT_MANAGEMENT};
