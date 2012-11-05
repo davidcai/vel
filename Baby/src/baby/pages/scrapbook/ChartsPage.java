@@ -1,5 +1,6 @@
 package baby.pages.scrapbook;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,6 +17,35 @@ public class ChartsPage extends BabyPage
 	public final static String COMMAND = BabyPage.COMMAND_SCRAPBOOK + "/charts";
 	
 	public final static String PARAM_VALUE_PREFIX = "value_";
+	public final static String PARAM_ID_PREFIX = "id_";
+	public final static String PARAM_SAVE = "save";
+	
+	private Mother mom;
+	
+	@Override
+	public void init() throws Exception
+	{
+		this.mom = MotherStore.getInstance().loadByUserID(getContext().getUserID());
+	}
+	
+	@Override
+	public void validate() throws Exception
+	{
+		int count = filterByPregnancyStage(MeasureStore.getInstance().getAll(), this.mom.getPregnancyStage()).size();
+		for (int i = 0; i < count; i++)
+		{
+			Measure m = MeasureStore.getInstance().load(getParameterUUID(PARAM_ID_PREFIX + i));
+			
+			int min = this.mom.isMetric() ? m.getMetricMin() : m.toImperial(m.getMetricMin());
+			int max = this.mom.isMetric() ? m.getMetricMax() : m.toMetric(m.getMetricMax());
+			validateParameterInteger(PARAM_VALUE_PREFIX + i, min, max);
+		}
+	}
+	
+	@Override
+	public void commit() throws Exception
+	{
+	}
 	
 	@Override
 	public void renderHTML() throws Exception
@@ -24,34 +54,49 @@ public class ChartsPage extends BabyPage
 		write(getString("scrapbook:Charts.RecordMeasures"));
 		write("</h2>");
 		
-		Mother mom = MotherStore.getInstance().loadByUserID(getContext().getUserID());
-//		List<UUID> recIDs = MeasureRecordStore.getInstance().getByUserID(getContext().getUserID());
-		
 		List<UUID> measureIDs = MeasureStore.getInstance().getAll(true);
 		measureIDs.addAll(MeasureStore.getInstance().getAll(false));
+		measureIDs = filterByPregnancyStage(measureIDs, this.mom.getPregnancyStage());
+		
+		writeFormOpen();
 		
 		writeMeasures(measureIDs);
+		
+		write("<br>");
+		writeSaveButton(PARAM_SAVE, null);
+		
+		writeFormClose();
+	}
+	
+	private List<UUID> filterByPregnancyStage(List<UUID> source, Stage stage) throws Exception
+	{
+		List<UUID> ids = new ArrayList<UUID>();
+		
+		for (UUID id : source)
+		{
+			Measure m = MeasureStore.getInstance().load(id);
+			
+			if ((m.isForPreconception() && stage.isPreconception()) || 
+				(m.isForPregnancy() && stage.isPregnancy()) || 
+				(m.isForInfancy() && stage.isInfancy())) 
+			{
+				ids.add(id);
+			}
+		}
+		
+		return ids;
 	}
 	
 	private void writeMeasures(List<UUID> measureIDs) throws Exception
 	{
-		Mother mom = MotherStore.getInstance().loadByUserID(getContext().getUserID());
-		Stage stage = mom.getPregnancyStage();
+		Stage stage = this.mom.getPregnancyStage();
 		
 		TwoColFormControl twoCol = new TwoColFormControl(this);
 		
-		int i = 0;
-		for (UUID id : measureIDs)
+		for (int i = 0; i < measureIDs.size(); i++)
 		{
-			Measure measure = MeasureStore.getInstance().load(id);
-			
-			if ((measure.isForPreconception() && stage.isPreconception()) || 
-				(measure.isForPregnancy() && stage.isPregnancy()) || 
-				(measure.isForInfancy() && stage.isInfancy())) 
-			{
-				writeMeasure(measure, twoCol, mom.isMetric(), i);
-				i++;
-			}
+			Measure m = MeasureStore.getInstance().load(measureIDs.get(i));
+			writeMeasure(m, twoCol, this.mom.isMetric(), i);
 		}
 		
 		twoCol.render();
@@ -67,6 +112,7 @@ public class ChartsPage extends BabyPage
 		twoCol.writeNumberInput(PARAM_VALUE_PREFIX + index, min, 16, min, max);
 		twoCol.write("&nbsp;");
 		twoCol.writeEncode(metric ? measure.getMetricUnit() : measure.getImperialUnit());
+		twoCol.writeHiddenInput(PARAM_ID_PREFIX + index, measure.getID().toString());
 	}
 	
 	@Override
