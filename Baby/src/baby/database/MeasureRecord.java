@@ -16,6 +16,16 @@ public class MeasureRecord extends DataBean
 	{
 		set("UserID", userID);
 	}
+	
+	public UUID getBabyID()
+	{
+		return (UUID) get("BabyID");
+	}
+
+	public void setBabyID(UUID babyID)
+	{
+		set("BabyID", babyID);
+	}
 
 	public UUID getMeasureID()
 	{

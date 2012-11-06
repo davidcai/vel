@@ -32,6 +32,7 @@ public class MeasureRecordStore extends DataBeanStore<MeasureRecord>
 		TableDef td = TableDef.newInstance("MeasureRecords", this);
 
 		td.defineCol("UserID", UUID.class).invariant().ownedBy("Users");
+		td.defineCol("BabyID", UUID.class).invariant().ownedBy("Babies");
 		td.defineCol("MeasureID", UUID.class).invariant().ownedBy("Measures");
 		td.defineCol("MetricValue", Integer.class);
 		td.defineCol("Created", Date.class);
