@@ -12,9 +12,9 @@ import mind.pages.patient.reminders.RemindersTab;
 import samoyan.apps.admin.AdminTab;
 import samoyan.apps.master.PrivacyPage;
 import samoyan.apps.master.TermsPage;
+import samoyan.apps.messaging.MessagingTab;
 import samoyan.apps.profile.ProfileTab;
 import samoyan.controls.MetaTagControl;
-import samoyan.core.Cache;
 import samoyan.database.*;
 import samoyan.servlet.Setup;
 import samoyan.servlet.RequestContext;
@@ -28,6 +28,7 @@ public class MindEnvelopePage extends EnvelopePage
 	private static EnvelopeTab remindersTab = new RemindersTab();
 	private static EnvelopeTab coachingTab = new CoachingTab();
 	private static EnvelopeTab accountTab = new ProfileTab();
+	private static EnvelopeTab messagingTab = new MessagingTab();
 		
 	@Override
 	protected List<EnvelopeTab> getTabs() throws Exception
@@ -37,26 +38,26 @@ public class MindEnvelopePage extends EnvelopePage
 		boolean admin = (user!=null && PermissionStore.getInstance().isUserGrantedPermission(user.getID(), Permission.SYSTEM_ADMINISTRATION));
 		Patient patient = PatientStore.getInstance().loadByUserID(ctx.getUserID());
 		
-		// Check cache
-		String cacheKey = "mindtabs:";
-		if (user==null)
-		{
-			cacheKey += "nouser,";
-		}
-		if (admin)
-		{
-			cacheKey += "admin,";
-		}
-		if (patient!=null)
-		{
-			cacheKey += "account,";
-		}
-
-		List<EnvelopeTab> cached = (List<EnvelopeTab>) Cache.get(cacheKey);
-		if (cached!=null)
-		{
-			return cached;
-		}
+//		// Check cache
+//		String cacheKey = "mindtabs:";
+//		if (user==null)
+//		{
+//			cacheKey += "nouser,";
+//		}
+//		if (admin)
+//		{
+//			cacheKey += "admin,";
+//		}
+//		if (patient!=null)
+//		{
+//			cacheKey += "account,";
+//		}
+//
+//		List<EnvelopeTab> cached = (List<EnvelopeTab>) Cache.get(cacheKey);
+//		if (cached!=null)
+//		{
+//			return cached;
+//		}
 		
 		// Create new
 		List<EnvelopeTab> result = new ArrayList<EnvelopeTab>(6);
@@ -67,6 +68,13 @@ public class MindEnvelopePage extends EnvelopePage
 		{
 			result.add(adminTab);
 		}
+		
+// !$! For demo 2012-11-05
+if (user!=null && PermissionStore.getInstance().isUserGrantedPermission(user.getID(), "Messaging"))
+{
+	result.add(messagingTab);
+}
+		
 		if (patient!=null)
 		{
 			result.add(remindersTab);
@@ -74,8 +82,8 @@ public class MindEnvelopePage extends EnvelopePage
 			result.add(accountTab);
 		}
 		
-		// Cache for later use
-		Cache.insert(cacheKey, result);
+//		// Cache for later use
+//		Cache.insert(cacheKey, result);
 		
 		// Return
 		return result;

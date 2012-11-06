@@ -352,6 +352,13 @@ Debug.logln(getContext().toString());
 		}
 	}
 	
+	@Override
+	public void renderVoiceXML() throws Exception
+	{
+		// !$! Voice notif not yet implemented
+		throw new PageNotFoundException();
+	}
+	
 /*
 	This code was written by Ilya. It is kept here for reference when reimplementing the voice API.
  
