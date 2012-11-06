@@ -13,6 +13,7 @@ import samoyan.apps.admin.AdminApp;
 import samoyan.apps.guidedsetup.GuidedSetupApp;
 import samoyan.apps.master.LoginPage;
 import samoyan.apps.master.MasterApp;
+import samoyan.apps.messaging.MessagingApp;
 import samoyan.apps.profile.ProfileApp;
 import samoyan.apps.system.SystemApp;
 import samoyan.core.*;
@@ -28,6 +29,7 @@ import samoyan.database.DataBeanStore;
 import samoyan.database.Database;
 import samoyan.database.Image;
 import samoyan.database.ImageStore;
+import samoyan.database.InternalMessageStore;
 import samoyan.database.LinkStore;
 import samoyan.database.LogEntryStore;
 import samoyan.database.LogTypeStore;
@@ -106,6 +108,7 @@ public class Controller extends HttpServlet
 			TrackbackStore.getInstance().getTableDef();
 			UserGroupStore.getInstance().getTableDef();
 			AuthTokenStore.getInstance().getTableDef();
+			InternalMessageStore.getInstance().getTableDef();
 			
 			UserUserGroupLinkStore.getInstance().getLinkTableDef();
 			
@@ -153,6 +156,7 @@ public class Controller extends HttpServlet
 			AdminApp.init();
 			ProfileApp.init();
 			GuidedSetupApp.init();
+			MessagingApp.init();
 			
 			Dispatcher.bindEnvelope(EnvelopePage.class);
 
@@ -1244,7 +1248,7 @@ if (Setup.isDebug() && ctx.getChannel().equalsIgnoreCase(Channel.VOICE))
 		// Obtain InputStream to the resource file.
 		// Must not access the file system directly because webapp can be running inside a WAR.
 		InputStream stm = null;
-		if (mimeType.startsWith("image/") && ratio>1)
+		if (mimeType!=null && mimeType.startsWith("image/") && ratio>1)
 		{
 			// Look for the high-resolution image by getting the file name with X2 appended,
 			// i.e. helloX2.jpg is the Retina version of hello.jpg

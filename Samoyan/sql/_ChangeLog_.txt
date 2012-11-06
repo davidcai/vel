@@ -14,3 +14,4 @@ Date		Engineer			Description
 2012-07-28	Yaniv				Removed columns Cookie, CookieCreated, LastLogin, RememberLogin from Users. Renamed UserName column to LoginName.
 2012-07-28	Yaniv				Added table AuthTokens.
 2012-07-30	Yaniv				Removed column Flags from Users. Instead, added Terminated and Suspended.
+2012-10-31	Yaniv				Added table InternalMessages and InternalMessageRecipients

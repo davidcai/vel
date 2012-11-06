@@ -15,15 +15,15 @@ public class ParameterMap extends HashMap<String, String>
 		super.putAll(map);
 	}
 
-	public ParameterMap(String n, String v)
+	public ParameterMap(String n, Object v)
 	{
 		super();
-		super.put(n, v);
+		super.put(n, v.toString());
 	}
 	
-	public ParameterMap plus(String n, String v)
+	public ParameterMap plus(String n, Object v)
 	{
-		super.put(n, v);
+		super.put(n, v.toString());
 		return this;
 	}
 	
