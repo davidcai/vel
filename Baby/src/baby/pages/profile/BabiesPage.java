@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import samoyan.apps.profile.ProfilePage;
 import samoyan.controls.SelectInputControl;
+import samoyan.controls.TextInputControl;
 import samoyan.controls.TwoColFormControl;
 import samoyan.servlet.exc.RedirectException;
 import baby.database.Baby;
@@ -113,9 +114,16 @@ public class BabiesPage extends BabyPage
 			}
 			
 			write("<li>");
-			writeTextInput(PARAM_NAME_PREFIX + i, 
-				baby.getName() == null ?  getString("babyprofile:Babies.DefaultName") + (i + 1) : baby.getName(), 
-				32, Baby.MAXSIZE_NAME);
+			new TextInputControl(this, PARAM_NAME_PREFIX + i)
+//				.setPlaceholder(getString("babyprofile:Babies.DefaultName") + (i + 1))
+				.setPlaceholder(getString("babyprofile:Babies.DefaultName"))
+				.setSize(32)
+				.setMaxLength(Baby.MAXSIZE_NAME)
+				.setInitialValue(baby.getName() == null ?  null : baby.getName())
+				.render();
+//			writeTextInput(PARAM_NAME_PREFIX + i, 
+//				baby.getName() == null ?  getString("babyprofile:Babies.DefaultName") + (i + 1) : baby.getName(), 
+//				32, Baby.MAXSIZE_NAME);
 			write("&nbsp;");
 			new SelectInputControl(this, PARAM_GENDER_PREFIX + i)
 				.addOption(getString("babyprofile:Babies.Male"), true)

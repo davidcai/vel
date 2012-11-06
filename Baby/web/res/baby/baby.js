@@ -9,7 +9,7 @@ function initBabyNumberChangeListener(defaultBabyName) {
 	        
 	        $('INPUT[type=text]', $newItem).attr({
 	        	name: 'name_' + i, 
-	        	value: defaultBabyName + (i + 1)
+	        	value: ''
 	        }).removeClass("Error");
 	        $('SELECT', $newItem).attr('name', 'gender_' + i);
 	        $('INPUT[type=hidden]', $newItem).attr({
