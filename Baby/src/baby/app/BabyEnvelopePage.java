@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import samoyan.apps.admin.AdminTab;
+import samoyan.apps.messaging.MessagingTab;
 import samoyan.controls.MetaTagControl;
 import samoyan.database.Permission;
 import samoyan.database.PermissionStore;
@@ -28,6 +29,7 @@ public class BabyEnvelopePage extends EnvelopePage
 	private static EnvelopeTab scrapbookTab = new ScrapbookTab();
 	private static EnvelopeTab todoTab = new TodoTab();
 	private static EnvelopeTab profileTab = new BabyProfileTab();
+	private static EnvelopeTab messagingTab = new MessagingTab();
 		
 	@Override
 	protected List<EnvelopeTab> getTabs() throws Exception
@@ -53,12 +55,12 @@ public class BabyEnvelopePage extends EnvelopePage
 			result.add(infoTab);
 			result.add(scrapbookTab);
 			result.add(todoTab);
+			result.add(messagingTab); // !$! Testing only
 			result.add(profileTab);
 		}
 		
 		return result;
 	}
-
 	
 	@Override
 	protected void renderHTMLMetaTagsAndIncludes() throws Exception

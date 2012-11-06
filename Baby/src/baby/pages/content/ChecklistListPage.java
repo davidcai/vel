@@ -26,7 +26,7 @@ public final class ChecklistListPage extends BabyPage
 	@Override
 	public void renderHTML() throws Exception
 	{
-		List<UUID> checklistIDs = ChecklistStore.getInstance().getAll();
+		List<UUID> checklistIDs = ChecklistStore.getInstance().getAllStandard();
 		
 		new LinkToolbarControl(this)
 			.addLink(getString("content:ChecklistList.NewChecklist"), getPageURL(EditChecklistPage.COMMAND), "icons/basic1/pencil_16.png")

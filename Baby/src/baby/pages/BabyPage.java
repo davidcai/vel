@@ -1,6 +1,8 @@
 package baby.pages;
 
 import baby.app.BabyConsts;
+import samoyan.apps.messaging.MessagingPage;
+import samoyan.apps.profile.ProfilePage;
 import samoyan.database.PermissionStore;
 import samoyan.servlet.RequestContext;
 import samoyan.servlet.WebPage;
@@ -24,7 +26,9 @@ public class BabyPage extends WebPage
 		}
 		else if (cmd1.equalsIgnoreCase(COMMAND_INFORMATION) ||
 				cmd1.equalsIgnoreCase(COMMAND_SCRAPBOOK) ||
-				cmd1.equalsIgnoreCase(COMMAND_TODO))
+				cmd1.equalsIgnoreCase(COMMAND_TODO) ||
+				cmd1.equalsIgnoreCase(ProfilePage.COMMAND) ||
+				cmd1.equalsIgnoreCase(MessagingPage.COMMAND))
 		{
 			return ctx.getUserID() != null;
 		}

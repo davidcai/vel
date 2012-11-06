@@ -45,14 +45,19 @@ public final class ChecklistStore extends DataBeanStore<Checklist>
 
 	// - - -
 
-	public List<UUID> getAll() throws SQLException
+	/**
+	 * Returns the IDs of checklists that are defined by the content manager, i.e. excluding checklists created by users.
+	 * @return
+	 * @throws SQLException
+	 */
+	public List<UUID> getAllStandard() throws SQLException
 	{
-		return Query.queryListUUID("SELECT ID FROM Checklists ORDER BY TimelineFrom ASC, TITLE ASC", null);
+		return Query.queryListUUID("SELECT ID FROM Checklists WHERE UserID IS NULL ORDER BY TimelineFrom ASC, TITLE ASC", null);
 	}
 
 	public List<UUID> queryBySectionAndTimeline(String section, int stage) throws SQLException
 	{
-		return Query.queryListUUID("SELECT ID FROM Checklists WHERE Section=? AND TimelineFrom<=? AND TimelineTo>=? ORDER BY TimelineFrom DESC, Title ASC", new ParameterList(section).plus(stage).plus(stage));
+		return Query.queryListUUID("SELECT ID FROM Checklists WHERE Section=? AND TimelineFrom<=? ORDER BY TimelineFrom DESC, Title ASC", new ParameterList(section).plus(stage));
 	}
 
 	public Checklist loadPersonalChecklist(UUID userID) throws Exception

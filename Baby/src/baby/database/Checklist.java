@@ -12,7 +12,7 @@ public final class Checklist extends DataBean
 	
 	// Known sections
 	public static final String SECTION_TODO = "To do";
-	public static final String SECTION_DOCTOR_VISIT = "Doctor visit";
+	public static final String SECTION_CHECKUP = "Checkup";
 	public static final String SECTION_ULTRASOUND = "Ultrasound";
 	public static final String SECTION_WELL_BABY = "Well Baby";
 

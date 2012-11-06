@@ -146,6 +146,13 @@ public class MeasurePage extends BabyPage
 		twoCol.writeRow(getString("content:Measure.ImperialUnit"));
 		twoCol.writeTextInput(PARAM_IMPERIAL_UNIT, this.measure.getImperialUnit(), 16, Measure.MAXSIZE_UNIT);
 		
+		twoCol.writeRow(getString("content:Measure.MetricFormula"));
+		twoCol.writeTextInput(PARAM_METRIC_TO_IMPERIAL_BETA, this.measure.getMetricToImperialBeta(), 7, Measure.MAXSIZE_METRIC_TO_IMPERIAL);
+		twoCol.write(" * " );
+		twoCol.writeEncode(getString("content:Measure.MetricValue"));
+		twoCol.write(" + ");
+		twoCol.writeTextInput(PARAM_METRIC_TO_IMPERIAL_ALPHA, this.measure.getMetricToImperialAlpha(), 7, Measure.MAXSIZE_METRIC_TO_IMPERIAL);
+
 		twoCol.writeSpaceRow();
 		
 		twoCol.writeRow(getString("content:Measure.MetricMin"));
@@ -153,17 +160,7 @@ public class MeasurePage extends BabyPage
 
 		twoCol.writeRow(getString("content:Measure.MetricMax"));
 		twoCol.writeNumberInput(PARAM_METRIC_MAX, this.measure.getMetricMax(), 7, 0, Measure.MAXVAL_MINMAX);
-		
-		twoCol.writeSpaceRow();
-		
-		twoCol.writeRow(getString("content:Measure.MetricToImperialAlpha"));
-		twoCol.writeTextInput(PARAM_METRIC_TO_IMPERIAL_ALPHA, this.measure.getMetricToImperialAlpha(), 7, Measure.MAXSIZE_METRIC_TO_IMPERIAL);
-		
-		twoCol.writeRow(getString("content:Measure.MetricToImperialBeta"));
-		twoCol.writeTextInput(PARAM_METRIC_TO_IMPERIAL_BETA, this.measure.getMetricToImperialBeta(), 7, Measure.MAXSIZE_METRIC_TO_IMPERIAL);
-		twoCol.write("<br>");
-		twoCol.writeEncode(getString("content:Measure.MetricToImperialFormula"));
-		
+				
 		twoCol.render();
 		
 		write("<br>");

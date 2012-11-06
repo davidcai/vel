@@ -41,11 +41,11 @@ public class MeasureListPage extends BabyPage
 			protected void defineColumns() throws Exception
 			{
 				column(getString("content:MeasureList.Label"));
+				column(getString("content:MeasureList.Unit"));
 				column(getString("content:MeasureList.ForMom"));
 				column(getString("content:MeasureList.Preconception"));
 				column(getString("content:MeasureList.Pregnancy"));
 				column(getString("content:MeasureList.Infancy"));
-				column(getString("content:MeasureList.Unit"));
 			}
 
 			@Override
@@ -56,6 +56,9 @@ public class MeasureListPage extends BabyPage
 				cell();
 				writeLink(m.getLabel(), getPageURL(MeasurePage.COMMAND, new ParameterMap(PARAM_ID, m.getID().toString())));
 				
+				cell();
+				writeEncode(getString("content:MeasureList.MetricImperial", m.getMetricUnit(), m.getImperialUnit()));
+
 				cell();
 				if (m.isForMother())
 				{
@@ -79,9 +82,6 @@ public class MeasureListPage extends BabyPage
 				{
 					writeEncode(getString("content:MeasureList.Yes"));
 				}
-				
-				cell();
-				writeEncode(getString("content:MeasureList.MetricImperial", m.getMetricUnit(), m.getImperialUnit()));
 			}
 		}.render();
 	}

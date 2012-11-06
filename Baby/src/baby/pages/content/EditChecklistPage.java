@@ -66,7 +66,7 @@ public final class EditChecklistPage extends BabyPage
 		twoCol.writeRow(getString("content:EditChecklist.Section"));
 		new SelectInputControl(twoCol, "section")
 			.addOption(getString("content:EditChecklist.ToDo"), Checklist.SECTION_TODO)
-			.addOption(getString("content:EditChecklist.DoctorVisit"), Checklist.SECTION_DOCTOR_VISIT)
+			.addOption(getString("content:EditChecklist.DoctorVisit"), Checklist.SECTION_CHECKUP)
 			.addOption(getString("content:EditChecklist.Ultrasound"), Checklist.SECTION_ULTRASOUND)
 			.addOption(getString("content:EditChecklist.WellBaby"), Checklist.SECTION_WELL_BABY)
 			.setInitialValue(this.checklist.getSection())
@@ -242,6 +242,13 @@ public final class EditChecklistPage extends BabyPage
 			{
 				throw new RedirectException(getContext().getCommand(), null);
 			}
+		}
+		
+		if (isParameter("remove"))
+		{
+			ChecklistStore.getInstance().remove(this.checklist.getID());
+			
+			throw new RedirectException(ChecklistListPage.COMMAND, null);
 		}
 	}
 }

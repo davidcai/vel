@@ -72,7 +72,6 @@ public class BabyController extends Controller
 		return result;
 	}
 
-	
 	@Override
 	protected List<LinkStore> getLinkStores()
 	{

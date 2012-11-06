@@ -16,7 +16,7 @@ Info list pages (HB, resources): Search box.
 
 (2) BACK BREADCRUMBS: Need _back_ functionality. support chaining? Look into window.session store. see http://code.google.com/p/sessionstorage/
 
-ASK LUIZ what it takes to demo the app w/o publication. Do we need apple dev acct or can he do it from his end?
+ASK what it takes to demo the app w/o publication. Do we need apple dev acct or can he do it from his end?
 
 brent feedback:
 journal: timeline across the top
@@ -26,6 +26,9 @@ categories for articles. can then let user browser by category.
 Checklists (mom form)
 - improve design style
 - collapse lists with >>. send via ajax
++ Content tab: do not list user defined checklists
++ Mom's page: show checklists from the past, i.e. ignore timeline to.
++ "remove" doesn't work
 
 Dr visits:
 - make part of journal
@@ -44,14 +47,45 @@ allow to pass in the imagesize spec string for the thumbnail. Can then make it 3
 
 design "notebook" style for journal. lines, margins, etc.
 
+guided setup
 
 (1) INTERNAL MESSAGING:
-- InternalMessage table: id, subject, fromUserID, toUserID, date created, read flag, important flag, content (html), attachments.
-- Compose page. FFpage functionality later.
-- Inbox page
-- View message page.
-- Notifications (SMS, voice, email): "you have a message on My eLert, login to view"
-- Admin AdHoc page: add "Internal msg" as option.
++ InternalMessages table: id, subject, fromUserID, toUserID, date created, read flag, important flag, content (html), attachments, threadID.
++ Compose new msg page.
+  + typeahed for users
+  + prevent sending to same user more than once
++ Multiple recipients: need InternalMessageRecipients table with InternalMessageID (ownedby), RecipientUserID (refers to), DeletedFlag.
+- View message
+  - show conversation/thread trail, including outgoing msgs. excluding deleted msgs.
+  + show sender + avatar, recipient list, subject, date
+  + validate user is on recipient list
+  + links/icons to reply/reply all/forward
+  + blockquote should be styled
+  - option to delete one msg in thread.
+- FFpage functionality later.
+  - option to restrict recipient typeahead
+  - support dynamic content as element of msg (via iframe?). then can have action buttons and use as My eLert Wall.
+- Inbox page.
+  - render in conversation view.
+    - date should be of last incoming msg (not deleted)
+    - title should exclude the "Re:" or "Fwd:".
+    - num should be total msg count in thread, including outgoing, but not deleted ones.
+  - option to render as Wall with bubbles
+  - option to render in chronological view
++ Notifications (SMS, voice, email): "you have a message on My eLert, login to view"
+= (1.2) Admin AdHoc page: add "Inbox" as option. No need to send out notifs.
+- Internal msg to be added as channel to timeline.
+- Where to place link to inbox?
+= (1.1) Prepare demo app.
+  +integrate messaging into MMM live system. allow for users based on permission/group.
+  + add new DB tables to MMM live.
+  + deploy new code
+  + Enable Voice. make sure it's off by default in timeline.
+  - https
+  + check notifs (sms, voice, email)
 
+demo monday= mmm with messaging, elert.
 
+= fix "res/icons" folder. Keep only important icons. Rename them and org in "standard" folder. remove all other icons.
+= user admin screen: typeahead for carrier, remove verified checkboxes. check that carrier matches country.
 
