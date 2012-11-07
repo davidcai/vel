@@ -1,8 +1,21 @@
 package samoyan.servlet;
 
-import java.io.*;
-import java.text.*;
-import java.util.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.text.DateFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TimeZone;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -12,6 +25,7 @@ import samoyan.controls.ButtonInputControl;
 import samoyan.controls.CheckboxInputControl;
 import samoyan.controls.DateInputControl;
 import samoyan.controls.DateTimeInputControl;
+import samoyan.controls.DecimalInputControl;
 import samoyan.controls.HiddenInputControl;
 import samoyan.controls.ImageControl;
 import samoyan.controls.ImageInputControl;
@@ -22,7 +36,13 @@ import samoyan.controls.RadioButtonInputControl;
 import samoyan.controls.RichEditControl;
 import samoyan.controls.TextAreaInputControl;
 import samoyan.controls.TextInputControl;
-import samoyan.core.*;
+import samoyan.core.Captcha;
+import samoyan.core.DateFormatEx;
+import samoyan.core.LocaleEx;
+import samoyan.core.Pair;
+import samoyan.core.ParameterMap;
+import samoyan.core.StringBundle;
+import samoyan.core.Util;
 import samoyan.core.image.JaiImage;
 import samoyan.database.Country;
 import samoyan.database.DataBean;
@@ -949,6 +969,41 @@ public class WebPage
 		return val;
 	}
 
+	public final Float validateParameterDecimal(String name, Float minVal, Float maxVal, Float step) throws WebFormException
+	{
+		String valStr = getContext().getParameter(name);
+		if (Util.isEmpty(valStr))
+		{
+			throw new WebFormException(name, getString("common:Errors.MissingField"));
+		}
+		
+		Float val;
+		try
+		{
+			val = Float.parseFloat(valStr);
+		}
+		catch (NumberFormatException nfe)
+		{
+			throw new WebFormException(name, getString("common:Errors.InvalidValue"));
+		}
+		
+		if ((minVal != null && val < minVal) || (maxVal != null && val > maxVal))
+		{
+			throw new WebFormException(name, getString("common:Errors.DecimalBetween", minVal, maxVal));
+		}
+		
+		if (step != null && step != 0f)
+		{
+			float start = (minVal == null) ? 0f : minVal;
+			if ((val - start) % step != 0)
+			{
+				throw new WebFormException(name, getString("common:Errors.DecimalStep", step));
+			}
+		}
+		
+		return val;
+	}
+
 	/**
 	 * Returns the value of a <code>Integer</code> parameter.
 	 * @param name The name of the parameter.
@@ -965,6 +1020,29 @@ public class WebPage
 		try
 		{
 			return Integer.parseInt(valStr);
+		}
+		catch (NumberFormatException nfe)
+		{
+			return null;
+		}
+	}
+
+	/**
+	 * Returns the value of a <code>Decimal</code> parameter.
+	 * @param name The name of the parameter.
+	 * @return The <code>Decimal</code> posted, or <code>null<code> if no parameter was posted under this name.
+	 */
+	public final Float getParameterDecimal(String name)
+	{
+		String valStr = getContext().getParameter(name);
+		if (Util.isEmpty(valStr))
+		{
+			return null;
+		}
+		
+		try
+		{
+			return Float.parseFloat(valStr);
 		}
 		catch (NumberFormatException nfe)
 		{
@@ -1196,6 +1274,18 @@ public class WebPage
 		area.setRows(rows);
 		area.setMaxLength(maxLen);
 		area.render();
+	}
+	
+	public void writeDecimalInput(String name, Float initialValue, int size, Float minValue, Float maxValue, Float step)
+	{
+		DecimalInputControl dec = new DecimalInputControl(this, name);
+		dec.setInitialValue(initialValue);
+		dec.setSize(size);
+		dec.setMaxLength(size);
+		dec.setMinValue(minValue);
+		dec.setMaxValue(maxValue);
+		dec.setStep(step);
+		dec.render();
 	}
 		
 	public void writeTypeAheadInput(String name, Object initialKey, Object initialValue, int size, int maxLen, String jsonPageUrl)

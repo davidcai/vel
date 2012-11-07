@@ -22,6 +22,8 @@ public class MeasurePage extends BabyPage
 	public static final String PARAM_IMPERIAL_UNIT = "imperialUnit";
 	public static final String PARAM_METRIC_MIN = "metricMin";
 	public static final String PARAM_METRIC_MAX = "metricMax";
+	public static final String PARAM_IMPERIAL_MIN = "imperialMin";
+	public static final String PARAM_IMPERIAL_MAX = "imperialMax";
 	public static final String PARAM_METRIC_TO_IMPERIAL_ALPHA = "metricToImperialAlpha";
 	public static final String PARAM_METRIC_TO_IMPERIAL_BETA = "metricToImperialBeta";
 	
@@ -52,12 +54,21 @@ public class MeasurePage extends BabyPage
 			validateParameterString(PARAM_LABEL, 1, Measure.MAXSIZE_LABEL);
 			validateParameterString(PARAM_METRIC_UNIT, 1, Measure.MAXSIZE_UNIT);
 			validateParameterString(PARAM_IMPERIAL_UNIT, 1, Measure.MAXSIZE_UNIT);
-			validateParameterInteger(PARAM_METRIC_MIN, 0, Measure.MAXVAL_MINMAX);
-			validateParameterInteger(PARAM_METRIC_MAX, 0, Measure.MAXVAL_MINMAX);
 			
-			if (getParameterInteger(PARAM_METRIC_MAX) <= getParameterInteger(PARAM_METRIC_MIN))
+			validateParameterDecimal(PARAM_METRIC_MIN, 0f, Measure.MAXVAL_MINMAX, null);
+			validateParameterDecimal(PARAM_METRIC_MAX, 0f, Measure.MAXVAL_MINMAX, null);
+			
+			if (getParameterDecimal(PARAM_METRIC_MAX) <= getParameterDecimal(PARAM_METRIC_MIN))
 			{
 				throw new WebFormException(PARAM_METRIC_MAX, getString("content:Measure.MinGreaterThanMax"));
+			}
+			
+			validateParameterDecimal(PARAM_IMPERIAL_MIN, 0f, Measure.MAXVAL_MINMAX, null);
+			validateParameterDecimal(PARAM_IMPERIAL_MAX, 0f, Measure.MAXVAL_MINMAX, null);
+			
+			if (getParameterDecimal(PARAM_IMPERIAL_MAX) <= getParameterDecimal(PARAM_IMPERIAL_MIN))
+			{
+				throw new WebFormException(PARAM_IMPERIAL_MAX, getString("content:Measure.MinGreaterThanMax"));
 			}
 			
 			String alpha = getParameterString(PARAM_METRIC_TO_IMPERIAL_ALPHA);
@@ -104,8 +115,10 @@ public class MeasurePage extends BabyPage
 			this.measure.setForInfancy(isParameter(PARAM_INFANCY));
 			this.measure.setMetricUnit(getParameterString(PARAM_METRIC_UNIT));
 			this.measure.setImperialUnit(getParameterString(PARAM_IMPERIAL_UNIT));
-			this.measure.setMetricMin(getParameterInteger(PARAM_METRIC_MIN));
-			this.measure.setMetricMax(getParameterInteger(PARAM_METRIC_MAX));
+			this.measure.setMetricMin(getParameterDecimal(PARAM_METRIC_MIN));
+			this.measure.setMetricMax(getParameterDecimal(PARAM_METRIC_MAX));
+			this.measure.setImperialMin(getParameterDecimal(PARAM_IMPERIAL_MIN));
+			this.measure.setImperialMax(getParameterDecimal(PARAM_IMPERIAL_MAX));
 			this.measure.setMetricToImperialAlpha(Float.parseFloat(getParameterString(PARAM_METRIC_TO_IMPERIAL_ALPHA)));
 			this.measure.setMetricToImperialBeta(Float.parseFloat(getParameterString(PARAM_METRIC_TO_IMPERIAL_BETA)));
 			
@@ -156,10 +169,16 @@ public class MeasurePage extends BabyPage
 		twoCol.writeSpaceRow();
 		
 		twoCol.writeRow(getString("content:Measure.MetricMin"));
-		twoCol.writeNumberInput(PARAM_METRIC_MIN, this.measure.getMetricMin(), 7, 0, Measure.MAXVAL_MINMAX);
+		twoCol.writeDecimalInput(PARAM_METRIC_MIN, this.measure.getMetricMin(), 7, 0f, Measure.MAXVAL_MINMAX, null);
 
 		twoCol.writeRow(getString("content:Measure.MetricMax"));
-		twoCol.writeNumberInput(PARAM_METRIC_MAX, this.measure.getMetricMax(), 7, 0, Measure.MAXVAL_MINMAX);
+		twoCol.writeDecimalInput(PARAM_METRIC_MAX, this.measure.getMetricMax(), 7, 0f, Measure.MAXVAL_MINMAX, null);
+
+		twoCol.writeRow(getString("content:Measure.ImperialMin"));
+		twoCol.writeDecimalInput(PARAM_IMPERIAL_MIN, this.measure.getImperialMin(), 7, 0f, Measure.MAXVAL_MINMAX, null);
+
+		twoCol.writeRow(getString("content:Measure.ImperialMax"));
+		twoCol.writeDecimalInput(PARAM_IMPERIAL_MAX, this.measure.getImperialMax(), 7, 0f, Measure.MAXVAL_MINMAX, null);
 				
 		twoCol.render();
 		

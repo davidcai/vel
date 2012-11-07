@@ -14,12 +14,14 @@ CREATE TABLE [Measures](
 	[ForPreconception] [bit] NOT NULL, 
 	[ForPregnancy] [bit] NOT NULL, 
 	[ForInfancy] [bit] NOT NULL, 
-	[ImperialUnit] [nvarchar](16) NOT NULL,
 	[MetricUnit] [nvarchar](16) NOT NULL,
+	[ImperialUnit] [nvarchar](16) NOT NULL,
 	[MetricToImperialAlpha] [numeric](28, 8) NOT NULL,
 	[MetricToImperialBeta] [numeric](28, 8) NOT NULL, 
-	[MetricMin] [int] NOT NULL, 
-	[MetricMax] [int] NOT NULL, 
+	[MetricMin] [numeric](28, 8) NOT NULL, 
+	[MetricMax] [numeric](28, 8) NOT NULL,  
+	[ImperialMin] [numeric](28, 8) NOT NULL, 
+	[ImperialMax] [numeric](28, 8) NOT NULL,
  CONSTRAINT [PK_Measures] PRIMARY KEY NONCLUSTERED 
 (
 	[ID] ASC

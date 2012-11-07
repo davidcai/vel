@@ -67,9 +67,9 @@ public class ChartsPage extends BabyPage
 		{
 			Measure m = MeasureStore.getInstance().load(getParameterUUID(PARAM_ID_PREFIX + i));
 			
-			int min = this.mom.isMetric() ? m.getMetricMin() : m.toImperial(m.getMetricMin());
-			int max = this.mom.isMetric() ? m.getMetricMax() : m.toMetric(m.getMetricMax());
-			validateParameterInteger(PARAM_VALUE_PREFIX + i, min, max);
+			Float min = this.mom.isMetric() ? m.getMetricMin() : m.getImperialMin();
+			Float max = this.mom.isMetric() ? m.getMetricMax() : m.getImperialMax();
+			validateParameterDecimal(PARAM_VALUE_PREFIX + i, min, max, null);
 		}
 	}
 	
@@ -202,10 +202,10 @@ public class ChartsPage extends BabyPage
 		
 		twoCol.writeRow(measure.getLabel());
 
-		Integer min = metric ? measure.getMetricMin() : measure.toImperial(measure.getMetricMin());
-		Integer max = metric ? measure.getMetricMax() : measure.toImperial(measure.getMetricMax());
+		Float min = metric ? measure.getMetricMin() : measure.getImperialMin();
+		Float max = metric ? measure.getMetricMax() : measure.getImperialMax();
 		
-		twoCol.writeNumberInput(PARAM_VALUE_PREFIX + index, min, 16, min, max);
+		twoCol.writeDecimalInput(PARAM_VALUE_PREFIX + index, min, 16, min, max, null);
 		twoCol.write("&nbsp;");
 		twoCol.writeEncode(metric ? measure.getMetricUnit() : measure.getImperialUnit());
 		twoCol.writeHiddenInput(PARAM_ID_PREFIX + index, measure.getID().toString());

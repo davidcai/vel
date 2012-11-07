@@ -37,8 +37,10 @@ public class MeasureStore extends DataBeanStore<Measure>
 		td.defineCol("ForInfancy", Boolean.class);
 		td.defineCol("MetricUnit", String.class).size(0, Measure.MAXSIZE_UNIT);
 		td.defineCol("ImperialUnit", String.class).size(0, Measure.MAXSIZE_UNIT);
-		td.defineCol("MetricMin", Integer.class);
-		td.defineCol("MetricMax", Integer.class);
+		td.defineCol("MetricMin", Float.class);
+		td.defineCol("MetricMax", Float.class);
+		td.defineCol("ImperialMin", Float.class);
+		td.defineCol("ImperialMax", Float.class);
 		td.defineCol("MetricToImperialAlpha", Float.class);
 		td.defineCol("MetricToImperialBeta", Float.class);
 

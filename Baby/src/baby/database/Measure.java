@@ -8,7 +8,7 @@ public class Measure extends DataBean
 	public static final int MAXSIZE_UNIT = 16;
 	public static final int MAXSIZE_MINMAX = 7;
 	public static final int MAXSIZE_METRIC_TO_IMPERIAL = 9;
-	public static final int MAXVAL_MINMAX = 9999999;
+	public static final float MAXVAL_MINMAX = 9999999f;
 
 	public String getLabel()
 	{
@@ -30,24 +30,44 @@ public class Measure extends DataBean
 		set("ForMother", forMother);
 	}
 
-	public Integer getMetricMin()
+	public Float getMetricMin()
 	{
-		return (Integer) get("MetricMin", 0);
+		return (Float) get("MetricMin", 0f);
 	}
 
-	public void setMetricMin(Integer metricMin)
+	public void setMetricMin(Float metricMin)
 	{
 		set("MetricMin", metricMin);
 	}
 
-	public Integer getMetricMax()
+	public Float getMetricMax()
 	{
-		return (Integer) get("MetricMax", 0);
+		return (Float) get("MetricMax", 0f);
 	}
 
-	public void setMetricMax(Integer metricMax)
+	public void setMetricMax(Float metricMax)
 	{
 		set("MetricMax", metricMax);
+	}
+
+	public Float getImperialMin()
+	{
+		return (Float) get("ImperialMin", 0f);
+	}
+
+	public void setImperialMin(Float metricMin)
+	{
+		set("ImperialMin", metricMin);
+	}
+
+	public Float getImperialMax()
+	{
+		return (Float) get("ImperialMax", 0f);
+	}
+
+	public void setImperialMax(Float metricMax)
+	{
+		set("ImperialMax", metricMax);
 	}
 
 	public String getMetricUnit()
@@ -120,17 +140,13 @@ public class Measure extends DataBean
 		set("ForInfancy", forInfancy);
 	}
 	
-	public Integer toImperial(int metricValue)
+	public Float toImperial(Float metricValue)
 	{
-		int imperial = Math.round(this.getMetricToImperialAlpha() + this.getMetricToImperialBeta() * metricValue);
-		
-		return imperial;
+		return this.getMetricToImperialAlpha() + this.getMetricToImperialBeta() * metricValue;
 	}
 	
-	public Integer toMetric(int imperialValue)
+	public Float toMetric(Float imperialValue)
 	{
-		int metric = Math.round((imperialValue - this.getMetricToImperialAlpha()) / this.getMetricToImperialBeta());
-		
-		return metric;
+		return (imperialValue - this.getMetricToImperialAlpha()) / this.getMetricToImperialBeta();
 	}
 }
