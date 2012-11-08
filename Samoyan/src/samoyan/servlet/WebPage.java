@@ -1279,7 +1279,17 @@ public class WebPage
 	public void writeDecimalInput(String name, Float initialValue, int size, Float minValue, Float maxValue, Float step)
 	{
 		DecimalInputControl dec = new DecimalInputControl(this, name);
-		dec.setInitialValue(initialValue);
+		
+		// Truncate .0 if the number appears to be an integer
+		if (initialValue != null && initialValue.intValue() == initialValue)
+		{
+			dec.setInitialValue(initialValue.intValue());
+		}
+		else
+		{
+			dec.setInitialValue(initialValue);
+		}
+		
 		dec.setSize(size);
 		dec.setMaxLength(size);
 		dec.setMinValue(minValue);

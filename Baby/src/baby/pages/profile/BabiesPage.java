@@ -66,7 +66,7 @@ public class BabiesPage extends BabyPage
 	}
 	
 	@Override
-	public void render() throws Exception
+	public void renderHTML() throws Exception
 	{
 		List<UUID> babyIDs = BabyStore.getInstance().getByUser(getContext().getUserID());
 		

@@ -12,8 +12,9 @@ CREATE TABLE [MeasureRecords](
 	[UserID] [binary](16) NOT NULL, 
 	[BabyID] [binary](16) NULL, 
 	[MeasureID] [binary](16) NOT NULL, 
-	[MetricValue] [int] NOT NULL,
-	[Created] [bigint] NOT NULL, 
+	[Value] [numeric](28, 8) NULL,
+	[Metric] [bit] NOT NULL, 
+	[CreatedDate] [bigint] NOT NULL, 
  CONSTRAINT [PK_MeasureRecords] PRIMARY KEY NONCLUSTERED 
 (
 	[ID] ASC
@@ -23,6 +24,9 @@ CREATE TABLE [MeasureRecords](
 GO
 
 SET ANSI_PADDING OFF
+GO
+
+ALTER TABLE [MeasureRecords] ADD CONSTRAINT [DF_MeasureRecords_Metric]  DEFAULT ((0)) FOR [Metric]
 GO
 
 CREATE NONCLUSTERED INDEX [IX_MeasureRecords_UserID] ON [MeasureRecords] 

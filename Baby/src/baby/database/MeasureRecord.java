@@ -37,23 +37,33 @@ public class MeasureRecord extends DataBean
 		set("MeasureID", measureID);
 	}
 
-	public Integer getMetricValue()
+	public Float getValue()
 	{
-		return (Integer) get("MetricValue");
+		return (Float) get("Value");
 	}
 
-	public void setMetricValue(Integer metricValue)
+	public void setValue(Float val)
 	{
-		set("MetricValue", metricValue);
+		set("Value", val);
+	}
+	
+	public boolean isMetric()
+	{
+		return (Boolean) get("Metric", false);
+	}
+	
+	public void setMetric(boolean metric)
+	{
+		set("Metric", metric);
 	}
 
-	public Date getCreated()
+	public Date getCreatedDate()
 	{
-		return (Date) get("Created");
+		return (Date) get("CreatedDate");
 	}
 
-	public void setCreated(Date created)
+	public void setCreatedDate(Date createdDate)
 	{
-		set("Created", created);
+		set("CreatedDate", createdDate);
 	}
 }
