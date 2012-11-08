@@ -199,7 +199,27 @@ public class ChartsPage extends BabyPage
 		
 		writeFormClose();
 		
-		// TODO: Charts
+//		// TODO: Charts
+//		List<UUID> allRecIDs = MeasureRecordStore.getInstance().getByUserID(getContext().getUserID());
+//		if (allRecIDs.isEmpty() == false)
+//		{
+//			MeasureRecord latestRec = MeasureRecordStore.getInstance().load(allRecIDs.get(0));
+//			MeasureRecord earliestRec = MeasureRecordStore.getInstance().load(allRecIDs.get(allRecIDs.size() - 1));
+//			
+//			latestRec.getCreatedDate();
+//			
+//		}
+//		
+//	
+//		TimeBucketing<Date> buckets = new TimeBucketing<Date>(from, to, getLocale(), getTimeZone(), Date.class, Calendar.DATE);
+//		
+//		GoogleGraph graph = new GoogleGraph(this);
+//		graph.setChartType(GoogleGraph.LINE_CHART);
+//		graph.setLegend(GoogleGraph.TOP);
+//		graph.setHeight(300);
+//		graph.getChartArea().setTop(30);
+//		graph.getChartArea().setBottom(50);
+//		graph.addColumn(GoogleGraph.STRING, "");
 		
 	}
 	
