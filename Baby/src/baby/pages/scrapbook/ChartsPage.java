@@ -1,5 +1,7 @@
 package baby.pages.scrapbook;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -7,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 import samoyan.controls.TwoColFormControl;
+import samoyan.core.DateFormatEx;
 import samoyan.core.ParameterMap;
 import samoyan.database.UserStore;
 import samoyan.servlet.exc.RedirectException;
@@ -26,9 +29,12 @@ public class ChartsPage extends BabyPage
 	
 	public final static String PARAM_VALUE_PREFIX = "value_";
 	public final static String PARAM_ID_PREFIX = "id_";
+	public final static String PARAM_DATE = "date";
 	public final static String PARAM_SAVE = "save";
 	
+	private DateFormat dateParamFormat = DateFormatEx.getSimpleInstance("MM-dd-yyyy", getLocale(), getTimeZone());
 	private Mother mom;
+	private Date date;
 	private List<MeasureRecord> records;
 	
 	@Override
@@ -36,10 +42,25 @@ public class ChartsPage extends BabyPage
 	{
 		UUID userID = getContext().getUserID();
 		this.mom = MotherStore.getInstance().loadByUserID(userID);
+
+		// Get date
+		if (isParameter(PARAM_DATE))
+		{
+			try
+			{
+				this.date = dateParamFormat.parse(getParameterString(PARAM_DATE));
+			}
+			catch (ParseException e)
+			{
+				this.date = null;
+			}
+		}
+		if (this.date == null)
+		{
+			this.date = new Date();
+		}
 		
-		// TODO: Get date from date param
-		Date date = new Date();
-		Stage stage = this.mom.getPregnancyStage(date);
+		Stage stage = this.mom.getPregnancyStage(this.date);
 		
 		//
 		// Prepare a list of measure records for both new and saved records
@@ -53,7 +74,7 @@ public class ChartsPage extends BabyPage
 			MeasureRecord rec = new MeasureRecord();
 			rec.setUserID(userID);
 			rec.setMeasureID(momMeasureID);
-			rec.setCreatedDate(date);
+			rec.setCreatedDate(this.date);
 			
 			// By default, use unit system defined in mother's profile
 			rec.setMetric(this.mom.isMetric());
@@ -72,7 +93,7 @@ public class ChartsPage extends BabyPage
 				rec.setUserID(userID);
 				rec.setBabyID(babyID);
 				rec.setMeasureID(babyMeasureID);
-				rec.setCreatedDate(date);
+				rec.setCreatedDate(this.date);
 
 				// By default, use unit system defined in mother's profile
 				rec.setMetric(this.mom.isMetric());
@@ -86,10 +107,16 @@ public class ChartsPage extends BabyPage
 		// 
 		
 		Calendar cal = Calendar.getInstance(getTimeZone());
-		cal.setTime(date);
+		cal.setTime(this.date);
 		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
 		Date from = cal.getTime();
 		cal.set(Calendar.HOUR_OF_DAY, 24);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
 		Date to = cal.getTime();
 		
 		List<UUID> savedRecIDs = MeasureRecordStore.getInstance().getByDate(userID, from, to);
@@ -145,26 +172,35 @@ public class ChartsPage extends BabyPage
 			MeasureRecordStore.getInstance().save(rec);
 		}
 		
-		throw new RedirectException(COMMAND, new ParameterMap(PARAM_SAVE, ""));
+		throw new RedirectException(COMMAND, new ParameterMap(PARAM_SAVE, "").plus(PARAM_DATE, dateParamFormat.format(this.date)));
 	}
 	
 	@Override
 	public void renderHTML() throws Exception
 	{
 		write("<h2>");
-		write(getString("scrapbook:Charts.RecordMeasures"));
+		writeEncode(getString("scrapbook:Charts.RecordMeasures"));
 		write("</h2>");
+
+		DateFormat df = DateFormatEx.getSimpleInstance("MMMMM d, yyyy", getLocale(), getTimeZone());
+		write("<p>");
+		writeEncode(df.format(this.date));
+		write("</p>");
 		
 		writeFormOpen();
 		
 		writeMeasureRecords(this.records);
 		
-		// TODO: Add date post back
+		// Date post back
+		writeHiddenInput(PARAM_DATE, dateParamFormat.format(this.date));
 		
 		write("<br>");
 		writeSaveButton(PARAM_SAVE, null);
 		
 		writeFormClose();
+		
+		// TODO: Charts
+		
 	}
 	
 	private List<UUID> filterByPregnancyStage(List<UUID> measureIDs, Stage stage) throws Exception
