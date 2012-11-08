@@ -155,7 +155,7 @@ public class MobilePage extends ProfilePage
 		{
 			carriers.add(MobileCarrierStore.getInstance().load(id));
 		}
-		Collections.sort(carriers, new MobileCarrier.SortByMinor(getLocale()));
+		Collections.sort(carriers, new MobileCarrier.SortByName(getLocale()));
 
 		if (carriers.size()>0)
 		{
@@ -205,6 +205,18 @@ public class MobilePage extends ProfilePage
 		RequestContext ctx = getContext();
 		User user = UserStore.getInstance().load(ctx.getUserID());
 
+		// See if there are any minor carriers for this country
+		boolean hasMinor = false;
+		for (int c=0; c<carriers.size(); c++)
+		{
+			MobileCarrier mc = carriers.get(c);
+			if (mc.isMinor())
+			{
+				hasMinor = true;
+				break;
+			}
+		}
+		
 		final int COLS = getContext().getUserAgent().isSmartPhone()? 1 : 4;
 		write("<table>");
 		for (int c=0; c<carriers.size(); c++)
@@ -217,14 +229,14 @@ public class MobilePage extends ProfilePage
 			}
 			
 			write("<td>");
-			if (mc.isMinor())
+			if (hasMinor && mc.isMinor()==false)
 			{
-				write("<small>");
+				write("<b>");
 			}
 			writeRadioButton("carrier", mc.getName(), mc.getID(), user.getMobileCarrierID());
-			if (mc.isMinor())
+			if (hasMinor && mc.isMinor()==false)
 			{
-				write("</small>");
+				write("</b>");
 			}
 			write("</td>");
 			
@@ -359,7 +371,6 @@ public class MobilePage extends ProfilePage
 		{
 			// Verified!
 			user.setMobile(getParameterString("fullnumber"));
-			user.setMobileVerified(true);
 			user.setMobileVerificationCode(null);
 			UserStore.getInstance().save(user);
 						
@@ -373,7 +384,6 @@ public class MobilePage extends ProfilePage
 		else if (isParameter("clear"))
 		{
 			user.setMobile(null);
-			user.setMobileVerified(false);
 			user.setMobileVerificationCode(null);
 			UserStore.getInstance().save(user);
 			

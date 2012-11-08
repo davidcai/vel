@@ -19,6 +19,7 @@ import samoyan.apps.admin.reports.OutgoingNotifsReportPage;
 import samoyan.apps.admin.runtime.RecurringTaskListPage;
 import samoyan.apps.admin.tools.AdHocMessagePage;
 import samoyan.apps.admin.tools.AdHocNotif;
+import samoyan.apps.admin.typeahead.MobileCarrierTypeAhead;
 import samoyan.apps.admin.typeahead.PermissionTypeAhead;
 import samoyan.apps.admin.typeahead.UserGroupTypeAhead;
 import samoyan.apps.admin.typeahead.UserTypeAhead;
@@ -89,5 +90,6 @@ public final class AdminApp
 		Dispatcher.bindPage(UserTypeAhead.COMMAND,				UserTypeAhead.class);
 		Dispatcher.bindPage(UserGroupTypeAhead.COMMAND,			UserGroupTypeAhead.class);
 		Dispatcher.bindPage(PermissionTypeAhead.COMMAND,		PermissionTypeAhead.class);
+		Dispatcher.bindPage(MobileCarrierTypeAhead.COMMAND,		MobileCarrierTypeAhead.class);
 	}
 }

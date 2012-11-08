@@ -171,15 +171,6 @@ public final class User extends DataBean
 	{
 		set("PhoneVerifyCode", mobile);
 	}
-	public boolean isPhoneVerified()
-	{
-		Boolean b = (Boolean) get("PhoneVerified");
-		return (b!=null && b==true);
-	}
-	public void setPhoneVerified(boolean b)
-	{
-		set("PhoneVerified", b);
-	}
 	
 	public String getMobile()
 	{
@@ -205,15 +196,6 @@ public final class User extends DataBean
 	{
 		set("MobileVerifyCode", mobile);
 	}
-	public boolean isMobileVerified()
-	{
-		Boolean b = (Boolean) get("MobileVerified");
-		return (b!=null && b==true);
-	}
-	public void setMobileVerified(boolean b)
-	{
-		set("MobileVerified", b);
-	}
 
 	public String getTwitter()
 	{
@@ -232,11 +214,11 @@ public final class User extends DataBean
 		}
 		else if (channel.equalsIgnoreCase(Channel.SMS))
 		{
-			return !Util.isEmpty(getMobile()) && isMobileVerified();
+			return !Util.isEmpty(getMobile());
 		}
 		else if (channel.equalsIgnoreCase(Channel.VOICE))
 		{
-			return !Util.isEmpty(getPhone()) && isPhoneVerified();
+			return !Util.isEmpty(getPhone());
 		}
 		else if (channel.equalsIgnoreCase(Channel.INSTANT_MESSAGE))
 		{

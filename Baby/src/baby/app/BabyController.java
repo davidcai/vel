@@ -16,11 +16,13 @@ import samoyan.servlet.Controller;
 import samoyan.servlet.Dispatcher;
 import baby.crawler.CrawlExecutor;
 import baby.database.ArticleStore;
+import baby.database.BabyStore;
 import baby.database.CheckItemStore;
 import baby.database.CheckItemUserLinkStore;
 import baby.database.ChecklistStore;
 import baby.database.ChecklistUserLinkStore;
 import baby.database.JournalEntryStore;
+import baby.database.MeasureRecordStore;
 import baby.database.MeasureStore;
 import baby.database.MotherStore;
 import baby.pages.content.ChecklistListPage;
@@ -64,8 +66,10 @@ public class BabyController extends Controller
 		
 		result.add(JournalEntryStore.getInstance());
 		result.add(MotherStore.getInstance());
+		result.add(BabyStore.getInstance());
 		result.add(ArticleStore.getInstance());
 		result.add(MeasureStore.getInstance());
+		result.add(MeasureRecordStore.getInstance());
 		result.add(ChecklistStore.getInstance());
 		result.add(CheckItemStore.getInstance());
 

@@ -105,12 +105,10 @@ public class ImportUsersPage extends AdminPage
 				else if (headers.get(c).equalsIgnoreCase("phone"))
 				{
 					user.setPhone(column);
-					user.setPhoneVerified(true);
 				}
 				else if (headers.get(c).equalsIgnoreCase("mobile"))
 				{
 					user.setMobile(column);
-					user.setMobileVerified(true);
 				}
 				else if (headers.get(c).equalsIgnoreCase("password") && !Util.isEmpty(column))
 				{

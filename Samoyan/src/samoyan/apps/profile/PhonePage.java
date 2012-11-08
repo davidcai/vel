@@ -245,7 +245,6 @@ public class PhonePage extends ProfilePage
 		{
 			// Verified!
 			user.setPhone(getParameterString("fullnumber"));
-			user.setPhoneVerified(true);
 			user.setPhoneVerificationCode(null);
 			UserStore.getInstance().save(user);
 						
@@ -259,7 +258,6 @@ public class PhonePage extends ProfilePage
 		else if (isParameter("clear"))
 		{
 			user.setPhone(null);
-			user.setPhoneVerified(false);
 			user.setPhoneVerificationCode(null);
 			UserStore.getInstance().save(user);
 			

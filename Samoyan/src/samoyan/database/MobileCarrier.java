@@ -7,6 +7,8 @@ import samoyan.core.SortStringsAlphabetically;
 
 public final class MobileCarrier extends DataBean
 {
+	public final static int MAXSIZE_NAME = 64;
+	
 	public static class SortByName implements Comparator<MobileCarrier>
 	{
 		private SortStringsAlphabetically alphaSorter;

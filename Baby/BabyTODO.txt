@@ -14,7 +14,27 @@ Need smarter cache indexing. allowing multiple keys for invalidation. using nami
 
 Info list pages (HB, resources): Search box.
 
-(2) BACK BREADCRUMBS: Need _back_ functionality. support chaining? Look into window.session store. see http://code.google.com/p/sessionstorage/
++ user admin screen: typeahead for carrier, remove verified checkboxes. check that carrier matches country.
++ New My Baby and I logo
++ BACK BREADCRUMBS:
+  + would be nice to be able to pass title of back page. e.g. _backtitle_
+    if not present, use default "Back" or whatever is passed into writeBackButton
+  + Support goBackException to use JS to pop stack. implement in Profile pages.
+  + writeBackButton(id):
+    if _back_ param, then call js pushBackHistory(_back_, id) - only push if top of stack is not same id
+    write button hidden. show it with js if stack is not empty and top of stack==id
+    on click, pop from stack, redirect.
+= (0) Redo iPhone UI:
+  - title bar, tab bars, buttons: fixed. scrollable center.
+    try to avoid using fixed positioning. try table with height=100% and scrollable center.
+    better location for menu bar. = icon in top bar to show the menu, hide the page, tabbar, back button.
+    smaller icons in tabbar (24px?)
+  - TwoCol: round cornered group of elements. see http://www.diffen.com/difference/Capex_vs_Opex for nice style
+    support > links for rows.
+    - Reimplement Profile page as list of properties with links to edit screens. Then no need for Profile Tab. but then, where to place link to settings? under name of user in nav bar?
+      use new Back button to return to previous screen
+  - shrink size of tab icons, if n X 48 > width.
+  - buttons fixed to top. use jQuery to move Save/Back buttons to title bar.
 
 ASK what it takes to demo the app w/o publication. Do we need apple dev acct or can he do it from his end?
 
@@ -26,9 +46,6 @@ categories for articles. can then let user browser by category.
 Checklists (mom form)
 - improve design style
 - collapse lists with >>. send via ajax
-+ Content tab: do not list user defined checklists
-+ Mom's page: show checklists from the past, i.e. ignore timeline to.
-+ "remove" doesn't work
 
 Dr visits:
 - make part of journal
@@ -49,7 +66,7 @@ design "notebook" style for journal. lines, margins, etc.
 
 guided setup
 
-(1) INTERNAL MESSAGING:
+INTERNAL MESSAGING:
 + InternalMessages table: id, subject, fromUserID, toUserID, date created, read flag, important flag, content (html), attachments, threadID.
 + Compose new msg page.
   + typeahed for users
@@ -73,19 +90,9 @@ guided setup
   - option to render as Wall with bubbles
   - option to render in chronological view
 + Notifications (SMS, voice, email): "you have a message on My eLert, login to view"
-= (1.2) Admin AdHoc page: add "Inbox" as option. No need to send out notifs.
+= Admin AdHoc page: add "Inbox" as option. No need to send out notifs.
 - Internal msg to be added as channel to timeline.
 - Where to place link to inbox?
-= (1.1) Prepare demo app.
-  +integrate messaging into MMM live system. allow for users based on permission/group.
-  + add new DB tables to MMM live.
-  + deploy new code
-  + Enable Voice. make sure it's off by default in timeline.
-  - https
-  + check notifs (sms, voice, email)
-
-demo monday= mmm with messaging, elert.
 
 = fix "res/icons" folder. Keep only important icons. Rename them and org in "standard" folder. remove all other icons.
-= user admin screen: typeahead for carrier, remove verified checkboxes. check that carrier matches country.
 

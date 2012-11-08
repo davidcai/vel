@@ -4,12 +4,11 @@ import samoyan.servlet.WebPage;
 
 public class DecimalInputControl extends TextInputControl
 {
-
 	public DecimalInputControl(WebPage outputPage, String name)
 	{
 		super(outputPage, name);
 
-		setAttribute("type", "number");
+		setAttribute("type", "text");
 	}
 
 	public DecimalInputControl setMinValue(Float minVal)
@@ -33,18 +32,6 @@ public class DecimalInputControl extends TextInputControl
 	public Float getMaxValue()
 	{
 		String str = getAttribute("max");
-		return str == null ? null : Float.parseFloat(str);
-	}
-
-	public DecimalInputControl setStep(Float step)
-	{
-		setAttribute("step", (step == null || step == 0f) ? "any" : String.valueOf(step));
-		return this;
-	}
-
-	public Float getStep()
-	{
-		String str = getAttribute("step");
 		return str == null ? null : Float.parseFloat(str);
 	}
 }

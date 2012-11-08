@@ -55,16 +55,16 @@ public class MeasurePage extends BabyPage
 			validateParameterString(PARAM_METRIC_UNIT, 1, Measure.MAXSIZE_UNIT);
 			validateParameterString(PARAM_IMPERIAL_UNIT, 1, Measure.MAXSIZE_UNIT);
 			
-			validateParameterDecimal(PARAM_METRIC_MIN, 0f, Measure.MAXVAL_MINMAX, null);
-			validateParameterDecimal(PARAM_METRIC_MAX, 0f, Measure.MAXVAL_MINMAX, null);
+			validateParameterDecimal(PARAM_METRIC_MIN, 0f, Measure.MAXVAL_MINMAX);
+			validateParameterDecimal(PARAM_METRIC_MAX, 0f, Measure.MAXVAL_MINMAX);
 			
 			if (getParameterDecimal(PARAM_METRIC_MAX) <= getParameterDecimal(PARAM_METRIC_MIN))
 			{
 				throw new WebFormException(PARAM_METRIC_MAX, getString("content:Measure.MinGreaterThanMax"));
 			}
 			
-			validateParameterDecimal(PARAM_IMPERIAL_MIN, 0f, Measure.MAXVAL_MINMAX, null);
-			validateParameterDecimal(PARAM_IMPERIAL_MAX, 0f, Measure.MAXVAL_MINMAX, null);
+			validateParameterDecimal(PARAM_IMPERIAL_MIN, 0f, Measure.MAXVAL_MINMAX);
+			validateParameterDecimal(PARAM_IMPERIAL_MAX, 0f, Measure.MAXVAL_MINMAX);
 			
 			if (getParameterDecimal(PARAM_IMPERIAL_MAX) <= getParameterDecimal(PARAM_IMPERIAL_MIN))
 			{
@@ -169,16 +169,16 @@ public class MeasurePage extends BabyPage
 		twoCol.writeSpaceRow();
 		
 		twoCol.writeRow(getString("content:Measure.MetricMin"));
-		twoCol.writeDecimalInput(PARAM_METRIC_MIN, this.measure.getMetricMin(), 7, 0f, Measure.MAXVAL_MINMAX, null);
+		twoCol.writeDecimalInput(PARAM_METRIC_MIN, this.measure.getMetricMin(), 7, 0f, Measure.MAXVAL_MINMAX);
 
 		twoCol.writeRow(getString("content:Measure.MetricMax"));
-		twoCol.writeDecimalInput(PARAM_METRIC_MAX, this.measure.getMetricMax(), 7, 0f, Measure.MAXVAL_MINMAX, null);
+		twoCol.writeDecimalInput(PARAM_METRIC_MAX, this.measure.getMetricMax(), 7, 0f, Measure.MAXVAL_MINMAX);
 
 		twoCol.writeRow(getString("content:Measure.ImperialMin"));
-		twoCol.writeDecimalInput(PARAM_IMPERIAL_MIN, this.measure.getImperialMin(), 7, 0f, Measure.MAXVAL_MINMAX, null);
+		twoCol.writeDecimalInput(PARAM_IMPERIAL_MIN, this.measure.getImperialMin(), 7, 0f, Measure.MAXVAL_MINMAX);
 
 		twoCol.writeRow(getString("content:Measure.ImperialMax"));
-		twoCol.writeDecimalInput(PARAM_IMPERIAL_MAX, this.measure.getImperialMax(), 7, 0f, Measure.MAXVAL_MINMAX, null);
+		twoCol.writeDecimalInput(PARAM_IMPERIAL_MAX, this.measure.getImperialMax(), 7, 0f, Measure.MAXVAL_MINMAX);
 				
 		twoCol.render();
 		

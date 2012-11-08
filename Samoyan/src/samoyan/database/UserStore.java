@@ -44,11 +44,9 @@ public final class UserStore extends DataBeanStore<User>
 
 		td.defineProp("Phone", String.class);
 		td.defineProp("PhoneVerifyCode", String.class);
-		td.defineProp("PhoneVerified", Boolean.class);
 		td.defineProp("Mobile", String.class);
 		td.defineProp("MobileCarrierID", UUID.class);
 		td.defineProp("MobileVerifyCode", String.class);
-		td.defineProp("MobileVerified", Boolean.class);
 		td.defineProp("Facebook", String.class).size(0, User.MAXSIZE_FACEBOOK);
 		td.defineProp("Twitter", String.class).size(0, User.MAXSIZE_TWITTER);
 		td.defineProp("XMPP", String.class);

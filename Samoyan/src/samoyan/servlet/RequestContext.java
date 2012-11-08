@@ -23,6 +23,8 @@ public final class RequestContext implements Cloneable
 	public final static String PARAM_COMMAND = "_command_";
 	public final static String PARAM_AUTH = "_auth_";
 	public final static String PARAM_SAVED = "_saved_";
+	public final static String PARAM_BACK = "_back_";
+	public final static String PARAM_BACK_CAPTION = "_backcap_";
 
 	private String channel = "";
 	private String ip = "";

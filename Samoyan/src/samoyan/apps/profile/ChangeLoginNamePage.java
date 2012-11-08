@@ -112,6 +112,8 @@ public class ChangeLoginNamePage extends ProfilePage
 
 		write("<br>");
 		writeSaveButton(user);
+//		write(" ");
+//		writeBackButton(null);
 		
 		writeFormClose();
 	}

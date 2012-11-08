@@ -969,7 +969,7 @@ public class WebPage
 		return val;
 	}
 
-	public final Float validateParameterDecimal(String name, Float minVal, Float maxVal, Float step) throws WebFormException
+	public final Float validateParameterDecimal(String name, Float minVal, Float maxVal) throws WebFormException
 	{
 		String valStr = getContext().getParameter(name);
 		if (Util.isEmpty(valStr))
@@ -991,16 +991,7 @@ public class WebPage
 		{
 			throw new WebFormException(name, getString("common:Errors.DecimalBetween", minVal, maxVal));
 		}
-		
-		if (step != null && step != 0f)
-		{
-			float start = (minVal == null) ? 0f : minVal;
-			if ((val - start) % step != 0)
-			{
-				throw new WebFormException(name, getString("common:Errors.DecimalStep", step));
-			}
-		}
-		
+				
 		return val;
 	}
 
@@ -1276,7 +1267,7 @@ public class WebPage
 		area.render();
 	}
 	
-	public void writeDecimalInput(String name, Float initialValue, int size, Float minValue, Float maxValue, Float step)
+	public void writeDecimalInput(String name, Float initialValue, int size, Float minValue, Float maxValue)
 	{
 		DecimalInputControl dec = new DecimalInputControl(this, name);
 		
@@ -1294,7 +1285,6 @@ public class WebPage
 		dec.setMaxLength(size);
 		dec.setMinValue(minValue);
 		dec.setMaxValue(maxValue);
-		dec.setStep(step);
 		dec.render();
 	}
 		
@@ -1559,35 +1549,57 @@ public class WebPage
 	}
 
 	/**
-	 * Write a button that redirects the user to the previous page.
+	 * Renders a button that takes the user to the preceding page.
+	 * @param caption The caption to use for the button. Can be <code>null</code>.
+	 * @param pageID Any identifier that can uniquely identify the page. if <code>null</code>, defaults to the command.
 	 */
-	@Deprecated
-	public void writeCancelButton()
+	public void writeBackButton(String caption, String pageID)
 	{
-		writeCancelButton(null, 1);
-	}
-	/**
-	 * Write a button that redirects the user to a previous page.
-	 * @param caption The caption for the button.
-	 * @param numPagesToGoBack A positive number for how many pages to redirect the user page.
-	 */
-	@Deprecated
-	public void writeCancelButton(String caption, int numPagesToGoBack)
-	{
+		if (pageID==null)
+		{
+			pageID = getContext().getCommand();
+		}
+		
+		// Push the _back_ param into the sessionStorage stack
+		String ephem = getEphemeral("BackBtnPush");
+		if (ephem==null)
+		{
+			setEphemeral("BackBtnPush", "1");
+
+			String back = getContext().getParameter(RequestContext.PARAM_BACK);
+			if (back==null)
+			{
+				back = getContext().getHeader("referer");
+			}
+			String backCaption = getContext().getParameter(RequestContext.PARAM_BACK_CAPTION);
+			
+			if (back!=null)
+			{
+				write("<script type=\"text/javascript\">backPush('");
+				write(Util.jsonEncode(back));
+				write("','");
+				if (!Util.isEmpty(backCaption))
+				{
+					write(Util.jsonEncode(backCaption));
+				}
+				write("','");
+				write(pageID);
+				write("');</script>");
+			}			
+		}
+		
+		// Render the button initially hidden
 		new ButtonInputControl(this, null)
-			.setValue(caption)
 			.setSubdued(true)
-			.setAttribute("onclick", "window.history.go(" + (-numPagesToGoBack) + ");return false;")
+			.setValue(Util.isEmpty(caption)? getString("controls:Button.Back") : caption)
+			.setStyleAttribute("display", "none")
+			.setAttribute("id", "backBtn")
 			.render();
-//		write("<input type=submit onclick=\"window.history.go(");
-//		write(-numPagesToGoBack);
-//		write(");return false;\" value=\"");
-//		if (caption==null)
-//		{
-//			caption = getString("controls:Button.Cancel");
-//		}
-//		writeEncode(caption);
-//		write("\" grey>");
+		
+		// Show it, if the page ID is at the top of the stack
+		write("<script type=\"text/javascript\">backShowButton('backBtn','");
+		write(pageID);
+		write("');</script>");
 	}
 
 	public void writeAjaxFrameOpen()

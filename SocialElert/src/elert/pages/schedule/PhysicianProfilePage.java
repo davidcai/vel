@@ -97,9 +97,7 @@ public class PhysicianProfilePage extends ElertPage
 		physician.setName(name);
 		physician.setEmail(getParameterString("email"));
 		physician.setMobile(getParameterPhone("mobile"));
-		physician.setMobileVerified(true);
 		physician.setPhone(getParameterPhone("phone"));
-		physician.setPhoneVerified(true);
 		Image avatar = getParameterImage("avatar");
 		physician.setAvatar(avatar);
 

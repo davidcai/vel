@@ -153,7 +153,7 @@ public class ChartsPage extends BabyPage
 				Measure m = MeasureStore.getInstance().load(rec.getMeasureID());
 				Float min = this.mom.isMetric() ? m.getMetricMin() : m.getImperialMin();
 				Float max = this.mom.isMetric() ? m.getMetricMax() : m.getImperialMax();
-				validateParameterDecimal(PARAM_VALUE_PREFIX + i, min, max, null);
+				validateParameterDecimal(PARAM_VALUE_PREFIX + i, min, max);
 			}
 		}
 	}
@@ -178,9 +178,8 @@ public class ChartsPage extends BabyPage
 	@Override
 	public void renderHTML() throws Exception
 	{
-		write("<h2>");
-		writeEncode(getString("scrapbook:Charts.RecordMeasures"));
-		write("</h2>");
+		writeEncode(getString("scrapbook:Charts.Help"));
+		write("<br>");
 
 		DateFormat df = DateFormatEx.getSimpleInstance("MMMMM d, yyyy", getLocale(), getTimeZone());
 		write("<p>");
@@ -257,7 +256,7 @@ public class ChartsPage extends BabyPage
 				if (momName.equals(name) == false)
 				{
 					name = momName;
-					twoCol.writeTextRow(name);
+					twoCol.writeSubtitleRow(momName);
 				}
 			}
 			else
@@ -266,7 +265,7 @@ public class ChartsPage extends BabyPage
 				if (babyName.equals(name) == false)
 				{
 					name = babyName;
-					twoCol.writeTextRow(name);
+					twoCol.writeSubtitleRow(name);
 				}
 			}
 			
@@ -298,7 +297,7 @@ public class ChartsPage extends BabyPage
 			}
 		}
 		
-		twoCol.writeDecimalInput(PARAM_VALUE_PREFIX + index, val, 16, min, max, null);
+		twoCol.writeDecimalInput(PARAM_VALUE_PREFIX + index, val, 16, min, max);
 		twoCol.write("&nbsp;");
 		twoCol.writeEncode(this.mom.isMetric() ? measure.getMetricUnit() : measure.getImperialUnit());
 		twoCol.writeHiddenInput(PARAM_ID_PREFIX + index, rec.getID().toString());

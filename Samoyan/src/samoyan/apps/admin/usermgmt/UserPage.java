@@ -4,6 +4,7 @@ import java.util.*;
 
 import samoyan.apps.admin.AdminPage;
 import samoyan.apps.admin.log.QueryLogPage;
+import samoyan.apps.admin.typeahead.MobileCarrierTypeAhead;
 import samoyan.apps.admin.typeahead.PermissionTypeAhead;
 import samoyan.apps.admin.typeahead.UserGroupTypeAhead;
 import samoyan.controls.ControlArray;
@@ -70,11 +71,36 @@ public class UserPage extends AdminPage
 		}
 
 		// Mobile
+		String mobile = null;
 		if (!Util.isEmpty(getParameterString("mobile")))
 		{
-			validateParameterPhone("mobile");
+			mobile = validateParameterPhone("mobile");		
 		}
 		
+		// Mobile carrier
+		Pair<String, String> kvp = getParameterTypeAhead("mobilecarrier");
+		if (!Util.isEmpty(kvp.getValue()))
+		{
+			if (Util.isEmpty(mobile))
+			{
+				throw new WebFormException("mobile", getString("common:Errors.MissingField"));
+			}
+			
+			if (!Util.isUUID(kvp.getKey()))
+			{
+				throw new WebFormException("mobilecarrier", getString("common:Errors.InvalidValue"));
+			}
+			MobileCarrier mc = MobileCarrierStore.getInstance().load(UUID.fromString(kvp.getKey()));
+			if (mc==null)
+			{
+				throw new WebFormException("mobilecarrier", getString("common:Errors.InvalidValue"));
+			}
+			if (mobile.startsWith(mc.getCountryCode() + "/")==false)
+			{
+				throw new WebFormException(new String[] {"mobile", "mobilecarrier"}, getString("admin:User.CarrierNotInCountry"));
+			}
+		}
+
 		// Phone
 		if (!Util.isEmpty(getParameterString("phone")))
 		{
@@ -97,10 +123,20 @@ public class UserPage extends AdminPage
 		}
 		this.user.setName(getParameterString("name"));
 		this.user.setEmail(getParameterString("email"));
+		
 		this.user.setMobile(getParameterPhone("mobile"));
-		this.user.setMobileVerified(isParameter("mobileverified"));
+		
+		String carrier = getParameterTypeAhead("mobilecarrier").getKey();
+		if (Util.isUUID(carrier))
+		{
+			this.user.setMobileCarrierID(UUID.fromString(carrier));
+		}
+		else
+		{
+			this.user.setMobileCarrierID(null);
+		}
+		
 		this.user.setPhone(getParameterPhone("phone"));
-		this.user.setPhoneVerified(isParameter("phoneverified"));
 		this.user.setSuspended(isParameter("suspended"));
 		this.user.setAvatar(getParameterImage("avatar"));
 
@@ -282,8 +318,11 @@ public class UserPage extends AdminPage
 			.limitCountries(fed.getSMSCountries())
 			.setInitialValue(this.user.getMobile())
 			.render();
-		twoCol.write(" ");
-		twoCol.writeCheckbox("mobileverified", getString("admin:User.Verified"), this.user.isMobileVerified());
+		
+		// Mobile
+		MobileCarrier carrier = MobileCarrierStore.getInstance().load(this.user.getMobileCarrierID());
+		twoCol.writeRow(getString("admin:User.MobileCarrier"));
+		twoCol.writeTypeAheadInput("mobilecarrier", carrier==null?null:carrier.getID(), carrier==null?null:carrier.getName(), 40, MobileCarrier.MAXSIZE_NAME, getPageURL(MobileCarrierTypeAhead.COMMAND));
 		
 		// Phone
 		twoCol.writeRow(getString("admin:User.Phone"));
@@ -291,8 +330,6 @@ public class UserPage extends AdminPage
 			.limitCountries(fed.getSMSCountries())
 			.setInitialValue(this.user.getPhone())
 			.render();
-		twoCol.write(" ");
-		twoCol.writeCheckbox("phoneverified", getString("admin:User.Verified"), this.user.isPhoneVerified());
 
 		twoCol.writeSpaceRow();
 

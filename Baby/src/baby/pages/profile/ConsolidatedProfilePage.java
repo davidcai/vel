@@ -13,6 +13,8 @@ import samoyan.apps.profile.TimeZonePage;
 import samoyan.controls.TwoColFormControl;
 import samoyan.core.TimeZoneEx;
 import samoyan.core.Util;
+import samoyan.database.MobileCarrier;
+import samoyan.database.MobileCarrierStore;
 import samoyan.database.Server;
 import samoyan.database.ServerStore;
 import samoyan.database.User;
@@ -88,6 +90,12 @@ public class ConsolidatedProfilePage extends BabyPage
 			if (!Util.isEmpty(user.getMobile()))
 			{
 				twoCol.writeEncode(Util.stripCountryCodeFromPhoneNumber(user.getMobile()));
+				MobileCarrier mc = MobileCarrierStore.getInstance().load(user.getMobileCarrierID());
+				if (mc!=null)
+				{
+					write(" ");
+					writeEncode(mc.getName());
+				}
 			}
 			else
 			{

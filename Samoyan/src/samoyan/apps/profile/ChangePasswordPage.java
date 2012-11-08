@@ -70,6 +70,8 @@ public class ChangePasswordPage extends ProfilePage
 		
 		// Redirect to self in order to clear form submission
 		throw new RedirectException(getContext().getCommand(), new ParameterMap(RequestContext.PARAM_SAVED, "")); // getString("profile:ChangePassword.Confirmation")));
+		
+//		throw new GoBackRedirectException();
 	}
 
 	@Override
@@ -117,6 +119,8 @@ public class ChangePasswordPage extends ProfilePage
 
 		write("<br>");
 		writeSaveButton(user);
+//		write(" ");
+//		writeBackButton(null, null);
 		
 		writeFormClose();
 	}

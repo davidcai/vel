@@ -109,6 +109,7 @@ public class EnvelopePage extends WebPage
 			{
 				writeIncludeJS("jquery-1.7.1.min.js");
 			}
+			writeIncludeJS("sessionstorage-1.4.js"); // Backward compatibility for session storage for older browsers
 			writeIncludeJS("samoyan.js");
 	
 			// CSS

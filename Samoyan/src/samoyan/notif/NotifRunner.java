@@ -361,10 +361,10 @@ final class NotifRunner implements Runnable
 		// SMS
 		else if (channel.equalsIgnoreCase(Channel.SMS))
 		{
-			if (/*Util.isValidPhoneNumber(user.getMobile())==false ||*/ user.isMobileVerified()==false)
-			{
-				return false;
-			}
+//			if (Util.isValidPhoneNumber(user.getMobile())==false || user.isMobileVerified()==false)
+//			{
+//				return false;
+//			}
 			
 			SmsMessage sms = new SmsMessage();
 			sms.setDestination(user.getMobile());
@@ -404,10 +404,10 @@ final class NotifRunner implements Runnable
 		//Voice
 		else if (channel.equalsIgnoreCase(Channel.VOICE))
 		{
-			if (/*Util.isValidPhoneNumber(user.getPhone())==false ||*/ user.isPhoneVerified()==false)
-			{
-				return false;
-			}
+//			if (Util.isValidPhoneNumber(user.getPhone())==false || user.isPhoneVerified()==false)
+//			{
+//				return false;
+//			}
 						
 //			//save the notification markup for later use (when we get a web service request for the voicexml document)
 //			notif.setMarkup(content);

@@ -7,6 +7,8 @@ import samoyan.apps.profile.ProfilePage;
 import samoyan.controls.SelectInputControl;
 import samoyan.controls.TextInputControl;
 import samoyan.controls.TwoColFormControl;
+import samoyan.core.ParameterMap;
+import samoyan.servlet.RequestContext;
 import samoyan.servlet.exc.RedirectException;
 import baby.database.Baby;
 import baby.database.BabyStore;
@@ -62,7 +64,7 @@ public class BabiesPage extends BabyPage
 		
 		BabyStore.getInstance().removeMany(oldIDs);
 		
-		throw new RedirectException(COMMAND, null);
+		throw new RedirectException(COMMAND, new ParameterMap(RequestContext.PARAM_SAVED, ""));
 	}
 	
 	@Override
