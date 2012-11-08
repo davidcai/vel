@@ -42,7 +42,7 @@ public class ChartsPage extends BabyPage
 		Stage stage = this.mom.getPregnancyStage(date);
 		
 		//
-		// Prepare the measure records
+		// Prepare a list of measure records for both new and saved records
 		//
 		
 		this.records = new ArrayList<MeasureRecord>();
@@ -53,8 +53,11 @@ public class ChartsPage extends BabyPage
 			MeasureRecord rec = new MeasureRecord();
 			rec.setUserID(userID);
 			rec.setMeasureID(momMeasureID);
-			rec.setMetric(this.mom.isMetric());
 			rec.setCreatedDate(date);
+			
+			// By default, use unit system defined in mother's profile
+			rec.setMetric(this.mom.isMetric());
+			
 			this.records.add(rec);
 		}
 		
@@ -69,14 +72,17 @@ public class ChartsPage extends BabyPage
 				rec.setUserID(userID);
 				rec.setBabyID(babyID);
 				rec.setMeasureID(babyMeasureID);
-				rec.setMetric(this.mom.isMetric());
 				rec.setCreatedDate(date);
+
+				// By default, use unit system defined in mother's profile
+				rec.setMetric(this.mom.isMetric());
+				
 				this.records.add(rec);
 			}
 		}
 		
 		//
-		// Populate measure records with saved records
+		// Populate measure records with saved data of a specified date
 		// 
 		
 		Calendar cal = Calendar.getInstance(getTimeZone());
@@ -118,8 +124,8 @@ public class ChartsPage extends BabyPage
 			{
 				MeasureRecord rec = this.records.get(i);
 				Measure m = MeasureStore.getInstance().load(rec.getMeasureID());
-				Float min = rec.isMetric() ? m.getMetricMin() : m.getImperialMin();
-				Float max = rec.isMetric() ? m.getMetricMax() : m.getImperialMax();
+				Float min = this.mom.isMetric() ? m.getMetricMin() : m.getImperialMin();
+				Float max = this.mom.isMetric() ? m.getMetricMax() : m.getImperialMax();
 				validateParameterDecimal(PARAM_VALUE_PREFIX + i, min, max, null);
 			}
 		}
@@ -132,6 +138,9 @@ public class ChartsPage extends BabyPage
 		{
 			MeasureRecord rec = this.records.get(i);
 			rec.setValue(getParameterDecimal(PARAM_VALUE_PREFIX + i));
+			
+			// Unit system defined in mother's profile always triumph over record's unit system.
+			rec.setMetric(this.mom.isMetric());
 			
 			MeasureRecordStore.getInstance().save(rec);
 		}
@@ -179,8 +188,6 @@ public class ChartsPage extends BabyPage
 	
 	private void writeMeasureRecords(List<MeasureRecord> records) throws Exception
 	{
-		Stage stage = this.mom.getPregnancyStage();
-		
 		TwoColFormControl twoCol = new TwoColFormControl(this);
 		
 		String name = null;
@@ -219,12 +226,25 @@ public class ChartsPage extends BabyPage
 		
 		twoCol.writeRow(measure.getLabel());
 
-		Float min = rec.isMetric() ? measure.getMetricMin() : measure.getImperialMin();
-		Float max = rec.isMetric() ? measure.getMetricMax() : measure.getImperialMax();
+		Float min = this.mom.isMetric() ? measure.getMetricMin() : measure.getImperialMin();
+		Float max = this.mom.isMetric() ? measure.getMetricMax() : measure.getImperialMax();
+		Float val = rec.getValue();
+		if (val != null)
+		{
+			// Convert value from record's current unit system to mother's unit system
+			if (this.mom.isMetric() && rec.isMetric() == false)
+			{
+				val = measure.toMetric(val);
+			}
+			else if (this.mom.isMetric() == false && rec.isMetric())
+			{
+				val = measure.toImperial(val);
+			}
+		}
 		
-		twoCol.writeDecimalInput(PARAM_VALUE_PREFIX + index, rec.getValue() == null ? null : rec.getValue(), 16, min, max, null);
+		twoCol.writeDecimalInput(PARAM_VALUE_PREFIX + index, val, 16, min, max, null);
 		twoCol.write("&nbsp;");
-		twoCol.writeEncode(rec.isMetric() ? measure.getMetricUnit() : measure.getImperialUnit());
+		twoCol.writeEncode(this.mom.isMetric() ? measure.getMetricUnit() : measure.getImperialUnit());
 		twoCol.writeHiddenInput(PARAM_ID_PREFIX + index, rec.getID().toString());
 	}
 	
