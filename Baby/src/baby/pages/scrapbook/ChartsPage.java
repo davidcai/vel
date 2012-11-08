@@ -57,7 +57,7 @@ public class ChartsPage extends BabyPage
 		}
 		if (this.date == null)
 		{
-			this.date = new Date();
+			this.date = Calendar.getInstance(getTimeZone()).getTime();
 		}
 		
 		Stage stage = this.mom.getPregnancyStage(this.date);
