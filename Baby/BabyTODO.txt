@@ -12,7 +12,9 @@ automatic cached query using DatabeanStore.cachedQuery(). clear all on remove an
 Need smarter cache indexing. allowing multiple keys for invalidation. using naming convention with x|y|z.
   convention for db: Table.ColA=ValA|Table.ColB=ValB|Table.ColC=* . Clear on Save (for dirty columns) and Remove (must load object for that).
 
-Info list pages (HB, resources): Search box.
+Info list pages (HB, resources):
+- Search box.
+- images of articles should be rendered in a "known" size and fit in phone screen.
 
 + user admin screen: typeahead for carrier, remove verified checkboxes. check that carrier matches country.
 + New My Baby and I logo
@@ -24,17 +26,38 @@ Info list pages (HB, resources): Search box.
     if _back_ param, then call js pushBackHistory(_back_, id) - only push if top of stack is not same id
     write button hidden. show it with js if stack is not empty and top of stack==id
     on click, pop from stack, redirect.
+= GoBACK:
+  ? always push page to stack. then GoBackExc will always work.
+  - to keep it clean, delete the stack when pressing on a tab icon
+  + when pressing BACK, need to pass param to page and prevent pushing of the page on the stack. or otherwise, subtract 2 from stack size.
+  = angular shape to button's left side. +blue color.
+  = (0.0) page to support isBreadcrumb. If false, do not push into history stack. in gallery, set false for indiv image.
 = (0) Redo iPhone UI:
   - title bar, tab bars, buttons: fixed. scrollable center.
-    try to avoid using fixed positioning. try table with height=100% and scrollable center.
-    better location for menu bar. = icon in top bar to show the menu, hide the page, tabbar, back button.
-    smaller icons in tabbar (24px?)
+    x try to avoid using fixed positioning. try table with height=100% and scrollable center.
+    + better location for menu bar.
+      + icon in top bar to show the menu, hide the page, tabbar, back button.
+    - (0.1) when pressing MENU button, hide tabbar, menu icon. change back button functionality to restore.
+    - (0.2) smaller icons in tabbar (24px?). especially if too many of them. use scale CSS attribute?
+      calc icon size dynamically. cache. or mandate 48px.
+    + rendering of #tabbar at end of page. on focus/blur, set position to fixed/static (same as titlebar)
+    - "menu" button:
+      + better icon.
+      + align to right
+      + on click, toggle visib of navbar.
+      - don't show menu button if nav bar is empty (i.e. no options). but there will be always the default options.
+  - need place to show Login/Logout, Register, Help, Home links.
+  - need place for Settings/profile link. Also in web UI. See facebook's dropdown corner menu.
+  + Don't show title in page area on mobile.
   - TwoCol: round cornered group of elements. see http://www.diffen.com/difference/Capex_vs_Opex for nice style
     support > links for rows.
     - Reimplement Profile page as list of properties with links to edit screens. Then no need for Profile Tab. but then, where to place link to settings? under name of user in nav bar?
       use new Back button to return to previous screen
-  - shrink size of tab icons, if n X 48 > width.
-  - buttons fixed to top. use jQuery to move Save/Back buttons to title bar.
+  - action buttons should be fixed to top/bottom.
+= (1) Upside down rendering of TabControl (see CNBC app). Use at top of pages in mobile view to navigate between screens.
+  also needs fixed positioning. set class to Fixed.
+  - initially, render as link bar.
+= cleanup TopBarControl. no longer used in mobile UI. Remove and incorporate into envelope?
 
 ASK what it takes to demo the app w/o publication. Do we need apple dev acct or can he do it from his end?
 

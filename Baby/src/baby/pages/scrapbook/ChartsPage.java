@@ -1,13 +1,19 @@
 package baby.pages.scrapbook;
 
+import java.text.Collator;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
+import samoyan.controls.GoogleGraph;
 import samoyan.controls.TwoColFormControl;
 import samoyan.core.DateFormatEx;
 import samoyan.core.ParameterMap;
@@ -31,6 +37,45 @@ public class ChartsPage extends BabyPage
 	public final static String PARAM_ID_PREFIX = "id_";
 	public final static String PARAM_DATE = "date";
 	public final static String PARAM_SAVE = "save";
+
+	private class GraphData
+	{
+		private String title;
+		private boolean forMother;
+		private Map<String, Float> rows;
+		
+		public String getTitle()
+		{
+			return title;
+		}
+		public void setTitle(String title)
+		{
+			this.title = title;
+		}
+
+		public boolean isForMother()
+		{
+			return forMother;
+		}
+		public void setForMother(boolean forMother)
+		{
+			this.forMother = forMother;
+		}
+
+		public Map<String, Float> getRows()
+		{
+			if (rows == null)
+			{
+				rows = new LinkedHashMap<String, Float>();
+			}
+			
+			return rows;
+		}
+		public void setRows(Map<String, Float> rows)
+		{
+			this.rows = rows;
+		}
+	}
 	
 	private DateFormat dateParamFormat = DateFormatEx.getSimpleInstance("MM-dd-yyyy", getLocale(), getTimeZone());
 	private Mother mom;
@@ -63,7 +108,7 @@ public class ChartsPage extends BabyPage
 		Stage stage = this.mom.getPregnancyStage(this.date);
 		
 		//
-		// Prepare a list of measure records for both new and saved records
+		// Prepare a list of measure records for new/saved records
 		//
 		
 		this.records = new ArrayList<MeasureRecord>();
@@ -103,7 +148,7 @@ public class ChartsPage extends BabyPage
 		}
 		
 		//
-		// Populate measure records with saved data of a specified date
+		// Pre-populate measure records with saved data of a specified date
 		// 
 		
 		Calendar cal = Calendar.getInstance(getTimeZone());
@@ -128,7 +173,8 @@ public class ChartsPage extends BabyPage
 			{
 				MeasureRecord rec = this.records.get(i);
 				
-				// For duplicate records with same measure IDs and baby IDs, always choose the latest record. 
+				// For duplicate records with same measure IDs and baby IDs, 
+				// we use "rec.isSaved() == false" to guarantee that we only pre-populate new record objects. 
 				if (rec.isSaved() == false && rec.getMeasureID().equals(savedRec.getMeasureID()) && (
 					( rec.getBabyID() == null && savedRec.getBabyID() == null ) || // Mom
 					( rec.getBabyID() != null && rec.getBabyID().equals(savedRec.getBabyID()) ) // Baby
@@ -169,7 +215,15 @@ public class ChartsPage extends BabyPage
 			// Unit system defined in mother's profile always triumph over record's unit system.
 			rec.setMetric(this.mom.isMetric());
 			
-			MeasureRecordStore.getInstance().save(rec);
+			if (rec.getValue() == null)
+			{
+				// If the record value is null, delete the record from DB.
+				MeasureRecordStore.getInstance().remove(rec.getID());
+			}
+			else
+			{
+				MeasureRecordStore.getInstance().save(rec);
+			}
 		}
 		
 		throw new RedirectException(COMMAND, new ParameterMap(PARAM_SAVE, "").plus(PARAM_DATE, dateParamFormat.format(this.date)));
@@ -186,59 +240,179 @@ public class ChartsPage extends BabyPage
 		writeEncode(df.format(this.date));
 		write("</p>");
 		
+		//
+		// Input form
+		//
+		
 		writeFormOpen();
-		
 		writeMeasureRecords(this.records);
-		
-		// Date post back
-		writeHiddenInput(PARAM_DATE, dateParamFormat.format(this.date));
-		
+		writeHiddenInput(PARAM_DATE, dateParamFormat.format(this.date)); // Date post back
 		write("<br>");
 		writeSaveButton(PARAM_SAVE, null);
-		
 		writeFormClose();
 		
-//		// TODO: Charts
-//		List<UUID> allRecIDs = MeasureRecordStore.getInstance().getByUserID(getContext().getUserID());
-//		if (allRecIDs.isEmpty() == false)
-//		{
-//			MeasureRecord latestRec = MeasureRecordStore.getInstance().load(allRecIDs.get(0));
-//			MeasureRecord earliestRec = MeasureRecordStore.getInstance().load(allRecIDs.get(allRecIDs.size() - 1));
-//			
-//			latestRec.getCreatedDate();
-//			
-//		}
-//		
-//	
-//		TimeBucketing<Date> buckets = new TimeBucketing<Date>(from, to, getLocale(), getTimeZone(), Date.class, Calendar.DATE);
-//		
-//		GoogleGraph graph = new GoogleGraph(this);
-//		graph.setChartType(GoogleGraph.LINE_CHART);
-//		graph.setLegend(GoogleGraph.TOP);
-//		graph.setHeight(300);
-//		graph.getChartArea().setTop(30);
-//		graph.getChartArea().setBottom(50);
-//		graph.addColumn(GoogleGraph.STRING, "");
+		//
+		// Graphs
+		//
 		
+		write("<br>");
+		List<UUID> recIDs = MeasureRecordStore.getInstance().getByUserID(getContext().getUserID());
+		
+		// Earliest records come first
+		Collections.reverse(recIDs);
+		
+		List<GraphData> lstGraphData = getGraphDataList(recIDs);
+		for (GraphData data : lstGraphData)
+		{
+			// Display graph only when historical data has more than two records.
+			if (data.getRows().size() > 1)
+			{
+				GoogleGraph graph = new GoogleGraph(this);
+				graph.setChartType(GoogleGraph.LINE_CHART);
+				graph.setLegend(GoogleGraph.NONE);
+				graph.setHeight(300);
+				graph.getChartArea().setTop(30);
+				graph.getChartArea().setBottom(50);
+				graph.addColumn(GoogleGraph.STRING, "");
+				graph.addColumn(GoogleGraph.NUMBER, "");
+				
+				for (String date : data.getRows().keySet())
+				{
+					Float val = data.getRows().get(date);
+					graph.addRow(date, new Number[] { val });
+				}
+				
+				write("<h2>");
+				writeEncode(data.getTitle());
+				write("</h2>");
+				graph.render();
+				write("<br>");
+			}
+		}
 	}
 	
+	/**
+	 * Gets a list of GraphData objects representing a graph of a measure for a person.
+	 * 
+	 * @param sortedRecIDs Measure record IDs. The IDs should be already sorted by CreateDate in an ascending order.
+	 * @return
+	 * @throws Exception
+	 */
+	private List<GraphData> getGraphDataList(List<UUID> sortedRecIDs) throws Exception
+	{
+		Map<String, GraphData> mapGraphs = new LinkedHashMap<String, GraphData>();
+		UUID userID = getContext().getUserID();
+		String momName = UserStore.getInstance().load(userID).getDisplayName();
+		DateFormat df = DateFormatEx.getSimpleInstance("MM-dd-yy", getLocale(), getTimeZone());
+		
+		for (UUID recID : sortedRecIDs)
+		{
+			MeasureRecord rec = MeasureRecordStore.getInstance().load(recID);
+			Measure measure = MeasureStore.getInstance().load(rec.getMeasureID());
+			
+			// key = person ID + measure ID
+			String key = (rec.getBabyID() == null ? userID : rec.getBabyID()) + "|" + measure.getID();
+			
+			GraphData graph = mapGraphs.get(key);
+			if (graph == null)
+			{
+				graph = new GraphData();
+				
+				String name = rec.getBabyID() == null ? momName : BabyStore.getInstance().load(rec.getBabyID()).getName();
+				String unit = this.mom.isMetric() ? measure.getMetricUnit() : measure.getImperialUnit();
+				
+				graph.setTitle(getString("scrapbook:Charts.GraphTitle", name, measure.getLabel(), unit));
+				graph.setForMother(rec.getBabyID() == null);
+				
+				mapGraphs.put(key, graph);
+			}
+			
+			// Don't override existing value for the same date
+			String date = df.format(rec.getCreatedDate());
+			if (graph.getRows().containsKey(date) == false)
+			{
+				Float val = getMeasureRecordValue(rec);
+				if (val != null)
+				{
+					graph.getRows().put(date, val);
+				}
+			}
+		}
+		
+		// Sort by mother and graph title
+		List<GraphData> graphs = new ArrayList<GraphData>(mapGraphs.values());
+		Collections.sort(graphs, new Comparator<GraphData>() {
+
+			@Override
+			public int compare(GraphData gd1, GraphData gd2)
+			{
+				if (gd1.isForMother() != gd2.isForMother())
+				{
+					// Always list mother first
+					return gd1.isForMother() ? -1 : 1;
+				}
+				
+				// Sort by title
+				return Collator.getInstance(getLocale()).compare(gd1.getTitle(), gd2.getTitle());
+			}
+		});
+		
+		return graphs;
+	}
+	
+	/**
+	 * Gets measure record value that is normalized by mother's preferred unit system.
+	 * 
+	 * @param rec
+	 * @return
+	 * @throws Exception
+	 */
+	private Float getMeasureRecordValue(MeasureRecord rec) throws Exception
+	{
+		Float val = rec.getValue();
+		if (val != null)
+		{
+			Measure measure = MeasureStore.getInstance().load(rec.getMeasureID());
+			
+			// Convert value from record's current unit system to mother's unit system
+			if (this.mom.isMetric() && rec.isMetric() == false)
+			{
+				val = measure.toMetric(val);
+			}
+			else if (this.mom.isMetric() == false && rec.isMetric())
+			{
+				val = measure.toImperial(val);
+			}
+		}
+		
+		return val;
+	}
+	
+	/**
+	 * Returns measures that are suitable for the specified pregnancy stage.
+	 * 
+	 * @param measureIDs
+	 * @param stage
+	 * @return
+	 * @throws Exception
+	 */
 	private List<UUID> filterByPregnancyStage(List<UUID> measureIDs, Stage stage) throws Exception
 	{
-		List<UUID> ids = new ArrayList<UUID>();
+		List<UUID> filteredMeasureIDs = new ArrayList<UUID>();
 		
-		for (UUID id : measureIDs)
+		for (UUID measureID : measureIDs)
 		{
-			Measure m = MeasureStore.getInstance().load(id);
+			Measure m = MeasureStore.getInstance().load(measureID);
 			
 			if ((m.isForPreconception() && stage.isPreconception()) || 
 				(m.isForPregnancy() && stage.isPregnancy()) || 
 				(m.isForInfancy() && stage.isInfancy())) 
 			{
-				ids.add(id);
+				filteredMeasureIDs.add(measureID);
 			}
 		}
 		
-		return ids;
+		return filteredMeasureIDs;
 	}
 	
 	private void writeMeasureRecords(List<MeasureRecord> records) throws Exception
@@ -283,19 +457,7 @@ public class ChartsPage extends BabyPage
 
 		Float min = this.mom.isMetric() ? measure.getMetricMin() : measure.getImperialMin();
 		Float max = this.mom.isMetric() ? measure.getMetricMax() : measure.getImperialMax();
-		Float val = rec.getValue();
-		if (val != null)
-		{
-			// Convert value from record's current unit system to mother's unit system
-			if (this.mom.isMetric() && rec.isMetric() == false)
-			{
-				val = measure.toMetric(val);
-			}
-			else if (this.mom.isMetric() == false && rec.isMetric())
-			{
-				val = measure.toImperial(val);
-			}
-		}
+		Float val = getMeasureRecordValue(rec);
 		
 		twoCol.writeDecimalInput(PARAM_VALUE_PREFIX + index, val, 16, min, max);
 		twoCol.write("&nbsp;");
