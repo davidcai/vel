@@ -14,6 +14,7 @@ import samoyan.apps.master.PrivacyPage;
 import samoyan.apps.master.RootPage;
 import samoyan.apps.master.TermsPage;
 import samoyan.apps.system.UnresponsiveVoiceCallPage;
+import samoyan.controls.ImageControl;
 import samoyan.controls.MetaTagControl;
 import samoyan.controls.NavTreeControl;
 import samoyan.controls.TopBarControl;
@@ -109,9 +110,28 @@ public class EnvelopePage extends WebPage
 			{
 				writeIncludeJS("jquery-1.7.1.min.js");
 			}
-			writeIncludeJS("sessionstorage-1.4.js"); // Backward compatibility for session storage for older browsers
+			writeIncludeJS("sessionstorage-1.4.js"); // Session storage for older browsers
 			writeIncludeJS("samoyan.js");
 	
+			// Push the page into the sessionStorage history stack
+			String back = getContext().getParameter(RequestContext.PARAM_BACK);
+			if (back==null)
+			{
+				back = getContext().getHeader("referer");
+			}
+			String backCaption = getContext().getParameter(RequestContext.PARAM_BACK_CAPTION);
+			if (back!=null)
+			{
+				write("<script type=\"text/javascript\">backPush('");
+				write(Util.jsonEncode(back));
+				write("','");
+				if (!Util.isEmpty(backCaption))
+				{
+					write(Util.jsonEncode(backCaption));
+				}
+				write("');</script>");
+			}
+
 			// CSS
 			write("<style>BODY{visibility:hidden;}</style>"); // Hide BODY until CSS loads
 			writeIncludeCSS("samoyan.less");
@@ -156,6 +176,12 @@ public class EnvelopePage extends WebPage
 						write("<table cellspacing=0 cellpadding=0 class=Inner><tr><td id=navbar>");
 							renderHTMLNavBar(); // subclass
 						write("</td><td id=page>");
+							if (!Util.isEmpty(pageTitle))
+							{
+								write("<h1>");
+								writeEncode(pageTitle);
+								write("</h1>");
+							}
 							renderHTMLPage();
 						write("</td></tr></table>");
 					
@@ -172,15 +198,30 @@ public class EnvelopePage extends WebPage
 				{
 					write("<div id=layout>");
 					
-					write("<div id=header>");
-					renderHTMLTopBar(); // subclass
+					// Fixed title bar
+					write("<div id=titlebar>");
+					write("<table class=Fixed><tr><td>");
+					writeBackButton(null, null);
+					write("</td><td><h1>");
+					if (!Util.isEmpty(pageTitle))
+					{
+						writeEncode(pageTitle);
+					}
+					write("</h1></td><td align=right>");
+					new ImageControl(this).resource("navbar-toggle.png").setAttribute("onclick", "$('#page').toggle();$('#navbar').toggle();").render();
+					write("</td></tr>");
+					write("</table>");
 					write("</div>");
+					
+//					write("<div id=header>");
+//					renderHTMLTopBar(); // subclass
+//					write("</div>");
 					
 					write("<div id=page>");
 					renderHTMLPage();
 					write("</div>");
 	
-					write("<div id=navbar>");
+					write("<div id=navbar style='display:none;'>");
 					renderHTMLNavBar(); // subclass
 					write("</div>");
 					
@@ -188,7 +229,49 @@ public class EnvelopePage extends WebPage
 					renderHTMLFooter(); // subclass
 					write("</div>");
 	
-					write("<div class=TopBarPlaceHolder>&nbsp;</div>");
+					// Fixed tab bar
+					int countTabs = 0;
+					List<EnvelopeTab> tabs = this.getTabs();
+					for (EnvelopeTab t : tabs)
+					{
+						if (!Util.isEmpty(t.getCommand()))
+						{
+							countTabs++;
+						}
+					}
+					if (countTabs>0)
+					{
+						String command1 = ctx.getCommand(1);
+						write("<div id=tabbar><table class=Fixed><tr>");
+						for (EnvelopeTab t : tabs)
+						{
+							if (Util.isEmpty(t.getCommand()))
+							{
+								continue;
+							}
+							
+							write("<td");
+							if (command1.equals(t.getCommand()))
+							{
+								write(" class=Current");
+							}
+							write(">");
+							write("<a href=\"");
+							writeEncode(getPageURL(t.getCommand()));
+							write("\">");
+							if (t.getIcon(this)!=null)
+							{
+								writeImage(t.getIcon(this), t.getLabel(this));
+								write("<br>");
+							}
+							writeEncode(t.getLabel(this));
+							write("</a>");
+							write("</td>");
+						}
+						write("</tr></table></div>");
+					}
+					
+//					write("<div class=TopBarPlaceHolder>&nbsp;</div>");
 					
 					write("</div>");
 				}
@@ -200,15 +283,6 @@ public class EnvelopePage extends WebPage
 		
 	private void renderHTMLPage() throws Exception
 	{
-		// Page title
-		String pageTitle = getTitle(); // calls child
-		if (!Util.isEmpty(pageTitle))
-		{
-			write("<h1>");
-			writeEncode(pageTitle);
-			write("</h1>");
-		}
-		
 		// Error messages
 		WebFormException formExc = getFormException();
 		if (formExc!=null)

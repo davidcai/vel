@@ -1555,50 +1555,51 @@ public class WebPage
 	 */
 	public void writeBackButton(String caption, String pageID)
 	{
-		if (pageID==null)
-		{
-			pageID = getContext().getCommand();
-		}
-		
-		// Push the _back_ param into the sessionStorage stack
-		String ephem = getEphemeral("BackBtnPush");
-		if (ephem==null)
-		{
-			setEphemeral("BackBtnPush", "1");
-
-			String back = getContext().getParameter(RequestContext.PARAM_BACK);
-			if (back==null)
-			{
-				back = getContext().getHeader("referer");
-			}
-			String backCaption = getContext().getParameter(RequestContext.PARAM_BACK_CAPTION);
-			
-			if (back!=null)
-			{
-				write("<script type=\"text/javascript\">backPush('");
-				write(Util.jsonEncode(back));
-				write("','");
-				if (!Util.isEmpty(backCaption))
-				{
-					write(Util.jsonEncode(backCaption));
-				}
-				write("','");
-				write(pageID);
-				write("');</script>");
-			}			
-		}
+//		if (pageID==null)
+//		{
+//			pageID = getContext().getCommand();
+//		}
+//		
+//		// Push the _back_ param into the sessionStorage stack
+//		String ephem = getEphemeral("BackBtnPush");
+//		if (ephem==null)
+//		{
+//			setEphemeral("BackBtnPush", "1");
+//
+//			String back = getContext().getParameter(RequestContext.PARAM_BACK);
+//			if (back==null)
+//			{
+//				back = getContext().getHeader("referer");
+//			}
+//			String backCaption = getContext().getParameter(RequestContext.PARAM_BACK_CAPTION);
+//			
+//			if (back!=null)
+//			{
+//				write("<script type=\"text/javascript\">backPush('");
+//				write(Util.jsonEncode(back));
+//				write("','");
+//				if (!Util.isEmpty(backCaption))
+//				{
+//					write(Util.jsonEncode(backCaption));
+//				}
+//				write("','");
+//				write(pageID);
+//				write("');</script>");
+//			}			
+//		}
 		
 		// Render the button initially hidden
+		String id = UUID.randomUUID().toString();
 		new ButtonInputControl(this, null)
-			.setSubdued(true)
 			.setValue(Util.isEmpty(caption)? getString("controls:Button.Back") : caption)
 			.setStyleAttribute("display", "none")
-			.setAttribute("id", "backBtn")
+			.setAttribute("id", "backBtn"+id)
+			.setAttribute("class", "Back")
 			.render();
 		
 		// Show it, if the page ID is at the top of the stack
-		write("<script type=\"text/javascript\">backShowButton('backBtn','");
-		write(pageID);
+		write("<script type=\"text/javascript\">backActivateButton('backBtn");
+		write(id);
 		write("');</script>");
 	}
 
@@ -1803,7 +1804,8 @@ public class WebPage
 		String overrideScreen = ctx.getCookie(RequestContext.COOKIE_OVERRIDE_SCREEN);
 		if (overrideScreen!=null && overrideScreen.equals(ctx.getCookie(RequestContext.COOKIE_SCREEN))==false)
 		{
-			write("<div id=overridescreen style=\"width:");
+			write("<table width=\"100%\" height=\"100%\"><tr valign=middle><td align=center>");
+			write("<div align=left id=overridescreen style=\"width:");
 			write(ctx.getUserAgent().getScreenWidth() + 16); // 16 pixels for scrollbars
 			write("px !important;height:");
 			write(ctx.getUserAgent().getScreenHeight() + 16); // 16 pixels for scrollbars
@@ -1817,6 +1819,7 @@ public class WebPage
 		String overrideScreen = ctx.getCookie(RequestContext.COOKIE_OVERRIDE_SCREEN);
 		if (overrideScreen!=null && overrideScreen.equals(ctx.getCookie(RequestContext.COOKIE_SCREEN))==false)
 		{
+			write("</td></tr></table>");
 			write("</div>");
 		}
 		

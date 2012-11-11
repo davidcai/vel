@@ -7,7 +7,6 @@ public class EnvelopeTab
 {
 	/**
 	 * To be overridden by subclass to return the navigation tree control to be rendered in the nav area of the page.
-	 * @param ctx
 	 * @return
 	 */
 	public NavTreeControl getNavTree(WebPage outputPage) throws Exception

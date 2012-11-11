@@ -647,7 +647,7 @@ public final class RequestContext implements Cloneable
 	}
 	
 	/**
-	 * Calculates a unique hash code for this context based on identifying request headers (such as user agent, accept, accept-encoding, etc.)
+	 * Calculates a unique hash code for this context based on identifying HTTP request headers (such as user agent, accept, accept-encoding, etc.)
 	 * @return
 	 */
 	public String getIdentifyingHeadersSHA256()

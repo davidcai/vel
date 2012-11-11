@@ -89,14 +89,15 @@ $(document).ready(function()
 	// Hack to hide the fixed-positioned tab bar on iPhone
 	if (UserAgent.AppleTouch && UserAgent.SmartPhone)
 	{
-		$("INPUT:not([type=checkbox]):not([type=radio]):not([type=submit]), SELECT, TEXTAREA")
-		.focus(function(ev)
+		$("BODY").on("focus", "INPUT:not([type=checkbox]):not([type=radio]):not([type=submit]), SELECT, TEXTAREA", function()
 		{
 			$(".TopBar .Tabs TABLE").hide();
+			$(".Fixed").css("position", "static");
 		})
-		.blur(function(ev)
+		.on("blur", "INPUT:not([type=checkbox]):not([type=radio]):not([type=submit]), SELECT, TEXTAREA", function()
 		{
 			$(".TopBar .Tabs TABLE").show();
+			$(".Fixed").css("position", "fixed");
 		});
 	}
 	if (UserAgent.AppleTouch)
@@ -455,32 +456,36 @@ function backStackSize()
 		return Number(sz);
 	}
 }
-function backPush(url, caption, pageID)
+function backPush(url, caption)
 {
-	var sz = backStackSize();
-	if (sz>0 && sessionStorage.getItem("bkStkID"+(sz-1))==pageID)
+	var redirected = sessionStorage.getItem("bkStkRedirect");
+	sessionStorage.removeItem("bkStkRedirect");
+	if (redirected=="true")
 	{
-		sz--; // Override
+		return;
 	}
-	sessionStorage.setItem("bkStkU"+sz, url);
-	sessionStorage.setItem("bkStkC"+sz, caption);
-	sessionStorage.setItem("bkStkID"+sz, pageID);
-	sessionStorage.setItem("bkStkSz", (sz+1));
+	var sz = backStackSize();
+	if (sz==0 || sessionStorage.getItem("bkStkID"+(sz-1))!=window.location.pathname)
+	{
+		sessionStorage.setItem("bkStkU"+sz, url);
+		sessionStorage.setItem("bkStkC"+sz, caption);
+		sessionStorage.setItem("bkStkID"+sz, window.location.pathname);
+		sessionStorage.setItem("bkStkSz", (sz+1));
+	}
 }
-function backShowButton(btnID, pageID)
+function backActivateButton(btnID)
 {
 	var sz = backStackSize();
-	if (sz>0 && sessionStorage.getItem("bkStkID"+(sz-1))==pageID)
+	if (sz>0 && sessionStorage.getItem("bkStkID"+(sz-1))==window.location.pathname)
 	{
-		$("#"+btnID)
-			.css("display", "inline")
-			.css("visibility", "visible")
-			.on("click", backPopAndRedirect);
 		var caption = sessionStorage.getItem("bkStkC"+(sz-1));
 		if (caption!=null && caption!="")
 		{
 			$("#"+btnID).attr("value", caption);
 		}
+		$("#"+btnID)
+			.show()
+			.on("click", backPopAndRedirect);
 	}
 }
 function backPopAndRedirect(ev)
@@ -494,6 +499,7 @@ function backPopAndRedirect(ev)
 		sessionStorage.removeItem("bkStkID"+sz);
 		sessionStorage.removeItem("bkStkU"+sz);
 		sessionStorage.removeItem("bkStkC"+sz);
+		sessionStorage.setItem("bkStkRedirect", "true");
 		window.location.href = url;
 		
 		if (ev!=null)

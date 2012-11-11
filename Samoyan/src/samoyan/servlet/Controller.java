@@ -1296,6 +1296,8 @@ if (Setup.isDebug() && ctx.getChannel().equalsIgnoreCase(Channel.VOICE))
 			return false;
 		}
 		
+		setCacheHeaders(request, response, true);
+		
 		outputBytes(img.getBytes(), img.getMimeType(), false, response);
 		return true;
 	}
