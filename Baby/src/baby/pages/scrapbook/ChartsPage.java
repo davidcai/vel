@@ -19,6 +19,7 @@ import samoyan.core.DateFormatEx;
 import samoyan.core.ParameterMap;
 import samoyan.database.UserStore;
 import samoyan.servlet.exc.RedirectException;
+import baby.database.Baby;
 import baby.database.BabyStore;
 import baby.database.Measure;
 import baby.database.MeasureRecord;
@@ -308,19 +309,31 @@ public class ChartsPage extends BabyPage
 		for (UUID recID : sortedRecIDs)
 		{
 			MeasureRecord rec = MeasureRecordStore.getInstance().load(recID);
-			Measure measure = MeasureStore.getInstance().load(rec.getMeasureID());
+
+			String name = momName;
+			if (rec.getBabyID() != null)
+			{
+				Baby baby = BabyStore.getInstance().load(rec.getBabyID());
+				if (baby == null)
+				{
+					// Ignore those baby IDs that link to non-existing baby.
+					continue;
+				}
+				
+				// Use baby's name since this record is a baby record.
+				name = baby.getName();
+			}
 			
 			// key = person ID + measure ID
+			Measure measure = MeasureStore.getInstance().load(rec.getMeasureID());
 			String key = (rec.getBabyID() == null ? userID : rec.getBabyID()) + "|" + measure.getID();
 			
 			GraphData graph = mapGraphs.get(key);
 			if (graph == null)
 			{
-				graph = new GraphData();
-				
-				String name = rec.getBabyID() == null ? momName : BabyStore.getInstance().load(rec.getBabyID()).getName();
 				String unit = this.mom.isMetric() ? measure.getMetricUnit() : measure.getImperialUnit();
 				
+				graph = new GraphData();
 				graph.setTitle(getString("scrapbook:Charts.GraphTitle", name, measure.getLabel(), unit));
 				graph.setForMother(rec.getBabyID() == null);
 				

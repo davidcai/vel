@@ -55,7 +55,7 @@ public class BabiesPage extends BabyPage
 
 			baby.setUserID(getContext().getUserID());
 			baby.setName(getParameterString(PARAM_NAME_PREFIX + i));
-			baby.setMale(Boolean.parseBoolean(getParameterString(PARAM_GENDER_PREFIX + i)));
+			baby.setGender(Baby.Gender.fromString(getParameterString(PARAM_GENDER_PREFIX + i)));
 			
 			BabyStore.getInstance().save(baby);
 			
@@ -146,9 +146,10 @@ public class BabiesPage extends BabyPage
 				.render();
 			write("&nbsp;");
 			new SelectInputControl(this, PARAM_GENDER_PREFIX + i)
-				.addOption(getString("babyprofile:Babies.Male"), true)
-				.addOption(getString("babyprofile:Babies.Female"), false)
-				.setInitialValue(baby.isMale())
+				.addOption(getString("babyprofile:Babies.Undetermined"), Baby.Gender.UNDETERMINED)
+				.addOption(getString("babyprofile:Babies.Male"), Baby.Gender.MALE)
+				.addOption(getString("babyprofile:Babies.Female"), Baby.Gender.FEMALE)
+				.setInitialValue(baby.getGender())
 				.render();
 			writeHiddenInput(PARAM_ID_PREFIX + i, baby.isSaved() ? baby.getID().toString() : "");
 			write("</li>");
