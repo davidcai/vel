@@ -52,6 +52,7 @@ import baby.pages.scrapbook.ChartsPage;
 import baby.pages.scrapbook.GalleryPage;
 import baby.pages.scrapbook.JournalEntryPage;
 import baby.pages.scrapbook.JournalPage;
+import baby.pages.scrapbook.KickCounterPage;
 import baby.pages.scrapbook.PhotoPage;
 import baby.pages.scrapbook.ScrapbookHomePage;
 import baby.pages.todo.ChecklistPage;
@@ -117,6 +118,7 @@ public class BabyController extends Controller
 		Dispatcher.bindPage(GalleryPage.COMMAND, 				GalleryPage.class);
 		Dispatcher.bindPage(PhotoPage.COMMAND, 					PhotoPage.class);
 		Dispatcher.bindPage(ChartsPage.COMMAND, 				ChartsPage.class);
+		Dispatcher.bindPage(KickCounterPage.COMMAND, 			KickCounterPage.class);
 
 		// To do
 		Dispatcher.bindPage(TodoHomePage.COMMAND, 				TodoHomePage.class);
