@@ -245,12 +245,19 @@ public class ChartsPage extends BabyPage
 		// Input form
 		//
 		
-		writeFormOpen();
-		writeMeasureRecords(this.records);
-		writeHiddenInput(PARAM_DATE, dateParamFormat.format(this.date)); // Date post back
-		write("<br>");
-		writeSaveButton(PARAM_SAVE, null);
-		writeFormClose();
+		if (this.records.isEmpty())
+		{
+			writeEncode(getString("scrapbook:Charts.NoRecords"));
+		}
+		else
+		{
+			writeFormOpen();
+			writeMeasureRecords(this.records);
+			writeHiddenInput(PARAM_DATE, dateParamFormat.format(this.date)); // Date post back
+			write("<br>");
+			writeSaveButton(PARAM_SAVE, null);
+			writeFormClose();
+		}
 		
 		//
 		// Graphs
@@ -324,8 +331,14 @@ public class ChartsPage extends BabyPage
 				name = baby.getName();
 			}
 			
-			// key = person ID + measure ID
 			Measure measure = MeasureStore.getInstance().load(rec.getMeasureID());
+			if (measure == null)
+			{
+				// Ignore records whose measures don't exist anymore
+				continue;
+			}
+			
+			// key = person ID + measure ID
 			String key = (rec.getBabyID() == null ? userID : rec.getBabyID()) + "|" + measure.getID();
 			
 			GraphData graph = mapGraphs.get(key);
