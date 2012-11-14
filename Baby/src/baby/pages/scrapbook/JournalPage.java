@@ -57,7 +57,7 @@ public class JournalPage extends BabyPage
 		this.entry.setHasPhoto(photo != null);
 		this.entry.setPhoto(photo);
 		
-		this.entry.setCreated(new Date());
+		this.entry.setCreated(Calendar.getInstance(getTimeZone()).getTime());
 
 		JournalEntryStore.getInstance().save(this.entry);
 
@@ -92,7 +92,7 @@ public class JournalPage extends BabyPage
 		}
 		
 		write("<h2>");
-		writeEncode(df.format((date != null) ? date : new Date()));
+		writeEncode(df.format((date != null) ? date : Calendar.getInstance(getTimeZone()).getTime()));
 		//writeEncodeDate((date != null) ? date : new Date());
 		write("</h2>");
 
@@ -115,13 +115,19 @@ public class JournalPage extends BabyPage
 		List<UUID> entryIDs = null;
 		if (date != null)
 		{
-			Calendar cal = Calendar.getInstance();
+			Calendar cal = Calendar.getInstance(getTimeZone());
 			cal.setTime(date);
 
 			cal.set(Calendar.HOUR_OF_DAY, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			cal.set(Calendar.MILLISECOND, 0);
 			Date from = cal.getTime();
 			
 			cal.set(Calendar.HOUR_OF_DAY, 24);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			cal.set(Calendar.MILLISECOND, 0);
 			Date to = cal.getTime();
 			
 			entryIDs = JournalEntryStore.getInstance().getByDate(getContext().getUserID(), from, to);
