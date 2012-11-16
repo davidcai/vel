@@ -89,6 +89,9 @@ public class GalleryPage extends BabyPage
 			
 			int colCountMax = COL_COUNT_MAX_WIDE; 
 			UserAgent ua = getContext().getUserAgent();
+			
+			// TODO: int d = ua.getScreenWidth() / 150;
+			
 			if (SCREENSIZE_WIDTH_THRESHOLD > ua.getScreenWidth()) 
 			{
 				colCountMax = COL_COUNT_MAX_NARROW;

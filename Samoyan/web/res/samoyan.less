@@ -192,7 +192,7 @@ INPUT[type="submit"],INPUT[type="button"] {
 			background-color: lighten(@color-accent-alert, 10%);
 		}
 	}
-	&.Subdued {
+	&.Subdued, &.Back {
 		background-color: @color-text-light;
 		&:hover {
 			background-color: lighten(@color-text-light, 10%);
@@ -621,6 +621,82 @@ DIV.InfoMessage {
 	> TD {
 		padding: 0px;
 		height: @header-height;
+	}
+}
+
+#titlebar {
+	height: 30px;
+	> TABLE {
+		width: 100%; height: 30px;
+		position: fixed;
+		top: 0px;
+		left: 0px;
+		color: @color-negative-text;
+		background-color: @color-negative-background;
+		z-index: 999999;
+		.GradientLight25;
+		TD {
+			vertical-align: middle;
+			&:first-child {
+				width: 20%;
+				INPUT.Back {
+					color: @color-background;
+					background-color: @color-accent;
+					font: @font-normal;
+					font-weight: bold;
+					&:hover {
+						text-decoration:underline;
+						background-color: lighten(@color-accent, 10%);
+					}
+				}
+			}
+			&:last-child {
+				width: 20%;
+				text-align: right;
+				IMG {
+					margin-right: 5px;
+				}
+			}
+			H1 {
+				width: 100%;
+				text-align: center;
+				text-overflow: ellipsis;
+				overflow: hidden;
+				white-space: nowrap;
+				color: @color-negative-text;
+			}
+		}
+	}
+}
+#tabbar {
+	height: 60px;
+	> TABLE {
+		height: 60px;
+		width: 100%;
+		position: fixed;
+		bottom: 0px;
+		left: 0px;
+		background-color: @color-text;
+		.HalfLight25;
+		z-index: 999999;
+		TD {
+			vertical-align: bottom;
+			text-align: center;
+			font: @font-small;
+			padding: 2px 2px;
+			border: none;
+			&.Current {
+				.Light50;
+			}
+			A {
+				color: @color-background;
+				text-decoration: none;
+				font-weight: bold;
+				&:hover {
+					text-decoration: underline;
+				}
+			}
+		}
 	}
 }
 

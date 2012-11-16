@@ -311,7 +311,8 @@ public class ChartsPage extends BabyPage
 		Map<String, GraphData> mapGraphs = new LinkedHashMap<String, GraphData>();
 		UUID userID = getContext().getUserID();
 		String momName = UserStore.getInstance().load(userID).getDisplayName();
-		DateFormat df = DateFormatEx.getSimpleInstance("MM-dd-yy", getLocale(), getTimeZone());
+		DateFormat df = DateFormatEx.getMiniDateInstance(getLocale(), getTimeZone());
+		//DateFormat df = DateFormatEx.getSimpleInstance("MM-dd-yy", getLocale(), getTimeZone());
 		
 		for (UUID recID : sortedRecIDs)
 		{

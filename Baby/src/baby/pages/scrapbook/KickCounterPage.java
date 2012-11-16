@@ -33,6 +33,7 @@ public class KickCounterPage extends BabyPage
 		
 		// #Buttons
 		write("<div id=\"Buttons\">");
+		// TODO: new ButtonInputControl(this, PARAM_START).setValue(getString("scrapbook:KickCounter.Start")).addCssClass("").render();
 		writeButton(PARAM_START, getString("scrapbook:KickCounter.Start"));
 		writeButtonRed(PARAM_STOP, getString("scrapbook:KickCounter.Stop"));
 		writeButton(PARAM_COUNT, getString("scrapbook:KickCounter.Count"));
