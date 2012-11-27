@@ -10,12 +10,6 @@ public final class Checklist extends DataBean
 	public static final int MAXSIZE_TITLE = 256;
 	public static final int MAXSIZE_SECTION = 64;
 	
-	// Known sections
-	public static final String SECTION_TODO = "To do";
-	public static final String SECTION_CHECKUP = "Checkup";
-	public static final String SECTION_ULTRASOUND = "Ultrasound";
-	public static final String SECTION_WELL_BABY = "Well Baby";
-
 	public String getTitle()
 	{
 		return (String) get("Title");

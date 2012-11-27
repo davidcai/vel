@@ -1,3 +1,30 @@
+// ---------- Mixins ----------
+.border-radius (@radius) {
+	border-radius: @radius;
+	-moz-border-radius: @radius;
+	-webkit-border-radius: @radius;
+}
+
+// ---------- Baby ----------
+.SmartPhone #footer {
+	display: none;
+}
+
+.ChecklistOverdue {
+	background-color: @color-error;
+	color: @color-background;
+	display: inline-block;
+	.border-radius(4px);
+	padding: 0px 5px;
+}
+.ChecklistComplete {
+	background-color: @color-accent;
+	color: @color-background;
+	display: inline-block;
+	.border-radius(4px);
+	padding: 0px 5px;
+}
+
 .PlainList {
 	list-style: none;
 	margin: 0;
@@ -32,6 +59,7 @@ TABLE.PhotoGrid TD {
 .LargeImage {
 	position: relative;
 	display: inline-block;
+	text-align: center;
 	
 	.PrevWrapper, .NextWrapper {
 		position: absolute;
@@ -131,5 +159,67 @@ TABLE.PhotoGrid TD {
 		INPUT[name="start"] {
 			background-color: #007000;
 		}
+	}
+}
+
+.Checklist {
+	B {
+		color: @color-accent;
+	}
+	IMG {
+		margin-top: 1px;
+		width: 16px;
+		height: 16px;
+		background-position: center center;
+		background-repeat: no-repeat;
+		&.Expanded {
+			background-image: url("collapse.png");
+			&:hover {
+				background-image: url("collapse-hover.png");
+				cursor: hand;
+				cursor: pointer;
+			}
+		}
+		&.Collapsed {
+			background-image: url("expand.png");
+			&:hover {
+				background-image: url("expand-hover.png");
+				cursor: hand;
+				cursor: pointer;
+			}
+		}
+	}
+	> TABLE:last-child {
+		padding-top: 2px;
+		padding-left: 20px;
+	}
+}
+
+// Home page
+BODY[uri="/"].Computer {
+	H1, #navbar {
+		display: none;
+	}
+	#spiel {
+		H2 {
+			font: @font-huge;
+		}
+		font: @font-large;
+	}
+	#loginframe {
+		.border-radius(10px);
+		border: solid 1px @color-text-light;
+		background-color: rgba(0,0,0,0.1);
+		padding: 30px 0px 15px 0px;
+		margin-top: 15px;
+	}
+}
+BODY[uri="/"].SmartPhone {
+	#loginframe {
+		border-top: 1px solid @color-text-light;
+		border-bottom: 1px solid @color-text-light;
+		background-color: @color-background-dark;
+		padding: 5px 0px;
+		margin: 10px 0px;
 	}
 }

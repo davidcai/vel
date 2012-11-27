@@ -15,6 +15,7 @@ import samoyan.database.UserGroupStore;
 import samoyan.servlet.Controller;
 import samoyan.servlet.Dispatcher;
 import baby.crawler.CrawlExecutor;
+import baby.database.AppointmentStore;
 import baby.database.ArticleStore;
 import baby.database.BabyStore;
 import baby.database.CheckItemStore;
@@ -43,7 +44,6 @@ import baby.pages.master.LoginPage;
 import baby.pages.master.RootPage;
 import baby.pages.master.WelcomePage;
 import baby.pages.profile.BabiesPage;
-import baby.pages.profile.BabyProfileHomePage;
 import baby.pages.profile.ConsolidatedProfilePage;
 import baby.pages.profile.MedicalCenterPage;
 import baby.pages.profile.StagePage;
@@ -55,6 +55,8 @@ import baby.pages.scrapbook.JournalPage;
 import baby.pages.scrapbook.KickCounterPage;
 import baby.pages.scrapbook.PhotoPage;
 import baby.pages.scrapbook.ScrapbookHomePage;
+import baby.pages.todo.AppointmentsPage;
+import baby.pages.todo.ChecklistAjaxPage;
 import baby.pages.todo.ChecklistPage;
 import baby.pages.todo.TodoHomePage;
 
@@ -73,6 +75,7 @@ public class BabyController extends Controller
 		result.add(MeasureRecordStore.getInstance());
 		result.add(ChecklistStore.getInstance());
 		result.add(CheckItemStore.getInstance());
+		result.add(AppointmentStore.getInstance());
 
 		return result;
 	}
@@ -98,6 +101,7 @@ public class BabyController extends Controller
 		ImageStore.getInstance().bindSizer(BabyConsts.IMAGESIZE_THUMB_150X150, new LargestCropSizer(150, 150));
 		ImageStore.getInstance().bindSizer(BabyConsts.IMAGESIZE_BOX_800X800, new ShrinkToFitSizer(800, 800));
 		ImageStore.getInstance().bindSizer(BabyConsts.IMAGESIZE_BOX_400X400, new ShrinkToFitSizer(400, 400));
+		ImageStore.getInstance().bindSizer(BabyConsts.IMAGESIZE_BOX_150X150, new ShrinkToFitSizer(150, 150));
 		
 		// Master
 		Dispatcher.bindPage(LoginPage.COMMAND,					LoginPage.class);
@@ -123,6 +127,8 @@ public class BabyController extends Controller
 		// To do
 		Dispatcher.bindPage(TodoHomePage.COMMAND, 				TodoHomePage.class);
 		Dispatcher.bindPage(ChecklistPage.COMMAND, 				ChecklistPage.class);
+		Dispatcher.bindPage(AppointmentsPage.COMMAND, 			AppointmentsPage.class);
+		Dispatcher.bindPage(ChecklistAjaxPage.COMMAND, 			ChecklistAjaxPage.class);
 		
 		// Content
 		Dispatcher.bindPage(ContentHomePage.COMMAND, 			ContentHomePage.class);
@@ -139,7 +145,7 @@ public class BabyController extends Controller
 		Dispatcher.bindPage(MedicalCenterPage.COMMAND, 			MedicalCenterPage.class);
 		Dispatcher.bindPage(StagePage.COMMAND, 					StagePage.class);
 		Dispatcher.bindPage(ConsolidatedProfilePage.COMMAND, 	ConsolidatedProfilePage.class);
-		Dispatcher.bindPage(BabyProfileHomePage.COMMAND, 		BabyProfileHomePage.class);
+//		Dispatcher.bindPage(BabyProfileHomePage.COMMAND, 		BabyProfileHomePage.class);
 		Dispatcher.bindPage(UnitsPage.COMMAND, 					UnitsPage.class);
 		Dispatcher.bindPage(BabiesPage.COMMAND, 				BabiesPage.class);
 		

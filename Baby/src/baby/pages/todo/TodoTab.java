@@ -17,9 +17,9 @@ public class TodoTab extends EnvelopeTab
 		User user = UserStore.getInstance().load(ctx.getUserID());
 
 		NavTreeControl navCtrl = new NavTreeControl(outputPage);
-//		navCtrl.addHeader(outputPage.getString("information:Nav.Articles"));
-//		navCtrl.addPage(HealthyBeginningsPage.COMMAND, null);
-//		navCtrl.addPage(ResourcesPage.COMMAND, null);
+		navCtrl.addHeader(outputPage.getString("todo:Nav.Tasks"));
+		navCtrl.addPage(ChecklistPage.COMMAND, null);
+		navCtrl.addPage(AppointmentsPage.COMMAND, null);
 		
 		return navCtrl;
 	}

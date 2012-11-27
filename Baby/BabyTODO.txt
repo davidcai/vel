@@ -1,11 +1,14 @@
-Healthy Beginnings baby article to always show first.
+Healthy Beginnings baby article to always show first. (pin to top)
 
 Governor interface:
-home screen: show stats (num article per section,city, etc.).
-hb editor:
+- home screen: show stats (num article per section,city, etc.) with links to relevant screens.
+HB article editor:
 - list page to break/sort articles by week range
-Resources: page to view/edit/lock the content of an article. (for author)
-on crawl of resources, need to remove ones that are no longer relevant. Delete all before crawl?
+- change FROM, TO timeline dropdowns from discrete week# to preset stages (e.g. "week 6-10", "week 10-12")
+
+Resources:
+- page to view/edit/lock the content of an article. (for author)
+- on crawl of resources, need to remove ones that are no longer relevant. Delete all with CreatedDate before crawl start, but only after crawl is complete.
 
 ArticleStore: caching for all queries. Clear after save/remove.
 automatic cached query using DatabeanStore.cachedQuery(). clear all on remove and store.
@@ -13,53 +16,54 @@ Need smarter cache indexing. allowing multiple keys for invalidation. using nami
   convention for db: Table.ColA=ValA|Table.ColB=ValB|Table.ColC=* . Clear on Save (for dirty columns) and Remove (must load object for that).
 
 Info list pages (HB, resources):
-- Search box.
-- images of articles should be rendered in a "known" size and fit in phone screen.
+- Search box or tab.
 
-+ user admin screen: typeahead for carrier, remove verified checkboxes. check that carrier matches country.
-+ New My Baby and I logo
-+ BACK BREADCRUMBS:
-  + would be nice to be able to pass title of back page. e.g. _backtitle_
-    if not present, use default "Back" or whatever is passed into writeBackButton
-  + Support goBackException to use JS to pop stack. implement in Profile pages.
-  + writeBackButton(id):
-    if _back_ param, then call js pushBackHistory(_back_, id) - only push if top of stack is not same id
-    write button hidden. show it with js if stack is not empty and top of stack==id
-    on click, pop from stack, redirect.
-= GoBACK:
-  ? always push page to stack. then GoBackExc will always work.
-  - to keep it clean, delete the stack when pressing on a tab icon
-  + when pressing BACK, need to pass param to page and prevent pushing of the page on the stack. or otherwise, subtract 2 from stack size.
-  = angular shape to button's left side. +blue color.
-  = (0.0) page to support isBreadcrumb. If false, do not push into history stack. in gallery, set false for indiv image.
-= (0) Redo iPhone UI:
-  - title bar, tab bars, buttons: fixed. scrollable center.
-    x try to avoid using fixed positioning. try table with height=100% and scrollable center.
-    + better location for menu bar.
-      + icon in top bar to show the menu, hide the page, tabbar, back button.
-    - (0.1) when pressing MENU button, hide tabbar, menu icon. change back button functionality to restore.
-    - (0.2) smaller icons in tabbar (24px?). especially if too many of them. use scale CSS attribute?
-      calc icon size dynamically. cache. or mandate 48px.
-    + rendering of #tabbar at end of page. on focus/blur, set position to fixed/static (same as titlebar)
-    - "menu" button:
-      + better icon.
-      + align to right
-      + on click, toggle visib of navbar.
-      - don't show menu button if nav bar is empty (i.e. no options). but there will be always the default options.
-  - need place to show Login/Logout, Register, Help, Home links.
++ iPhone desktop + splash icons.
+= Home page when logged in (PortalPage):
+  + when logged in, do not add the Master tab, but rather the HomeTab with the Portal page. House icon.
+    or redirect to PortalPage, or find way to hide the bg image of the babies (hard code #middle background-image:none !important in source)
+  + for MasterTab, if logged in on a smartphone, return the House icon instead of the logo.
+  - Calendar. click to take to DayPage
+    - highlight Due date, delivery date.
+    - let implementors append CSS class to a cell
+  - what's on your mind? text box.
+  - most recent uploaded image + upload control.
+  - list of checklists with 4/6 complete indicator. arrow > to take to checklist screen with # in url
+  - links to relevant articles for current stage. arrow > to take to article.
+  - title at top of page: Stage stats: "Week 6, 56 days to go." "David is 6 weeks old".
++ Import of HB articles from .html files (will allow richer HTML formatting such as H3 and tables)
+    and/or allow pasting HTML code in addition to RichEdit control
+  or import/export from DB via Zip file.
+
+- TopBarControl
+  - check rendering on all projects (My eLert, MMM, Samoyan)
+  - check IE7 on desktop
+
+- Horizontal navigation (tab):
+  ? render tabs upside down
+  - set Fixed to top. Padding at bottom should not be fixed.
+
+= (3) GoBACK:
+  = when pushing on stack, check history.length. if same as during prev push, may indicate that the browser's back button was pressed.
+    esp. if window.location.pathname is same as that in BACK history at n-1 (before push).
+  = GoBackPage: need to redirect to SELF if BACK stack is empty. when can this happen? after clearing BACK stack? 
+    GoBackOrSaveRedirectException
+    SaveRedirectException
+  = Improve goback redirection: page with JS is slow and flickers
+    - always post the top of the stack in a _back_ param.
+    - when doing a GoBack redirection, redirect to that URL instead of to the GoBack page.
+    - pass param to the page to pop the stack accordingly. _backpop_ or similar. 
+= Redo iPhone UI:
+  - support for ... MORE in tab bar if there are too many tabs
+  = when pressing MENU button, hide tabbar, menu icon. change BACK button functionality to restore.
+  - don't show MENU button if nav bar is empty (i.e. no options). ?but there will be always the default options.
+  - need place to show Login/Logout, Register, Help.
   - need place for Settings/profile link. Also in web UI. See facebook's dropdown corner menu.
-  + Don't show title in page area on mobile.
   - TwoCol: round cornered group of elements. see http://www.diffen.com/difference/Capex_vs_Opex for nice style
     support > links for rows.
     - Reimplement Profile page as list of properties with links to edit screens. Then no need for Profile Tab. but then, where to place link to settings? under name of user in nav bar?
       use new Back button to return to previous screen
-  - action buttons should be fixed to top/bottom.
-= (1) Upside down rendering of TabControl (see CNBC app). Use at top of pages in mobile view to navigate between screens.
-  also needs fixed positioning. set class to Fixed.
-  - initially, render as link bar.
-= cleanup TopBarControl. no longer used in mobile UI. Remove and incorporate into envelope?
-
-ASK what it takes to demo the app w/o publication. Do we need apple dev acct or can he do it from his end?
+  - action buttons (Save, Cancel) should be fixed to top/bottom (i.e. always visible).
 
 brent feedback:
 journal: timeline across the top
@@ -69,8 +73,10 @@ categories for articles. can then let user browser by category.
 Checklists (mom form)
 - improve design style
 - collapse lists with >>. send via ajax
+= checklists from earlier stages (preconception, pregnancy, infancy): show as faded.
 
-Dr visits:
+Appointments:
+- DB table
 - make part of journal
 - attach checklists to a visit based on timeline. including: birth plan.
 - attach suggested questions(article) to a visit based on timeline.
@@ -87,7 +93,10 @@ allow to pass in the imagesize spec string for the thumbnail. Can then make it 3
 
 design "notebook" style for journal. lines, margins, etc.
 
-guided setup
+Promote books for sale on Amazon. Collect commission.
+Discussion forums tab.
+
+
 
 INTERNAL MESSAGING:
 + InternalMessages table: id, subject, fromUserID, toUserID, date created, read flag, important flag, content (html), attachments, threadID.

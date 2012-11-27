@@ -9,6 +9,7 @@ import samoyan.core.Util;
 import samoyan.servlet.RequestContext;
 import samoyan.servlet.exc.RedirectException;
 import samoyan.servlet.exc.WebFormException;
+import baby.app.BabyConsts;
 import baby.database.Article;
 import baby.database.ArticleStore;
 import baby.database.Stage;
@@ -160,7 +161,7 @@ public final class EditHealthBegPage extends BabyPage
 			
 			this.article.setPhoto(getParameterImage("image"));
 			this.article.setPriority(isParameter("pinned")? 100 : 0);
-			this.article.setSection(Article.SECTION_HEALTHY_BEGINNINGS);
+			this.article.setSection(BabyConsts.SECTION_HEALTHY_BEGINNINGS);
 			
 			this.article.setTimelineFrom(getParameterInteger("from"));
 			this.article.setTimelineTo(getParameterInteger("to"));

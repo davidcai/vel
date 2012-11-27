@@ -1,5 +1,6 @@
 package baby.database;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,6 +40,17 @@ public class BabyStore extends DataBeanStore<Baby>
 	
 	public List<UUID> getByUser(UUID userID) throws Exception
 	{
-		return queryByColumn("UserID", userID, "Name", true);
+		List<UUID> babies = queryByColumn("UserID", userID, "Name", true);
+		if (babies.size()==0)
+		{
+			// Auto create the first baby
+			Baby baby = new Baby();
+			baby.setUserID(userID);
+			save(baby);
+			
+			babies = new ArrayList<UUID>();
+			babies.add(baby.getID());
+		}
+		return babies;
 	}
 }

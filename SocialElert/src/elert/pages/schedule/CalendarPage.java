@@ -1,15 +1,14 @@
 package elert.pages.schedule;
 
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import samoyan.controls.BigCalendarControl;
 import samoyan.controls.DataTableControl;
-import samoyan.controls.SelectInputControl;
 import samoyan.core.DateFormatEx;
 import samoyan.core.ParameterMap;
 
@@ -57,7 +56,7 @@ public final class CalendarPage extends ElertPage
 		
 		// Bucketize
 		List<Opening> todaysOpenings = new ArrayList<Opening>();
-		int[] count = new int[cal.getMaximum(Calendar.DAY_OF_MONTH) + 1];
+		final int[] count = new int[cal.getMaximum(Calendar.DAY_OF_MONTH) + 1];
 		
 		for (UUID openingID : openingIDs)
 		{
@@ -76,7 +75,19 @@ public final class CalendarPage extends ElertPage
 		write("<br><br>");
 		
 		// Render calendar
-		writeMonth(yyyy, mm, dd, count);
+		final int currentMonth = mm;
+		new BigCalendarControl(this)
+		{
+			protected void renderCell(int yyyy, int mm, int dd)
+			{
+				if (mm==currentMonth)
+				{
+					writeEncodeLong(count[dd]);
+				}
+			}
+		}
+		.setDay(yyyy, mm, dd)
+		.render();
 		
 		// Render today's openings
 		if (todaysOpenings.size()>0)
@@ -235,180 +246,5 @@ public final class CalendarPage extends ElertPage
 				}
 			}
 		}.render();			
-	}
-
-	private void writeMonth(int yyyy, int mm, int dd, int[] count)
-	{
-		mm--; // 1-based to 0-based
-		
-		DateFormat df;
-		
-		Calendar cal = Calendar.getInstance(getTimeZone(), getLocale());
-		cal.clear();
-		cal.set(yyyy, mm, 1, 12, 0, 0);
-		cal.set(Calendar.MILLISECOND, 0);
-		
-		// The frame
-		write("<table class=BigCalendar>");
-
-		// Month header
-		ParameterMap params = new ParameterMap();
-		write("<tr valign=middle>");
-		write("<td class=Month>");
-			cal.set(yyyy, mm, 1, 12, 0, 0);
-			cal.add(Calendar.MONTH, -1);
-			df = new SimpleDateFormat("MMM");
-			df.setTimeZone(cal.getTimeZone());
-			params.plus("y", String.valueOf(cal.get(Calendar.YEAR)))
-				.plus("m", String.valueOf(cal.get(Calendar.MONTH)+1))
-				.plus("d", String.valueOf(Math.min(dd, cal.getActualMaximum(Calendar.DAY_OF_MONTH))));
-			write("<a href=\"");
-			writeEncode(getPageURL(getContext().getCommand(), params));
-			write("\">");
-			writeEncode("< ");
-			writeEncode(df.format(cal.getTime()));
-			write("</a>");
-		write("</td><td class=Month colspan=5>");
-//			df = new SimpleDateFormat("MMMM yyyy");
-//			df.setTimeZone(cal.getTimeZone());
-//			writeEncode(df.format(cal.getTime()));
-
-			// Nav form
-			df = new SimpleDateFormat("MMMM");
-			df.setTimeZone(cal.getTimeZone());
-			writeFormOpen("GET", getContext().getCommand());
-				
-				SelectInputControl combo = new SelectInputControl(this, "m");
-				combo.setInitialValue(mm+1);
-				for (int i=1; i<=12; i++)
-				{
-					cal.set(yyyy, i-1, 1);
-					combo.addOption(df.format(cal.getTime()), i);
-				}
-				combo.setAutoSubmit(true);
-				combo.render();
-				write(" ");
-				combo = new SelectInputControl(this, "y");
-				combo.setInitialValue(yyyy);
-				for (int i=cal.get(Calendar.YEAR)+1; i>cal.get(Calendar.YEAR)+1-10; i--)
-				{
-					combo.addOption(String.valueOf(i), i);
-				}
-				combo.setAutoSubmit(true);
-				combo.render();
-//				write(" ");
-//				writeButton(getString("controls:Button.Go"));
-				writeHiddenInput("d", dd);
-
-			writeFormClose();
-	
-			
-		write("</td><td class=Month>");
-			cal.set(yyyy, mm, 1, 12, 0, 0);
-			cal.add(Calendar.MONTH, 1);
-			df = new SimpleDateFormat("MMM");
-			df.setTimeZone(cal.getTimeZone());
-			params.plus("y", String.valueOf(cal.get(Calendar.YEAR)))
-				.plus("m", String.valueOf(cal.get(Calendar.MONTH)+1))
-				.plus("d", String.valueOf(Math.min(dd, cal.getActualMaximum(Calendar.DAY_OF_MONTH))));
-			write("<a href=\"");
-			writeEncode(getPageURL(getContext().getCommand(), params));
-			write("\">");
-			writeEncode(df.format(cal.getTime()));
-			writeEncode(" >");
-			write("</a>");
-		write("</td></tr>");
-		
-		// Days of week
-		cal.set(yyyy, mm, 1, 12, 0, 0);
-		int firstDow = cal.getFirstDayOfWeek(); // Typically Sunday or Monday
-		cal.set(Calendar.DAY_OF_WEEK, firstDow);
-		
-		df = new SimpleDateFormat("EEE");
-		write("<tr>");
-		for (int i=0; i<7; i++)
-		{
-			write("<td class=DOW>");
-			writeEncode(df.format(cal.getTime()));
-			write("</td>");
-			cal.add(Calendar.DATE, 1);
-		}
-		write("</tr>");
-		
-		// Days
-		cal.set(Calendar.DAY_OF_MONTH, 1);
-		if (firstDow!=cal.get(Calendar.DAY_OF_WEEK))
-		{
-			cal.set(Calendar.DAY_OF_WEEK, firstDow);
-		}
-		else
-		{
-			cal.add(Calendar.DATE, -7);
-		}
-		
-		// Always print 6 weeks
-		for (int week=0; week<6; week++)
-		{
-			write("<tr>");
-			
-			for (int day=0; day<7; day++)
-			{
-				int m = cal.get(Calendar.MONTH);
-				int d = cal.get(Calendar.DAY_OF_MONTH);
-				write("<td class=\"Day");
-				if (m!=mm)
-				{
-					write(" Disabled");
-				}
-				else if (d==dd)
-				{
-					write(" Selected");
-				}
-				write("\">");
-				if (m==mm && d!=dd)
-				{
-					params.plus("y", String.valueOf(yyyy));
-					params.plus("m", String.valueOf(mm+1));
-					params.plus("d", String.valueOf(d));
-					write("<a href=\"");
-					writeEncode(getPageURL(getContext().getCommand(), params));
-					write("\">");
-				}
-				else
-				{
-					write("<div>");
-				}
-				write("<div class=Number>");
-				write(d);
-				write("</div>");
-
-				int x = count[d];
-				if (m==mm && x>0)
-				{
-					writeEncodeLong(x);
-				}
-				else
-				{
-					write("&nbsp;");
-				}
-
-				if (m==mm && d!=dd)
-				{
-					write("</a>");
-				}
-				else
-				{
-					write("</div>");
-				}
-				write("</td>");
-				
-				cal.add(Calendar.DATE, 1);
-			}
-			
-			write("</tr>");
-		}
-		
-		// Close the frame
-		write("</table>");
 	}
 }

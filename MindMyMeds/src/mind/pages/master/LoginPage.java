@@ -7,10 +7,4 @@ public class LoginPage extends samoyan.apps.master.LoginPage
 	{
 		writeImage("mind/logo.png", null);
 	}
-	
-	@Override
-	protected boolean isAllowRememberMe()
-	{
-		return false;
-	}
 }

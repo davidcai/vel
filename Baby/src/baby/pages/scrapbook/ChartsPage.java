@@ -233,6 +233,8 @@ public class ChartsPage extends BabyPage
 	@Override
 	public void renderHTML() throws Exception
 	{
+		writeHorizontalNav(ChartsPage.COMMAND);
+		
 		writeEncode(getString("scrapbook:Charts.Help"));
 		write("<br>");
 
@@ -312,7 +314,6 @@ public class ChartsPage extends BabyPage
 		UUID userID = getContext().getUserID();
 		String momName = UserStore.getInstance().load(userID).getDisplayName();
 		DateFormat df = DateFormatEx.getMiniDateInstance(getLocale(), getTimeZone());
-		//DateFormat df = DateFormatEx.getSimpleInstance("MM-dd-yy", getLocale(), getTimeZone());
 		
 		for (UUID recID : sortedRecIDs)
 		{

@@ -446,7 +446,7 @@ function tooltipToggle(e)
 // Back button
 function backStackSize()
 {
-	var sz = sessionStorage.getItem("bkStkSz");
+	var sz = windowStorage.getItem("bkStkSz");
 	if (sz==null)
 	{
 		return 0;
@@ -456,55 +456,50 @@ function backStackSize()
 		return Number(sz);
 	}
 }
-function backPush(url, caption)
+function backPush()
 {
-	var redirected = sessionStorage.getItem("bkStkRedirect");
-	sessionStorage.removeItem("bkStkRedirect");
-	if (redirected=="true")
-	{
-		return;
-	}
 	var sz = backStackSize();
-	if (sz==0 || sessionStorage.getItem("bkStkID"+(sz-1))!=window.location.pathname)
+	if (sz==0 || windowStorage.getItem("bkStkID"+(sz-1))!=window.location.pathname)
 	{
-		sessionStorage.setItem("bkStkU"+sz, url);
-		sessionStorage.setItem("bkStkC"+sz, caption);
-		sessionStorage.setItem("bkStkID"+sz, window.location.pathname);
-		sessionStorage.setItem("bkStkSz", (sz+1));
+		windowStorage.setItem("bkStkU"+sz, window.location.href);
+		windowStorage.setItem("bkStkID"+sz, window.location.pathname);
+		windowStorage.setItem("bkStkSz", (sz+1));
 	}
 }
 function backActivateButton(btnID)
 {
 	var sz = backStackSize();
-	if (sz>0 && sessionStorage.getItem("bkStkID"+(sz-1))==window.location.pathname)
+	if (sz>1)
 	{
-		var caption = sessionStorage.getItem("bkStkC"+(sz-1));
-		if (caption!=null && caption!="")
-		{
-			$("#"+btnID).attr("value", caption);
-		}
-		$("#"+btnID)
-			.show()
-			.on("click", backPopAndRedirect);
+		$("#"+btnID).show().on("click", backPopAndRedirect);
 	}
 }
 function backPopAndRedirect(ev)
 {
 	var sz = backStackSize();
-	if (sz>0)
+	if (sz>1)
 	{
-		sz--;
-		var url = sessionStorage.getItem("bkStkU"+sz);
-		sessionStorage.setItem("bkStkSz", sz);
-		sessionStorage.removeItem("bkStkID"+sz);
-		sessionStorage.removeItem("bkStkU"+sz);
-		sessionStorage.removeItem("bkStkC"+sz);
-		sessionStorage.setItem("bkStkRedirect", "true");
+		var url = windowStorage.getItem("bkStkU"+(sz-2));
+		windowStorage.setItem("bkStkSz", (sz-2));
 		window.location.href = url;
-		
 		if (ev!=null)
 		{
 			ev.preventDefault();
 		}
 	}
 }
+function backClear()
+{
+	windowStorage.setItem("bkStkSz", 0);
+}
+function backPrint()
+{
+	var sz = backStackSize();
+	var i;
+	for (i=0; i<sz; i++)
+	{
+		document.write(windowStorage.getItem("bkStkU"+i));
+		document.write("<br>");
+	}
+}
+backPush();

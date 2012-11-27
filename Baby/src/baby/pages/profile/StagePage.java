@@ -3,13 +3,10 @@ package baby.pages.profile;
 import java.util.Calendar;
 import java.util.Date;
 
-import samoyan.apps.profile.CloseAccountPage;
 import samoyan.apps.profile.ProfilePage;
-import samoyan.core.ParameterMap;
 import samoyan.core.TimeZoneEx;
-import samoyan.servlet.RequestContext;
 import samoyan.servlet.Setup;
-import samoyan.servlet.exc.RedirectException;
+import samoyan.servlet.exc.GoBackRedirectException;
 import samoyan.servlet.exc.WebFormException;
 import baby.database.Mother;
 import baby.database.MotherStore;
@@ -28,6 +25,8 @@ public final class StagePage extends BabyPage
 	@Override
 	public void renderHTML() throws Exception
 	{
+		boolean phone = getContext().getUserAgent().isSmartPhone();
+		
 		Mother mother = MotherStore.getInstance().loadByUserID(getContext().getUserID());
 		String initial = "pre";
 		if (mother.getBirthDate()!=null)
@@ -46,22 +45,31 @@ public final class StagePage extends BabyPage
 		
 		write("<table>");
 		
-		write("<tr valign=middle><td>");
-		writeImage("baby/stage-preconception.jpg", getString("babyprofile:Stage.Preconception"));
-		write("</td><td>");
-		write("<big>");
+		write("<tr valign=middle>");
+		if (!phone)
+		{
+			write("<td>");
+			writeImage("baby/stage-preconception.jpg", getString("babyprofile:Stage.Preconception"));
+			write("</td>");
+		}
+		write("<td>");
+//		write("<big>");
 		writeRadioButton("stage", getString("babyprofile:Stage.PreconceptionDetail"), "pre", initial);
-		write("</big>");
+//		write("</big>");
 		write("</td></tr>");
 		
-		write("<tr valign=middle><td>");
-		writeImage("baby/stage-pregnancy.jpg", getString("babyprofile:Stage.Pregnancy"));
-		write("</td><td>");
-		write("<big>");
+		write("<tr valign=middle>");
+		if (!phone)
+		{
+			writeImage("baby/stage-pregnancy.jpg", getString("babyprofile:Stage.Pregnancy"));
+			write("</td>");
+		}
+		write("<td>");
+//		write("<big>");
 		writeRadioButton("stage", getString("babyprofile:Stage.PregnancyDetail"), "pregnancy", initial);
 		write(" ");
 		writeDateInput("due", mother.getDueDate());
-		write("</big>");
+//		write("</big>");
 		if (mother.getDueDate()==null)
 		{
 			write("<br><span class=Faded>");
@@ -70,14 +78,18 @@ public final class StagePage extends BabyPage
 		}
 		write("</td></tr>");
 
-		write("<tr valign=middle><td>");
-		writeImage("baby/stage-infancy.jpg", getString("babyprofile:Stage.Infancy"));
-		write("</td><td>");
-		write("<big>");
+		write("<tr valign=middle>");
+		if (!phone)
+		{
+			writeImage("baby/stage-infancy.jpg", getString("babyprofile:Stage.Infancy"));
+			write("</td>");
+		}
+		write("<td>");
+//		write("<big>");
 		writeRadioButton("stage", getString("babyprofile:Stage.InfancyDetail"), "infancy", initial);
 		write(" ");
 		writeDateInput("delivery", mother.getBirthDate());
-		write("</big>");
+//		write("</big>");
 		write("</td></tr>");
 
 		write("</table>");
@@ -85,10 +97,7 @@ public final class StagePage extends BabyPage
 		write("<br>");
 		writeSaveButton(mother);
 		
-		writeFormClose();
-		
-		write("<br><br>");
-		writeLink(getString("babyprofile:Stage.Unsubscribe", Setup.getAppTitle(getLocale())), getPageURL(CloseAccountPage.COMMAND));
+		writeFormClose();		
 	}
 	
 	@Override
@@ -158,7 +167,8 @@ public final class StagePage extends BabyPage
 		
 		MotherStore.getInstance().save(mother);
 		
-		// Redirect to self
-		throw new RedirectException(getContext().getCommand(), new ParameterMap(RequestContext.PARAM_SAVED, ""));
+		// Redirect to parent
+		progressGuidedSetup();
+		throw new GoBackRedirectException();
 	}
 }

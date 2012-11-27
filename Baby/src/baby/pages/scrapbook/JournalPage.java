@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import samoyan.controls.TextAreaInputControl;
 import samoyan.core.DateFormatEx;
 import samoyan.core.ParameterMap;
 import samoyan.core.Util;
@@ -74,6 +75,8 @@ public class JournalPage extends BabyPage
 	@Override
 	public void renderHTML() throws Exception
 	{
+		writeHorizontalNav(JournalPage.COMMAND);
+
 		DateFormat df = DateFormatEx.getSimpleInstance("MMMMM d, yyyy", getLocale(), getTimeZone());
 
 		// Date param
@@ -97,10 +100,15 @@ public class JournalPage extends BabyPage
 		write("</h2>");
 
 		// What's on your mind?
-		writeEncode(getString("scrapbook:Journal.WhatIsOnYourMind"));
+//		writeEncode(getString("scrapbook:Journal.WhatIsOnYourMind"));
 		writeFormOpen();
-		write("<br>");
-		writeTextAreaInput("text", "", 80, 3, JournalEntry.MAXSIZE_TEXT);
+//		write("<br>");
+		new TextAreaInputControl(this, "text")
+			.setRows(3).setCols(80)
+			.setMaxLength(JournalEntry.MAXSIZE_TEXT)
+			.setPlaceholder(getString("scrapbook:Journal.WhatIsOnYourMind"))
+			.render();
+//		writeTextAreaInput("text", "", 80, 3, JournalEntry.MAXSIZE_TEXT);
 		write("<br><br>");
 		writeImageInput("photo", null);
 		write("<br>");

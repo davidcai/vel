@@ -3,6 +3,7 @@ package baby.pages.info;
 import java.util.List;
 import java.util.UUID;
 
+import samoyan.controls.SelectInputControl;
 import samoyan.core.ParameterMap;
 import samoyan.core.Util;
 import baby.database.Article;
@@ -25,16 +26,20 @@ public class ResourcesPage extends BabyPage
 	@Override
 	public void renderHTML() throws Exception
 	{
-		StringBuilder link = new StringBuilder();
-		link.append("<a href=\"");
-		link.append(getPageURL(MedicalCenterPage.COMMAND));
-		link.append("\">");
-		link.append("$text$");
-		link.append("</a>");
-		
 		Mother mother = MotherStore.getInstance().loadByUserID(getContext().getUserID());
-		if (Util.isEmpty(mother.getMedicalCenter()))
+		List<String> medicalCenters = ArticleStore.getInstance().getMedicalCenters(mother.getRegion());
+
+		writeHorizontalNav(ResourcesPage.COMMAND);
+
+		if (Util.isEmpty(mother.getMedicalCenter()) || medicalCenters.contains(mother.getMedicalCenter())==false)
 		{
+			StringBuilder link = new StringBuilder();
+			link.append("<a href=\"");
+			link.append(getPageURL(MedicalCenterPage.COMMAND));
+			link.append("\">");
+			link.append("$text$");
+			link.append("</a>");
+
 			String pattern = Util.textToHtml(getString("information:Resources.NoMedicalCenter", "$link$"));
 			pattern = Util.strReplace(pattern, "$link$", link.toString());
 			pattern = Util.strReplace(pattern, "$text$", Util.textToHtml(getString("information:Resources.ChooseMedicalCenter")));
@@ -42,13 +47,28 @@ public class ResourcesPage extends BabyPage
 			return;
 		}
 		
-		List<UUID> articleIDs = ArticleStore.getInstance().queryByMedicalCenter(mother.getRegion(), mother.getMedicalCenter());
+		String medCenter = getParameterString("center");
+		if (Util.isEmpty(medCenter))
+		{
+			medCenter = mother.getMedicalCenter();
+		}
+		List<UUID> articleIDs = ArticleStore.getInstance().queryByMedicalCenter(mother.getRegion(), medCenter);
 		
-		String pattern = Util.textToHtml(getString("information:Resources.FoundResources", articleIDs.size(), "$link$"));
-		pattern = Util.strReplace(pattern, "$link$", link.toString());
-		pattern = Util.strReplace(pattern, "$text$", mother.getMedicalCenter());
-		write(pattern);
-		write("<br><br>");
+		// Medical center drop down
+		writeFormOpen("GET", null);
+		write("<table><tr valign=middle><td>");
+		writeEncode(getString("information:Resources.FoundResources", articleIDs.size()));
+		write("</td><td>");
+		SelectInputControl select = new SelectInputControl(this, "center");
+		for (String m : medicalCenters)
+		{
+			select.addOption(m, m);
+		}
+		select.setInitialValue(medCenter);
+		select.setAutoSubmit(true);
+		select.render();
+		write("</td></tr></table><br>");
+		writeFormClose();
 		
 		for (UUID articleID : articleIDs)
 		{

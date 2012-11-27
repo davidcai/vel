@@ -15,9 +15,6 @@ public final class Article extends DataBean
 	public static final int MAXSIZE_MEDICAL_CENTER = 64;
 	public static final int MAXSIZE_SOURCE_URL = 2048;
 	
-	// Known sections
-	public static final String SECTION_HEALTHY_BEGINNINGS = "Healthy Beginnings";
-	
 	public String getHTML()
 	{
 		return (String) get("HTML");

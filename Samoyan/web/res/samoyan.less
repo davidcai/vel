@@ -30,7 +30,18 @@
 	-moz-border-radius: @radius;
 	-webkit-border-radius: @radius;
 }
-
+.scale (@magnitude) {
+    -moz-transform: scale(@magnitude);
+    -webkit-transform: scale(@magnitude);
+    -o-transform: scale(@magnitude);
+    -ms-transform: scale(@magnitude);
+    transform: scale(@magnitude);
+    -moz-transform-origin: 0 0;
+    -webkit-transform-origin: 0 0;
+    -o-transform-origin: 0 0;
+    -ms-transform-origin: 0 0;
+    transform-origin: 0 0;
+}
 
 // ---------- Basic tags ----------
 *				{.box-sizing(border-box);}
@@ -62,7 +73,7 @@ A				{color: @color-link; &:hover {color: @color-hover;}}
 .NoShow			{position: absolute; top:-9999px;}
 TEXTAREA		{resize: none;}
 
-.SmartPhone IMG	{max-width:100%;height:auto;}
+//.SmartPhone IMG	{max-width:100%;height:auto;}
 .Faded			{opacity:.5;}
 *[align=center]	{text-align:center;margin-left:auto;margin-right:auto;}
 *[align=right]	{text-align:right;}
@@ -201,6 +212,9 @@ INPUT[type="submit"],INPUT[type="button"] {
 }
 .MSIE INPUT[type=submit], .MSIE INPUT[type="button"] {
 	padding: 2px 10px;
+}
+.SmartPhone INPUT[type=submit], .MSIE INPUT[type="button"] {
+	padding: 6px 10px;
 }
 
 .RichEditCtrl {
@@ -347,99 +361,6 @@ DIV.InfoMessage {
 	}
 }
 
-// ---------- Top bar ----------
-.TopBar {
-	height: 100%;
-	width: 100%;
-	TD {
-		padding: 0px;
-		margin: 0px;
-		white-space: nowrap;
-	}
-	A {
-		text-decoration: none;
-		font-weight: bold;
-		&:hover {
-			text-decoration: underline;
-		}
-	}
-	.Logo {
-		padding-top: 2px;
-		font: @font-huge;
-		width:1px;
-		padding-right: 15px;
-	}
-	.Tabs {
-		width: 1px;
-		height: 100%;
-		TABLE {
-			height: 100%;
-			> TBODY > TR > TD {
-				padding: 2px 15px;
-				border-left: solid 1px lighten(@color-negative-background, 10%);
-				border-right: solid 1px darken(@color-negative-background, 10%);
-				text-align: center;
-				font: @font-small;
-				&.Current {
-					background: url('tab-current.png') bottom center no-repeat;
-				}
-			}
-		}
-	}
-	.Links {
-		padding-top: 2px;
-		text-align:right;
-		font: @font-small;
-		A {
-			color: inherit;
-			font-weight: normal;
-		}
-	}
-	.SearchBox {
-		background-image: url("search-go.png");
-		background-position: center right;
-		background-repeat: no-repeat;
-		background-color: inherit;
-		.border-radius(8px 8px);
-		padding: 0px 16px 0px 5px;
-		margin-top: 10px;
-//		font-family: inherit;
-//		font-size: inherit;
-		width: 120px;
-		color: inherit;
-	}
-}
-.SmartPhone .TopBar {
-	height: auto;
-	.Tabs TABLE {
-		height: auto;
-		width: 100%;
-		position: fixed;
-		bottom: 0px;
-		left: 0px;
-		background-color: @color-text;
-		.HalfLight25;
-		z-index: 999999;
-		TD {
-			padding: 2px 2px;
-			border: none;
-			&.Current {
-				background: none;
-				.Light50;
-			}
-			A {
-				color: @color-background;
-			}
-		}
-	}
-}
-.SmartPhone .TopBarPlaceHolder {
-	height: 60px;
-}
-.BlackBerry_5 .TopBar .Tabs TABLE {
-	bottom: -16px;
-}
-
 // ---------- Tooltip ----------
 .Tooltip {
 	border-bottom-width: 1px;
@@ -571,6 +492,64 @@ DIV.InfoMessage {
 	}
 }
 
+// ---------- Big calendar ----------
+.BigCalendar {
+	border: solid 1px @color-text-light;
+	TD {
+		text-align: center;
+		padding: 0px;
+		&.Day {
+			width: 60px; height: 60px;
+			> * {
+				width: 100%; height: 100%;
+				padding: 2px 2px 5px 2px;
+				display: block;
+			}
+			A {
+				text-decoration: none;
+				color: @color-text;
+				&:hover {
+					color: @color-background;
+					background-color: @color-hover;
+				}
+			}
+			.Number {
+				text-align: right;
+				font: @font-small;
+			}
+			border-right: solid 1px @color-text-light;
+			border-top: solid 1px @color-text-light;
+			&:last-child {
+				border-right: none;
+			}
+		}
+		&.DOW {
+			font: @font-small;
+		}
+		&.Selected {
+			background-color: @color-accent; color: @color-background;
+		}
+		&.Disabled {
+			color: @color-text-light;
+		}
+		&.Month {
+			background-color: @color-text-light; color: @color-background; text-align: center;
+			.GradientLight25;
+			A {
+				color: @color-background;
+				font: @font-small;
+				text-decoration: none;
+				&:hover {
+					color: @color-hover;
+				}
+			}
+		}
+	}
+}
+.SmartPhone .BigCalendar TD.Day {
+	width: 40px; height: 40px;
+}
+
 // ---------- Console ----------
 .Console {
 	background: black;
@@ -589,10 +568,83 @@ DIV.InfoMessage {
 	font-size: 6pt;
 }
 
+// ---------- Tab bar ----------
+
+.TabBar {
+	height: 100%;
+	width: 100%;
+	TD {
+		padding-top: 3px !important;
+		vertical-align: top;
+		text-align: center;
+		font: @font-small;
+		padding: 2px 2px;
+		border: none;
+		&.Current {
+			background: url('tab-current.png') bottom center no-repeat;
+		}
+		&.Tab {
+			A {
+				text-decoration: none;
+				font-weight: bold;
+				&:hover {
+					text-decoration: underline;
+				}
+			}
+		}
+		&.Links {
+			text-align: right;
+		}
+	}
+	A {
+		text-decoration: none;
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+//	.SearchBox {
+//		background-image: url("search-go.png");
+//		background-position: center right;
+//		background-repeat: no-repeat;
+//		background-color: inherit;
+//		.border-radius(8px 8px);
+//		padding: 0px 16px 0px 5px;
+//		margin-top: 10px;
+//		width: 120px;
+//	}
+}
+.SmartPhone .TabBar {
+	TD {
+		&.Current {
+			.Light50;
+		}
+		&.Tab {
+			border: none;
+			IMG {
+				height: 32px;
+				width: auto;
+			}
+			A {
+				font-size: 6pt;
+			}
+		}
+	}
+}
+.Computer .TabBar {
+	TD.Tab {
+		padding: 2px 15px;
+		border-left: solid 1px rgba(255,255,255,.1);
+		border-right: solid 1px rgba(0,0,0,.1);
+		&:first-child {
+			border: none;
+		}
+	}
+}
+
 // ---------- Web envelope ----------
 
 .Inner {width: 1000px; margin:auto; height: 100%; padding: 0px;}
-.Mobile .Inner {width:100%; margin: 0px;}
+.SmartPhone .Inner {width:100%; margin: 0px;}
 
 #layout {
 	width: 100%;
@@ -603,42 +655,41 @@ DIV.InfoMessage {
 }
 
 #header {
-	height: @header-height;
+	height: 75px;
+	> TD {
+		height: 75px;
+		padding: 0px !important;
+	}
 	vertical-align: top;
 	color: @color-negative-text;
 	background-color: @color-negative-background;
+	.GradientLight25;
 	A {
 		color: @color-negative-text;
 		&:hover {
 			color: @color-negative-hover;
 		}
 	}
-	H1 {
-		color: inherit;
-		font-weight: bold; padding: 0px; margin: 0px;
-	}
-	.GradientLight25;
-	> TD {
-		padding: 0px;
-		height: @header-height;
-	}
 }
 
 #titlebar {
-	height: 30px;
-	> TABLE {
-		width: 100%; height: 30px;
+	height: 44px;
+	> TABLE.Fixed {
+		width: 100%; height: 44px;
 		position: fixed;
+		table-layout: fixed;
 		top: 0px;
 		left: 0px;
 		color: @color-negative-text;
 		background-color: @color-negative-background;
 		z-index: 999999;
-		.GradientLight25;
+		.HalfLight25;
+		border-bottom: solid 1px darken(@color-negative-background, 50%);
 		TD {
 			vertical-align: middle;
+			text-align: center;
 			&:first-child {
-				width: 20%;
+				width: 35px;
 				INPUT.Back {
 					color: @color-background;
 					background-color: @color-accent;
@@ -651,15 +702,10 @@ DIV.InfoMessage {
 				}
 			}
 			&:last-child {
-				width: 20%;
-				text-align: right;
-				IMG {
-					margin-right: 5px;
-				}
+				width: 35px;
 			}
 			H1 {
 				width: 100%;
-				text-align: center;
 				text-overflow: ellipsis;
 				overflow: hidden;
 				white-space: nowrap;
@@ -669,43 +715,34 @@ DIV.InfoMessage {
 	}
 }
 #tabbar {
-	height: 60px;
-	> TABLE {
-		height: 60px;
+	height: 50px;
+	> .Fixed {
+		height: 50px;
 		width: 100%;
 		position: fixed;
+		z-index: 999999;
 		bottom: 0px;
 		left: 0px;
 		background-color: @color-text;
 		.HalfLight25;
-		z-index: 999999;
-		TD {
-			vertical-align: bottom;
-			text-align: center;
-			font: @font-small;
-			padding: 2px 2px;
-			border: none;
-			&.Current {
-				.Light50;
-			}
-			A {
-				color: @color-background;
-				text-decoration: none;
-				font-weight: bold;
-				&:hover {
-					text-decoration: underline;
-				}
-			}
+		border-top: solid 1px @color-text;
+		color: @color-background;
+		A {
+			color: @color-background;
 		}
 	}
 }
+.BlackBerry_5 #tabbar > .Fixed {
+	bottom: -16px;
+}
+
 
 #middle {
 	padding: 0px;
 }
 
 #footer {
-	height: @footer-height; 
+	height: 60px; 
 	font: @font-small;
 	color: @color-negative-text;
 	background-color: @color-negative-background;
@@ -718,7 +755,7 @@ DIV.InfoMessage {
 	.GradientLight25;
 	> TD {
 		padding: 10px 0px;
-		height: @footer-height;
+		height: 60px;
 	}
 }
 .SmartPhone #footer {

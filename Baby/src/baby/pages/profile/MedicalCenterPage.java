@@ -3,10 +3,9 @@ package baby.pages.profile;
 import java.util.List;
 
 import samoyan.apps.profile.ProfilePage;
-import samoyan.core.ParameterMap;
 import samoyan.core.Util;
-import samoyan.servlet.RequestContext;
-import samoyan.servlet.exc.RedirectException;
+import samoyan.servlet.Setup;
+import samoyan.servlet.exc.GoBackRedirectException;
 
 import baby.database.ArticleStore;
 import baby.database.Mother;
@@ -38,6 +37,10 @@ public class MedicalCenterPage extends BabyPage
 		{
 			COLS = 2;
 		}
+		
+		// Help
+		writeEncode(getString("babyprofile:MedicalCenter.Help", Setup.getAppTitle(getLocale())));
+		write("<br><br>");
 		
 		writeFormOpen();
 		
@@ -100,6 +103,8 @@ public class MedicalCenterPage extends BabyPage
 		mother.setMedicalCenter(center);
 		MotherStore.getInstance().save(mother);
 		
-		throw new RedirectException(getContext().getCommand(), new ParameterMap(RequestContext.PARAM_SAVED, ""));
+		// Redirect to parent
+		progressGuidedSetup();
+		throw new GoBackRedirectException();
 	}
 }

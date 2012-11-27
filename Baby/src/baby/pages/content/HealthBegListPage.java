@@ -7,6 +7,7 @@ import samoyan.controls.DataTableControl;
 import samoyan.controls.LinkToolbarControl;
 import samoyan.core.ParameterMap;
 
+import baby.app.BabyConsts;
 import baby.database.Article;
 import baby.database.ArticleStore;
 import baby.database.Stage;
@@ -30,7 +31,7 @@ public final class HealthBegListPage extends BabyPage
 			.addLink(	getString("content:HealthBegList.NewArticle"), getPageURL(EditHealthBegPage.COMMAND), "icons/basic1/pencil_16.png")
 			.render();
 
-		List<UUID> articleIDs = ArticleStore.getInstance().queryBySection(Article.SECTION_HEALTHY_BEGINNINGS);
+		List<UUID> articleIDs = ArticleStore.getInstance().queryBySection(BabyConsts.SECTION_HEALTHY_BEGINNINGS);
 		// !$! Need better sorting/grouping; scrolling
 		
 		new DataTableControl<UUID>(this, "articles", articleIDs)

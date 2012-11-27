@@ -12,7 +12,7 @@
 }
 
 // General
-.TopBar .Tabs TD {
+.TabBar .Tab {
 	IMG {
 		display: none;
 	}
@@ -25,7 +25,7 @@
 	font: @font-normal;
 	vertical-align: middle;
 }
-.SmartPhone .TopBar .Tabs TD {
+.SmartPhone .TabBar .Tab {
 	IMG {
 		display: inline-block;
 	}
@@ -268,59 +268,9 @@ BODY.SmartPhone[uri="/"] {
 }
 
 // BigCalendar
-.BigCalendar {
-	border: solid 1px @color-text-light;
-	TD {
-		text-align: center;
-		padding: 0px;
-		&.Day {
-			font: @font-huge;
-			> * {
-				padding: 2px 2px 5px 2px;
-				display: block;
-				width: 60px; height: 60px;
-			}
-			A {
-				text-decoration: none;
-				color: @color-text;
-				&:hover {
-					color: @color-background;
-					background-color: @color-hover;
-				}
-			}
-			.Number {
-				text-align: right;
-				font: @font-small;
-			}
-			border-right: solid 1px @color-text-light;
-			border-top: solid 1px @color-text-light;
-			&:last-child {
-				border-right: none;
-			}
-		}
-		&.DOW {
-			font: @font-small;
-		}
-		&.Selected {
-			background-color: @color-accent; color: @color-background;
-		}
-		&.Disabled {
-			color: @color-background-dark;
-		}
-		&.Month {
-			background-color: @color-text-light; color: @color-background; text-align: center;
-			.GradientLight25;
-			A {
-				color: @color-background;
-				font: @font-small;
-				text-decoration: none;
-				&:hover {
-					color: @color-hover;
-				}
-			}
-		}
-	}
+.BigCalendar TD.Day {
+	font: @font-huge;
 }
-.SmartPhone .BigCalendar TD.Day > * {
-	width: 40px; height: 40px;
+.SmartPhone .BigCalendar TD.Day {
+	font: @font-large;
 }

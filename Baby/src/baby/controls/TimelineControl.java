@@ -3,6 +3,7 @@ package baby.controls;
 import java.util.Map;
 
 import baby.database.Stage;
+import samoyan.controls.SelectInputControl;
 import samoyan.core.ParameterMap;
 import samoyan.servlet.WebPage;
 
@@ -10,28 +11,90 @@ public class TimelineControl
 {
 	private WebPage out;
 	private Stage stage;
-	private String command = null;
 	private String stageParamName = "stage";
 	private Map<String, String> params = null;
 	
-	public TimelineControl(WebPage outputPage, Stage stage)
+	// The stages in the timeline are:
+	// Label					Range
+	// -----					-----
+	// Preconception			*
+	// Pregnancy week 6-10		1-9
+	// Pregnancy week 10-12		10-15
+	// Pregnancy week 16-20		16-19
+	// Pregnancy week 20-24		20-23
+	// Pregnancy week 24-28		24-29
+	// Pregnancy week 30-32		30-35
+	// Pregnancy week 36		36-37
+	// Pregnancy week 38		38-40
+	// Infancy month 2			1-2
+	// Infancy month 4			3-4
+	// Infancy month 6			5-10
+	// Infancy month 12			11-12
+	private final static String[] labels = {
+		"Preconception",
+		"Week6",
+		"Week10",
+		"Week16",
+		"Week20",
+		"Week24",
+		"Week30",
+		"Week36",
+		"Week38",
+		"Month2",
+		"Month4",
+		"Month6",
+		"Month12"
+	};
+	private final static int[] ranges = {
+		1, 1,
+		101, 109,
+		110, 115,
+		116, 119,
+		120, 123,
+		124, 129,
+		130, 135,
+		136, 137,
+		138, 140,
+		201, 202,
+		203, 204,
+		205, 210,
+		211, 212
+	};
+
+	public TimelineControl(WebPage outputPage, Stage stage, String stageParamName)
 	{
 		this.out = outputPage;
 		this.stage = stage;
-		this.command = outputPage.getContext().getCommand();
-	}
-		
-	public TimelineControl setCommand(String command, Map<String, String> params)
-	{
-		this.command = command;
-		this.params = params;
-		return this;
+		this.stageParamName = stageParamName;
 	}
 	
-	public TimelineControl setStageParamName(String stageParamName)
+	public static int getLowRange(int stageInt)
 	{
-		this.stageParamName = stageParamName;
-		return this;
+		for (int i=0; i<labels.length; i++)
+		{
+			int low = ranges[i*2];
+			int hi = ranges[i*2+1];
+			
+			if (stageInt>=low && stageInt<=hi)
+			{
+				return low;
+			}
+		}
+		return 0;
+	}
+	public static int getHighRange(int stageInt)
+	{
+		for (int i=0; i<labels.length; i++)
+		{
+			int low = ranges[i*2];
+			int hi = ranges[i*2+1];
+			
+			if (stageInt>=low && stageInt<=hi)
+			{
+				return hi;
+			}
+		}
+		return 0;
 	}
 	
 	public void render()
@@ -41,53 +104,34 @@ public class TimelineControl
 		{
 			urlParams.putAll(this.params);
 		}
+				
+		this.out.writeFormOpen("GET", null);
 		
-		boolean smartPhone = out.getContext().getUserAgent().isSmartPhone();
-		if (stage.isPreconception())
+		int stageInt = stage.toInteger();
+		SelectInputControl select = new SelectInputControl(this.out, this.stageParamName);
+		for (int i=0; i<labels.length; i++)
 		{
-			// Nothing to show
-		}
-		else if (stage.isPregnancy())
-		{
-			// 40 weeks
-			out.write("<div class=TimelineBar>");
-			for (int i=1; i<=Stage.MAX_WEEKS; i++)
+			String label = this.out.getString("baby:TimelineCtrl."+labels[i]);
+			int low = ranges[i*2];
+			int hi = ranges[i*2+1];
+			
+			select.addOption(label, low + "-" + hi);
+			if (stageInt>=low && stageInt<=hi)
 			{
-				out.write("<a href=\"");
-				out.write(out.getPageURL(this.command, urlParams.plus(this.stageParamName, String.valueOf(Stage.pregnancy(i).toInteger()))));
-				out.write("\"");
-				if (i==stage.getPregnancyWeek())
-				{
-					out.write(" class=Current");
-				}
-				out.write(">");
-				out.writeEncodeLong(i);
-				out.write("</a>");
-				if (smartPhone && (i==13 || i==26))
-				{
-					out.write("<br>");
-				}
+				select.setInitialValue(low + "-" + hi);
 			}
-			out.write("</div>");
 		}
-		else if (stage.isInfancy())
+		select.setAutoSubmit(true);
+		select.render();
+		
+		if (this.params!=null)
 		{
-			// 12 months
-			out.write("<div class=TimelineBar>");
-			for (int i=1; i<=Stage.MAX_MONTHS; i++)
+			for (String k : this.params.keySet())
 			{
-				out.write("<a href=\"");
-				out.write(out.getPageURL(this.command, urlParams.plus(this.stageParamName, String.valueOf(Stage.infancy(i).toInteger()))));
-				out.write("\"");
-				if (i==stage.getInfancyMonth())
-				{
-					out.write(" class=Current");
-				}
-				out.write(">");
-				out.writeEncodeLong(i);
-				out.write("</a>");
+				this.out.writeHiddenInput(k, this.params.get(k));
 			}
-			out.write("</div>");
 		}
+		
+		this.out.writeFormClose();		
 	}
 }

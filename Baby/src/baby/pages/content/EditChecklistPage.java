@@ -13,6 +13,7 @@ import samoyan.core.Util;
 import samoyan.servlet.RequestContext;
 import samoyan.servlet.exc.RedirectException;
 import samoyan.servlet.exc.WebFormException;
+import baby.app.BabyConsts;
 import baby.database.CheckItem;
 import baby.database.CheckItemStore;
 import baby.database.Checklist;
@@ -65,10 +66,10 @@ public final class EditChecklistPage extends BabyPage
 		
 		twoCol.writeRow(getString("content:EditChecklist.Section"));
 		new SelectInputControl(twoCol, "section")
-			.addOption(getString("content:EditChecklist.ToDo"), Checklist.SECTION_TODO)
-			.addOption(getString("content:EditChecklist.DoctorVisit"), Checklist.SECTION_CHECKUP)
-			.addOption(getString("content:EditChecklist.Ultrasound"), Checklist.SECTION_ULTRASOUND)
-			.addOption(getString("content:EditChecklist.WellBaby"), Checklist.SECTION_WELL_BABY)
+			.addOption(getString("content:EditChecklist.ToDo"), BabyConsts.SECTION_TODO)
+			.addOption(getString("content:EditChecklist.DoctorVisit"), BabyConsts.SECTION_CHECKUP)
+			.addOption(getString("content:EditChecklist.Ultrasound"), BabyConsts.SECTION_ULTRASOUND)
+			.addOption(getString("content:EditChecklist.WellBaby"), BabyConsts.SECTION_WELL_BABY)
 			.setInitialValue(this.checklist.getSection())
 			.render();
 

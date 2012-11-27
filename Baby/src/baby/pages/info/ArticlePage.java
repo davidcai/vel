@@ -44,10 +44,13 @@ public class ArticlePage extends BabyPage
 //		writeEncode(this.article.getSourceURL());
 //		write("<br><br>");
 		
+		boolean healthyBeginnings = this.article.getSection().equals(BabyConsts.SECTION_HEALTHY_BEGINNINGS);
+		writeHorizontalNav(healthyBeginnings? HealthyBeginningsPage.COMMAND : ResourcesPage.COMMAND);
+		
 		if (this.article.getPhoto()!=null)
 		{
 			new ImageControl(this)
-				.img(this.article.getPhoto(), BabyConsts.IMAGESIZE_BOX_400X400)
+				.img(this.article.getPhoto(), getContext().getUserAgent().isSmartPhone()? BabyConsts.IMAGESIZE_BOX_150X150 : BabyConsts.IMAGESIZE_BOX_400X400)
 				.setAttribute("align", "right")
 				.render();
 		}

@@ -4,7 +4,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
+import samoyan.controls.ImageControl;
 import samoyan.core.ParameterMap;
+import samoyan.servlet.UserAgent;
+import samoyan.servlet.exc.PageNotFoundException;
 import baby.app.BabyConsts;
 import baby.database.JournalEntry;
 import baby.database.JournalEntryStore;
@@ -46,6 +49,11 @@ public class PhotoPage extends BabyPage
 				this.prevID = id;
 			}
 		}
+		
+		if (this.curEntry == null || this.curEntry.isHasPhoto()==false)
+		{
+			throw new PageNotFoundException();
+		}
 	}
 	
 	@Override
@@ -57,33 +65,45 @@ public class PhotoPage extends BabyPage
 	@Override
 	public void renderHTML() throws Exception
 	{
-		if (this.curEntry != null && this.curEntry.isHasPhoto())
+		writeHorizontalNav(GalleryPage.COMMAND);
+
+		UserAgent ua = getContext().getUserAgent();
+		
+		String imgSz = BabyConsts.IMAGESIZE_BOX_800X800;
+		if (ua.getScreenWidth() <= 400)
 		{
-			write("<div class=\"LargeImage\">");
-			
-			writeImage(this.curEntry.getPhoto(), BabyConsts.IMAGESIZE_BOX_800X800, null, null);
-			
-			if (this.prevID != null)
-			{
-				write("<div class=\"PrevWrapper\">");
-				write("<a class=\"Prev\" href=\"");
-				write(getPageURL(COMMAND, new ParameterMap(PARAM_ID, this.prevID.toString())));
-				write("\">");
-				write("</a>");
-				write("</div>");
-			}
-			
-			if (this.nextID != null)
-			{
-				write("<div class=\"NextWrapper\">");
-				write("<a class=\"Next\" href=\"");
-				write(getPageURL(COMMAND, new ParameterMap(PARAM_ID, this.nextID.toString())));
-				write("\">");
-				write("</a>");
-				write("</div>");
-			}
-			
+			imgSz = BabyConsts.IMAGESIZE_BOX_400X400;
+		}
+		
+		write("<div class=\"LargeImage\">");
+		
+		ImageControl img = new ImageControl(this).img(this.curEntry.getPhoto(), imgSz);
+		if (ua.isSmartPhone())
+		{
+			img.width(ua.getScreenWidth()-2).height(0); // 2 pixels margin, auto-adjust height
+		}
+		img.render();
+		
+		if (this.prevID != null)
+		{
+			write("<div class=\"PrevWrapper\">");
+			write("<a class=\"Prev\" href=\"");
+			write(getPageURL(COMMAND, new ParameterMap(PARAM_ID, this.prevID.toString())));
+			write("\">");
+			write("</a>");
 			write("</div>");
 		}
-	}
+		
+		if (this.nextID != null)
+		{
+			write("<div class=\"NextWrapper\">");
+			write("<a class=\"Next\" href=\"");
+			write(getPageURL(COMMAND, new ParameterMap(PARAM_ID, this.nextID.toString())));
+			write("\">");
+			write("</a>");
+			write("</div>");
+		}
+		
+		write("</div>");
+	}	
 }

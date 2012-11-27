@@ -8,6 +8,7 @@ import samoyan.controls.DataTableControl;
 import samoyan.controls.LinkToolbarControl;
 import samoyan.core.ParameterMap;
 import samoyan.core.Util;
+import baby.app.BabyConsts;
 import baby.crawler.CrawlExecutor;
 import baby.database.Article;
 import baby.database.ArticleStore;
@@ -143,7 +144,7 @@ public final class ResourceListPage extends BabyPage
 			protected boolean isRenderRow(UUID articleID) throws Exception
 			{
 				Article article = ArticleStore.getInstance().load(articleID);
-				return article.getSection().equals(Article.SECTION_HEALTHY_BEGINNINGS)==false;
+				return article.getSection().equals(BabyConsts.SECTION_HEALTHY_BEGINNINGS)==false;
 			}
 
 			@Override

@@ -20,6 +20,8 @@ public class ImageControl extends TagControl
 	private String resName = null;
 	private int width = 0;
 	private int height = 0;
+	private int overrideWidth = 0;
+	private int overrideHeight = 0;
 	private String url = null;
 	private String altText = null;
 	
@@ -43,13 +45,13 @@ public class ImageControl extends TagControl
 
 	public ImageControl width(int width)
 	{
-		this.width = width;
+		this.overrideWidth = width;
 		return this;
 	}
 
 	public ImageControl height(int height)
 	{
-		this.height = height;
+		this.overrideHeight = height;
 		return this;
 	}
 
@@ -137,13 +139,27 @@ public class ImageControl extends TagControl
 		// Write the IMG tag
 		super.setAttribute("src", src);
 		super.setAttribute("alt", this.altText);
-		if (this.width>0)
+		if (this.overrideHeight<=0 && this.overrideWidth<=0)
 		{
-			super.setAttribute("width", String.valueOf(this.width));
+			if (this.width>0)
+			{
+				super.setAttribute("width", String.valueOf(this.width));
+			}
+			if (this.height>0)
+			{
+				super.setAttribute("height", String.valueOf(this.height));
+			}
 		}
-		if (this.height>0)
+		else
 		{
-			super.setAttribute("height", String.valueOf(this.height));
+			if (this.overrideWidth>0)
+			{
+				super.setAttribute("width", String.valueOf(this.overrideWidth));
+			}
+			if (this.overrideHeight>0)
+			{
+				super.setAttribute("height", String.valueOf(this.overrideHeight));
+			}
 		}
 		super.writeTag("img");
 

@@ -47,9 +47,6 @@ public class LessStylesheetPage extends WebPage
 		writeLESSVar("font-normal", getFontNormal());
 		writeLESSVar("font-small", getFontSmall());
 		
-		writeLESSVar("header-height", getHeaderHeight());
-		writeLESSVar("footer-height", getFooterHeight());
-
 		write("\r\n");
 		renderPrologue();
 		write("\r\n\r\n");
@@ -183,7 +180,7 @@ public class LessStylesheetPage extends WebPage
 	{
 		if (getContext().getUserAgent().isSmartPhone())
 		{
-			return "24pt Helvetica,Arial Narrow,Arial,Sans-Serif";
+			return "24pt Helvetica Neue,Helvetica,Arial Narrow,Arial,Sans-Serif";
 		}
 		else
 		{
@@ -194,7 +191,7 @@ public class LessStylesheetPage extends WebPage
 	{
 		if (getContext().getUserAgent().isSmartPhone())
 		{
-			return "16pt Helvetica,Arial Narrow,Arial,Sans-Serif";
+			return "16pt Helvetica Neue,Helvetica,Arial Narrow,Arial,Sans-Serif";
 		}
 		else
 		{
@@ -205,7 +202,7 @@ public class LessStylesheetPage extends WebPage
 	{
 		if (getContext().getUserAgent().isSmartPhone())
 		{
-			return "10pt Helvetica,Arial Narrow,Arial,Sans-Serif";
+			return "10pt Helvetica Neue,Helvetica,Arial Narrow,Arial,Sans-Serif";
 		}
 		else
 		{
@@ -216,21 +213,11 @@ public class LessStylesheetPage extends WebPage
 	{
 		if (getContext().getUserAgent().isSmartPhone())
 		{
-			return "8pt Helvetica,Arial Narrow,Arial,Sans-Serif";
+			return "8pt Helvetica Neue,Helvetica,Arial Narrow,Arial,Sans-Serif";
 		}
 		else
 		{
 			return "8pt Arial,Sans-Serif";
 		}
-	}
-	
-	protected String getFooterHeight()
-	{
-		return "60px";
-	}
-
-	protected String getHeaderHeight()
-	{
-		return "75px";
 	}
 }

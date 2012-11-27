@@ -136,10 +136,6 @@ public class LoginPage extends WebPage
 		
 		// Create auth token and set as cookie
 		boolean keep = isParameter(PARAM_KEEP);
-		if (keep && this.isAllowRememberMe()==false)
-		{
-			keep = false;
-		}
 		setCookie(RequestContext.COOKIE_AUTH, AuthTokenStore.getInstance().createAuthToken(user.getID(), getContext().getUserAgent().getString(), keep).toString());
 
 		
@@ -276,8 +272,6 @@ public class LoginPage extends WebPage
 			
 		write("</td></tr></table>"); // Button table
 		
-		if (this.isAllowRememberMe())
-		{
 			write("</td></tr><tr><td colspan=2 align=center>"); // Inner
 			
 			write("<small><br>");
@@ -285,7 +279,6 @@ public class LoginPage extends WebPage
 			write(" ");
 			writeTooltip(getString("master:Login.KeepLogin"), getString("master:Login.KeepHelp"));
 			write("</small>");
-		}
 		
 		write("</td></tr></table>"); // Inner
 		
@@ -317,13 +310,5 @@ public class LoginPage extends WebPage
 	 */
 	protected void renderLogo() throws Exception
 	{
-	}
-
-	/**
-	 * To be overridden by subclass to allow or disallow the remember me functionality.
-	 */
-	protected boolean isAllowRememberMe() throws Exception
-	{
-		return true;
 	}
 }

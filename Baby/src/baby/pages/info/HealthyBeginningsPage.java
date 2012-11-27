@@ -6,6 +6,7 @@ import java.util.UUID;
 import samoyan.core.ParameterMap;
 import samoyan.core.Util;
 import samoyan.database.Image;
+import baby.app.BabyConsts;
 import baby.controls.TimelineControl;
 import baby.database.Article;
 import baby.database.ArticleStore;
@@ -39,37 +40,38 @@ public class HealthyBeginningsPage extends BabyPage
 	@Override
 	public void renderHTML() throws Exception
 	{
+		// Figure out the stage and its range (high, low)
 		Mother mother = MotherStore.getInstance().loadByUserID(getContext().getUserID());
+		int low = 0;
+		int high = 0;
 		Stage stage = null;
 		if (isParameter(PARAM_STAGE))
 		{
-			stage = Stage.fromInteger(getParameterInteger(PARAM_STAGE));
+			String rangeStr = getParameterString(PARAM_STAGE);
+			int p = rangeStr.indexOf("-");
+			low = Integer.parseInt(rangeStr.substring(0, p));
+			high = Integer.parseInt(rangeStr.substring(p+1));
+			stage = Stage.fromInteger(low);
 		}
 		if (stage==null || stage.isValid()==false)
 		{
 			stage = mother.getPregnancyStage();
+			low = TimelineControl.getLowRange(stage.toInteger());
+			high = TimelineControl.getHighRange(stage.toInteger());
 		}
 		
-		List<UUID> articleIDs = ArticleStore.getInstance().queryBySectionAndTimeline(Article.SECTION_HEALTHY_BEGINNINGS, stage.toInteger());
-				
+		TimelineControl tlCtrl = new TimelineControl(this, stage, PARAM_STAGE);
+		
+		List<UUID> articleIDs = ArticleStore.getInstance().queryBySectionAndTimeline(BabyConsts.SECTION_HEALTHY_BEGINNINGS, low, high);
+		
+		writeHorizontalNav(HealthyBeginningsPage.COMMAND);
+
 		// Render timeline
-		if (stage.isPreconception())
-		{
-			writeEncode(getString("information:HealthyBeginnings.FoundResourcesPreconception", articleIDs.size()));
-		}
-		else if (stage.isPregnancy())
-		{
-			writeEncode(getString("information:HealthyBeginnings.FoundResourcesPregnancy", articleIDs.size(), stage.getPregnancyWeek()));
-		}
-		else if (stage.isInfancy())
-		{
-			writeEncode(getString("information:HealthyBeginnings.FoundResourcesInfancy", articleIDs.size(), stage.getInfancyMonth()));
-		}
-		write("<br><br>");
-		new TimelineControl(this, stage)
-			.setStageParamName(PARAM_STAGE)
-			.render();
-		write("<br>");
+		write("<table><tr valign=middle><td>");
+		writeEncode(getString("information:HealthyBeginnings.FoundResources", articleIDs.size()));
+		write("</td><td>");
+		tlCtrl.render();
+		write("</td></tr></table><br>");
 		
 		// Render articles
 		write("<table width=\"100%\"><col width=\"1%\"><col width=\"99%\">");

@@ -91,13 +91,15 @@ public class OverrideUserAgentPage extends WebPage
 		write("</h2>");
 		
 		String[] presets = {
+			"Mobile UI", "Mozilla/5.0 (iPhone; CPU iPhone OS 5_0_1 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1 Mobile/9A405 Safari/7534.48.3", String.valueOf(ua.getScreenWidth()), String.valueOf(ua.getScreenHeight()), "1",
 			"iPhone 3Gs iOS5", "Mozilla/5.0 (iPhone; CPU iPhone OS 5_0_1 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1 Mobile/9A405 Safari/7534.48.3", "320", "480", "1",
+//			"iPhone 5 iOS6", "Mozilla/5.0 (iPhone; CPU iPhone OS 5_0_1 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1 Mobile/9A405 Safari/7534.48.3", "320", "480", "1",
 			"Android HTC ADR6400L", "Mozilla/5.0 (Linux; U; Android 2.3.4; en-us; ADR6400L 4G Build/GRJ22) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1", "369", "554", "1",
 			"BlackBerry 9700", "BlackBerry9700/5.0.0.714 Profile/MIDP-2.1 Configuration/CLDC-1.1 VendorID/100", "480", "360", "1",
 			"New iPad", "Mozilla/5.0 (iPad; CPU OS 5_1_1 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1 Mobile/9B206 Safari/7534.48.3", "768", "1024", "2",
 			"Galaxy S III", "Mozilla/5.0 (Linux; U; Android 4.0.4; en-us; SAMSUNG-SGH-I747 Build/IMM76D) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30", "1280", "720", "2"
 		};
-		
+
 		ParameterMap params = new ParameterMap();
 		for (int i=0; i<presets.length; i+=5)
 		{			

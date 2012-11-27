@@ -11,13 +11,12 @@ import samoyan.apps.guidedsetup.GuidedSetupTab;
 import samoyan.apps.master.LoginPage;
 import samoyan.apps.master.MasterTab;
 import samoyan.apps.master.PrivacyPage;
-import samoyan.apps.master.RootPage;
 import samoyan.apps.master.TermsPage;
 import samoyan.apps.system.UnresponsiveVoiceCallPage;
 import samoyan.controls.ImageControl;
 import samoyan.controls.MetaTagControl;
 import samoyan.controls.NavTreeControl;
-import samoyan.controls.TopBarControl;
+import samoyan.controls.TabBarControl;
 import samoyan.core.Cache;
 import samoyan.core.Util;
 import samoyan.database.Permission;
@@ -112,26 +111,7 @@ public class EnvelopePage extends WebPage
 			}
 			writeIncludeJS("sessionstorage-1.4.js"); // Session storage for older browsers
 			writeIncludeJS("samoyan.js");
-	
-			// Push the page into the sessionStorage history stack
-			String back = getContext().getParameter(RequestContext.PARAM_BACK);
-			if (back==null)
-			{
-				back = getContext().getHeader("referer");
-			}
-			String backCaption = getContext().getParameter(RequestContext.PARAM_BACK_CAPTION);
-			if (back!=null)
-			{
-				write("<script type=\"text/javascript\">backPush('");
-				write(Util.jsonEncode(back));
-				write("','");
-				if (!Util.isEmpty(backCaption))
-				{
-					write(Util.jsonEncode(backCaption));
-				}
-				write("');</script>");
-			}
-
+			
 			// CSS
 			write("<style>BODY{visibility:hidden;}</style>"); // Hide BODY until CSS loads
 			writeIncludeCSS("samoyan.less");
@@ -201,7 +181,20 @@ public class EnvelopePage extends WebPage
 					// Fixed title bar
 					write("<div id=titlebar>");
 					write("<table class=Fixed><tr><td>");
-					writeBackButton(null, null);
+					
+					// Render the button initially hidden
+					String id = UUID.randomUUID().toString();
+					new ImageControl(this)
+						.resource("navbar-back.png")
+						.setStyleAttribute("display", "none")
+						.setAttribute("id", "backBtn"+id)
+						.render();
+					// Show it, if the page ID is at the top of the stack
+					write("<script type=\"text/javascript\">backActivateButton('backBtn");
+					write(id);
+					write("');</script>");
+					
+//					writeBackButton(null, null);
 					write("</td><td><h1>");
 					if (!Util.isEmpty(pageTitle))
 					{
@@ -212,11 +205,7 @@ public class EnvelopePage extends WebPage
 					write("</td></tr>");
 					write("</table>");
 					write("</div>");
-					
-//					write("<div id=header>");
-//					renderHTMLTopBar(); // subclass
-//					write("</div>");
-					
+										
 					write("<div id=page>");
 					renderHTMLPage();
 					write("</div>");
@@ -229,49 +218,9 @@ public class EnvelopePage extends WebPage
 					renderHTMLFooter(); // subclass
 					write("</div>");
 	
-					// Fixed tab bar
-					int countTabs = 0;
-					List<EnvelopeTab> tabs = this.getTabs();
-					for (EnvelopeTab t : tabs)
-					{
-						if (!Util.isEmpty(t.getCommand()))
-						{
-							countTabs++;
-						}
-					}
-					if (countTabs>0)
-					{
-						String command1 = ctx.getCommand(1);
-						write("<div id=tabbar><table class=Fixed><tr>");
-						for (EnvelopeTab t : tabs)
-						{
-							if (Util.isEmpty(t.getCommand()))
-							{
-								continue;
-							}
-							
-							write("<td");
-							if (command1.equals(t.getCommand()))
-							{
-								write(" class=Current");
-							}
-							write(">");
-							write("<a href=\"");
-							writeEncode(getPageURL(t.getCommand()));
-							write("\">");
-							if (t.getIcon(this)!=null)
-							{
-								writeImage(t.getIcon(this), t.getLabel(this));
-								write("<br>");
-							}
-							writeEncode(t.getLabel(this));
-							write("</a>");
-							write("</td>");
-						}
-						write("</tr></table></div>");
-					}
-					
-//					write("<div class=TopBarPlaceHolder>&nbsp;</div>");
+					write("<div id=tabbar><div class=Fixed>");
+					renderHTMLTopBar(); // subclass
+					write("</div></div>");
 					
 					write("</div>");
 				}
@@ -369,24 +318,13 @@ public class EnvelopePage extends WebPage
 		RequestContext ctx = getContext();
 		User login = UserStore.getInstance().load(ctx.getUserID());
 		
-		TopBarControl topBar = new TopBarControl(this);
-
+		TabBarControl tabBar = new TabBarControl(this);
 		List<EnvelopeTab> tabs = this.getTabs(); // call subclass
 		for (EnvelopeTab tab : tabs)
 		{
-			if (Util.isEmpty(tab.getCommand()))
-			{
-				// Default tab
-				topBar.setLogo(tab.getIcon(this), tab.getLabel(this), RootPage.COMMAND);
-			}
-			else
-			{
-				// Normal tab
-				topBar.addTab(tab.getIcon(this), tab.getLabel(this), tab.getCommand());
-			}
+			tabBar.addTab(tab.getIcon(this), tab.getLabel(this), tab.getCommand());
 		}
-				
-		topBar.render();
+		tabBar.render();
 	}
 	
 	/**

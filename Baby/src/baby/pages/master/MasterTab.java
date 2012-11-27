@@ -51,6 +51,16 @@ public class MasterTab extends EnvelopeTab
 	@Override
 	public String getIcon(WebPage outputPage)
 	{
-		return outputPage.getContext().getUserAgent().isSmartPhone()? "baby/corner-logo-25.png":"baby/corner-logo-60.png";
+		RequestContext ctx = outputPage.getContext();
+		boolean phone = ctx.getUserAgent().isSmartPhone();
+		
+		if (phone && ctx.getUserID()!=null)
+		{
+			return "baby/tab-home.png";
+		}
+		else
+		{
+			return "baby/corner-logo-60.png";
+		}
 	}
 }

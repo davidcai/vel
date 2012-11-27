@@ -86,6 +86,8 @@ public class JournalEntryPage extends BabyPage
 	{
 		RequestContext ctx = getContext();
 		
+		writeHorizontalNav(JournalPage.COMMAND);
+
 		writeFormOpen();
 		
 		TwoColFormControl twoCol = new TwoColFormControl(this);

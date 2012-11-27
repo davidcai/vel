@@ -63,6 +63,8 @@ public class GalleryPage extends BabyPage
 	@Override
 	public void renderHTML() throws Exception
 	{
+		writeHorizontalNav(GalleryPage.COMMAND);
+		
 		writeFormOpen();
 		writeImageInput("photo", null);
 		write("<br>");

@@ -13,6 +13,12 @@ public class LogoutPage extends WebPage
 	public final static String COMMAND = "logout";
 	
 	@Override
+	public String getTitle() throws Exception
+	{
+		return getString("master:Logout.Title");
+	}
+	
+	@Override
 	public void renderHTML() throws Exception
 	{
 		// Clear cookie and redirect to goodbye page

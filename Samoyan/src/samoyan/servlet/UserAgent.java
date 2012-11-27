@@ -35,6 +35,7 @@ public class UserAgent implements Cloneable
 	public final static String KINDLE = "Kindle";
 	public final static String SAMSUNG = "Samsung";
 	
+	public final static String COMPUTER = "Computer";
 	public final static String SMARTPHONE = "SmartPhone";
 	public final static String MOBILE = "Mobile";
 	public final static String SPIDER = "Spider";
@@ -206,6 +207,11 @@ public class UserAgent implements Cloneable
 		{
 			this.tags.put(SMARTPHONE, 0F);
 		}
+		
+		if (this.tags.containsKey(SMARTPHONE)==false)
+		{
+			this.tags.put(COMPUTER, 0F);
+		}
 	}
 	
 	/**
@@ -304,6 +310,15 @@ public class UserAgent implements Cloneable
 		return this.tags.containsKey(SPIDER);
 	}
 	
+	/**
+	 * Computer devices have a wide screen (640 pixels or more).
+	 * @return
+	 */
+	public boolean isComputer()
+	{
+		return this.tags.containsKey(COMPUTER);
+	}
+
 	/**
 	 * SmartPhone devices have a narrow screen (640 pixels or less).
 	 * Rendering is considerably affected to fit this constraint.
