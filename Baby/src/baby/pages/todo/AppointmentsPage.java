@@ -11,7 +11,6 @@ import java.util.UUID;
 
 import samoyan.controls.SelectInputControl;
 import samoyan.controls.TwoColFormControl;
-import samoyan.core.DateFormatEx;
 import samoyan.core.ParameterMap;
 import samoyan.servlet.exc.RedirectException;
 import samoyan.servlet.exc.WebFormException;
@@ -369,7 +368,6 @@ public class AppointmentsPage extends BabyPage
 		if (this.appointmentIDs.isEmpty())
 		{
 			return;
-//			writeEncode(getString("todo:Appointments.NoAppointment"));
 		}
 		else
 		{
@@ -379,8 +377,6 @@ public class AppointmentsPage extends BabyPage
 			writeEncode(getString("todo:Appointments.History"));
 			write("</h2>");
 			
-			final DateFormat df = DateFormatEx.getDateTimeInstance(getLocale(), getTimeZone());
-			
 			write("<table>");
 			for (UUID id : this.appointmentIDs)
 			{
@@ -388,8 +384,12 @@ public class AppointmentsPage extends BabyPage
 				
 				write("<tr>");
 				
-				write("<td>");
-				writeEncode(df.format(appointment.getDateTime()));
+				write("<td style=\"text-align: right;\">");
+				writeEncodeDate(appointment.getDateTime());
+				write("</td>");
+				
+				write("<td style=\"text-align: right;\">");
+				writeEncodeTime(appointment.getDateTime());
 				write("</td>");
 				
 				write("<td>");
