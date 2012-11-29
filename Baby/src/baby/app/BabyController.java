@@ -48,6 +48,7 @@ import baby.pages.profile.ConsolidatedProfilePage;
 import baby.pages.profile.MedicalCenterPage;
 import baby.pages.profile.StagePage;
 import baby.pages.profile.UnitsPage;
+import baby.pages.scrapbook.CalendarPage;
 import baby.pages.scrapbook.ChartsPage;
 import baby.pages.scrapbook.GalleryPage;
 import baby.pages.scrapbook.JournalEntryPage;
@@ -122,6 +123,7 @@ public class BabyController extends Controller
 		Dispatcher.bindPage(GalleryPage.COMMAND, 				GalleryPage.class);
 		Dispatcher.bindPage(PhotoPage.COMMAND, 					PhotoPage.class);
 		Dispatcher.bindPage(ChartsPage.COMMAND, 				ChartsPage.class);
+		Dispatcher.bindPage(CalendarPage.COMMAND, 				CalendarPage.class);
 		Dispatcher.bindPage(KickCounterPage.COMMAND, 			KickCounterPage.class);
 
 		// To do

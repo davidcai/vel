@@ -22,6 +22,7 @@ public class ScrapbookTab extends EnvelopeTab
 		navCtrl.addPage(JournalPage.COMMAND, null);
 		navCtrl.addPage(GalleryPage.COMMAND, null);
 		navCtrl.addPage(ChartsPage.COMMAND, null);
+		navCtrl.addPage(CalendarPage.COMMAND, null);
 		
 		return navCtrl;
 	}
