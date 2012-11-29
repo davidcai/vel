@@ -37,7 +37,10 @@ public class TextInputControl extends InputControl
 	
 	public TextInputControl setMaxLength(int maxLen)
 	{
-		setAttribute("maxlength", String.valueOf(maxLen));
+		if (maxLen>0)
+		{
+			setAttribute("maxlength", String.valueOf(maxLen));
+		}
 		return this;
 	}
 	public int getMaxLength()

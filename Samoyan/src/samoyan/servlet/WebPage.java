@@ -1257,16 +1257,13 @@ public class WebPage
 		num.render();
 	}
 	
-	public void writeTextAreaInput(String name, Object initialValue, int cols, int rows, Integer maxLen)
+	public void writeTextAreaInput(String name, Object initialValue, int cols, int rows, int maxLen)
 	{
 		TextAreaInputControl area = new TextAreaInputControl(this, name);
 		area.setInitialValue(initialValue);
 		area.setCols(cols);
 		area.setRows(rows);
-		if (maxLen != null)
-		{
-			area.setMaxLength(maxLen);
-		}
+		area.setMaxLength(maxLen);
 		area.render();
 	}
 	
