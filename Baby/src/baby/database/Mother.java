@@ -80,35 +80,43 @@ public class Mother extends DataBean
 	public Stage getPregnancyStage(Date date)
 	{
 		Date due = getDueDate();
-		if (due!=null)
+		if (due != null)
 		{
-			int week = Stage.MAX_WEEKS+1;
+			int week = Stage.MAX_WEEKS + 1;
 			Calendar cal = Calendar.getInstance(TimeZoneEx.GMT);
 			cal.setTime(date);
-			while (cal.getTime().before(due) && week>1)
+			while (cal.getTime().before(due) && week > 1)
 			{
 				week--;
 				cal.add(Calendar.DATE, 7);
 			}
-			if (week>Stage.MAX_WEEKS) week = Stage.MAX_WEEKS;
+			if (week > Stage.MAX_WEEKS)
+			{
+				week = Stage.MAX_WEEKS;
+			}
+			
 			return Stage.pregnancy(week);
 		}
-		
+
 		Date delivery = getBirthDate();
-		if (delivery!=null)
+		if (delivery != null)
 		{
 			int month = 0;
 			Calendar cal = Calendar.getInstance(TimeZoneEx.GMT);
 			cal.setTime(date);
-			while (cal.getTime().after(delivery) && month<Stage.MAX_MONTHS)
+			while (cal.getTime().after(delivery) && month < Stage.MAX_MONTHS)
 			{
 				month++;
 				cal.add(Calendar.MONTH, -1);
 			}
-			if (month==0) month = 0;
+			if (month == 0)
+			{
+				month = 0;
+			}
+			
 			return Stage.infancy(month);
 		}
-		
+
 		return Stage.preconception();
 	}
 }

@@ -73,8 +73,14 @@ public class BadgedCalendarControl extends BigCalendarControl
 		{
 			out.write("<div class=\"CalendarBadges\">");
 
+			boolean first = true;
 			for (Badge badge : badges)
 			{
+				if (first == false)
+				{
+					out.write(" ");
+				}
+				
 				out.write("<span class=\"CalendarBadge");
 				if (badge.getType() != null)
 				{
@@ -83,6 +89,8 @@ public class BadgedCalendarControl extends BigCalendarControl
 				out.write("\">");
 				out.writeEncode(badge.getValue());
 				out.write("</span>");
+				
+				first = false;
 			}
 
 			out.write("</div>");

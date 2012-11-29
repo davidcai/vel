@@ -4,6 +4,15 @@
 	-moz-border-radius: @radius;
 	-webkit-border-radius: @radius;
 }
+.background-gradient-top (@from, @to) {
+	background-color: @from;
+  background-image: -moz-linear-gradient(top, @from 0%, @to 100%);
+  background-image: -o-linear-gradient(top, @from 0%, @to 100%);
+  background-image: -webkit-linear-gradient(top, @from 0%, @to 100%);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, @from 0%), color-stop(1, @to 100%));
+  filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr=@from 0%, EndColorStr=@to 100%)";
+  background-image: linear-gradient(top, @from 0%, @to 100%);
+}
 
 // ---------- Baby ----------
 .SmartPhone #footer {
@@ -134,17 +143,14 @@ TABLE.PhotoGrid TD {
 		color: #BADA55;
 		font-weight: bold;
 		text-align: center;
-		
-		   -moz-border-radius: 7px;
-    	-webkit-border-radius: 7px;
-    	        border-radius: 7px;
+    .border-radius(7px);
     	
-    	#Countdown {
-			font-size: 3em;
-    	}
-    	#Kicks {
-			font-size: 1.5em;
-    	}
+  	#Countdown {
+		font-size: 3em;
+  	}
+  	#Kicks {
+		font-size: 1.5em;
+  	}
 	}
 	
 	#Buttons {
@@ -196,46 +202,24 @@ TABLE.PhotoGrid TD {
 }
 
 .CalendarBadges{
-	padding-top: 5px;
-	
+  font-size: 0.72em;
+  line-height: 1.8;
+  
 	.CalendarBadge {
 		padding: 1px 4px;
-		margin: 0 1px;
-	    color: #FFFFFF;
-	    font-size: 0.72em;
-	    
-	       -moz-border-radius: 4px;
-	    -webkit-border-radius: 4px;
-	            border-radius: 4px;
-	
+    color: #FFFFFF;
+    .border-radius(4px);
+    
 		&.JournalEntry {
-			background-color: #BDDB9A;
-		    background-image: -moz-linear-gradient(top, #BDDB9A 0%, #699736 100%);
-		    background-image: -o-linear-gradient(top, #BDDB9A 0%, #699736 100%);
-		    background-image: -webkit-linear-gradient(top, #BDDB9A 0%, #699736 100%);
-		    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #BDDB9A 0%), color-stop(1, #699736 100%));
-		              filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr=#BDDB9A 0%, EndColorStr=#699736 100%)";
-		    background-image: linear-gradient(top, #BDDB9A 0%, #699736 100%);
-	    }
+			.background-gradient-top(#BDDB9A, #699736);
+	  }
 
 		&.Checklist {
-			background-color: #FCB230;
-		    background-image: -moz-linear-gradient(top, #FCB230 0%, #EE7215 100%);
-		    background-image: -o-linear-gradient(top, #FCB230 0%, #EE7215 100%);
-		    background-image: -webkit-linear-gradient(top, #FCB230 0%, #EE7215 100%);
-		    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #FCB230 0%), color-stop(1, #EE7215 100%));
-		              filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr=#FCB230 0%, EndColorStr=#EE7215 100%)";
-		    background-image: linear-gradient(top, #FCB230 0%, #EE7215 100%);
+			.background-gradient-top(#FCB230, #EE7215);
 		}
 
 		&.Appointment {
-			background-color: #DA000F;
-		    background-image: -moz-linear-gradient(top, #DA000F 0%, #6E0002 100%);
-		    background-image: -o-linear-gradient(top, #DA000F 0%, #6E0002 100%);
-		    background-image: -webkit-linear-gradient(top, #DA000F 0%, #6E0002 100%);
-		    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #DA000F 0%), color-stop(1, #6E0002 100%));
-		              filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr=#DA000F 0%, EndColorStr=#6E0002 100%)";
-		    background-image: linear-gradient(top, #DA000F 0%, #6E0002 100%);
+			.background-gradient-top(#DA000F, #6E0002);
 		}
 	}
 }
