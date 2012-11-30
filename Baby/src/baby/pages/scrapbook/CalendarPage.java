@@ -7,6 +7,8 @@ import java.util.UUID;
 
 import baby.controls.BadgedCalendarControl;
 import baby.controls.BadgedCalendarControl.Badge;
+import baby.database.Appointment;
+import baby.database.AppointmentStore;
 import baby.database.JournalEntry;
 import baby.database.JournalEntryStore;
 import baby.database.MeasureRecord;
@@ -77,7 +79,17 @@ public class CalendarPage extends BabyPage
 		// TODO: Checklists
 		//ChecklistStore.getInstance().queryBySectionAndTimeline(section, lowStage, highStage);
 		
-		// TODO: Appointments
+		// Appointment dues
+		List<UUID> appointmentIDs = AppointmentStore.getInstance().getByDate(userID, from, to);
+		for (UUID appointmentID : appointmentIDs)
+		{
+			Appointment appointment = AppointmentStore.getInstance().load(appointmentID);
+			
+			Calendar c = Calendar.getInstance(getTimeZone());
+			c.setTime(appointment.getDateTime());
+			calCtrl.getBadges(c.get(Calendar.YEAR), c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH))
+				.add(Badge.AppointmentDue);			
+		}
 		
 		calCtrl.render();
 		

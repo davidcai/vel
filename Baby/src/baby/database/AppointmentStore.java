@@ -4,7 +4,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import samoyan.core.ParameterList;
 import samoyan.database.DataBeanStore;
+import samoyan.database.Query;
 import samoyan.database.TableDef;
 
 public class AppointmentStore extends DataBeanStore<Appointment>
@@ -55,5 +57,12 @@ public class AppointmentStore extends DataBeanStore<Appointment>
 	public List<UUID> getAll(UUID userID) throws Exception
 	{
 		return queryByColumn("UserID", userID, "DateTime", false);
+	}
+	
+	public List<UUID> getByDate(UUID userID, Date from, Date to) throws Exception
+	{
+		return Query.queryListUUID(
+			"SELECT ID FROM Appointments WHERE UserID=? AND DateTime>=? AND DateTime<? ORDER BY DateTime DESC", 
+			new ParameterList().plus(userID).plus(from.getTime()).plus(to.getTime()));
 	}
 }
