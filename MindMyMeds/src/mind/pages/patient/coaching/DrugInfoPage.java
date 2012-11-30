@@ -26,8 +26,6 @@ public class DrugInfoPage extends PatientPage
 	@Override
 	public void init() throws Exception
 	{
-		RequestContext ctx = getContext();
-		
 		UUID drugID = getParameterUUID(PARAM_ID);
 		if (drugID==null)
 		{

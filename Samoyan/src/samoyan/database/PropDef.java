@@ -6,7 +6,6 @@ public class PropDef
 	private Class<?> type;
 	private int minSize = 0;
 	private int maxSize = 0;
-	private boolean column = false;
 	private boolean invariant = false;
 //	private Object defaultValue = null;
 	private String ownerTable = null;

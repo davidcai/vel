@@ -105,7 +105,6 @@ public class SubscriptionStore extends DataBeanStore<Subscription>
 		//	order by u.Name
 		
 		StringBuilder sql = new StringBuilder();
-		ParameterList params = new ParameterList();
 		sql.append("SELECT sub.ID FROM Subscriptions AS sub ");
 		sql.append("JOIN SubscriptionPhysicianLink AS spl ");
 		sql.append("  ON sub.ID = spl.SubscriptionID ");

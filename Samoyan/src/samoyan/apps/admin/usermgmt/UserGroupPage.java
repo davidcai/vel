@@ -15,7 +15,6 @@ import samoyan.database.Permission;
 import samoyan.database.PermissionStore;
 import samoyan.database.UserGroup;
 import samoyan.database.UserGroupStore;
-import samoyan.servlet.RequestContext;
 import samoyan.servlet.exc.PageNotFoundException;
 import samoyan.servlet.exc.RedirectException;
 import samoyan.servlet.exc.WebFormException;
@@ -31,8 +30,6 @@ public class UserGroupPage extends AdminPage
 	@Override
 	public void init() throws Exception
 	{
-		RequestContext ctx = getContext();
-		
 		UUID grpID = getParameterUUID(PARAM_ID);
 		if (grpID!=null)
 		{
@@ -51,8 +48,6 @@ public class UserGroupPage extends AdminPage
 	@Override
 	public void validate() throws Exception
 	{
-		RequestContext ctx = getContext();
-		
 		String name = validateParameterString("name", 1, UserGroup.MAXSIZE_NAME);
 		
 		// Check if already exists

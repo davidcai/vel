@@ -3,7 +3,6 @@ package samoyan.core;
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
-import java.awt.font.LineMetrics;
 import java.awt.geom.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.FilteredImageSource;
@@ -217,7 +216,7 @@ public class Captcha
 	 */
 	private BufferedImage renderWord (BufferedImage image, String word, String fontName, Color fontColor)
 	{
-		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+//		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             
 //		GraphicsDevice gd = ge.getDefaultScreenDevice();
 //		GraphicsConfiguration gc = gd.getDefaultConfiguration();
@@ -241,7 +240,7 @@ public class Captcha
 		for (int i = 0; i<wc.length; i++)
 		{
 			char[] itchar = new char[]{wc[i]};
-			LineMetrics lmet = font.getLineMetrics(itchar,0,itchar.length,frc);
+//			LineMetrics lmet = font.getLineMetrics(itchar,0,itchar.length,frc);
 			GlyphVector gv = font.createGlyphVector(frc, itchar);
 			
 			totalWidth += (int) (gv.getVisualBounds().getWidth() + 3);

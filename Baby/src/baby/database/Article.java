@@ -14,7 +14,7 @@ public final class Article extends DataBean
 	public static final int MAXSIZE_REGION = 64;
 	public static final int MAXSIZE_MEDICAL_CENTER = 64;
 	public static final int MAXSIZE_SOURCE_URL = 2048;
-	
+		
 	public String getHTML()
 	{
 		return (String) get("HTML");

@@ -32,8 +32,6 @@ public class LogConfigPage extends AdminPage
 	@Override
 	public void commit() throws Exception
 	{
-		RequestContext ctx = getContext();
-		
 		List<String> typeNames = LogTypeStore.getInstance().getNames();
 		for (String t : typeNames)
 		{

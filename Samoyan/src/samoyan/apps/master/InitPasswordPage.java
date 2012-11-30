@@ -32,8 +32,6 @@ public class InitPasswordPage extends WebPage
 	@Override
 	public void validate() throws Exception
 	{
-		RequestContext ctx = getContext();
-
 //		// Name
 //		if (Util.isEmpty(this.user.getName()))
 //		{
@@ -125,8 +123,6 @@ public class InitPasswordPage extends WebPage
 	@Override
 	public void renderHTML() throws Exception
 	{
-		RequestContext ctx = getContext();
-		
 		writeFormOpen();
 		
 		TwoColFormControl twoCol = new TwoColFormControl(this);

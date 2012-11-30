@@ -67,7 +67,7 @@ public class LogNewOpeningPage extends ElertPage
 
 		int minDuration = 0;
 		int minLead = 0;
-		boolean foundProcedure = false;
+//		boolean foundProcedure = false;
 		Integer postedCount = getParameterInteger("procedures");
 		for(int i = 0; i < postedCount; i++)
 		{
@@ -86,7 +86,7 @@ public class LogNewOpeningPage extends ElertPage
 			if(!ProcedureFacilityLinkStore.getInstance().isProcedureAssignedToFacility(procedure.getID(), facilityID))
 				throw new WebFormException(PARAM_PROCEDURE + i, getString("schedule:LogNewOpening.UnassignedProcedure", procedure.getName(), facility.getName()));
 			
-			foundProcedure = true;
+//			foundProcedure = true;
 			minDuration = Math.max(minDuration, procedure.getDuration());
 			minLead = Math.max(minLead, procedure.getLead());
 		}

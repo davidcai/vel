@@ -218,8 +218,6 @@ public abstract class DataTableControl<T> extends WebPage
 	@Override
 	public final void renderHTML() throws Exception
 	{
-		RequestContext ctx = getContext();
-
 		if (this.initialValues.hasNext()==false)
 		{
 			return;

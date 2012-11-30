@@ -51,8 +51,6 @@ public abstract class CommonProcedurePage extends WebPage
 	@Override
 	public void init() throws Exception
 	{
-		RequestContext ctx = getContext();
-
 		// Flag to indicate if this is a scheduler that is editing a custom procedure
 		this.customProcedure = this.isCustomProcedure(); // Call subclass
 

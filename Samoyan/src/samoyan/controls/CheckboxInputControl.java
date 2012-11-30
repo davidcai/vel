@@ -1,12 +1,10 @@
 package samoyan.controls;
 
-import samoyan.servlet.RequestContext;
 import samoyan.servlet.WebPage;
 
 public class CheckboxInputControl extends InputControl
 {
 	private String label = null;
-	private Object value = null;
 	
 	public CheckboxInputControl(WebPage outputPage, String name)
 	{
@@ -63,7 +61,7 @@ public class CheckboxInputControl extends InputControl
 		
 		// Checked?
 		boolean checked = false;
-		if (out.isParameter(RequestContext.PARAM_SESSION))
+		if (out.isParameter("_cb_" + name)) // Check shadow var
 		{
 			checked = out.isParameter(name);
 		}
@@ -95,6 +93,11 @@ public class CheckboxInputControl extends InputControl
 			write("&nbsp;");
 			writeEncode(this.label);
 			write("</label>");
-		}		
+		}
+		
+		// Shadow hidden var
+		write("<input type=hidden name=\"_cb_");
+		writeEncode(name);
+		write("\" value=1>");
 	}
 }

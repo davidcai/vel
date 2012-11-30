@@ -6,14 +6,14 @@ import java.util.Calendar;
 import java.util.Map;
 
 import samoyan.core.ParameterMap;
+import samoyan.core.Util;
 import samoyan.servlet.WebPage;
 
-public class BigCalendarControl
+public class BigCalendarControl extends WebPage
 {
 	private int yyyy;
 	private int mm;
 	private int dd;
-	private WebPage out;
 	private boolean dropdowns = true;
 	private boolean links = true;
 	private String command;
@@ -21,27 +21,27 @@ public class BigCalendarControl
 	
 	public BigCalendarControl(WebPage outputPage)
 	{
-		this.out = outputPage;
+		setContainer(outputPage);
 
-		this.command = this.out.getContext().getCommand();
-		this.params = this.out.getContext().getParameters();
+		this.command = getContext().getCommand();
+		this.params = getContext().getParameters();
 		
-		Calendar cal = Calendar.getInstance(out.getTimeZone(), out.getLocale());
+		Calendar cal = Calendar.getInstance(getTimeZone(), getLocale());
 		this.yyyy = cal.get(Calendar.YEAR);
 		this.mm = cal.get(Calendar.MONTH);
 		this.dd = cal.get(Calendar.DAY_OF_MONTH);
 		
-		Integer y = out.getParameterInteger("y");
+		Integer y = getParameterInteger("y");
 		if (y!=null)
 		{
 			this.yyyy = y;
 		}
-		Integer m = out.getParameterInteger("m");
+		Integer m = getParameterInteger("m");
 		if (m!=null)
 		{
 			this.mm = m-1; // 1-based to 0-based
 		}
-		Integer d = out.getParameterInteger("d");
+		Integer d = getParameterInteger("d");
 		if (d!=null)
 		{
 			this.dd = d;
@@ -79,18 +79,18 @@ public class BigCalendarControl
 	{
 		DateFormat df;
 		
-		Calendar cal = Calendar.getInstance(out.getTimeZone(), out.getLocale());
+		Calendar cal = Calendar.getInstance(getTimeZone(), getLocale());
 		cal.clear();
 		cal.set(yyyy, mm, 1, 12, 0, 0);
 		cal.set(Calendar.MILLISECOND, 0);
 		
 		// The frame
-		out.write("<table class=BigCalendar>");
+		write("<table class=BigCalendar>");
 
 		// Month header
 		ParameterMap params = new ParameterMap();
-		out.write("<tr valign=middle>");
-		out.write("<td class=Month>");
+		write("<tr valign=middle>");
+		write("<td class=Month>");
 			if (this.links)
 			{
 				cal.set(yyyy, mm, 1, 12, 0, 0);
@@ -100,21 +100,21 @@ public class BigCalendarControl
 				params.plus("y", String.valueOf(cal.get(Calendar.YEAR)))
 					.plus("m", String.valueOf(cal.get(Calendar.MONTH)+1))
 					.plus("d", String.valueOf(Math.min(dd, cal.getActualMaximum(Calendar.DAY_OF_MONTH))));
-				out.write("<a href=\"");
-				out.writeEncode(out.getPageURL(out.getContext().getCommand(), params));
-				out.write("\">");
-				out.writeEncode("< ");
-				out.writeEncode(df.format(cal.getTime()));
-				out.write("</a>");
+				write("<a href=\"");
+				writeEncode(getPageURL(getContext().getCommand(), params));
+				write("\">");
+				writeEncode("< ");
+				writeEncode(df.format(cal.getTime()));
+				write("</a>");
 			}
 			else
 			{
-				out.write("&nbsp;");
+				write("&nbsp;");
 			}
-		out.write("</td><td class=Month colspan=5>");
+		write("</td><td class=Month colspan=5>");
 //			df = new SimpleDateFormat("MMMM yyyy");
 //			df.setTimeZone(cal.getTimeZone());
-//			out.writeEncode(df.format(cal.getTime()));
+//			writeEncode(df.format(cal.getTime()));
 
 			// Nav form
 			df = new SimpleDateFormat("MMMM");
@@ -122,8 +122,8 @@ public class BigCalendarControl
 				
 			if (this.dropdowns)
 			{
-				out.writeFormOpen("GET", out.getContext().getCommand());
-				SelectInputControl combo = new SelectInputControl(out, "m");
+				writeFormOpen("GET", getContext().getCommand());
+				SelectInputControl combo = new SelectInputControl(this, "m");
 				combo.setInitialValue(mm+1);
 				for (int i=1; i<=12; i++)
 				{
@@ -132,8 +132,8 @@ public class BigCalendarControl
 				}
 				combo.setAutoSubmit(true);
 				combo.render();
-				out.write(" ");
-				combo = new SelectInputControl(out, "y");
+				write(" ");
+				combo = new SelectInputControl(this, "y");
 				combo.setInitialValue(yyyy);
 				for (int i=cal.get(Calendar.YEAR)+1; i>cal.get(Calendar.YEAR)+1-10; i--)
 				{
@@ -141,21 +141,21 @@ public class BigCalendarControl
 				}
 				combo.setAutoSubmit(true);
 				combo.render();
-//				out.write(" ");
-//				out.writeButton(getString("controls:Button.Go"));
-				out.writeHiddenInput("d", dd);
+//				write(" ");
+//				writeButton(getString("controls:Button.Go"));
+				writeHiddenInput("d", dd);
 				
-				out.writeFormClose();
+				writeFormClose();
 			}
 			else
 			{
 				cal.set(yyyy, mm, 1);
-				out.writeEncode(df.format(cal.getTime()));
-				out.write(" ");
-				out.write(String.valueOf(yyyy));
+				writeEncode(df.format(cal.getTime()));
+				write(" ");
+				write(String.valueOf(yyyy));
 			}
 			
-		out.write("</td><td class=Month>");
+		write("</td><td class=Month>");
 			if (this.links)
 			{
 				cal.set(yyyy, mm, 1, 12, 0, 0);
@@ -165,18 +165,18 @@ public class BigCalendarControl
 				params.plus("y", String.valueOf(cal.get(Calendar.YEAR)))
 					.plus("m", String.valueOf(cal.get(Calendar.MONTH)+1))
 					.plus("d", String.valueOf(Math.min(dd, cal.getActualMaximum(Calendar.DAY_OF_MONTH))));
-				out.write("<a href=\"");
-				out.writeEncode(out.getPageURL(out.getContext().getCommand(), params));
-				out.write("\">");
-				out.writeEncode(df.format(cal.getTime()));
-				out.writeEncode(" >");
-				out.write("</a>");
+				write("<a href=\"");
+				writeEncode(getPageURL(getContext().getCommand(), params));
+				write("\">");
+				writeEncode(df.format(cal.getTime()));
+				writeEncode(" >");
+				write("</a>");
 			}
 			else
 			{
-				out.write("&nbsp;");
+				write("&nbsp;");
 			}
-		out.write("</td></tr>");
+		write("</td></tr>");
 		
 		// Days of week
 		cal.set(yyyy, mm, 1, 12, 0, 0);
@@ -184,15 +184,15 @@ public class BigCalendarControl
 		cal.set(Calendar.DAY_OF_WEEK, firstDow);
 		
 		df = new SimpleDateFormat("EEE");
-		out.write("<tr>");
+		write("<tr>");
 		for (int i=0; i<7; i++)
 		{
-			out.write("<td class=DOW>");
-			out.writeEncode(df.format(cal.getTime()));
-			out.write("</td>");
+			write("<td class=DOW>");
+			writeEncode(df.format(cal.getTime()));
+			write("</td>");
 			cal.add(Calendar.DATE, 1);
 		}
-		out.write("</tr>");
+		write("</tr>");
 		
 		// Days
 		cal.set(Calendar.DAY_OF_MONTH, 1);
@@ -213,61 +213,67 @@ public class BigCalendarControl
 		}
 		for (int week=0; week<6; week++)
 		{
-			out.write("<tr>");
+			write("<tr>");
 			
 			for (int day=0; day<7; day++)
 			{
 				int m = cal.get(Calendar.MONTH);
 				int d = cal.get(Calendar.DAY_OF_MONTH);
 				int y = cal.get(Calendar.YEAR);
-				out.write("<td class=\"Day");
+				write("<td class=\"Day");
 				if (m!=mm)
 				{
-					out.write(" Disabled");
+					write(" Disabled");
 				}
 				else if (d==dd)
 				{
-					out.write(" Selected");
+					write(" Selected");
 				}
-				out.write("\">");
+				String addlClasses = getCellCSSClass(y, m, d); // Call subclass for additional CSS classes
+				if (!Util.isEmpty(addlClasses))
+				{
+					write(" ");
+					writeEncode(addlClasses);
+				}
+				write("\">");
 				if (m==mm)
 				{
 					params.plus("y", String.valueOf(y));
 					params.plus("m", String.valueOf(m+1));
 					params.plus("d", String.valueOf(d));
-					out.write("<a href=\"");
-					out.writeEncode(out.getPageURL(this.command, params));
-					out.write("\">");
+					write("<a href=\"");
+					writeEncode(getPageURL(this.command, params));
+					write("\">");
 				}
 				else
 				{
-					out.write("<div>");
+					write("<div>");
 				}
-				out.write("<div class=Number>");
-				out.write(d);
-				out.write("</div>");
+				write("<div class=Number>");
+				write(d);
+				write("</div>");
 
 				// Call subclass to render the cell's content
 				renderCell(y, m, d);
 
 				if (m==mm)
 				{
-					out.write("</a>");
+					write("</a>");
 				}
 				else
 				{
-					out.write("</div>");
+					write("</div>");
 				}
-				out.write("</td>");
+				write("</td>");
 				
 				cal.add(Calendar.DATE, 1);
 			}
 			
-			out.write("</tr>");
+			write("</tr>");
 		}
 		
 		// Close the frame
-		out.write("</table>");
+		write("</table>");
 	}
 	
 	/**
@@ -279,5 +285,17 @@ public class BigCalendarControl
 	protected void renderCell(int yyyy, int mm, int dd)
 	{
 		// Default to nothing
+	}
+	
+	/**
+	 * To be overridden by implementors to return the CSS classes to attach to the cell.
+	 * @param yyyy
+	 * @param mm
+	 * @param dd
+	 * @return A space separated list of classes, or <code>null</code>.
+	 */
+	protected String getCellCSSClass(int yyyy, int mm, int dd)
+	{
+		return null;
 	}
 }

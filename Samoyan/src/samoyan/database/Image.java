@@ -19,7 +19,6 @@ public final class Image
 	private int width = 0;
 	private int height = 0;
 	private int version = 0;
-	private int lenBytes = 0;
 	private UUID origID = null;
 	private String size = SIZE_FULL;
 	private UUID linkedID = null;

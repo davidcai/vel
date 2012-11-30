@@ -315,9 +315,6 @@ public class EnvelopePage extends WebPage
 	 */
 	protected void renderHTMLTopBar() throws Exception
 	{
-		RequestContext ctx = getContext();
-		User login = UserStore.getInstance().load(ctx.getUserID());
-		
 		TabBarControl tabBar = new TabBarControl(this);
 		List<EnvelopeTab> tabs = this.getTabs(); // call subclass
 		for (EnvelopeTab tab : tabs)

@@ -47,7 +47,6 @@ public final class RequestContext implements Cloneable
 	private byte[] payload = null;
 //	private int screenWidth = 0;
 //	private int screenHeight = 0;
-	private String action = null;
 	
 	private static final ThreadLocal <RequestContext> threadLocal = new ThreadLocal<RequestContext>();
 

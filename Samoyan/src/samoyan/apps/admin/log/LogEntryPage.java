@@ -9,7 +9,6 @@ import samoyan.database.LogEntry;
 import samoyan.database.LogEntryStore;
 import samoyan.database.User;
 import samoyan.database.UserStore;
-import samoyan.servlet.RequestContext;
 import samoyan.servlet.exc.PageNotFoundException;
 
 public class LogEntryPage extends AdminPage
@@ -23,8 +22,6 @@ public class LogEntryPage extends AdminPage
 	@Override
 	public void init() throws Exception
 	{
-		RequestContext ctx = getContext();
-		
 		this.logEntry = LogEntryStore.getInstance().load(getParameterUUID(PARAM_ID));
 		if (this.logEntry==null)
 		{

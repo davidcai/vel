@@ -29,7 +29,6 @@ public class SmsConfigPage extends AdminPage
 	@Override
 	public void validate() throws Exception
 	{
-		RequestContext ctx = getContext();
 		int actives = 0;
 		
 		// General

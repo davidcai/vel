@@ -9,7 +9,6 @@ public class TwoColFormControl extends WebPage
 {
 	private String delayed = null;
 	private boolean phone = false;
-	private WebPage container = null;
 	private ByteArrayOutputStream canvas = new ByteArrayOutputStream(512);
 	
 	public TwoColFormControl(WebPage outputPage)

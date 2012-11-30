@@ -126,16 +126,13 @@ public class UpcomingPatientsPage extends ElertPage
 
 		Collection<Collection<Subscription>> groups = CollectionsEx.group(subs, grouper, sorter);
 		
-		final boolean phone = getContext().getUserAgent().isSmartPhone();
+//		final boolean phone = getContext().getUserAgent().isSmartPhone();
 
 		// Render the results
 		writeFormOpen();
 		
-		int g = 0;
 		for (Collection<Subscription> group : groups)
 		{
-			g++;
-			
 			String h2Title = grouper.getGroupTitle(group.iterator().next(), getLocale());
 			if (Util.isEmpty(h2Title) == false)
 			{

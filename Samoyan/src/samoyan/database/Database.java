@@ -268,7 +268,7 @@ public class Database
 		Query q = new Query(this);
 		try
 		{
-			ResultSet rs = q.select("SELECT 'OK'");
+			q.select("SELECT 'OK'");
 		}
 		finally
 		{

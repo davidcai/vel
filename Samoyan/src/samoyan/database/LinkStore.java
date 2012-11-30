@@ -290,7 +290,6 @@ public abstract class LinkStore
 				List<Link> cached = (List<Link>) Cache.get("link:" + td.getName() + "." + key1.toString());
 				if (cached!=null)
 				{
-					List<UUID> result = new ArrayList<UUID>(cached.size());
 					for (Link l : cached)
 					{
 						if (l.key.equals(key2) && l.weight==weight)
@@ -305,7 +304,6 @@ public abstract class LinkStore
 					cached = (List<Link>) Cache.get("link:" + td.getName() + "." + key2.toString());
 					if (cached!=null)
 					{
-						List<UUID> result = new ArrayList<UUID>(cached.size());
 						for (Link l : cached)
 						{
 							if (l.key.equals(key1) && l.weight==weight)
@@ -429,7 +427,6 @@ public abstract class LinkStore
 				if (cached!=null)
 				{
 					cacheExists = true;
-					List<UUID> result = new ArrayList<UUID>(cached.size());
 					for (Link l : cached)
 					{
 						if (l.key.equals(key2))
@@ -446,7 +443,6 @@ public abstract class LinkStore
 					if (cached!=null)
 					{
 						cacheExists = true;
-						List<UUID> result = new ArrayList<UUID>(cached.size());
 						for (Link l : cached)
 						{
 							if (l.key.equals(key1))
@@ -543,7 +539,7 @@ public abstract class LinkStore
 		Query q = new Query();
 		try
 		{
-			int res = q.update(sql.toString(), new ParameterList(key));
+			q.update(sql.toString(), new ParameterList(key));
 		}
 		finally
 		{
@@ -602,7 +598,7 @@ public abstract class LinkStore
 		}
 		
 		// Not found in cache, then load relationship key1->key2 and look again in cache
-		List<UUID> keys = getByKey1(key1);
+		getByKey1(key1);
 		
 		links = (List<Link>) Cache.get("link:" + td.getName() + "." + key1.toString());
 		if (links!=null)

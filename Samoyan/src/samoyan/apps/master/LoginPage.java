@@ -17,7 +17,6 @@ import samoyan.database.ServerStore;
 import samoyan.database.User;
 import samoyan.database.UserStore;
 import samoyan.servlet.RequestContext;
-import samoyan.servlet.UserAgent;
 import samoyan.servlet.WebPage;
 import samoyan.servlet.exc.RedirectException;
 import samoyan.servlet.exc.WebFormException;
@@ -83,7 +82,7 @@ public class LoginPage extends WebPage
 		}
 		
 		// Check validity of password
-		if (user!=null && user.isPassword(password))
+		if (user!=null && user.isPassword(password) && !quickRepost)
 		{
 			// First time users must initialize their password
 			if (user.getLastActive()==null)
@@ -193,7 +192,7 @@ public class LoginPage extends WebPage
 	public void renderHTML() throws Exception
 	{
 		RequestContext ctx = getContext();
-		UserAgent ua = ctx.getUserAgent();
+//		UserAgent ua = ctx.getUserAgent();
 		
 		writeFormOpen();
 		

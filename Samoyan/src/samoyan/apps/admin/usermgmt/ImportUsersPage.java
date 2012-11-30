@@ -10,7 +10,6 @@ import samoyan.core.Util;
 import samoyan.database.*;
 import samoyan.notif.Notifier;
 import samoyan.servlet.Channel;
-import samoyan.servlet.RequestContext;
 import samoyan.servlet.exc.WebFormException;
 import samoyan.syslog.NewUserLogEntry;
 
@@ -50,9 +49,6 @@ public class ImportUsersPage extends AdminPage
 	@Override
 	public void commit() throws Exception
 	{
-		RequestContext ctx = getContext();
-		Date now = new Date();
-		
 		String subject = getParameterString("subject");
 		String message = getParameterRichEdit("message");
 
@@ -198,8 +194,6 @@ public class ImportUsersPage extends AdminPage
 	@Override
 	public void renderHTML() throws Exception
 	{
-		RequestContext ctx = getContext();
-		
 		if (this.isCommitted())
 		{
 			writeEncode(getString("admin:ImportUsers.LoginsCreated", usersCreated.size()));

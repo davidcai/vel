@@ -12,7 +12,6 @@ import samoyan.core.TimeBucketing;
 import samoyan.core.Util;
 import samoyan.database.QueryIterator;
 import samoyan.database.User;
-import samoyan.servlet.RequestContext;
 
 public abstract class UsersOverTimeReportPage extends AdminPage
 {
@@ -34,8 +33,6 @@ public abstract class UsersOverTimeReportPage extends AdminPage
 	@Override
 	public void renderHTML() throws Exception
 	{
-		RequestContext ctx = getContext();
-		
 		String help = this.getHelpString(); // call subclass
 		if (!Util.isEmpty(help))
 		{

@@ -188,7 +188,7 @@ public final class ServerStore extends DataBeanStore<Server>
 		return loadByColumn("Name", name);
 	}
 	
-	private Server openByName(String name) throws Exception
+	public Server openByName(String name) throws Exception
 	{
 		return openByColumn("Name", name);
 	}

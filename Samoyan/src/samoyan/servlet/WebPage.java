@@ -1779,7 +1779,6 @@ public class WebPage
 	{
 		RequestContext ctx = getContext();
 		
-		boolean space = false;
 		write("<body class=\"");
 		Map<String, Float> uaTags = ctx.getUserAgent().getTags();
 		for (String t : uaTags.keySet())

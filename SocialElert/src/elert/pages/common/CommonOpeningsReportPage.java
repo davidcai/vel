@@ -10,9 +10,7 @@ import elert.database.OpeningStore;
 
 import samoyan.controls.DataTableControl;
 import samoyan.controls.GoogleGraph;
-import samoyan.core.Pair;
 import samoyan.core.TimeBucketing;
-import samoyan.core.Util;
 import samoyan.database.QueryIterator;
 import samoyan.database.User;
 import samoyan.database.UserStore;
@@ -95,12 +93,6 @@ public final class CommonOpeningsReportPage extends CommonTimeReportPage
 		graph.render();
 	}
 	
-	private UUID getUUID(String paramName)
-	{
-		Pair<String, String> kvp = getParameterTypeAhead(paramName);
-		return kvp==null || !Util.isUUID(kvp.getKey())? null : UUID.fromString(kvp.getKey());
-	}
-
 	@Override
 	protected void renderTable(Date from, Date to, UUID regionID, UUID serviceAreaID, UUID facilityID, UUID schedulerID, UUID physicianID, UUID procedureID) throws Exception
 	{

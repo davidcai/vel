@@ -47,7 +47,6 @@ public final class ImageStore
 		{
 			ResultSet rs = q.updatableSelect("SELECT ID,Width,Height,Version,LengthBytes,Bytes,MimeType,LinkedID,Name,OriginalID,Size FROM Images WHERE ID=?", new ParameterList(img.getID()));
 			boolean insert = !rs.next();
-			int v;
 			if (insert)
 			{
 				rs.moveToInsertRow();

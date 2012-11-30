@@ -3,6 +3,7 @@ package baby.pages;
 import baby.app.BabyConsts;
 import baby.pages.info.HealthyBeginningsPage;
 import baby.pages.info.ResourcesPage;
+import baby.pages.info.SearchPage;
 import baby.pages.scrapbook.ChartsPage;
 import baby.pages.scrapbook.GalleryPage;
 import baby.pages.scrapbook.JournalPage;
@@ -59,6 +60,7 @@ public class BabyPage extends WebPage
 			new TabControl(this)
 				.addTab(HealthyBeginningsPage.COMMAND, getString("information:HealthyBeginnings.Title"), getPageURL(HealthyBeginningsPage.COMMAND))
 				.addTab(ResourcesPage.COMMAND, getString("information:Resources.Title"), getPageURL(ResourcesPage.COMMAND))
+				.addTab(SearchPage.COMMAND, getString("information:Search.Title"), getPageURL(SearchPage.COMMAND))
 				.setCurrentTab(currentTab)
 				.render();
 		}

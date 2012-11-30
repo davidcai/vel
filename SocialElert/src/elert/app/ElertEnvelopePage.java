@@ -42,7 +42,6 @@ public class ElertEnvelopePage extends EnvelopePage
 	{
 		RequestContext ctx = getContext();
 		User user = UserStore.getInstance().load(ctx.getUserID());
-		List<EnvelopeTab> tabs = getTabs();
 		
 		// User name
 		boolean smartPhone = ctx.getUserAgent().isSmartPhone();

@@ -22,12 +22,12 @@ public class RootCrawler implements Callable<Void>
 
 		String html = wb.getContent();
 		
-		// Get the URL to post to
-		int a = html.indexOf("action='/health/care/consumer/health-wellness/programs-classes/classes");
-		a += 8;
-		int b = html.indexOf("'", a);
-		
-		String url = html.substring(a, b);
+//		// Get the URL to post to
+//		int a = html.indexOf("action='/health/care/consumer/health-wellness/programs-classes/classes");
+//		a += 8;
+//		int b = html.indexOf("'", a);
+//		
+//		String url = html.substring(a, b);
 		
 		// Get list of regions
 		int start = html.indexOf("<option value='Select an area'>");

@@ -618,10 +618,10 @@ public class Controller extends HttpServlet
 		
 		// Multi-part parameters
 		String contentType = request.getHeader("content-type");
-		int totalCount = 0;
+//		int totalCount = 0;
 		if (contentType!=null && contentType.startsWith("multipart/form-data"))
 		{
-			int contentLen = request.getIntHeader("content-length");
+//			int contentLen = request.getIntHeader("content-length");
 
 			// multipart/form-data
 			int p = contentType.indexOf("boundary=");
@@ -632,7 +632,7 @@ public class Controller extends HttpServlet
 			
 			// First line is always the boundary
 			int count = in.readLine(buffer, 0, buffer.length);
-			totalCount += count;
+//			totalCount += count;
 			do
 			{
 				// Next come the MIME headers
@@ -643,7 +643,7 @@ public class Controller extends HttpServlet
 				{
 					count = in.readLine(buffer, 0, buffer.length);
 					if (count<=2) break;
-					totalCount += count;
+//					totalCount += count;
 
 					String line = new String(buffer, 0, count);
 					if (line.startsWith("Content-Disposition: form-data; name=\""))
@@ -689,7 +689,7 @@ public class Controller extends HttpServlet
 							if (line.indexOf(boundary)>=0) break;
 						}
 
-						totalCount += count;
+//						totalCount += count;
 
 //						partContent.append(Util.htmlDecode(line));
 						partContent.append(line);
@@ -725,7 +725,7 @@ public class Controller extends HttpServlet
 							if (line.indexOf(boundary)>=0) break;
 						}
 						
-						totalCount += count;
+//						totalCount += count;
 
 						// Write the content of the previous line
 						if (prevBuffer!=null)
@@ -1350,7 +1350,6 @@ if (Setup.isDebug() && ctx.getChannel().equalsIgnoreCase(Channel.VOICE))
 		String cssText = (String) Cache.get(cacheKey);
 		if (cssText==null)
 		{
-			final String path = "/" + ctx.getCommand();
 			cssText = lessEngine.compile(lessText, Setup.isDebug()==false, null);
 			Cache.insert(cacheKey, cssText);
 		}

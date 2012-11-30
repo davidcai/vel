@@ -26,8 +26,6 @@ public class UserGroupListPage extends AdminPage
 	@Override
 	public void renderHTML() throws Exception
 	{
-		RequestContext ctx = getContext();
-
 		List<UUID> all = UserGroupStore.getInstance().getAllIDs();
 
 		// Create new

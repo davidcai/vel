@@ -10,7 +10,6 @@ import samoyan.core.WebBrowser;
 
 class RegionCrawler implements Callable<Void>
 {
-	private WebBrowser wb;
 	private String regionKey;
 	private String region;
 	

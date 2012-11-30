@@ -11,7 +11,6 @@ import samoyan.core.ParameterMap;
 import samoyan.database.QueryIterator;
 import samoyan.database.User;
 import samoyan.database.UserStore;
-import samoyan.servlet.RequestContext;
 import samoyan.servlet.exc.RedirectException;
 
 public class UserListPage extends AdminPage
@@ -38,8 +37,6 @@ public class UserListPage extends AdminPage
 	@Override
 	public void renderHTML() throws Exception
 	{
-		RequestContext ctx = getContext();
-
 		// Invite/import
 		new LinkToolbarControl(this)
 			.addLink(	getString("admin:UserList.InviteUsers"), getPageURL(InviteUsersPage.COMMAND), "icons/basic1/letter_16.png")

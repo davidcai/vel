@@ -12,7 +12,6 @@ import samoyan.core.ReverseIterator;
 import samoyan.core.TimeBucketing;
 import samoyan.database.*;
 import samoyan.servlet.Channel;
-import samoyan.servlet.RequestContext;
 
 public final class OutgoingNotifsReportPage extends AdminPage
 {
@@ -43,8 +42,6 @@ public final class OutgoingNotifsReportPage extends AdminPage
 	@Override
 	public void renderHTML() throws Exception
 	{
-		RequestContext ctx = getContext();
-		
 		writeEncode(getString("admin:OutgoingNotifs.Help"));
 		write("<br><br>");
 

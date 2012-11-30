@@ -1,16 +1,10 @@
 package samoyan.controls;
 
-import java.util.Map;
-import java.util.Set;
-
 import samoyan.servlet.WebPage;
 
 public abstract class InputControl extends TagControl
 {
 	private WebPage outputPage;
-	private Map<String, String> attrs;
-	private Map<String, String> styleAttrs;
-	private Set<String> cssClasses;
 	private Object initialValue;
 	private boolean autoSubmit;
 		
@@ -19,8 +13,6 @@ public abstract class InputControl extends TagControl
 		super(outputPage);
 		this.outputPage = outputPage;
 
-		this.attrs = null;
-		this.cssClasses = null;
 		this.initialValue = null;
 		this.autoSubmit = false;
 

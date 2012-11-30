@@ -31,6 +31,7 @@ import baby.pages.content.ContentHomePage;
 import baby.pages.content.EditChecklistPage;
 import baby.pages.content.EditHealthBegPage;
 import baby.pages.content.HealthBegListPage;
+import baby.pages.content.ImportHealthBegPage;
 import baby.pages.content.MeasureListPage;
 import baby.pages.content.MeasurePage;
 import baby.pages.content.ResourceListPage;
@@ -39,6 +40,7 @@ import baby.pages.info.ArticlePage;
 import baby.pages.info.HealthyBeginningsPage;
 import baby.pages.info.InformationHomePage;
 import baby.pages.info.ResourcesPage;
+import baby.pages.info.SearchPage;
 import baby.pages.master.LessStylesheetPage;
 import baby.pages.master.LoginPage;
 import baby.pages.master.RootPage;
@@ -115,6 +117,7 @@ public class BabyController extends Controller
 		Dispatcher.bindPage(HealthyBeginningsPage.COMMAND, 		HealthyBeginningsPage.class);
 		Dispatcher.bindPage(ResourcesPage.COMMAND, 				ResourcesPage.class);
 		Dispatcher.bindPage(ArticlePage.COMMAND, 				ArticlePage.class);
+		Dispatcher.bindPage(SearchPage.COMMAND, 				SearchPage.class);
 		
 		// Scrapbook
 		Dispatcher.bindPage(ScrapbookHomePage.COMMAND, 			ScrapbookHomePage.class);
@@ -142,6 +145,7 @@ public class BabyController extends Controller
 		Dispatcher.bindPage(MeasurePage.COMMAND, 				MeasurePage.class);
 		Dispatcher.bindPage(ChecklistListPage.COMMAND, 			ChecklistListPage.class);
 		Dispatcher.bindPage(EditChecklistPage.COMMAND, 			EditChecklistPage.class);
+		Dispatcher.bindPage(ImportHealthBegPage.COMMAND, 		ImportHealthBegPage.class);
 
 		// Profile
 		Dispatcher.bindPage(MedicalCenterPage.COMMAND, 			MedicalCenterPage.class);

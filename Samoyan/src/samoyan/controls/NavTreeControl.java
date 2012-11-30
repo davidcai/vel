@@ -107,8 +107,6 @@ public class NavTreeControl
 	
 	public void render()
 	{
-		RequestContext ctx = outputPage.getContext();
-		
 		if (this.links.size()==0)
 		{
 			return;

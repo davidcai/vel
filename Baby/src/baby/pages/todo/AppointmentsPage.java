@@ -68,10 +68,10 @@ public class AppointmentsPage extends BabyPage
 				Calendar cal = Calendar.getInstance(getTimeZone());
 				for (UUID id : this.appointmentIDs)
 				{
-					Appointment appointment = AppointmentStore.getInstance().open(id);
+					Appointment appointment = AppointmentStore.getInstance().load(id);
 					if (cal.getTime().compareTo(appointment.getDateTime()) <= 0)
 					{
-						this.curAppointment = appointment;
+						this.curAppointment = (Appointment) appointment.clone();
 					}
 					else
 					{

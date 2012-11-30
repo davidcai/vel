@@ -84,7 +84,6 @@ public final class PatientProfilePage extends ElertPage
 	private void renderSubscriptionList() throws Exception
 	{
 		final List<UUID> subIDs = SubscriptionStore.getInstance().getByUserID(this.patient.getID());
-		final boolean phone = getContext().getUserAgent().isSmartPhone();
 		
 		write("<h2>");
 		writeEncode(getString("schedule:PatientProfile.ActiveSubscriptions"));

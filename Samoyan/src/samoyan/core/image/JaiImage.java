@@ -29,13 +29,6 @@ import com.sun.media.jai.codec.ForwardSeekableStream;
  */
 public final class JaiImage implements Cloneable
 {	
-	private static Boolean copyrightLock = new Boolean(false);
-	private static RenderedOp copyrightAlphaOp = null;
-	private static RenderedOp copyrightRgbOp = null;
-
-	private static RenderedOp edgeGradientOp = null;
-	private static Boolean edgeGradientLock = new Boolean(false);
-
 	private RenderedOp op = null;
 
 	private static double[][] MATRIX_ALPHA_ONLY = {{0.0D, 0.0D, 0.0D, 1.0D, 0.0D}};
@@ -90,14 +83,14 @@ public final class JaiImage implements Cloneable
 		
 		if (this.op==null)
 		{
-//			if (throwBack!=null)
-//			{
-//				throw new IOException(throwBack);
-//			}
-//			else
-//			{
+			if (throwBack!=null)
+			{
+				throw new IOException(throwBack);
+			}
+			else
+			{
 				throw new IOException();
-//			}
+			}
 		}
 	}
 	public JaiImage(byte[] bytes) throws IOException
@@ -473,7 +466,7 @@ public final class JaiImage implements Cloneable
 
 		
 		// This line seems to be necessary for this method to work.
-		int original = bg.getAsBufferedImage().getRGB(0, 0);
+		bg.getAsBufferedImage().getRGB(0, 0);
 
 		
 		// Get the alpha channel only
@@ -1284,11 +1277,11 @@ public final class JaiImage implements Cloneable
         	highValue[i] = 255.0;
         }
 
-        // Create the Histogram object.
-        Histogram hist = new Histogram(numBins, lowValue, highValue);
-
-        // Set the ROI to the entire image.
-        ROIShape roi = new ROIShape(this.op.getBounds());
+//        // Create the Histogram object.
+//        Histogram hist = new Histogram(numBins, lowValue, highValue);
+//
+//        // Set the ROI to the entire image.
+//        ROIShape roi = new ROIShape(this.op.getBounds());
 
         // Create the histogram op.
 		ParameterBlock pb = new ParameterBlock();
@@ -1296,7 +1289,8 @@ public final class JaiImage implements Cloneable
 		pb.add(null);											// The ROI
 		pb.add(1); pb.add(1);									// Sampling
 		pb.add(new int[]{binCount});							// Bins
-		pb.add(new double[]{0});  pb.add(new double[]{256});	// Range for inclusion
+		pb.add(new double[]{0});
+		pb.add(new double[]{256});	// Range for inclusion
 		this.op = JAI.create("histogram", pb, null);
     }
         

@@ -31,11 +31,6 @@ public class ImageInputControl
 	{
 		return this.initialValue;
 	}
-
-	private void renderRadio()
-	{
-		
-	}
 	
 	public void render()
 	{

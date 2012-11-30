@@ -20,17 +20,7 @@ public class HealthyBeginningsPage extends BabyPage
 	public final static String COMMAND = BabyPage.COMMAND_INFORMATION + "/healthy-beginnings";
 
 	private static final String PARAM_STAGE = "stage";
-	
-	private Mother mother;
-	private Stage stage;
-	
-	@Override
-	public void init() throws Exception
-	{
-		this.mother = MotherStore.getInstance().loadByUserID(getContext().getUserID());
-		this.stage = mother.getPregnancyStage();
-	}
-	
+		
 	@Override
 	public String getTitle() throws Exception
 	{

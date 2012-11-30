@@ -48,7 +48,7 @@ public final class CalendarPage extends ElertPage
 		cal.set(yyyy, mm-1, 1, 0, 0, 0);
 		cal.set(Calendar.MILLISECOND, 0);
 		Date from = cal.getTime();
-		int days = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+//		int days = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
 		cal.add(Calendar.MONTH, 1);
 		Date to = cal.getTime();
 		

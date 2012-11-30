@@ -230,8 +230,6 @@ public class UserPage extends AdminPage
 	@Override
 	public void init() throws Exception
 	{
-		RequestContext ctx = getContext();
-		
 		UUID userID = getParameterUUID(PARAM_ID);
 		if (userID==null)
 		{
@@ -341,7 +339,6 @@ public class UserPage extends AdminPage
 
 		// Groups
 		twoCol.writeRow(getString("admin:User.Groups"));
-		String groups = "";
 		List<UUID> groupIDs = new ArrayList<UUID>();
 		groupIDs.addAll(UserUserGroupLinkStore.getInstance().getGroupsForUser(this.user.getID()));
 		new ControlArray<UUID>(twoCol, "groups", groupIDs)
@@ -358,7 +355,6 @@ public class UserPage extends AdminPage
 
 		// Permissions
 		twoCol.writeRow(getString("admin:User.Permissions"));
-		String permissions = "";
 		List<String> permNames = new ArrayList<String>();
 		permNames.addAll(PermissionStore.getInstance().getPermissions(this.user.getID()));
 		new ControlArray<String>(twoCol, "permissions", permNames)

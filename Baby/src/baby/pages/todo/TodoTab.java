@@ -2,10 +2,7 @@ package baby.pages.todo;
 
 import baby.pages.BabyPage;
 import samoyan.controls.NavTreeControl;
-import samoyan.database.User;
-import samoyan.database.UserStore;
 import samoyan.servlet.EnvelopeTab;
-import samoyan.servlet.RequestContext;
 import samoyan.servlet.WebPage;
 
 public class TodoTab extends EnvelopeTab
@@ -13,9 +10,6 @@ public class TodoTab extends EnvelopeTab
 	@Override
 	public NavTreeControl getNavTree(WebPage outputPage) throws Exception
 	{
-		RequestContext ctx = outputPage.getContext();
-		User user = UserStore.getInstance().load(ctx.getUserID());
-
 		NavTreeControl navCtrl = new NavTreeControl(outputPage);
 		navCtrl.addHeader(outputPage.getString("todo:Nav.Tasks"));
 		navCtrl.addPage(ChecklistPage.COMMAND, null);

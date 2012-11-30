@@ -100,7 +100,6 @@ public final class EditHealthBegPage extends BabyPage
 	
 	private void populateTimelineCombo(SelectInputControl select)
 	{
-		Stage stage;
 		select.addOption("", 0);
 
 		select.addOption(getString("content:EditHealthBeg.Preconception"), Stage.preconception().toInteger());

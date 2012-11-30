@@ -19,7 +19,6 @@ import samoyan.database.UserUserGroupLinkStore;
 import samoyan.database.UserStore;
 import samoyan.notif.Notifier;
 import samoyan.servlet.Channel;
-import samoyan.servlet.RequestContext;
 import samoyan.servlet.exc.WebFormException;
 
 public class AdHocMessagePage extends AdminPage
@@ -31,8 +30,6 @@ public class AdHocMessagePage extends AdminPage
 	@Override
 	public void validate() throws Exception
 	{
-		RequestContext ctx = getContext();
-		
 		int countAddressees = 0;
 				
 		// Users

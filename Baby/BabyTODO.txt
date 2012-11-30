@@ -1,14 +1,12 @@
 Healthy Beginnings baby article to always show first. (pin to top)
 
-Governor interface:
-- home screen: show stats (num article per section,city, etc.) with links to relevant screens.
 HB article editor:
-- list page to break/sort articles by week range
 - change FROM, TO timeline dropdowns from discrete week# to preset stages (e.g. "week 6-10", "week 10-12")
 
 Resources:
 - page to view/edit/lock the content of an article. (for author)
 - on crawl of resources, need to remove ones that are no longer relevant. Delete all with CreatedDate before crawl start, but only after crawl is complete.
+  set crawl automatically every 30 days
 
 ArticleStore: caching for all queries. Clear after save/remove.
 automatic cached query using DatabeanStore.cachedQuery(). clear all on remove and store.
@@ -18,22 +16,45 @@ Need smarter cache indexing. allowing multiple keys for invalidation. using nami
 Info list pages (HB, resources):
 - Search box or tab.
 
-+ iPhone desktop + splash icons.
+- iPhone desktop + splash icons for all device sizes.
+  fix meta data control to support multiple images
 = Home page when logged in (PortalPage):
   + when logged in, do not add the Master tab, but rather the HomeTab with the Portal page. House icon.
     or redirect to PortalPage, or find way to hide the bg image of the babies (hard code #middle background-image:none !important in source)
   + for MasterTab, if logged in on a smartphone, return the House icon instead of the logo.
-  - Calendar. click to take to DayPage
-    - highlight Due date, delivery date.
-    - let implementors append CSS class to a cell
-  - what's on your mind? text box.
-  - most recent uploaded image + upload control.
-  - list of checklists with 4/6 complete indicator. arrow > to take to checklist screen with # in url
-  - links to relevant articles for current stage. arrow > to take to article.
-  - title at top of page: Stage stats: "Week 6, 56 days to go." "David is 6 weeks old".
-+ Import of HB articles from .html files (will allow richer HTML formatting such as H3 and tables)
-    and/or allow pasting HTML code in addition to RichEdit control
-  or import/export from DB via Zip file.
+  + title at top of page: Stage status: "Not yet pregnant", "Week 6, 56 days to go." "David is 6 weeks old".
+  + link to stage page: "Are you pregnant?" "Did you give birth?"
+  + Don't hide navbar if logged in. same as #middle
+  + pinned articles
+  + links to relevant articles for current stage. arrow > to take to article.
+  + Calendar. click to take to DayPage
+    + highlight Due date, delivery date.
+    + let implementors append CSS class to a cell
+    + check cell highlighting in Chrome
+  + list of incomplete checklists with 4/6 complete indicator. arrow > to take to checklist screen with # in url
+  + next appointment with link
+  ? what's on your mind? text box to post to journal
+  ? most recent uploaded image + upload control.
+  = Last journal entry (image+text)
+  = Nav bar with links to common actions: logout, upload photo, profile, etc.
+  = Calendar
++ Import of HB articles from ZIP file
++ simplify import articles. remove phase 2. print report of what was imported with links to edit pages.
++ Platform: checkboxes need to post a shadow hidden var and check it to know if to take initial value or not. using SESSION param is incorrect.
++ list page of HB articles to break/sort articles by unique week range tuple. show all, no paging.
++ SearchPage, but without functionality.
+= (4) check mother.getPregnancyStage method impl by David
+- (0) governor home screen: show stats (num article per section,city, etc.) with links to relevant screens.
+= (1) need way to post/import articles to appointments.
+  - "Section" dropdown in article input forms.
+  - Show section in list page
+  - Retitle page to Articles.
+  - Retitle section "HB" to "Your pregnancy"
+
+- Calendar. click to take to DayPage
+  - highlight Due date, delivery date.
+  - icons for data points (checklist, images, journal entries, etc.)
+  - Show on portal page
 
 - TopBarControl
   - check rendering on all projects (My eLert, MMM, Samoyan)
@@ -70,32 +91,25 @@ journal: timeline across the top
 pinkpad app calendar with icons: day, month, list views.
 categories for articles. can then let user browser by category.
 
-Checklists (mom form)
-- improve design style
-- collapse lists with >>. send via ajax
-= checklists from earlier stages (preconception, pregnancy, infancy): show as faded.
-
-Appointments:
-- DB table
-- make part of journal
-- attach checklists to a visit based on timeline. including: birth plan.
-- attach suggested questions(article) to a visit based on timeline.
+= checklists from earlier stages (preconception, pregnancy): show as faded.
 
 Integrate the "Birth plan". It's a document the mother should fill out and send to her doctor.
 can be done electronically, or printed/mailed to doctor.
 
 print capability of the journal. or export to PDF.
+design "notebook" style for journal. lines, margins, etc.
 
 kick counter: special screen with timer of 60 seconds to help mom count. button counter.
 
 compressed "upload only" version of image upload control: don't show thumbnail, don't show "upload new", size.
 allow to pass in the imagesize spec string for the thumbnail. Can then make it 32x32.
 
-design "notebook" style for journal. lines, margins, etc.
-
-Promote books for sale on Amazon. Collect commission.
-Discussion forums tab.
-
+Future ideas:
+- Promote books for sale on Amazon. Collect commission via Amazon Associates program (approx 7%)
+  as simple as publishing article with link to Amazon
+- Discussion forums tab.
+- Count hits on popular articles.
+- Ratings of articles (5 star system), comments.
 
 
 INTERNAL MESSAGING:
@@ -128,3 +142,9 @@ INTERNAL MESSAGING:
 
 = fix "res/icons" folder. Keep only important icons. Rename them and org in "standard" folder. remove all other icons.
 
+= Leverage foreign keys with optionally ON DELETE CASCADE to keep references in DB.
+  create the FK's in controller startup
+  remove the DB events (onBeforeSave, etc.)
+  see http://stackoverflow.com/questions/6260688/sql-server-cascade-delete
+
+  

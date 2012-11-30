@@ -70,7 +70,7 @@ public class PersonalInfoPage extends ProfilePage
 				Date maxDate = cal.getTime();
 				cal.add(Calendar.YEAR, -107);
 				Date minDate = cal.getTime();
-				Date bday = validateParameterDate(PARAM_BIRTHDAY, minDate, maxDate);
+				validateParameterDate(PARAM_BIRTHDAY, minDate, maxDate);
 			}
 		}
 		

@@ -123,7 +123,6 @@ public final class EditChecklistPage extends BabyPage
 
 	private void populateTimelineCombo(SelectInputControl select)
 	{
-		Stage stage;
 		select.addOption("", 0);
 
 		select.addOption(getString("content:EditChecklist.Preconception"), Stage.preconception().toInteger());

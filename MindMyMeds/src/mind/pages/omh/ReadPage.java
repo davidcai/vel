@@ -230,23 +230,4 @@ public class ReadPage extends OmhPage
 
 		return dt;
 	}
-
-	private int getPagingNum(String number, int defaultNumber)
-	{
-		int num = defaultNumber;
-
-		if (Util.isEmpty(number) == false)
-		{
-			try
-			{
-				num = Integer.parseInt(number);
-			}
-			catch (NumberFormatException e)
-			{
-				num = defaultNumber;
-			}
-		}
-
-		return num;
-	}
 }

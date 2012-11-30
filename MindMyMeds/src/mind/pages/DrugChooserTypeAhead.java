@@ -23,7 +23,6 @@ public class DrugChooserTypeAhead extends TypeAhead
 	{
 		RequestContext ctx = getContext();
 		Patient patient = PatientStore.getInstance().loadByUserID(ctx.getUserID());
-		boolean smartPhone = ctx.getUserAgent().isSmartPhone();
 		
 		List<UUID> drugIDs = new ArrayList<UUID>();
 		drugIDs.addAll(DrugStore.getInstance().searchByName(q));

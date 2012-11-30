@@ -1,6 +1,5 @@
 package samoyan.apps.master;
 
-import java.util.Date;
 import java.util.Locale;
 import samoyan.apps.master.PrivacyPage;
 import samoyan.apps.master.TermsPage;
@@ -37,8 +36,6 @@ public class JoinPage extends WebPage
 		{
 			throw new PageNotFoundException();
 		}
-		
-		RequestContext ctx = getContext();
 
 		// Name
 		validateParameterString("name", User.MINSIZE_NAME, User.MAXSIZE_NAME);
@@ -98,8 +95,6 @@ public class JoinPage extends WebPage
 		Server fed = ServerStore.getInstance().loadFederation();
 		
 		// Create the user
-		Date now = new Date();
-		
 		User user = new User();
 		user.setName(getParameterString("name"));
 		user.setEmail(getParameterString("email").toLowerCase(Locale.US));
@@ -150,9 +145,7 @@ public class JoinPage extends WebPage
 			writeEncode(getString("master:Join.ByInvitationOnly"));
 			return;
 		}
-		
-		RequestContext ctx = getContext();
-		
+				
 		writeFormOpen();
 				
 		TwoColFormControl twoCol = new TwoColFormControl(this);

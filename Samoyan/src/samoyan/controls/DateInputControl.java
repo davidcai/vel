@@ -51,9 +51,7 @@ public class DateInputControl extends TextInputControl
 		WebPage out = this.getOutputPage();
 		
 		DateFormat df;
-		String inputType;
 
-		UserAgent ua = out.getContext().getUserAgent();
 		if (this.dateInputSupported)
 		{
 			df = new SimpleDateFormat("yyyy-MM-dd");

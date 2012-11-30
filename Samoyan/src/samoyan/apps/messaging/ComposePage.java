@@ -70,7 +70,6 @@ public class ComposePage extends MessagingPage
 		
 		List<UUID> to = new ArrayList<UUID>();
 		String content = null;
-		UUID threadID = null;
 		String subject = null;
 		
 		if (isParameter(PARAM_REPLY))
@@ -80,7 +79,6 @@ public class ComposePage extends MessagingPage
 			{
 				to.add(reply.getSenderUserID());
 				content = quote(reply);
-				threadID = reply.getThreadID();
 				subject = modifySubject(getString("messaging:Compose.Re"), reply.getSubject());
 			}
 		}
@@ -91,7 +89,6 @@ public class ComposePage extends MessagingPage
 			{
 				to.addAll(InternalMessageRecipientStore.getInstance().queryRecipientsOfMessage(reply.getID()));
 				content = quote(reply);
-				threadID = reply.getThreadID();
 				subject = modifySubject(getString("messaging:Compose.Re"), reply.getSubject());
 			}
 		}
@@ -101,15 +98,10 @@ public class ComposePage extends MessagingPage
 			if (reply!=null && InternalMessageRecipientStore.getInstance().isRecipient(reply.getID(), ctx.getUserID()))
 			{
 				content = quote(reply);
-				threadID = reply.getThreadID();
 				subject = modifySubject(getString("messaging:Compose.Fwd"), reply.getSubject());
 			}
 		}
-		
-		
-		InternalMessage replyAll = InternalMessageStore.getInstance().load(getParameterUUID(PARAM_REPLY_ALL));
-		InternalMessage forward = InternalMessageStore.getInstance().load(getParameterUUID(PARAM_FORWARD));
-		
+				
 		writeFormOpen();
 		
 		TwoColFormControl twoCol = new TwoColFormControl(this);

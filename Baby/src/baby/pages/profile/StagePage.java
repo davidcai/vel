@@ -61,6 +61,7 @@ public final class StagePage extends BabyPage
 		write("<tr valign=middle>");
 		if (!phone)
 		{
+			write("<td>");
 			writeImage("baby/stage-pregnancy.jpg", getString("babyprofile:Stage.Pregnancy"));
 			write("</td>");
 		}
@@ -81,6 +82,7 @@ public final class StagePage extends BabyPage
 		write("<tr valign=middle>");
 		if (!phone)
 		{
+			write("<td>");
 			writeImage("baby/stage-infancy.jpg", getString("babyprofile:Stage.Infancy"));
 			write("</td>");
 		}

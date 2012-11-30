@@ -29,8 +29,6 @@ public class ConsolePage extends AdminPage
 	@Override
 	public void renderHTML() throws Exception
 	{
-		RequestContext ctx = getContext();
-		
 		write("<pre class=Console id=console>");
 		List<String> console = Debug.getConsole();
 		Iterator<String> iter = console.iterator();

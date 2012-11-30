@@ -197,7 +197,6 @@ public class EditPrescriptionPage extends PatientPage
 	{
 		RequestContext ctx = getContext();
 		User user = UserStore.getInstance().load(ctx.getUserID());
-		Patient patient = PatientStore.getInstance().loadByUserID(ctx.getUserID());
 		boolean smartPhone = ctx.getUserAgent().isSmartPhone();
 		
 		writeIncludeCSS("mind/hourchooser.css");

@@ -8,7 +8,6 @@ import samoyan.controls.DataTableControl;
 import samoyan.core.ParameterMap;
 import samoyan.database.Permission;
 import samoyan.database.PermissionStore;
-import samoyan.servlet.RequestContext;
 import samoyan.servlet.exc.WebFormException;
 
 public class PermissionListPage extends AdminPage
@@ -45,8 +44,6 @@ public class PermissionListPage extends AdminPage
 	@Override
 	public void renderHTML() throws Exception
 	{
-		RequestContext ctx = getContext();
-
 //		// Search
 //		writeFormOpen();
 //		writeTypeAheadInput("q", null, null, 20, Permission.MAXSIZE_NAME, getPageURL(PermissionTypeAhead.COMMAND));

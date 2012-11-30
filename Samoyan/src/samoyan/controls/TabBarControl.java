@@ -25,13 +25,10 @@ public class TabBarControl extends WebPage
 	}
 	private List<Icon> tabs;
 	
-	private WebPage outputPage;
-
 	public TabBarControl(WebPage outputPage) throws Exception
 	{
 		setContainer(outputPage);
 
-		this.outputPage = outputPage;
 		this.tabs = new ArrayList<Icon>();
 	}
 

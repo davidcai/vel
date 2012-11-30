@@ -46,8 +46,6 @@ public class TypeAhead extends WebPage
 	@Override
 	public final void renderHTML() throws Exception
 	{
-		RequestContext ctx = getContext();
-		
 		String q = getParameterString("q");
 		
 		String preQ = "";

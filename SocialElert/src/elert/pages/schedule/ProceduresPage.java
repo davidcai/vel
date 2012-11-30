@@ -331,9 +331,6 @@ public class ProceduresPage extends ElertPage
 	
 	private void renderCustomProcs(List<UUID> customProcedures, final List<UUID> facilityIDs) throws Exception
 	{
-		RequestContext ctx = getContext();
-		final boolean phone = ctx.getUserAgent().isSmartPhone();
-
 		writeFormOpen();
 
 		writeEncode(getString("schedule:Procedures.HelpCustom"));

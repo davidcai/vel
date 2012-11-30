@@ -77,13 +77,9 @@ public class ChecklistControl
 		Date now = Calendar.getInstance(TimeZoneEx.GMT).getTime(); // Today's date in GMT
 		int tzOffset = out.getTimeZone().getRawOffset();
 
-		Checklist personalChecklist = ChecklistStore.getInstance().loadPersonalChecklist(userID);
-		boolean personal = (personalChecklist.getID().equals(this.checklistID));
-
 		boolean incomplete = false;
 		for (UUID checkitemID : checkitemIDs)
 		{
-			CheckItem checkitem = CheckItemStore.getInstance().load(checkitemID);
 			if (CheckItemUserLinkStore.getInstance().isChecked(checkitemID, userID)==false)
 			{
 				incomplete = true;

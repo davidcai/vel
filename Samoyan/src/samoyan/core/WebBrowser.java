@@ -321,7 +321,7 @@ public final class WebBrowser implements Cloneable
 	
 	private final void fetch(String method, String address, String mimeType, Poster poster) throws IOException
 	{
-		long start = System.currentTimeMillis();
+//		long start = System.currentTimeMillis();
 		
 		HttpURLConnection cn = null;
 			
@@ -499,7 +499,7 @@ public final class WebBrowser implements Cloneable
 			this.content = null;
 		}
 				
-		long finish = System.currentTimeMillis();
+//		long finish = System.currentTimeMillis();
 //		Debug.println("URL fetched: " + this.content.length() + " bytes in " + (finish-start) + "ms");
 	}
 	
@@ -640,7 +640,7 @@ public final class WebBrowser implements Cloneable
 		// Verify charset validity
 		try
 		{
-			Charset cs = Charset.forName(charset);
+			Charset.forName(charset);
 		}
 		catch (Exception e)
 		{

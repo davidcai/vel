@@ -29,8 +29,6 @@ public class PhonePage extends ProfilePage
 	@Override
 	public void renderHTML() throws Exception
 	{
-		RequestContext ctx = getContext();
-		User user = UserStore.getInstance().load(ctx.getUserID());
 		Server fed = ServerStore.getInstance().loadFederation();
 
 		if (!fed.isChannelEnabled(Channel.VOICE))
@@ -125,9 +123,6 @@ public class PhonePage extends ProfilePage
 
 	private void renderSendCode() throws Exception
 	{
-		RequestContext ctx = getContext();
-		User user = UserStore.getInstance().load(ctx.getUserID());
-		
 		writeFormOpen();
 		
 		writeEncode(getString("profile:Phone.VerifyHelp", CODE_LEN));
@@ -142,9 +137,6 @@ public class PhonePage extends ProfilePage
 	
 	private void renderEnterCode() throws Exception
 	{
-		RequestContext ctx = getContext();
-		User user = UserStore.getInstance().load(ctx.getUserID());
-
 		writeFormOpen();
 
 		TwoColFormControl twoCol = new TwoColFormControl(this);
@@ -177,7 +169,8 @@ public class PhonePage extends ProfilePage
 
 		if (isParameter("enter"))
 		{
-			String phone = validateParameterPhone("number");
+			validateParameterPhone("number");
+//			String phone = validateParameterPhone("number");
 //			if (phone.equals(user.getPhone()))
 //			{
 //				throw new WebFormException("number", getString("profile:Phone.NoChange"));

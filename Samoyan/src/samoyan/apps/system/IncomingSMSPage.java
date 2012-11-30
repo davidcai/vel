@@ -155,8 +155,6 @@ public class IncomingSMSPage extends WebPage
 	@Override
 	public void renderHTML() throws Exception
 	{
-		RequestContext ctx = getContext();
-
 		String phoneNum = getParam("from");
 		String text = getParam("text").trim();
 

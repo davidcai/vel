@@ -4,7 +4,6 @@ import java.util.Date;
 
 import samoyan.controls.TwoColFormControl;
 import samoyan.database.Image;
-import samoyan.servlet.RequestContext;
 import samoyan.servlet.exc.RedirectException;
 import samoyan.servlet.exc.WebFormException;
 import baby.database.JournalEntry;
@@ -84,8 +83,6 @@ public class JournalEntryPage extends BabyPage
 	@Override
 	public void renderHTML() throws Exception
 	{
-		RequestContext ctx = getContext();
-		
 		writeHorizontalNav(JournalPage.COMMAND);
 
 		writeFormOpen();

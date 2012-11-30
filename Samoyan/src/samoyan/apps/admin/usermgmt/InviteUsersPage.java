@@ -106,7 +106,6 @@ public class InviteUsersPage extends AdminPage
 		}
 
 		// Groups
-		List<UUID> groupIDs = new ArrayList<UUID>();
 		Integer groupCount = getParameterInteger("groups");
 		for (int i=0; i<groupCount; i++)
 		{
@@ -125,7 +124,6 @@ public class InviteUsersPage extends AdminPage
 	@Override
 	public void commit() throws Exception
 	{
-		String recipients = getParameterString("recipients");
 		String subject = getParameterString("subject");
 		String message = getParameterRichEdit("message");
 				

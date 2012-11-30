@@ -41,9 +41,7 @@ import samoyan.servlet.Controller;
 public class LessEngine
 {	
 	private Scriptable scope;
-	private ClassLoader classLoader;
 	private Function compileString;
-	private Function compileFile;
 	
 	public LessEngine()
 	{
@@ -51,8 +49,6 @@ public class LessEngine
 		{
 			Debug.logln("Initializing LESS Engine");
 			
-			this.classLoader = getClass().getClassLoader();
-
 			InputStream env = Controller.getResourceAsStream("WEB-INF/less/env.js");
 			InputStream engine = Controller.getResourceAsStream("WEB-INF/less/engine.js");
 			InputStream cssmin= Controller.getResourceAsStream("WEB-INF/less/cssmin.js");
@@ -73,7 +69,6 @@ public class LessEngine
 			cx.evaluateReader(this.scope, new InputStreamReader(engine), "engine.js", 1, null);
 			
 			this.compileString = (Function) this.scope.get("compileString", scope);
-			this.compileFile = (Function) this.scope.get("compileFile", scope);
 			Context.exit();
 		}
 		catch (Exception e)

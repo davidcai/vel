@@ -12,7 +12,6 @@ import samoyan.database.ServerStore;
 import samoyan.database.UserStore;
 import samoyan.email.EmailServer;
 import samoyan.servlet.Controller;
-import samoyan.servlet.RequestContext;
 import samoyan.sms.SmsServer;
 import samoyan.twitter.TwitterServer;
 
@@ -29,7 +28,6 @@ public class SystemOverviewPage extends AdminPage
 	@Override
 	public void renderHTML() throws Exception
 	{
-		RequestContext ctx = getContext();
 		Server fed = ServerStore.getInstance().loadFederation();
 		
 		if (isParameter("gc"))

@@ -2,8 +2,6 @@ package samoyan.apps.profile;
 
 import samoyan.controls.TwoColFormControl;
 import samoyan.core.Util;
-import samoyan.database.Server;
-import samoyan.database.ServerStore;
 import samoyan.database.User;
 import samoyan.database.UserStore;
 import samoyan.servlet.RequestContext;
@@ -25,7 +23,6 @@ public class EmailPage extends ProfilePage
 	{
 		RequestContext ctx = getContext();
 		User user = UserStore.getInstance().load(ctx.getUserID());
-		Server fed = ServerStore.getInstance().loadFederation();
 
 		writeFormOpen();
 

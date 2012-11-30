@@ -183,8 +183,6 @@ public class RichEditControl extends WebPage
 	
 	private void writeToolbarButton(String cmd)
 	{
-		RequestContext ctx = getContext();
-
 		write("<img src=\"");
 		write(getResourceURL("richedit/" + cmd + ".gif"));
 		write("\" cmd=\"");

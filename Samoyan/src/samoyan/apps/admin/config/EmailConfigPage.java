@@ -28,8 +28,6 @@ public class EmailConfigPage extends AdminPage
 	@Override
 	public void validate() throws Exception
 	{
-		RequestContext ctx = getContext();
-		
 		// Validate SMTP
 		String smtpHost = validateParameterString("smtp.host", isParameter("smtp.status")?1:0, Server.MAXSIZE_HOST);
 		if (smtpHost.matches("[\\w\\x2e\\x2d]*")==false) // Word letters, dot, hyphen
@@ -53,8 +51,6 @@ public class EmailConfigPage extends AdminPage
 	@Override
 	public void commit() throws Exception
 	{
-		RequestContext ctx = getContext();
-
 		// Commit
 		Server fed = ServerStore.getInstance().openFederation(); 
 

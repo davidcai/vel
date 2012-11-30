@@ -15,7 +15,6 @@ import samoyan.core.Cache;
 import samoyan.core.DateFormatEx;
 import samoyan.core.Util;
 import samoyan.servlet.Controller;
-import samoyan.servlet.RequestContext;
 import samoyan.servlet.Setup;
 import samoyan.servlet.WebPage;
 import samoyan.servlet.exc.PageNotFoundException;
@@ -28,8 +27,6 @@ public class StaticPage extends WebPage
 	@Override
 	public void init() throws Exception
 	{		
-		RequestContext ctx = getContext();
-				
 		// Load the page
 		String html = loadFile(getFileName());
 		if (Util.isEmpty(html))
@@ -297,8 +294,8 @@ public class StaticPage extends WebPage
 					throw new Exception("Missing </a>");
 				}
 				
-				Map<String, String> attrs = getAttributes(html.substring(p, closeBracket));
-				String href = attrs.get("href");
+//				Map<String, String> attrs = getAttributes(html.substring(p, closeBracket));
+//				String href = attrs.get("href");
 //				if (!Util.isEmpty(href) && href.startsWith("/"))
 //				{
 //					// Validate relative URLs
@@ -363,8 +360,8 @@ public class StaticPage extends WebPage
 			{
 				boolean printImage = true;
 				
-				Map<String, String> attrs = getAttributes(html.substring(p, closeBracket));
-				String src = attrs.get("src");
+//				Map<String, String> attrs = getAttributes(html.substring(p, closeBracket));
+//				String src = attrs.get("src");
 //				if (!Util.isEmpty(src) && src.startsWith("/" + UrlGenerator.PATH_RESOURCE + "/"))
 //				{
 //					// Validate relative URLs

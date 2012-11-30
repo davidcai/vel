@@ -97,7 +97,7 @@ public class HomeServiceAreasPage extends ElertPage
 		
 		// Assign neighboring areas
 		Integer neighbourAreasCount = getParameterInteger("neighbourareas");
-		for(int i = 0; i < homeAreasCount; i++)
+		for(int i = 0; i < neighbourAreasCount; i++)
 		{
 			Pair<String, String> field = getParameterTypeAhead(PARAM_NEIGHBOUR_AREA + i);
 			if(field != null && !Util.isEmpty(field.getValue()))

@@ -60,9 +60,7 @@ public class DateTimeInputControl extends InputControl
 		WebPage out = this.getOutputPage();
 		
 		DateFormat df;
-		String inputType;
 
-		UserAgent ua = out.getContext().getUserAgent();
 		if (this.dateInputSupported)
 		{
 			df = DateFormatEx.getSimpleInstance("yyyy-MM-dd'T'HH:mm", out.getLocale(), out.getTimeZone());

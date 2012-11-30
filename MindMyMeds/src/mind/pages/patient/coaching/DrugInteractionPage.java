@@ -6,7 +6,6 @@ import java.util.UUID;
 
 import samoyan.core.ParameterMap;
 import samoyan.core.Util;
-import samoyan.servlet.RequestContext;
 import mind.database.Drug;
 import mind.database.DrugStore;
 import mind.pages.patient.PatientPage;
@@ -24,8 +23,6 @@ public class DrugInteractionPage extends PatientPage
 	@Override
 	public void renderHTML() throws Exception
 	{
-		RequestContext ctx = getContext();
-		
 		// Load drugs indicated in parameters
 		List<Drug> drugs = new ArrayList<Drug>();
 		for (int i=0; ; i++)

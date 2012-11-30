@@ -616,7 +616,7 @@ public abstract class DataBeanStore<T extends DataBean>
 						throw new SQLException("Invariant column: " + bean.getClass().getName() + " " + pd.getName());
 					}
 					
-					Prop readProp = bean.getReadProp(pd.getName()); // readProp may be null
+//					Prop readProp = bean.getReadProp(pd.getName()); // readProp may be null
 
 					Object val = bean.get(pd.getName());					
 					if (val==null)

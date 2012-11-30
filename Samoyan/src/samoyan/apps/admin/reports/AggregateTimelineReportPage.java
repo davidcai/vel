@@ -92,7 +92,6 @@ public class AggregateTimelineReportPage extends AdminPage
 		graph.getChartArea().setBottom(30);
 		graph.addColumn(GoogleGraph.STRING, "");
 		
-		List<String> channels = new ArrayList<String>();
 		for (String channel : enabledChannels)
 		{
 			graph.addColumn(GoogleGraph.NUMBER, Channel.getDescription(channel, getLocale()));

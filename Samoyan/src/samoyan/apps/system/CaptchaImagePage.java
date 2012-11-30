@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.util.UUID;
 
 import samoyan.core.Captcha;
-import samoyan.servlet.RequestContext;
 import samoyan.servlet.WebPage;
 import samoyan.servlet.exc.PageNotFoundException;
 
@@ -18,8 +17,6 @@ public class CaptchaImagePage extends WebPage
 	@Override
 	public void renderHTML() throws Exception
 	{
-		RequestContext ctx = getContext();
-		
 		UUID uuid = getParameterUUID(PARAM_ID);
 		if (uuid==null)
 		{

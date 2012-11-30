@@ -23,14 +23,11 @@ import samoyan.database.LogType;
 import samoyan.database.LogTypeStore;
 import samoyan.database.User;
 import samoyan.database.UserStore;
-import samoyan.servlet.RequestContext;
 import samoyan.servlet.exc.WebFormException;
 
 public class QueryLogPage extends AdminPage
 {
 	public final static String COMMAND = AdminPage.COMMAND + "/system-log";
-
-	private static final int PAGE_SIZE = 100;
 
 	public static final String PARAM_LOGINNAME = "loginname";
 
@@ -39,8 +36,6 @@ public class QueryLogPage extends AdminPage
 	@Override
 	public void validate() throws Exception
 	{
-		RequestContext ctx = getContext();
-		
 		// Dates
 		validateParameterDate("datefrom");
 		validateParameterDate("dateto");
@@ -51,7 +46,7 @@ public class QueryLogPage extends AdminPage
 		{
 			try
 			{
-				InetAddress inet = InetAddress.getByName(ip);
+				InetAddress.getByName(ip);
 			}
 			catch (Exception e)
 			{
@@ -86,8 +81,6 @@ public class QueryLogPage extends AdminPage
 	@Override
 	public void renderHTML() throws Exception
 	{
-		RequestContext ctx = getContext();
-
 		if (UserStore.getInstance().loadByLoginName(getParameterString(PARAM_LOGINNAME))!=null)
 		{
 			this.runQuery = true;
@@ -108,8 +101,6 @@ public class QueryLogPage extends AdminPage
 
 	private void renderForm() throws Exception
 	{
-		RequestContext ctx = getContext();
-		
 		TwoColFormControl twoCol = new TwoColFormControl(this);
 
 		// Dates
@@ -178,9 +169,6 @@ public class QueryLogPage extends AdminPage
 	
 	private void renderQuery() throws Exception
 	{
-		RequestContext ctx = getContext();
-		long now = System.currentTimeMillis();
-		
 		// Dates
 		Date from = getParameterDate("datefrom");
 		if (from==null)

@@ -7,8 +7,6 @@ import mind.database.Dose;
 import mind.database.DoseStore;
 import mind.database.Drug;
 import mind.database.DrugStore;
-import mind.database.Patient;
-import mind.database.PatientStore;
 import mind.database.Prescription;
 import mind.database.PrescriptionStore;
 import samoyan.controls.ActionListControl;
@@ -31,7 +29,6 @@ public class DoseReminderNotif extends RemindersPage
 
 	private Dose dose;
 	private Prescription rx;
-	private Patient patient;
 	private Drug drug;
 	private String drugName;
 		
@@ -137,7 +134,6 @@ Debug.logln(getContext().toString());
 		
 		this.rx = PrescriptionStore.getInstance().load(this.dose.getPrescriptionID());
 		this.drug = DrugStore.getInstance().load(this.rx.getDrugID());
-		this.patient = PatientStore.getInstance().load(this.rx.getPatientID());
 		
 		this.drugName = this.drug.getName();
 		if (!Util.isEmpty(this.rx.getNickname()) && Channel.isPush(getContext().getChannel()))

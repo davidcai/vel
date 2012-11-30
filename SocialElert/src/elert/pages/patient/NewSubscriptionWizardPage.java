@@ -500,7 +500,7 @@ public class NewSubscriptionWizardPage extends ElertPage
 			UUID procID = getParameterUUID("proc");
 			List<UUID> physicianIDs = getPhysiciansForProcedureInServiceArea(areaID, procID);
 			
-			UUID procTypeID = getParameterUUID("proctype");
+//			UUID procTypeID = getParameterUUID("proctype");
 
 			write("<table>");
 			for (UUID physicianID : physicianIDs)

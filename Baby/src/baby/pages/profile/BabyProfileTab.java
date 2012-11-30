@@ -20,7 +20,6 @@ public class BabyProfileTab extends ProfileTab
 	@Override
 	public NavTreeControl getNavTree(WebPage outputPage) throws Exception
 	{
-		boolean smartPhone = outputPage.getContext().getUserAgent().isSmartPhone();
 		Server fed = ServerStore.getInstance().loadFederation();
 
 		NavTreeControl navCtrl = new NavTreeControl(outputPage);
