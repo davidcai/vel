@@ -146,10 +146,10 @@ TABLE.PhotoGrid TD {
     .border-radius(7px);
     	
   	#Countdown {
-		font-size: 3em;
+			font-size: 3em;
   	}
   	#Kicks {
-		font-size: 1.5em;
+			font-size: 1.5em;
   	}
 	}
 	
@@ -206,20 +206,24 @@ TABLE.PhotoGrid TD {
   line-height: 1.8;
   
 	.CalendarBadge {
-		padding: 1px 4px;
-    color: #FFFFFF;
-    .border-radius(4px);
+		display: inline-block;
+		width: 16px;
+		height: 16px;
     
-		&.JournalEntry {
-			.background-gradient-top(#BDDB9A, #699736);
+		&.Photo {
+			background: transparent url("picture.png") no-repeat center center;
 	  }
-
-		&.Checklist {
-			.background-gradient-top(#FCB230, #EE7215);
+		&.Text {
+			background: transparent url("text.png") no-repeat center center;
+	  }
+		&.MeasureRecord {
+			background: transparent url("measure-record.png") no-repeat center center;
 		}
-
-		&.Appointment {
-			.background-gradient-top(#DA000F, #6E0002);
+		&.ChecklistDue {
+			background: transparent url("text.png") no-repeat center center;
+		}
+		&.AppointmentDue {
+			background: transparent url("text.png") no-repeat center center;
 		}
 	}
 }
