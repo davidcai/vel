@@ -4,7 +4,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
-
 import samoyan.core.TimeZoneEx;
 import samoyan.database.DataBean;
 
@@ -74,17 +73,11 @@ public class Mother extends DataBean
 	
 	public Stage getPregnancyStage()
 	{
-		return getPregnancyStage(new Date());
-	}
-	
-	public Stage getPregnancyStage(Date date)
-	{
 		Date due = getDueDate();
 		if (due != null)
 		{
 			int week = Stage.MAX_WEEKS + 1;
 			Calendar cal = Calendar.getInstance(TimeZoneEx.GMT);
-			cal.setTime(date);
 			while (cal.getTime().before(due) && week > 1)
 			{
 				week--;
@@ -103,15 +96,72 @@ public class Mother extends DataBean
 		{
 			int month = 0;
 			Calendar cal = Calendar.getInstance(TimeZoneEx.GMT);
-			cal.setTime(date);
 			while (cal.getTime().after(delivery) && month < Stage.MAX_MONTHS)
 			{
 				month++;
 				cal.add(Calendar.MONTH, -1);
 			}
-			if (month == 0)
+			
+			return Stage.infancy(month);
+		}
+
+		return Stage.preconception();
+	}
+	
+	public Stage getEstimatedPregnancyStage(Date target)
+	{
+		Date due = getDueDate();
+		Date delivery = null;
+		
+		if (due != null)
+		{
+			int week = Stage.MAX_WEEKS + 1;
+			Calendar cal = Calendar.getInstance(TimeZoneEx.GMT);
+			cal.setTime(target);
+			
+			while (cal.getTime().before(due) && week > 1)
 			{
-				month = 0;
+				week--;
+				cal.add(Calendar.DATE, 7);	
+			}
+			
+			if (cal.getTime().before(due)) 
+			{
+				// Preconception
+				return Stage.preconception();
+			}
+			
+			cal.add(Calendar.DATE, - Stage.MAX_WEEK_DELAY * 7);
+			if (cal.getTime().after(due) == false)
+			{
+				// Pregnancy
+				if (week > Stage.MAX_WEEKS)
+				{
+					week = Stage.MAX_WEEKS;
+				}
+				
+				return Stage.pregnancy(week);
+			}
+			else
+			{
+				// Assume mother gave birth Stage.MAX_WEEK_DEAY weeks after due
+				cal.setTime(due);
+				cal.add(Calendar.DATE, Stage.MAX_WEEK_DELAY * 7);
+				delivery = cal.getTime();
+			}
+		}
+		
+		delivery = (delivery == null ? getBirthDate() : delivery);
+		if (delivery != null)
+		{
+			// Infancy
+			int month = 0;
+			Calendar cal = Calendar.getInstance(TimeZoneEx.GMT);
+			cal.setTime(target);
+			while (cal.getTime().after(delivery) && month < Stage.MAX_MONTHS)
+			{
+				month++;
+				cal.add(Calendar.MONTH, -1);
 			}
 			
 			return Stage.infancy(month);
