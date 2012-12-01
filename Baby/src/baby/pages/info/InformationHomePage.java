@@ -10,6 +10,6 @@ public class InformationHomePage extends BabyPage
 	@Override
 	public void init() throws Exception
 	{
-		throw new RedirectException(HealthyBeginningsPage.COMMAND, null);
+		throw new RedirectException(ViewArticleListPage.COMMAND, null);
 	}
 }

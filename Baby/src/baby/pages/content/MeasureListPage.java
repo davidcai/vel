@@ -6,6 +6,7 @@ import java.util.UUID;
 import samoyan.controls.DataTableControl;
 import samoyan.controls.LinkToolbarControl;
 import samoyan.core.ParameterMap;
+import samoyan.servlet.exc.RedirectException;
 import baby.database.Measure;
 import baby.database.MeasureStore;
 import baby.pages.BabyPage;
@@ -35,11 +36,14 @@ public class MeasureListPage extends BabyPage
 			return;
 		}
 		
+		writeFormOpen();
+		
 		new DataTableControl<UUID>(this, "measures", measureIDs)
 		{
 			@Override
 			protected void defineColumns() throws Exception
 			{
+				column("").width(1); // checkbox
 				column(getString("content:MeasureList.Label"));
 				column(getString("content:MeasureList.Unit"));
 				column(getString("content:MeasureList.ForMom"));
@@ -53,6 +57,9 @@ public class MeasureListPage extends BabyPage
 			{
 				Measure m = MeasureStore.getInstance().load(id);
 				
+				cell();
+				writeCheckbox("chk_" + m.getID().toString(), null, false);
+
 				cell();
 				writeLink(m.getLabel(), getPageURL(MeasurePage.COMMAND, new ParameterMap(PARAM_ID, m.getID().toString())));
 				
@@ -84,8 +91,25 @@ public class MeasureListPage extends BabyPage
 				}
 			}
 		}.render();
+		
+		write("<br>");
+		writeRemoveButton();
+		
+		writeFormClose();
 	}
 	
+	@Override
+	public void commit() throws Exception
+	{
+		for (String p : getContext().getParameterNamesThatStartWith("chk_"))
+		{
+			MeasureStore.getInstance().remove(UUID.fromString(p.substring(4)));
+		}
+		
+		// Redirect to self
+		throw new RedirectException(getContext().getCommand(), null);
+	}
+
 	@Override
 	public String getTitle() throws Exception
 	{

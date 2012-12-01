@@ -11,7 +11,6 @@ public class Stage
 {
 	public static final int MAX_WEEKS = 40;
 	public static final int MAX_MONTHS = 12;
-	public static final int MAX_WEEK_DELAY = 2;
 	
 	private int key = 0;
 	

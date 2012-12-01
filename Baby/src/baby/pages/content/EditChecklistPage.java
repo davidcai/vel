@@ -65,13 +65,14 @@ public final class EditChecklistPage extends BabyPage
 		twoCol.writeTextAreaInput("desc", this.checklist.getDescription(), 80, 2, Checklist.MAXSIZE_DESCRIPTION);
 		
 		twoCol.writeRow(getString("content:EditChecklist.Section"));
-		new SelectInputControl(twoCol, "section")
-			.addOption(getString("content:EditChecklist.ToDo"), BabyConsts.SECTION_TODO)
-			.addOption(getString("content:EditChecklist.DoctorVisit"), BabyConsts.SECTION_CHECKUP)
-			.addOption(getString("content:EditChecklist.Ultrasound"), BabyConsts.SECTION_ULTRASOUND)
-			.addOption(getString("content:EditChecklist.WellBaby"), BabyConsts.SECTION_WELL_BABY)
-			.setInitialValue(this.checklist.getSection())
-			.render();
+		SelectInputControl select = new SelectInputControl(twoCol, "section");
+		select.setInitialValue(this.checklist.getSection());
+		select.addOption(BabyConsts.SECTION_TODO, BabyConsts.SECTION_TODO);
+		for (String s : BabyConsts.SECTIONS_APPOINTMENT)
+		{
+			select.addOption(s,s);
+		}
+		select.render();
 
 		twoCol.writeRow(getString("content:EditChecklist.Timeline"));
 
@@ -110,11 +111,6 @@ public final class EditChecklistPage extends BabyPage
 
 		write("<br>");
 		writeSaveButton("save", this.checklist);
-		if (this.checklist.isSaved())
-		{
-			write(" ");
-			writeRemoveButton("remove");
-		}
 		
 		writeHiddenInput(PARAM_ID, null);
 		
@@ -139,116 +135,103 @@ public final class EditChecklistPage extends BabyPage
 	@Override
 	public void validate() throws Exception
 	{
-		if (isParameter("save"))
+		validateParameterString("title", 1, Checklist.MAXSIZE_TITLE);
+		validateParameterString("desc", 0, Checklist.MAXSIZE_DESCRIPTION);
+		
+		// Validate "from" and "to"
+		Stage from = Stage.fromInteger(getParameterInteger("from"));
+		if (from.isValid()==false)
 		{
-			validateParameterString("title", 1, Checklist.MAXSIZE_TITLE);
-			validateParameterString("desc", 0, Checklist.MAXSIZE_DESCRIPTION);
-			
-			// Validate "from" and "to"
-			Stage from = Stage.fromInteger(getParameterInteger("from"));
-			if (from.isValid()==false)
-			{
-				throw new WebFormException("from", getString("common:Errors.MissingField"));
-			}
-			Stage to = Stage.fromInteger(getParameterInteger("to"));
-			if (to.isValid()==false)
-			{
-				throw new WebFormException("to", getString("common:Errors.MissingField"));
-			}
-			if (from.toInteger() > to.toInteger())
-			{
-				throw new WebFormException(new String[] {"from", "to"}, getString("content:EditHealthBeg.InvalidTimeline"));
-			}
+			throw new WebFormException("from", getString("common:Errors.MissingField"));
+		}
+		Stage to = Stage.fromInteger(getParameterInteger("to"));
+		if (to.isValid()==false)
+		{
+			throw new WebFormException("to", getString("common:Errors.MissingField"));
+		}
+		if (from.toInteger() > to.toInteger())
+		{
+			throw new WebFormException(new String[] {"from", "to"}, getString("content:EditHealthBeg.InvalidTimeline"));
+		}
 
-			int actualCount = 0;
-			int itemCount = getParameterInteger("items");
-			for (int i=0; i<itemCount; i++)
+		int actualCount = 0;
+		int itemCount = getParameterInteger("items");
+		for (int i=0; i<itemCount; i++)
+		{
+			String txt = getParameterString("itemtext_" + i);
+			if (txt!=null)
 			{
-				String txt = getParameterString("itemtext_" + i);
-				if (txt!=null)
+				actualCount ++;
+				if (Util.isEmpty(txt))
 				{
-					actualCount ++;
-					if (Util.isEmpty(txt))
-					{
-						throw new WebFormException("itemtext_" + i, getString("common:Errors.MissingField"));
-					}
+					throw new WebFormException("itemtext_" + i, getString("common:Errors.MissingField"));
 				}
 			}
-			
-			if (actualCount==0)
-			{
-				throw new WebFormException("itemtext_" + itemCount, getString("common:Errors.MissingField"));
-			}
+		}
+		
+		if (actualCount==0)
+		{
+			throw new WebFormException("itemtext_" + itemCount, getString("common:Errors.MissingField"));
 		}
 	}
 	
 	@Override
 	public void commit() throws Exception
 	{
-		if (isParameter("save"))
+		boolean saved = this.checklist.isSaved();
+		
+		this.checklist.setTitle(getParameterString("title"));
+		this.checklist.setDescription(getParameterString("desc"));
+		
+		this.checklist.setSection(getParameterString("section"));
+		
+		this.checklist.setTimelineFrom(getParameterInteger("from"));
+		this.checklist.setTimelineTo(getParameterInteger("to"));
+		
+		ChecklistStore.getInstance().save(this.checklist);
+		
+		// Saved checkitems
+		Set<UUID> itemIDs = new HashSet<UUID>();
+		itemIDs.addAll(CheckItemStore.getInstance().getByChecklistID(this.checklist.getID()));
+		int itemCount = getParameterInteger("items");
+		for (int i=0; i<itemCount; i++)
 		{
-			boolean saved = this.checklist.isSaved();
-			
-			this.checklist.setTitle(getParameterString("title"));
-			this.checklist.setDescription(getParameterString("desc"));
-			
-			this.checklist.setSection(getParameterString("section"));
-			
-			this.checklist.setTimelineFrom(getParameterInteger("from"));
-			this.checklist.setTimelineTo(getParameterInteger("to"));
-			
-			ChecklistStore.getInstance().save(this.checklist);
-			
-			// Saved checkitems
-			Set<UUID> itemIDs = new HashSet<UUID>();
-			itemIDs.addAll(CheckItemStore.getInstance().getByChecklistID(this.checklist.getID()));
-			int itemCount = getParameterInteger("items");
-			for (int i=0; i<itemCount; i++)
-			{
-				String txt = getParameterString("itemtext_" + i);
-				if (txt==null) continue;
+			String txt = getParameterString("itemtext_" + i);
+			if (txt==null) continue;
 
-				CheckItem item;
-				UUID id = getParameterUUID("itemid_" + i);
-				if (id==null)
-				{
-					// New item
-					item = new CheckItem();
-				}
-				else
-				{
-					// Existing item
-					item = CheckItemStore.getInstance().open(id);
-					itemIDs.remove(id);
-				}
-				item.setChecklistID(this.checklist.getID());
-				item.setText(txt);
-				item.setOrderSequence(i);
-				CheckItemStore.getInstance().save(item);
-			}
-			
-			// Removed checkitems
-			for (UUID id : itemIDs)
+			CheckItem item;
+			UUID id = getParameterUUID("itemid_" + i);
+			if (id==null)
 			{
-				CheckItemStore.getInstance().remove(id);
-			}
-			
-			// For now, redirect to self
-			if (saved)
-			{
-				throw new RedirectException(getContext().getCommand(), new ParameterMap(PARAM_ID, this.checklist.getID().toString()).plus(RequestContext.PARAM_SAVED, ""));
+				// New item
+				item = new CheckItem();
 			}
 			else
 			{
-				throw new RedirectException(getContext().getCommand(), null);
+				// Existing item
+				item = CheckItemStore.getInstance().open(id);
+				itemIDs.remove(id);
 			}
+			item.setChecklistID(this.checklist.getID());
+			item.setText(txt);
+			item.setOrderSequence(i);
+			CheckItemStore.getInstance().save(item);
 		}
 		
-		if (isParameter("remove"))
+		// Removed checkitems
+		for (UUID id : itemIDs)
 		{
-			ChecklistStore.getInstance().remove(this.checklist.getID());
-			
-			throw new RedirectException(ChecklistListPage.COMMAND, null);
+			CheckItemStore.getInstance().remove(id);
+		}
+		
+		// For now, redirect to self
+		if (saved)
+		{
+			throw new RedirectException(getContext().getCommand(), new ParameterMap(PARAM_ID, this.checklist.getID().toString()).plus(RequestContext.PARAM_SAVED, ""));
+		}
+		else
+		{
+			throw new RedirectException(getContext().getCommand(), null);
 		}
 	}
 }

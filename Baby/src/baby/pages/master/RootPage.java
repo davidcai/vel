@@ -21,8 +21,8 @@ import baby.database.Mother;
 import baby.database.MotherStore;
 import baby.database.Stage;
 import baby.pages.content.ChecklistListPage;
-import baby.pages.info.ArticlePage;
-import baby.pages.info.HealthyBeginningsPage;
+import baby.pages.info.ViewArticlePage;
+import baby.pages.info.ViewArticleListPage;
 import baby.pages.profile.StagePage;
 import baby.pages.todo.AppointmentsPage;
 import samoyan.apps.master.JoinPage;
@@ -144,7 +144,7 @@ public class RootPage extends WebPage
 		// Pinned articles
 		int low = TimelineControl.getLowRange(stage.toInteger());
 		int high = TimelineControl.getHighRange(stage.toInteger());
-		List<UUID> articleIDs = ArticleStore.getInstance().queryBySectionAndTimeline(BabyConsts.SECTION_HEALTHY_BEGINNINGS, low, high);
+		List<UUID> articleIDs = ArticleStore.getInstance().queryBySectionAndTimeline(BabyConsts.SECTION_INFO, low, high);
 		List<Article> pinnedArticles = new ArrayList<Article>();
 		for (UUID id : articleIDs)
 		{
@@ -159,7 +159,7 @@ public class RootPage extends WebPage
 			write("<table width=\"100%\">");
 			for (Article article : pinnedArticles)
 			{
-				String url = getPageURL(ArticlePage.COMMAND, new ParameterMap(ArticlePage.PARAM_ID, article.getID().toString()));
+				String url = getPageURL(ViewArticlePage.COMMAND, new ParameterMap(ViewArticlePage.PARAM_ID, article.getID().toString()));
 
 				write("<tr>");
 				if (article.getPhoto()==null)
@@ -204,7 +204,7 @@ public class RootPage extends WebPage
 				linkStr = "baby:Root.MoreInfoInfancy";
 			}
 			write("<br>");
-			writeLink(getString(linkStr), getPageURL(HealthyBeginningsPage.COMMAND));
+			writeLink(getString(linkStr), getPageURL(ViewArticleListPage.COMMAND));
 			write("<br><br>");
 		}
 		
@@ -355,7 +355,7 @@ public class RootPage extends WebPage
 				// Background image on #middle
 				write("#middle{background-image:url(\"");
 				writeEncode(getResourceURL("baby/babies-background.jpg"));
-				write("\");background-position:top center;background-repeat:no-repeat;");
+				write("\");background-position:top center;background-repeat:no-repeat;}");
 			}
 			if (ctx.getUserID()==null)
 			{

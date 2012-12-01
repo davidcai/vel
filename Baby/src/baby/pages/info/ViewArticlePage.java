@@ -8,7 +8,7 @@ import baby.database.Article;
 import baby.database.ArticleStore;
 import baby.pages.BabyPage;
 
-public class ArticlePage extends BabyPage
+public class ViewArticlePage extends BabyPage
 {
 	public final static String COMMAND = BabyPage.COMMAND_INFORMATION + "/article";
 	public final static String PARAM_ID = "id";
@@ -44,8 +44,8 @@ public class ArticlePage extends BabyPage
 //		writeEncode(this.article.getSourceURL());
 //		write("<br><br>");
 		
-		boolean healthyBeginnings = this.article.getSection().equals(BabyConsts.SECTION_HEALTHY_BEGINNINGS);
-		writeHorizontalNav(healthyBeginnings? HealthyBeginningsPage.COMMAND : ResourcesPage.COMMAND);
+		boolean healthyBeginnings = this.article.getSection().equals(BabyConsts.SECTION_INFO);
+		writeHorizontalNav(healthyBeginnings? ViewArticleListPage.COMMAND : ResourcesPage.COMMAND);
 		
 		if (this.article.getPhoto()!=null)
 		{

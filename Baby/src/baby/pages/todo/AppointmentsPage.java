@@ -198,12 +198,13 @@ public class AppointmentsPage extends BabyPage
 		
 		// Type
 		twoCol.writeRow(getString("todo:Appointments.Type"));
-		new SelectInputControl(twoCol, PARAM_TYPE)
-			.addOption(BabyConsts.SECTION_CHECKUP, BabyConsts.SECTION_CHECKUP)
-			.addOption(BabyConsts.SECTION_ULTRASOUND, BabyConsts.SECTION_ULTRASOUND)
-			.addOption(BabyConsts.SECTION_WELL_BABY, BabyConsts.SECTION_WELL_BABY)
-			.setInitialValue(this.curAppointment.getType())
-			.render();
+		SelectInputControl select = new SelectInputControl(twoCol, PARAM_TYPE);
+		select.setInitialValue(this.curAppointment.getType());
+		for (String s : BabyConsts.SECTIONS_APPOINTMENT)
+		{
+			select.addOption(s,s);
+		}
+		select.render();
 		
 		// DateTime
 		writeDateTime(twoCol, this.curAppointment.getDateTime());

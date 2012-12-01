@@ -10,6 +10,7 @@ import samoyan.controls.DataTableControl;
 import samoyan.controls.LinkToolbarControl;
 import samoyan.core.CollectionsEx;
 import samoyan.core.ParameterMap;
+import samoyan.servlet.exc.RedirectException;
 
 import baby.app.BabyConsts;
 import baby.database.Article;
@@ -17,14 +18,14 @@ import baby.database.ArticleStore;
 import baby.database.Stage;
 import baby.pages.BabyPage;
 
-public final class HealthBegListPage extends BabyPage
+public final class ArticleListPage extends BabyPage
 {
-	public final static String COMMAND = BabyPage.COMMAND_CONTENT + "/hb-list";
+	public final static String COMMAND = BabyPage.COMMAND_CONTENT + "/articles";
 
 	@Override
 	public String getTitle() throws Exception
 	{
-		return getString("content:HealthBegList.Title");
+		return getString("content:Articles.Title");
 	}
 	
 	@Override
@@ -32,12 +33,12 @@ public final class HealthBegListPage extends BabyPage
 	{
 		// Toolbar
 		new LinkToolbarControl(this)
-			.addLink(getString("content:HealthBegList.NewArticle"), getPageURL(EditHealthBegPage.COMMAND), "icons/basic1/pencil_16.png")
-			.addLink(getString("content:HealthBegList.ImportArticles"), getPageURL(ImportHealthBegPage.COMMAND), "icons/basic2/box_16.png")
+			.addLink(getString("content:Articles.NewArticle"), getPageURL(EditArticlePage.COMMAND), "icons/basic1/pencil_16.png")
+			.addLink(getString("content:Articles.ImportArticles"), getPageURL(ImportArticlePage.COMMAND), "icons/basic2/box_16.png")
 			.render();
 
 		// Load all articles
-		List<UUID> articleIDs = ArticleStore.getInstance().queryBySection(BabyConsts.SECTION_HEALTHY_BEGINNINGS);
+		List<UUID> articleIDs = ArticleStore.getInstance().queryBySection(BabyConsts.SECTION_INFO);
 		List<Article> articles = new ArrayList<Article>(articleIDs.size());
 		for (UUID id : articleIDs)
 		{
@@ -83,46 +84,57 @@ public final class HealthBegListPage extends BabyPage
 			}
 			write("</h2>");
 			
-//			write("<table>");
-//			for (Article article : group)
-//			{
-//				write("<tr><td>");
-//				writeLink(article.getTitle(), getPageURL(EditHealthBegPage.COMMAND, new ParameterMap(EditHealthBegPage.PARAM_ID, article.getID().toString())));
-//				write("</td></tr>");
-//			}
-//			write("</table>");
+			writeFormOpen();
 			
 			new DataTableControl<Article>(this, "articles", group.iterator())
 			{
 				@Override
 				protected void defineColumns() throws Exception
 				{
+					column("").width(1); // checkbox
 					column("").width(1); // pinned?
 					column("").width(1); // image?
-					column(getString("content:HealthBegList.ArticleTitle"));
+					column(getString("content:Articles.ArticleTitle"));
+					column(getString("content:Articles.Section")).width(15);
 				}
 	
 				@Override
 				protected void renderRow(Article article) throws Exception
 				{
 					cell();
+					writeCheckbox("chk_" + article.getID().toString(), null, false);
+					
+					cell();
 					if (article.getPriority()>0)
 					{
-						writeImage("icons/basic1/label_16.png", getString("content:HealthBegList.Pinned"));
+						writeImage("icons/basic1/label_16.png", getString("content:Articles.Pinned"));
 					}
 					
 					cell();
 					if (article.getPhoto()!=null)
 					{
-						writeImage("icons/basic2/photo_16.png", getString("content:HealthBegList.Photo"));
+						writeImage("icons/basic2/photo_16.png", getString("content:Articles.Photo"));
 					}
 
 					cell();
-					writeLink(article.getTitle(), getPageURL(EditHealthBegPage.COMMAND, new ParameterMap(EditHealthBegPage.PARAM_ID, article.getID().toString())));
-				}			
+					writeLink(article.getTitle(), getPageURL(EditArticlePage.COMMAND, new ParameterMap(EditArticlePage.PARAM_ID, article.getID().toString())));
+
+					cell();
+					writeEncode(article.getSection());
+				}
 			}
 			.setPageSize(group.size()) // No paging
 			.render();
+			
+			write("<br>");
+			writeRemoveButton();
+			
+			writeFormClose();
+		}
+		
+		if (groups.size()==0)
+		{
+			writeEncode(getString("content:Articles.NoResults"));
 		}
 	}
 
@@ -131,15 +143,27 @@ public final class HealthBegListPage extends BabyPage
 		Stage stage = Stage.fromInteger(stageKey);
 		if (stage.isPreconception())
 		{
-			writeEncode(getString("content:HealthBegList.Preconception"));
+			writeEncode(getString("content:Articles.Preconception"));
 		}
 		else if (stage.isPregnancy())
 		{
-			writeEncode(getString("content:HealthBegList.Pregnancy", stage.getPregnancyWeek()));
+			writeEncode(getString("content:Articles.Pregnancy", stage.getPregnancyWeek()));
 		}
 		else if (stage.isInfancy())
 		{
-			writeEncode(getString("content:HealthBegList.Infancy", stage.getInfancyMonth()));
+			writeEncode(getString("content:Articles.Infancy", stage.getInfancyMonth()));
 		}
+	}
+	
+	@Override
+	public void commit() throws Exception
+	{
+		for (String p : getContext().getParameterNamesThatStartWith("chk_"))
+		{
+			ArticleStore.getInstance().remove(UUID.fromString(p.substring(4)));
+		}
+		
+		// Redirect to self
+		throw new RedirectException(getContext().getCommand(), null);
 	}
 }

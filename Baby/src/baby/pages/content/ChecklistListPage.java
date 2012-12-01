@@ -7,6 +7,7 @@ import samoyan.controls.DataTableControl;
 import samoyan.controls.LinkToolbarControl;
 import samoyan.core.ParameterMap;
 import samoyan.core.Util;
+import samoyan.servlet.exc.RedirectException;
 
 import baby.database.Checklist;
 import baby.database.ChecklistStore;
@@ -38,11 +39,14 @@ public final class ChecklistListPage extends BabyPage
 			return;
 		}
 		
+		writeFormOpen();
+		
 		new DataTableControl<UUID>(this, "checklists", checklistIDs)
 		{
 			@Override
 			protected void defineColumns() throws Exception
 			{
+				column("").width(1); // checkbox
 				column(getString("content:ChecklistList.ChecklistTitle"));
 				column(getString("content:ChecklistList.Section"));
 				column(getString("content:ChecklistList.From"));
@@ -54,6 +58,9 @@ public final class ChecklistListPage extends BabyPage
 			{
 				Checklist cl = ChecklistStore.getInstance().load(checklistID);
 				
+				cell();
+				writeCheckbox("chk_" + cl.getID().toString(), null, false);
+
 				cell();
 				writeLink(cl.getTitle(), getPageURL(EditChecklistPage.COMMAND, new ParameterMap(EditChecklistPage.PARAM_ID, cl.getID().toString())));
 				
@@ -94,6 +101,23 @@ public final class ChecklistListPage extends BabyPage
 				}
 			}
 		}
-		.render();		
+		.render();
+		
+		write("<br>");
+		writeRemoveButton();
+		
+		writeFormClose();
+	}
+	
+	@Override
+	public void commit() throws Exception
+	{
+		for (String p : getContext().getParameterNamesThatStartWith("chk_"))
+		{
+			ChecklistStore.getInstance().remove(UUID.fromString(p.substring(4)));
+		}
+		
+		// Redirect to self
+		throw new RedirectException(getContext().getCommand(), null);
 	}
 }

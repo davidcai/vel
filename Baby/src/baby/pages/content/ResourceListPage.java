@@ -8,6 +8,7 @@ import samoyan.controls.DataTableControl;
 import samoyan.controls.LinkToolbarControl;
 import samoyan.core.ParameterMap;
 import samoyan.core.Util;
+import samoyan.servlet.exc.RedirectException;
 import baby.app.BabyConsts;
 import baby.crawler.CrawlExecutor;
 import baby.database.Article;
@@ -129,12 +130,15 @@ public final class ResourceListPage extends BabyPage
 	}
 	
 	private void renderList(List<UUID> articleIDs) throws Exception
-	{		
+	{
+		writeFormOpen();
+		
 		new DataTableControl<UUID>(this, "articles", articleIDs)
 		{
 			@Override
 			protected void defineColumns() throws Exception
 			{
+				column("").width(1); // checkbox
 				column(getString("content:ResourceList.ArticleTitle"));
 				column(getString("content:ResourceList.Section"));
 			}
@@ -144,7 +148,7 @@ public final class ResourceListPage extends BabyPage
 			protected boolean isRenderRow(UUID articleID) throws Exception
 			{
 				Article article = ArticleStore.getInstance().load(articleID);
-				return article.getSection().equals(BabyConsts.SECTION_HEALTHY_BEGINNINGS)==false;
+				return article.getSection().equals(BabyConsts.SECTION_INFO)==false;
 			}
 
 			@Override
@@ -153,11 +157,31 @@ public final class ResourceListPage extends BabyPage
 				Article article = ArticleStore.getInstance().load(articleID);
 				
 				cell();
+				writeCheckbox("chk_" + article.getID().toString(), null, false);
+
+				cell();
 				writeEncode(article.getTitle());
 				
 				cell();
 				writeEncode(article.getSection());
 			}
 		}.render();
+		
+		write("<br>");
+		writeRemoveButton();
+		
+		writeFormClose();
+	}
+	
+	@Override
+	public void commit() throws Exception
+	{
+		for (String p : getContext().getParameterNamesThatStartWith("chk_"))
+		{
+			ArticleStore.getInstance().remove(UUID.fromString(p.substring(4)));
+		}
+		
+		// Redirect to self
+		throw new RedirectException(getContext().getCommand(), null);
 	}
 }

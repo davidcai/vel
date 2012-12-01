@@ -49,85 +49,75 @@ public class MeasurePage extends BabyPage
 	@Override
 	public void validate() throws Exception
 	{
-		if (isParameter(PARAM_SAVE))
+		validateParameterString(PARAM_LABEL, 1, Measure.MAXSIZE_LABEL);
+		validateParameterString(PARAM_METRIC_UNIT, 1, Measure.MAXSIZE_UNIT);
+		validateParameterString(PARAM_IMPERIAL_UNIT, 1, Measure.MAXSIZE_UNIT);
+		
+		validateParameterDecimal(PARAM_METRIC_MIN, 0f, Measure.MAXVAL_MINMAX);
+		validateParameterDecimal(PARAM_METRIC_MAX, 0f, Measure.MAXVAL_MINMAX);
+		
+		if (getParameterDecimal(PARAM_METRIC_MAX) <= getParameterDecimal(PARAM_METRIC_MIN))
 		{
-			validateParameterString(PARAM_LABEL, 1, Measure.MAXSIZE_LABEL);
-			validateParameterString(PARAM_METRIC_UNIT, 1, Measure.MAXSIZE_UNIT);
-			validateParameterString(PARAM_IMPERIAL_UNIT, 1, Measure.MAXSIZE_UNIT);
-			
-			validateParameterDecimal(PARAM_METRIC_MIN, 0f, Measure.MAXVAL_MINMAX);
-			validateParameterDecimal(PARAM_METRIC_MAX, 0f, Measure.MAXVAL_MINMAX);
-			
-			if (getParameterDecimal(PARAM_METRIC_MAX) <= getParameterDecimal(PARAM_METRIC_MIN))
-			{
-				throw new WebFormException(PARAM_METRIC_MAX, getString("content:Measure.MinGreaterThanMax"));
-			}
-			
-			validateParameterDecimal(PARAM_IMPERIAL_MIN, 0f, Measure.MAXVAL_MINMAX);
-			validateParameterDecimal(PARAM_IMPERIAL_MAX, 0f, Measure.MAXVAL_MINMAX);
-			
-			if (getParameterDecimal(PARAM_IMPERIAL_MAX) <= getParameterDecimal(PARAM_IMPERIAL_MIN))
-			{
-				throw new WebFormException(PARAM_IMPERIAL_MAX, getString("content:Measure.MinGreaterThanMax"));
-			}
-			
-			String alpha = getParameterString(PARAM_METRIC_TO_IMPERIAL_ALPHA);
-			if (Util.isEmpty(alpha))
-			{
-				throw new WebFormException(PARAM_METRIC_TO_IMPERIAL_ALPHA, getString("common:Errors.MissingField"));
-			}
-			
-			try
-			{
-				Float.parseFloat(alpha);
-			}
-			catch (NumberFormatException e)
-			{
-				throw new WebFormException(PARAM_METRIC_TO_IMPERIAL_ALPHA, getString("common:Errors.InvalidValue"));
-			}
-			
-			String beta = getParameterString(PARAM_METRIC_TO_IMPERIAL_BETA);
-			if (Util.isEmpty(beta))
-			{
-				throw new WebFormException(PARAM_METRIC_TO_IMPERIAL_BETA, getString("common:Errors.MissingField"));
-			}
-			
-			try
-			{
-				Float.parseFloat(beta);
-			}
-			catch (NumberFormatException e)
-			{
-				throw new WebFormException(PARAM_METRIC_TO_IMPERIAL_BETA, getString("common:Errors.InvalidValue"));
-			}
+			throw new WebFormException(PARAM_METRIC_MAX, getString("content:Measure.MinGreaterThanMax"));
+		}
+		
+		validateParameterDecimal(PARAM_IMPERIAL_MIN, 0f, Measure.MAXVAL_MINMAX);
+		validateParameterDecimal(PARAM_IMPERIAL_MAX, 0f, Measure.MAXVAL_MINMAX);
+		
+		if (getParameterDecimal(PARAM_IMPERIAL_MAX) <= getParameterDecimal(PARAM_IMPERIAL_MIN))
+		{
+			throw new WebFormException(PARAM_IMPERIAL_MAX, getString("content:Measure.MinGreaterThanMax"));
+		}
+		
+		String alpha = getParameterString(PARAM_METRIC_TO_IMPERIAL_ALPHA);
+		if (Util.isEmpty(alpha))
+		{
+			throw new WebFormException(PARAM_METRIC_TO_IMPERIAL_ALPHA, getString("common:Errors.MissingField"));
+		}
+		
+		try
+		{
+			Float.parseFloat(alpha);
+		}
+		catch (NumberFormatException e)
+		{
+			throw new WebFormException(PARAM_METRIC_TO_IMPERIAL_ALPHA, getString("common:Errors.InvalidValue"));
+		}
+		
+		String beta = getParameterString(PARAM_METRIC_TO_IMPERIAL_BETA);
+		if (Util.isEmpty(beta))
+		{
+			throw new WebFormException(PARAM_METRIC_TO_IMPERIAL_BETA, getString("common:Errors.MissingField"));
+		}
+		
+		try
+		{
+			Float.parseFloat(beta);
+		}
+		catch (NumberFormatException e)
+		{
+			throw new WebFormException(PARAM_METRIC_TO_IMPERIAL_BETA, getString("common:Errors.InvalidValue"));
 		}
 	}
 	
 	@Override
 	public void commit() throws Exception
 	{
-		if (isParameter(PARAM_SAVE))
-		{
-			this.measure.setLabel(getParameterString(PARAM_LABEL));
-			this.measure.setForMother(isParameter(PARAM_FOR_MOM));
-			this.measure.setForPreconception(isParameter(PARAM_PRECONCEPTION));
-			this.measure.setForPregnancy(isParameter(PARAM_PREGNANCY));
-			this.measure.setForInfancy(isParameter(PARAM_INFANCY));
-			this.measure.setMetricUnit(getParameterString(PARAM_METRIC_UNIT));
-			this.measure.setImperialUnit(getParameterString(PARAM_IMPERIAL_UNIT));
-			this.measure.setMetricMin(getParameterDecimal(PARAM_METRIC_MIN));
-			this.measure.setMetricMax(getParameterDecimal(PARAM_METRIC_MAX));
-			this.measure.setImperialMin(getParameterDecimal(PARAM_IMPERIAL_MIN));
-			this.measure.setImperialMax(getParameterDecimal(PARAM_IMPERIAL_MAX));
-			this.measure.setMetricToImperialAlpha(Float.parseFloat(getParameterString(PARAM_METRIC_TO_IMPERIAL_ALPHA)));
-			this.measure.setMetricToImperialBeta(Float.parseFloat(getParameterString(PARAM_METRIC_TO_IMPERIAL_BETA)));
-			
-			MeasureStore.getInstance().save(this.measure);
-		}
-		else if (isParameter(PARAM_REMOVE))
-		{
-			MeasureStore.getInstance().remove(this.measure.getID());
-		}
+		this.measure.setLabel(getParameterString(PARAM_LABEL));
+		this.measure.setForMother(isParameter(PARAM_FOR_MOM));
+		this.measure.setForPreconception(isParameter(PARAM_PRECONCEPTION));
+		this.measure.setForPregnancy(isParameter(PARAM_PREGNANCY));
+		this.measure.setForInfancy(isParameter(PARAM_INFANCY));
+		this.measure.setMetricUnit(getParameterString(PARAM_METRIC_UNIT));
+		this.measure.setImperialUnit(getParameterString(PARAM_IMPERIAL_UNIT));
+		this.measure.setMetricMin(getParameterDecimal(PARAM_METRIC_MIN));
+		this.measure.setMetricMax(getParameterDecimal(PARAM_METRIC_MAX));
+		this.measure.setImperialMin(getParameterDecimal(PARAM_IMPERIAL_MIN));
+		this.measure.setImperialMax(getParameterDecimal(PARAM_IMPERIAL_MAX));
+		this.measure.setMetricToImperialAlpha(Float.parseFloat(getParameterString(PARAM_METRIC_TO_IMPERIAL_ALPHA)));
+		this.measure.setMetricToImperialBeta(Float.parseFloat(getParameterString(PARAM_METRIC_TO_IMPERIAL_BETA)));
+		
+		MeasureStore.getInstance().save(this.measure);
 		
 		throw new RedirectException(MeasureListPage.COMMAND, null);
 	}
@@ -184,14 +174,8 @@ public class MeasurePage extends BabyPage
 		
 		write("<br>");
 		writeSaveButton(PARAM_SAVE, this.measure);
-		
-		if (this.measure.isSaved())
-		{
-			write("&nbsp;");
-			writeRemoveButton(PARAM_REMOVE);
 			
-			writeHiddenInput(PARAM_ID, this.measure.getID().toString());
-		}
+		writeHiddenInput(PARAM_ID, this.measure.getID().toString());
 		
 		writeFormClose();
 	}

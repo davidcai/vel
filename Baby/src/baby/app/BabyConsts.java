@@ -13,10 +13,12 @@ public class BabyConsts
 	
 	// Sections
 	public final static String SECTION_TODO = "To do";
-	public final static String SECTION_HEALTHY_BEGINNINGS = "Healthy Beginnings";	
+	public final static String SECTION_INFO = "Info";
+	
 	public final static String SECTION_CHECKUP = "Checkup";
 	public final static String SECTION_ULTRASOUND = "Ultrasound";
 	public final static String SECTION_WELL_BABY = "Well Baby";
+	public final static String[] SECTIONS_APPOINTMENT = {SECTION_CHECKUP, SECTION_ULTRASOUND, SECTION_WELL_BABY};
 	
 	// Permissions
 	public final static String PERMISSION_CONTENT_MANAGEMENT = "Content management";

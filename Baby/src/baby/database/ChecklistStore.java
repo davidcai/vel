@@ -79,4 +79,9 @@ public final class ChecklistStore extends DataBeanStore<Checklist>
 		}
 		return cl;
 	}
+
+	public List<UUID> getAll() throws Exception
+	{
+		return super.getAllBeanIDs();
+	}
 }

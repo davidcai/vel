@@ -15,16 +15,16 @@ import baby.database.MotherStore;
 import baby.database.Stage;
 import baby.pages.BabyPage;
 
-public class HealthyBeginningsPage extends BabyPage
+public class ViewArticleListPage extends BabyPage
 {
-	public final static String COMMAND = BabyPage.COMMAND_INFORMATION + "/healthy-beginnings";
+	public final static String COMMAND = BabyPage.COMMAND_INFORMATION + "/articles";
 
 	private static final String PARAM_STAGE = "stage";
 		
 	@Override
 	public String getTitle() throws Exception
 	{
-		return getString("information:HealthyBeginnings.Title");
+		return getString("information:Articles.Title");
 	}
 	
 	@Override
@@ -52,13 +52,13 @@ public class HealthyBeginningsPage extends BabyPage
 		
 		TimelineControl tlCtrl = new TimelineControl(this, stage, PARAM_STAGE);
 		
-		List<UUID> articleIDs = ArticleStore.getInstance().queryBySectionAndTimeline(BabyConsts.SECTION_HEALTHY_BEGINNINGS, low, high);
+		List<UUID> articleIDs = ArticleStore.getInstance().queryBySectionAndTimeline(BabyConsts.SECTION_INFO, low, high);
 		
-		writeHorizontalNav(HealthyBeginningsPage.COMMAND);
+		writeHorizontalNav(ViewArticleListPage.COMMAND);
 
 		// Render timeline
 		write("<table><tr valign=middle><td>");
-		writeEncode(getString("information:HealthyBeginnings.FoundResources", articleIDs.size()));
+		writeEncode(getString("information:Articles.FoundResources", articleIDs.size()));
 		write("</td><td>");
 		tlCtrl.render();
 		write("</td></tr></table><br>");
@@ -68,7 +68,7 @@ public class HealthyBeginningsPage extends BabyPage
 		for (UUID articleID : articleIDs)
 		{
 			Article article = ArticleStore.getInstance().load(articleID);
-			String url = getPageURL(ArticlePage.COMMAND, new ParameterMap(ArticlePage.PARAM_ID, article.getID().toString()));
+			String url = getPageURL(ViewArticlePage.COMMAND, new ParameterMap(ViewArticlePage.PARAM_ID, article.getID().toString()));
 			
 			write("<tr><td>");
 			if (article.getPhoto()!=null)

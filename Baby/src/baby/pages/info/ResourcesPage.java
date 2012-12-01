@@ -74,7 +74,7 @@ public class ResourcesPage extends BabyPage
 		{
 			Article article = ArticleStore.getInstance().load(articleID);
 			
-			writeLink(article.getTitle(), getPageURL(ArticlePage.COMMAND, new ParameterMap(ArticlePage.PARAM_ID, article.getID().toString())));
+			writeLink(article.getTitle(), getPageURL(ViewArticlePage.COMMAND, new ParameterMap(ViewArticlePage.PARAM_ID, article.getID().toString())));
 			write(" <span class=Faded>(");
 			writeEncode(article.getSection());
 			write(")</span>");
@@ -96,7 +96,7 @@ public class ResourcesPage extends BabyPage
 		writeLink(getString("information:Resources.OnlinePregnancyCenter"), "https://healthy.kaiserpermanente.org/health/poc?uri=center:pregnancy&article=EEA2B18C-B19C-11E0-B461-CB58EEF22C59");
 		write("</li>");
 		write("<li>");
-		writeLink(getString("information:Resources.MedicalRecords"), ""); // !$! Need link from KP
+		writeLink(getString("information:Resources.MyMedical"), "http://www.mymedicalapp.com/"); // !$! Confirm link
 		write("</li>");
 		write("</ul>");
 	}

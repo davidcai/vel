@@ -1,7 +1,7 @@
 package baby.pages;
 
 import baby.app.BabyConsts;
-import baby.pages.info.HealthyBeginningsPage;
+import baby.pages.info.ViewArticleListPage;
 import baby.pages.info.ResourcesPage;
 import baby.pages.info.SearchPage;
 import baby.pages.scrapbook.ChartsPage;
@@ -58,7 +58,7 @@ public class BabyPage extends WebPage
 		if (cmd1.equals(COMMAND_INFORMATION))
 		{
 			new TabControl(this)
-				.addTab(HealthyBeginningsPage.COMMAND, getString("information:HealthyBeginnings.Title"), getPageURL(HealthyBeginningsPage.COMMAND))
+				.addTab(ViewArticleListPage.COMMAND, getString("information:HealthyBeginnings.Title"), getPageURL(ViewArticleListPage.COMMAND))
 				.addTab(ResourcesPage.COMMAND, getString("information:Resources.Title"), getPageURL(ResourcesPage.COMMAND))
 				.addTab(SearchPage.COMMAND, getString("information:Search.Title"), getPageURL(SearchPage.COMMAND))
 				.setCurrentTab(currentTab)

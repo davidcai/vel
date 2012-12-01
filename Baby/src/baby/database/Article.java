@@ -2,6 +2,8 @@ package baby.database;
 
 import java.util.Date;
 
+import baby.app.BabyConsts;
+
 import samoyan.core.Util;
 import samoyan.database.DataBean;
 import samoyan.database.Image;
@@ -63,7 +65,7 @@ public final class Article extends DataBean
 
 	public String getSection()
 	{
-		return (String) get("Section");
+		return (String) get("Section", BabyConsts.SECTION_INFO);
 	}
 	public void setSection(String section)
 	{

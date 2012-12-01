@@ -29,15 +29,14 @@ import baby.database.MotherStore;
 import baby.pages.content.ChecklistListPage;
 import baby.pages.content.ContentHomePage;
 import baby.pages.content.EditChecklistPage;
-import baby.pages.content.EditHealthBegPage;
-import baby.pages.content.HealthBegListPage;
-import baby.pages.content.ImportHealthBegPage;
+import baby.pages.content.EditArticlePage;
+import baby.pages.content.ArticleListPage;
+import baby.pages.content.ImportArticlePage;
 import baby.pages.content.MeasureListPage;
 import baby.pages.content.MeasurePage;
 import baby.pages.content.ResourceListPage;
-import baby.pages.content.SectionTypeAhead;
-import baby.pages.info.ArticlePage;
-import baby.pages.info.HealthyBeginningsPage;
+import baby.pages.info.ViewArticlePage;
+import baby.pages.info.ViewArticleListPage;
 import baby.pages.info.InformationHomePage;
 import baby.pages.info.ResourcesPage;
 import baby.pages.info.SearchPage;
@@ -114,9 +113,9 @@ public class BabyController extends Controller
 		
 		// Info
 		Dispatcher.bindPage(InformationHomePage.COMMAND, 		InformationHomePage.class);
-		Dispatcher.bindPage(HealthyBeginningsPage.COMMAND, 		HealthyBeginningsPage.class);
+		Dispatcher.bindPage(ViewArticleListPage.COMMAND, 		ViewArticleListPage.class);
 		Dispatcher.bindPage(ResourcesPage.COMMAND, 				ResourcesPage.class);
-		Dispatcher.bindPage(ArticlePage.COMMAND, 				ArticlePage.class);
+		Dispatcher.bindPage(ViewArticlePage.COMMAND, 				ViewArticlePage.class);
 		Dispatcher.bindPage(SearchPage.COMMAND, 				SearchPage.class);
 		
 		// Scrapbook
@@ -137,15 +136,14 @@ public class BabyController extends Controller
 		
 		// Content
 		Dispatcher.bindPage(ContentHomePage.COMMAND, 			ContentHomePage.class);
-		Dispatcher.bindPage(EditHealthBegPage.COMMAND, 			EditHealthBegPage.class);
-		Dispatcher.bindPage(SectionTypeAhead.COMMAND, 			SectionTypeAhead.class);
-		Dispatcher.bindPage(HealthBegListPage.COMMAND, 			HealthBegListPage.class);
+		Dispatcher.bindPage(EditArticlePage.COMMAND, 			EditArticlePage.class);
+		Dispatcher.bindPage(ArticleListPage.COMMAND, 			ArticleListPage.class);
 		Dispatcher.bindPage(ResourceListPage.COMMAND, 			ResourceListPage.class);
 		Dispatcher.bindPage(MeasureListPage.COMMAND, 			MeasureListPage.class);
 		Dispatcher.bindPage(MeasurePage.COMMAND, 				MeasurePage.class);
 		Dispatcher.bindPage(ChecklistListPage.COMMAND, 			ChecklistListPage.class);
 		Dispatcher.bindPage(EditChecklistPage.COMMAND, 			EditChecklistPage.class);
-		Dispatcher.bindPage(ImportHealthBegPage.COMMAND, 		ImportHealthBegPage.class);
+		Dispatcher.bindPage(ImportArticlePage.COMMAND, 		ImportArticlePage.class);
 
 		// Profile
 		Dispatcher.bindPage(MedicalCenterPage.COMMAND, 			MedicalCenterPage.class);
