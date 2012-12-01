@@ -101,6 +101,10 @@ public class Mother extends DataBean
 				month++;
 				cal.add(Calendar.MONTH, -1);
 			}
+			if (month == 0)
+			{
+				month = 1;
+			}
 			
 			return Stage.infancy(month);
 		}
@@ -110,99 +114,51 @@ public class Mother extends DataBean
 
 	public Stage getEstimatedPregnancyStage(Date target)
 	{
-		Date due = getDueDate();
-		if (due != null)
+		Date birthday = getDueDate() == null ? getBirthDate() : getDueDate();
+		if (birthday == null)
 		{
-			Calendar cal = Calendar.getInstance(TimeZoneEx.GMT);
-			cal.setTime(target);
-			
-			if (cal.getTime().after(due))
-			{
-				cal.add(Calendar.DATE, Stage.MAX_WEEK_DELAY * 7);
-				if (cal.getTime().after(due))
-				{
-					// Assume mother gave birth Stage.MAX_WEEK_DEAY after due
-					cal.setTime(due);
-					cal.add(Calendar.DATE, Stage.MAX_WEEK_DELAY * 7);
-					
-					return getEstimatedPostBirthStage(target, cal.getTime());
-				}
-			}
-			
-			return getEstimatedPreDueStage(target, due);
-		}
-		
-		Date birthday = getBirthDate();
-		if (birthday != null)
-		{
-			Calendar cal = Calendar.getInstance(TimeZoneEx.GMT);
-			cal.setTime(target);
-			
-			if (cal.getTime().before(birthday))
-			{
-				// Assume due is Stage.MAX_WEEK_DELAY before the birthday
-				cal.setTime(birthday);
-				cal.add(Calendar.DATE, - Stage.MAX_WEEK_DELAY * 7);
-				return getEstimatedPreDueStage(target, cal.getTime());
-			}
-			
-			return getEstimatedPostBirthStage(target, birthday);
-		}
-
-		return Stage.preconception();
-	}
-	
-	private Stage getEstimatedPreDueStage(Date target, Date due)
-	{
-		// Target date must be <= due + max_delay
-		Calendar cal = Calendar.getInstance(TimeZoneEx.GMT);
-		cal.setTime(target);
-		cal.add(Calendar.DATE, - Stage.MAX_WEEK_DELAY * 7);
-		if (cal.getTime().after(due))
-		{
-			throw new IllegalArgumentException("Target date > due + max_delay");
-		}
-		
-		int week = Stage.MAX_WEEKS + 1;
-		cal.setTime(target);
-		while (cal.getTime().before(due) && week > 1)
-		{
-			week--;
-			cal.add(Calendar.DATE, 7);	
-		}
-		
-		if (cal.getTime().before(due)) 
-		{
-			// Preconception
 			return Stage.preconception();
 		}
+		
+		Calendar cal = Calendar.getInstance(TimeZoneEx.GMT);
+		cal.setTime(birthday);
+		cal.add(Calendar.DATE, - Stage.MAX_WEEKS * 7);
+		Date conception = cal.getTime();
+		
+		if (target.before(conception))
+		{
+			return Stage.preconception();
+		}
+		
+		if (target.after(birthday))
+		{
+			int month = 0;
+			cal.setTime(target);
+			while (cal.getTime().after(birthday) && month < Stage.MAX_MONTHS)
+			{
+				month++;
+				cal.add(Calendar.MONTH, -1);
+			}
+			if (month == 0)
+			{
+				month = 1;
+			}
+			
+			return Stage.infancy(month);
+		}
 
-		// Pregnancy
+		int week = Stage.MAX_WEEKS + 1;
+		cal.setTime(target);
+		while (cal.getTime().before(birthday) && week > 1)
+		{
+			week--;
+			cal.add(Calendar.DATE, 7);
+		}
 		if (week > Stage.MAX_WEEKS)
 		{
 			week = Stage.MAX_WEEKS;
 		}
 		
 		return Stage.pregnancy(week);
-	}
-	
-	private Stage getEstimatedPostBirthStage(Date target, Date birthday)
-	{
-		// Target date must be >= birthday
-		if (target.before(birthday))
-		{
-			throw new IllegalArgumentException("Target date < birthday");
-		}
-		
-		int month = 0;
-		Calendar cal = Calendar.getInstance(TimeZoneEx.GMT);
-		cal.setTime(target);
-		while (cal.getTime().after(birthday) && month < Stage.MAX_MONTHS)
-		{
-			month++;
-			cal.add(Calendar.MONTH, -1);
-		}
-		
-		return Stage.infancy(month);
 	}
 }
