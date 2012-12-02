@@ -178,7 +178,11 @@ public class JournalPage extends BabyPage
 				if (entry.getPhoto() != null)
 				{
 					write("<div class=\"EntryPhoto\">");
+					write("<a href=\"");
+					write(getPageURL(PhotoPage.COMMAND, new ParameterMap(PhotoPage.PARAM_ID, entry.getID().toString())));
+					write("\">");
 					writeImage(entry.getPhoto(), Image.SIZE_THUMBNAIL, null, null);
+					write("</a>");
 					write("</div>");
 				}
 

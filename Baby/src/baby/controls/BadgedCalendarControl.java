@@ -12,10 +12,12 @@ public class BadgedCalendarControl extends BigCalendarControl
 {
 	public enum Badge
 	{
-		Photo, Text, MeasureRecord, ChecklistDue, AppointmentDue
+		DeliveryDue, AppointmentDue, ChecklistDue, MeasureRecord, Photo, Text
 	}
 
 	public static final String KEY_DELIM = "-";
+	public static final int MAX_BADGES_NORMAL = 6;
+	public static final int MAX_BADGES_MOBILE = 2;
 
 	private WebPage out;
 	private Map<String, Set<Badge>> dayToBadges = new LinkedHashMap<String, Set<Badge>>();
@@ -34,12 +36,19 @@ public class BadgedCalendarControl extends BigCalendarControl
 		Set<Badge> badges = getBadges(yyyy, mm + 1, dd); // 0-based to 1-based month
 		if (badges != null && badges.isEmpty() == false)
 		{
+			final int maxBadges = getContext().getUserAgent().isMobile() ? MAX_BADGES_MOBILE : MAX_BADGES_NORMAL;
+			
 			out.write("<div class=\"CalendarBadges\">");
 
-			boolean first = true;
+			int i = 1;
 			for (Badge badge : badges)
 			{
-				if (first == false)
+				if (i > maxBadges)
+				{
+					break;
+				}
+				
+				if (i > 1)
 				{
 					out.write(" ");
 				}
@@ -48,8 +57,7 @@ public class BadgedCalendarControl extends BigCalendarControl
 				out.write(badge);
 				out.write("\">");
 				out.write("</span>");
-				
-				first = false;
+				i++;
 			}
 
 			out.write("</div>");

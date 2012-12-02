@@ -5,14 +5,20 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import samoyan.core.TimeZoneEx;
 import baby.controls.BadgedCalendarControl;
 import baby.controls.BadgedCalendarControl.Badge;
 import baby.database.Appointment;
 import baby.database.AppointmentStore;
+import baby.database.Checklist;
+import baby.database.ChecklistStore;
 import baby.database.JournalEntry;
 import baby.database.JournalEntryStore;
 import baby.database.MeasureRecord;
 import baby.database.MeasureRecordStore;
+import baby.database.Mother;
+import baby.database.MotherStore;
+import baby.database.Stage;
 import baby.pages.BabyPage;
 
 public class CalendarPage extends BabyPage
@@ -22,6 +28,11 @@ public class CalendarPage extends BabyPage
 	@Override
 	public void renderHTML() throws Exception
 	{
+		writeHorizontalNav(CalendarPage.COMMAND);
+		
+		UUID userID = getContext().getUserID();
+		Mother mother = MotherStore.getInstance().loadByUserID(userID);
+		
 		// Get base date
 		Calendar cal = Calendar.getInstance(getTimeZone(), getLocale());
 		Integer yyyy = getParameterInteger("y");
@@ -43,16 +54,18 @@ public class CalendarPage extends BabyPage
 		// Calendar
 		BadgedCalendarControl calCtrl = new BadgedCalendarControl(this);
 		calCtrl.setDay(yyyy, mm, dd);
-
-		// Journal entries
+		
 		cal.set(yyyy, mm - 1, 1, 0, 0, 0);
 		cal.set(Calendar.MILLISECOND, 0);
 		Date from = cal.getTime();
 		
 		cal.add(Calendar.MONTH, 1);
 		Date to = cal.getTime();
+
+		//
+		// Journal entries
+		//
 		
-		UUID userID = getContext().getUserID();
 		List<UUID> entryIDs = JournalEntryStore.getInstance().getByDate(userID, from, to);
 		for (UUID entryID : entryIDs)
 		{
@@ -64,7 +77,10 @@ public class CalendarPage extends BabyPage
 				.add(entry.isHasPhoto() ? Badge.Photo : Badge.Text);
 		}
 		
+		//
 		// Measure records
+		//
+		
 		List<UUID> recordIDs = MeasureRecordStore.getInstance().getByDate(userID, from, to);
 		for (UUID recordID : recordIDs)
 		{
@@ -76,10 +92,39 @@ public class CalendarPage extends BabyPage
 				.add(Badge.MeasureRecord);
 		}
 		
-		// TODO: Checklists
-		//ChecklistStore.getInstance().queryBySectionAndTimeline(section, lowStage, highStage);
+		//
+		// Checklist dues
+		//
 		
+		// Note: checklist uses GMT time zone
+		Calendar calChecklist = Calendar.getInstance(TimeZoneEx.GMT);
+		calChecklist.set(yyyy, mm - 1, dd, 0, 0, 0);
+		calChecklist.set(Calendar.MILLISECOND, 0);
+		
+		Stage lowStage = mother.getEstimatedPregnancyStage(calChecklist.getTime());
+		calChecklist.add(Calendar.MONTH, 1);
+		Stage highStage = mother.getEstimatedPregnancyStage(calChecklist.getTime());
+		
+		List<UUID> checklistIDs = ChecklistStore.getInstance().queryByTimeline(lowStage.toInteger(), highStage.toInteger());
+		for (UUID checklistID : checklistIDs)
+		{
+			Checklist checklist = ChecklistStore.getInstance().load(checklistID);
+			
+			Date checklistDue = mother.calcDateOfStage(checklist.getTimelineTo());
+			if (checklistDue != null)
+			{
+				// Note: checklist due is in GMT time zone
+				calChecklist.setTime(checklistDue);
+				calCtrl.getBadges(
+					calChecklist.get(Calendar.YEAR), calChecklist.get(Calendar.MONTH) + 1, calChecklist.get(Calendar.DAY_OF_MONTH))
+					.add(Badge.ChecklistDue);
+			}
+		}
+		
+		//
 		// Appointment dues
+		//
+		
 		List<UUID> appointmentIDs = AppointmentStore.getInstance().getByDate(userID, from, to);
 		for (UUID appointmentID : appointmentIDs)
 		{
@@ -91,9 +136,45 @@ public class CalendarPage extends BabyPage
 				.add(Badge.AppointmentDue);			
 		}
 		
+		//
+		// Delivery due
+		//
+		
+		Date due = mother.getDueDate();
+		if (due == null)
+		{
+			due = mother.getBirthDate();
+		}
+		if (due != null)
+		{
+			// Note: delivery due is in GMT time zone
+			Calendar c = Calendar.getInstance(TimeZoneEx.GMT);
+			c.setTime(due);
+			calCtrl.getBadges(c.get(Calendar.YEAR), c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH))
+				.add(Badge.DeliveryDue);		
+		}
+		
+		write("<div class=\"BigCalendarContainer\">");
+		
+		calCtrl.setCommand(DaySummaryPage.COMMAND, null);
 		calCtrl.render();
 		
-		// TODO: Legend
+		//
+		// Legend
+		//
+		
+		write("<div class=\"BigCalendarLegend\">");
+		for (Badge badge : Badge.values())
+		{
+			write("<span class=\"CalendarBadge ");
+			write(badge.toString());
+			write("\"></span>");
+			writeEncode(getString("scrapbook:Calendar." + badge.toString()));
+			write("<br>");
+		}
+		write("</div>");
+		
+		write("</div>");
 	}
 	
 	@Override

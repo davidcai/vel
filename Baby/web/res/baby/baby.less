@@ -204,27 +204,58 @@ TABLE.PhotoGrid TD {
 .CalendarBadges{
  	font-size: 0.72em;
  	line-height: 1.8;
-  
+}
+.CalendarBadge {
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+   
+	&.Photo {
+	
+		background: transparent url("picture.png") no-repeat center center;
+	}
+	&.Text {
+		background: transparent url("text.png") no-repeat center center;
+	}
+	&.MeasureRecord {
+		background: transparent url("measure-record.png") no-repeat center center;
+	}
+	&.ChecklistDue {
+		background: transparent url("checklist-due.png") no-repeat center center;
+	}
+	&.AppointmentDue {
+		background: transparent url("appointment-due.png") no-repeat center center;
+	}
+	&.DeliveryDue {
+		background: transparent url("delivery-due.png") no-repeat center center;
+	}
+}
+
+.BigCalendarContainer {
+	clear: both;
+	overflow: hidden;
+}
+.BigCalendar, 
+.BigCalendarLegend {
+	float: left;
+}
+.BigCalendarLegend {
+	padding-left: 3em;
+	line-height: 2;
+	
 	.CalendarBadge {
-		display: inline-block;
-		width: 16px;
-		height: 16px;
-    
-		&.Photo {
-			background: transparent url("picture.png") no-repeat center center;
-		}
-		&.Text {
-			background: transparent url("text.png") no-repeat center center;
-		}
-		&.MeasureRecord {
-			background: transparent url("measure-record.png") no-repeat center center;
-		}
-		&.ChecklistDue {
-			background: transparent url("text.png") no-repeat center center;
-		}
-		&.AppointmentDue {
-			background: transparent url("appointment-due.png") no-repeat center center;
-		}
+		background-position: left center;
+		padding-right: 2em;
+	}
+}
+BODY.SmartPhone {
+	.BigCalendar, 
+	.BigCalendarLegend {
+		float: none;
+	}
+	.BigCalendarLegend {
+		padding-top: 1em;
+		padding-left: 1em;
 	}
 }
 
@@ -255,4 +286,11 @@ BODY[uri="/"].SmartPhone {
 		padding: 5px 0px;
 		margin: 10px 0px;
 	}
+}
+
+.DivideLine {
+	display: block;
+	border-top: 1px solid #CCC;
+	margin: 1em 0 0;
+	padding: 1em 0 0;
 }

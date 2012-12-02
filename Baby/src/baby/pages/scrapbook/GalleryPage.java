@@ -7,7 +7,6 @@ import java.util.UUID;
 
 import samoyan.core.ParameterMap;
 import samoyan.database.Image;
-import samoyan.servlet.UserAgent;
 import samoyan.servlet.exc.RedirectException;
 import samoyan.servlet.exc.WebFormException;
 import baby.app.BabyConsts;
@@ -18,8 +17,7 @@ import baby.pages.BabyPage;
 public class GalleryPage extends BabyPage
 {
 	public final static String COMMAND = BabyPage.COMMAND_SCRAPBOOK + "/gallery";
-	public final static int COL_COUNT_MAX_WIDE = 5;
-	public final static int COL_COUNT_MAX_NARROW = 3;
+	
 	public final static int SCREENSIZE_WIDTH_THRESHOLD = 450;
 	public final static String PARAM_POST = "post";
 	
@@ -88,17 +86,7 @@ public class GalleryPage extends BabyPage
 		if (entries.isEmpty() == false)
 		{
 			int entryCount = entries.size();
-			
-			int colCountMax = COL_COUNT_MAX_WIDE; 
-			UserAgent ua = getContext().getUserAgent();
-			
-			// TODO: int d = ua.getScreenWidth() / 150;
-			
-			if (SCREENSIZE_WIDTH_THRESHOLD > ua.getScreenWidth()) 
-			{
-				colCountMax = COL_COUNT_MAX_NARROW;
-			}
-			
+			int colCountMax = getContext().getUserAgent().getScreenWidth() / 150; // BabyConsts.IMAGESIZE_THUMB_150X150
 			int rowCount = (int) Math.ceil((entryCount + 0d) / colCountMax);
 			
 			write("<table class=\"PhotoGrid\">");
@@ -116,10 +104,8 @@ public class GalleryPage extends BabyPage
 						
 						write("<td>");
 						write("<a href=\"");
-//						write(getPageURL(JournalEntryPage.COMMAND,
-//								new ParameterMap(JournalEntryPage.PARAM_ID, entry.getID().toString())));
 						write(getPageURL(PhotoPage.COMMAND, 
-								new ParameterMap(PhotoPage.PARAM_ID, entry.getID().toString())));
+							new ParameterMap(PhotoPage.PARAM_ID, entry.getID().toString())));
 						write("\">");
 						writeImage(entry.getPhoto(), BabyConsts.IMAGESIZE_THUMB_150X150, null, null);
 						write("</a>");

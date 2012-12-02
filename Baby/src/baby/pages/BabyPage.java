@@ -1,20 +1,21 @@
 package baby.pages;
 
-import baby.app.BabyConsts;
-import baby.pages.info.ViewArticleListPage;
-import baby.pages.info.ResourcesPage;
-import baby.pages.info.SearchPage;
-import baby.pages.scrapbook.ChartsPage;
-import baby.pages.scrapbook.GalleryPage;
-import baby.pages.scrapbook.JournalPage;
-import baby.pages.todo.ChecklistPage;
-import baby.pages.todo.AppointmentsPage;
 import samoyan.apps.messaging.MessagingPage;
 import samoyan.apps.profile.ProfilePage;
 import samoyan.controls.TabControl;
 import samoyan.database.PermissionStore;
 import samoyan.servlet.RequestContext;
 import samoyan.servlet.WebPage;
+import baby.app.BabyConsts;
+import baby.pages.info.ResourcesPage;
+import baby.pages.info.SearchPage;
+import baby.pages.info.ViewArticleListPage;
+import baby.pages.scrapbook.CalendarPage;
+import baby.pages.scrapbook.ChartsPage;
+import baby.pages.scrapbook.GalleryPage;
+import baby.pages.scrapbook.JournalPage;
+import baby.pages.todo.AppointmentsPage;
+import baby.pages.todo.ChecklistPage;
 
 public class BabyPage extends WebPage
 {
@@ -70,6 +71,7 @@ public class BabyPage extends WebPage
 				.addTab(JournalPage.COMMAND, getString("scrapbook:Journal.Title"), getPageURL(JournalPage.COMMAND))
 				.addTab(GalleryPage.COMMAND, getString("scrapbook:Gallery.Title"), getPageURL(GalleryPage.COMMAND))
 				.addTab(ChartsPage.COMMAND, getString("scrapbook:Charts.Title"), getPageURL(ChartsPage.COMMAND))
+				.addTab(CalendarPage.COMMAND, getString("scrapbook:Calendar.Title"), getPageURL(CalendarPage.COMMAND))
 				.setCurrentTab(currentTab)
 				.render();
 		}

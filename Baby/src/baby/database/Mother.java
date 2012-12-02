@@ -161,4 +161,60 @@ public class Mother extends DataBean
 		
 		return Stage.pregnancy(week);
 	}
+	
+	public Date calcDateOfStage(int timelineTo)
+	{
+		Stage presentStage = getPregnancyStage();
+		Stage dueStage = Stage.fromInteger(timelineTo);
+		
+		if (presentStage.isPreconception())
+		{
+			// We can't estimate dates
+			return null;
+		}
+		else if (presentStage.isPregnancy())
+		{
+			Calendar cal = Calendar.getInstance(TimeZoneEx.GMT);
+			cal.setTime(getDueDate());
+
+			if (dueStage.isPreconception())
+			{
+				cal.add(Calendar.DATE, -7 * 40);
+			}
+			else if (dueStage.isPregnancy())
+			{
+				cal.add(Calendar.DATE, -7 * 40);
+				cal.add(Calendar.DATE, 7 * dueStage.getPregnancyWeek());
+			}
+			else if (dueStage.isInfancy())
+			{
+				cal.add(Calendar.MONTH, dueStage.getInfancyMonth());
+			}
+			return cal.getTime();
+		}
+		else if (presentStage.isInfancy())
+		{
+			Calendar cal = Calendar.getInstance(TimeZoneEx.GMT);
+			cal.setTime(getBirthDate());
+			
+			if (dueStage.isPreconception())
+			{
+				cal.add(Calendar.DATE, -7 * 40);
+			}
+			else if (dueStage.isPregnancy())
+			{
+				cal.add(Calendar.DATE, -7 * 40);
+				cal.add(Calendar.DATE, 7 * dueStage.getPregnancyWeek());
+			}
+			else if (dueStage.isInfancy())
+			{
+				cal.add(Calendar.MONTH, dueStage.getInfancyMonth());
+			}
+			return cal.getTime();
+		}		
+		else
+		{
+			return null;
+		}
+	}
 }

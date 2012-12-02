@@ -5,6 +5,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import samoyan.controls.CheckboxInputControl;
+import samoyan.controls.ImageControl;
+import samoyan.core.TimeZoneEx;
+import samoyan.core.Util;
+import samoyan.servlet.RequestContext;
+import samoyan.servlet.UrlGenerator;
+import samoyan.servlet.WebPage;
 import baby.database.CheckItem;
 import baby.database.CheckItemStore;
 import baby.database.CheckItemUserLinkStore;
@@ -13,16 +20,7 @@ import baby.database.ChecklistStore;
 import baby.database.ChecklistUserLinkStore;
 import baby.database.Mother;
 import baby.database.MotherStore;
-import baby.database.Stage;
 import baby.pages.todo.ChecklistAjaxPage;
-
-import samoyan.controls.CheckboxInputControl;
-import samoyan.controls.ImageControl;
-import samoyan.core.TimeZoneEx;
-import samoyan.core.Util;
-import samoyan.servlet.RequestContext;
-import samoyan.servlet.UrlGenerator;
-import samoyan.servlet.WebPage;
 
 public class ChecklistControl
 {
@@ -122,7 +120,7 @@ public class ChecklistControl
 			}
 			out.write("</b>");
 			
-			Date due = calcDateOfStage(checklist, mother);
+			Date due = mother.calcDateOfStage(checklist.getTimelineTo());
 			if (due!=null)
 			{
 				out.write(" ");
@@ -213,62 +211,6 @@ public class ChecklistControl
 				out.write("&cmd=toggle&chk=' + $img.attr('target') + '&val=' + $img.hasClass('Collapsed'));");
 			out.write("}");
 			out.write("</script>");
-		}
-	}
-
-	private Date calcDateOfStage(Checklist cl, Mother mother)
-	{
-		Stage presentStage = mother.getPregnancyStage();
-		Stage dueStage = Stage.fromInteger(cl.getTimelineTo());
-		
-		if (presentStage.isPreconception())
-		{
-			// We can't estimate dates
-			return null;
-		}
-		else if (presentStage.isPregnancy())
-		{
-			Calendar cal = Calendar.getInstance(TimeZoneEx.GMT);
-			cal.setTime(mother.getDueDate());
-
-			if (dueStage.isPreconception())
-			{
-				cal.add(Calendar.DATE, -7 * 40);
-			}
-			else if (dueStage.isPregnancy())
-			{
-				cal.add(Calendar.DATE, -7 * 40);
-				cal.add(Calendar.DATE, 7 * dueStage.getPregnancyWeek());
-			}
-			else if (dueStage.isInfancy())
-			{
-				cal.add(Calendar.MONTH, dueStage.getInfancyMonth());
-			}
-			return cal.getTime();
-		}
-		else if (presentStage.isInfancy())
-		{
-			Calendar cal = Calendar.getInstance(TimeZoneEx.GMT);
-			cal.setTime(mother.getBirthDate());
-			
-			if (dueStage.isPreconception())
-			{
-				cal.add(Calendar.DATE, -7 * 40);
-			}
-			else if (dueStage.isPregnancy())
-			{
-				cal.add(Calendar.DATE, -7 * 40);
-				cal.add(Calendar.DATE, 7 * dueStage.getPregnancyWeek());
-			}
-			else if (dueStage.isInfancy())
-			{
-				cal.add(Calendar.MONTH, dueStage.getInfancyMonth());
-			}
-			return cal.getTime();
-		}		
-		else
-		{
-			return null;
 		}
 	}
 }

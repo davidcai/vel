@@ -463,11 +463,15 @@ public class ChartsPage extends BabyPage
 			}
 			else
 			{
-				String babyName = BabyStore.getInstance().load(rec.getBabyID()).getName();
-				if (babyName.equals(name) == false)
+				Baby baby = BabyStore.getInstance().load(rec.getBabyID());
+				if (baby != null)
 				{
-					name = babyName;
-					twoCol.writeSubtitleRow(name);
+					String babyName = baby.getName();
+					if (babyName.equals(name) == false)
+					{
+						name = babyName;
+						twoCol.writeSubtitleRow(name);
+					}
 				}
 			}
 			

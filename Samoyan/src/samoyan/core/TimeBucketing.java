@@ -2,8 +2,10 @@ package samoyan.core;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -16,7 +18,7 @@ public class TimeBucketing<T>
 	private Calendar cal;
 	private TimeZone timeZone;
 	private Locale locale;
-	private Object[] buckets;
+	private List<T> buckets;
 	private Class<T> bucketClass;
 	private DateFormat df;
 	
@@ -66,7 +68,12 @@ public class TimeBucketing<T>
 		}
 				
 		// Allocate the buckets
-		this.buckets = new Object[unitDiff(this.base, this.to, this.granularity) + 1];
+		int n = unitDiff(this.base, this.to, this.granularity) + 1;
+		this.buckets = new ArrayList<T>(n);
+		for (int i=0; i<n; i++)
+		{
+			this.buckets.add(null);
+		}
 	}
 	
 	private int unitDiff(Date base, Date date, int granularity)
@@ -121,29 +128,29 @@ public class TimeBucketing<T>
 		}
 		
 		int index = unitDiff(this.from, date, this.granularity);
-		T bucket = (T) this.buckets[index];
+		T bucket = this.buckets.get(index);
 		if (bucket==null)
 		{
 			bucket = this.bucketClass.newInstance();
-			this.buckets[index] = bucket;
+			this.buckets.set(index,  bucket);
 		}
 		return bucket;
 	}
 	
 	public T getBucket(int bucketIndex) throws InstantiationException, IllegalAccessException
 	{
-		T bucket = (T) this.buckets[bucketIndex];
+		T bucket = this.buckets.get(bucketIndex);
 		if (bucket==null)
 		{
 			bucket = this.bucketClass.newInstance();
-			this.buckets[bucketIndex] = bucket;
+			this.buckets.set(bucketIndex,  bucket);
 		}
 		return bucket;
 	}
 
 	public int length()
 	{
-		return this.buckets.length;
+		return this.buckets.size();
 	}
 	
 	public Date getBaseDate(int bucketIndex)
