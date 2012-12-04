@@ -88,7 +88,7 @@ public class PhotoPage extends BabyPage
 		{
 			write("<div class=\"PrevWrapper\">");
 			write("<a class=\"Prev\" href=\"");
-			write(getPageURL(COMMAND, new ParameterMap(PARAM_ID, this.prevID.toString())));
+			writeEncode(getPageURL(COMMAND, new ParameterMap(PARAM_ID, this.prevID.toString())));
 			write("\">");
 			write("</a>");
 			write("</div>");
@@ -98,7 +98,7 @@ public class PhotoPage extends BabyPage
 		{
 			write("<div class=\"NextWrapper\">");
 			write("<a class=\"Next\" href=\"");
-			write(getPageURL(COMMAND, new ParameterMap(PARAM_ID, this.nextID.toString())));
+			writeEncode(getPageURL(COMMAND, new ParameterMap(PARAM_ID, this.nextID.toString())));
 			write("\">");
 			write("</a>");
 			write("</div>");

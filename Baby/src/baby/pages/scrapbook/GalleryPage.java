@@ -104,7 +104,7 @@ public class GalleryPage extends BabyPage
 						
 						write("<td>");
 						write("<a href=\"");
-						write(getPageURL(PhotoPage.COMMAND, 
+						writeEncode(getPageURL(PhotoPage.COMMAND, 
 							new ParameterMap(PhotoPage.PARAM_ID, entry.getID().toString())));
 						write("\">");
 						writeImage(entry.getPhoto(), BabyConsts.IMAGESIZE_THUMB_150X150, null, null);

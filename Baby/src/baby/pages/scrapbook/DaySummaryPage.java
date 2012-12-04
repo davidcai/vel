@@ -94,8 +94,7 @@ public class DaySummaryPage extends BabyPage
 		}
 		if (delivery != null && delivery.before(fromGMT) == false && delivery.before(toGMT))
 		{
-			// Note: due and birthday use GMT time zone
-			if (Calendar.getInstance(TimeZoneEx.GMT).getTime().after(delivery))
+			if (mother.getEstimatedPregnancyStage(fromGMT).isInfancy())
 			{
 				writeEncode(getString("scrapbook:DaySummary.GaveBirth"));
 			}
@@ -103,6 +102,7 @@ public class DaySummaryPage extends BabyPage
 			{
 				writeEncode(getString("scrapbook:DaySummary.Expecting"));
 			}
+			
 			write("<br>");
 			write("<br>");
 			
@@ -143,7 +143,7 @@ public class DaySummaryPage extends BabyPage
 				{
 					write("<div class=\"EntryPhoto\">");
 					write("<a href=\"");
-					write(getPageURL(PhotoPage.COMMAND, new ParameterMap(PhotoPage.PARAM_ID, entry.getID().toString())));
+					writeEncode(getPageURL(PhotoPage.COMMAND, new ParameterMap(PhotoPage.PARAM_ID, entry.getID().toString())));
 					write("\">");
 					writeImage(entry.getPhoto(), Image.SIZE_THUMBNAIL, null, null);
 					write("</a>");
@@ -169,8 +169,7 @@ public class DaySummaryPage extends BabyPage
 			write("<h2>");
 			writeEncode(getString("scrapbook:DaySummary.Measures"));
 			write("</h2>");
-			
-			write("<div class=\"DivideLine\"></div>");
+			write("<hr>");
 			
 			TwoColFormControl twoCol = new TwoColFormControl(this);
 			for (UUID recordID : recordIDs)
@@ -239,8 +238,7 @@ public class DaySummaryPage extends BabyPage
 						write("<h2>");
 						writeEncode(getString("scrapbook:DaySummary.Checklists"));
 						write("</h2>");
-						
-						write("<div class=\"DivideLine\"></div>");
+						write("<hr>");
 					}
 					
 					new ChecklistControl(this, getContext().getUserID(), checklistID).render();
@@ -267,8 +265,7 @@ public class DaySummaryPage extends BabyPage
 			write("<h2>");
 			writeEncode(getString("scrapbook:DaySummary.Appointments"));
 			write("</h2>");
-			
-			write("<div class=\"DivideLine\"></div>");
+			write("<hr>");
 			
 			write("<table>");
 			for (UUID appointmentID : appointmentIDs)
