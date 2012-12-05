@@ -25,10 +25,12 @@ public class TimelineControl
 	// Pregnancy week 24-28		24-29
 	// Pregnancy week 30-32		30-35
 	// Pregnancy week 36		36-37
-	// Pregnancy week 38		38-40
-	// Infancy month 2			1-2
-	// Infancy month 4			3-4
-	// Infancy month 6			5-10
+	// Pregnancy week 38		38
+	// Pregnancy week 39-40		39-40
+	// Infancy postpartum		1
+	// Infancy month 2			2-3
+	// Infancy month 4			4-5
+	// Infancy month 6			6-10
 	// Infancy month 12			11-12
 	private final static String[] labels = {
 		"Preconception",
@@ -40,6 +42,8 @@ public class TimelineControl
 		"Week30",
 		"Week36",
 		"Week38",
+		"Week39",
+		"Month1",
 		"Month2",
 		"Month4",
 		"Month6",
@@ -54,10 +58,12 @@ public class TimelineControl
 		124, 129,
 		130, 135,
 		136, 137,
-		138, 140,
-		201, 202,
-		203, 204,
-		205, 210,
+		138, 138,
+		139, 140,
+		201, 201,
+		202, 203,
+		204, 205,
+		206, 210,
 		211, 212
 	};
 

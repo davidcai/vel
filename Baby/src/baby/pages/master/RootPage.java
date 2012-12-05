@@ -3,6 +3,7 @@ package baby.pages.master;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 import baby.app.BabyConsts;
@@ -146,6 +147,7 @@ public class RootPage extends WebPage
 		int high = TimelineControl.getHighRange(stage.toInteger());
 		List<UUID> articleIDs = ArticleStore.getInstance().queryBySectionAndTimeline(BabyConsts.SECTION_INFO, low, high);
 		List<Article> pinnedArticles = new ArrayList<Article>();
+		List<Article> standardArticles = new ArrayList<Article>();
 		for (UUID id : articleIDs)
 		{
 			Article article = ArticleStore.getInstance().load(id);
@@ -153,6 +155,17 @@ public class RootPage extends WebPage
 			{
 				pinnedArticles.add(article);
 			}
+			else
+			{
+				standardArticles.add(article);
+			}
+		}
+		Random rnd = new Random(System.currentTimeMillis()/Setup.getSessionLength()); // Sticky random, changes every session
+		while (pinnedArticles.size()<3 && standardArticles.size()>0)
+		{
+			// Complement pinned articles with random standard articles
+			Article art = standardArticles.remove(rnd.nextInt(standardArticles.size()));
+			pinnedArticles.add(art);
 		}
 		if (pinnedArticles.size()>0)
 		{
@@ -162,16 +175,16 @@ public class RootPage extends WebPage
 				String url = getPageURL(ViewArticlePage.COMMAND, new ParameterMap(ViewArticlePage.PARAM_ID, article.getID().toString()));
 
 				write("<tr>");
+				write("<td width=\"1%\">");
 				if (article.getPhoto()==null)
 				{
-					write("<td colspan=2>");
+					writeImage(article.getPhoto(), Image.SIZE_THUMBNAIL, article.getTitle(), url);
 				}
 				else
 				{
-					write("<td width=\"1%\">");
 					writeImage(article.getPhoto(), Image.SIZE_THUMBNAIL, article.getTitle(), url);
-					write("</td><td>");
 				}
+				write("</td><td>");
 				writeLink(article.getTitle(), url);
 				String summary = article.getSummary();
 				if (Util.isEmpty(summary))
@@ -183,7 +196,6 @@ public class RootPage extends WebPage
 					write("<br>");
 					writeEncode(Util.getTextAbstract(summary, Article.MAXSIZE_SUMMARY));
 				}
-				write("<br><br>");
 				write("</td></tr>");
 			}
 			write("</table>");

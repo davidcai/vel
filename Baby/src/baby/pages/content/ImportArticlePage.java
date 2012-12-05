@@ -104,8 +104,6 @@ public class ImportArticlePage extends BabyPage
 	
 	private void renderFileList() throws Exception
 	{
-		RequestContext ctx = getContext();
-				
 		writeEncode(getString("content:ImportArticle.ImportHelp", this.imported.size()));
 		write("<br><br>");
 
@@ -121,7 +119,6 @@ public class ImportArticlePage extends BabyPage
 	
 	private void populateTimelineCombo(SelectInputControl select)
 	{
-		Stage stage;
 		select.addOption("", 0);
 
 		select.addOption(getString("content:ImportArticle.Preconception"), Stage.preconception().toInteger());
@@ -261,6 +258,8 @@ public class ImportArticlePage extends BabyPage
 					this.imported.add(article);
 				}
 			}
+			
+			zipFile.close();
 		}
 	}
 }

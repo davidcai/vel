@@ -49,13 +49,9 @@ public final class ResourceListPage extends BabyPage
 			List<UUID> articleIDs = ArticleStore.getInstance().queryByMedicalCenter(region, medCenter);
 			renderList(articleIDs);
 		}
-		else if (ArticleStore.getInstance().getRegions().size()>0)
-		{
-			renderRegionTree();
-		}
 		else
 		{
-			writeEncode(getString("content:ResourceList.NoArticles"));
+			renderRegionTree();
 		}
 	}
 	
@@ -73,7 +69,7 @@ public final class ResourceListPage extends BabyPage
 		new LinkToolbarControl(this)
 			.addLink(	getString("content:ResourceList.InitiateCrawl"), getPageURL(getContext().getCommand(), new ParameterMap("crawl", "")), "icons/basic2/reload_16.png")
 			.render();
-
+		
 		int COLS = 5;
 		if (getContext().getUserAgent().isSmartPhone())
 		{
@@ -81,6 +77,12 @@ public final class ResourceListPage extends BabyPage
 		}
 
 		List<String> regions = ArticleStore.getInstance().getRegions();
+		if (regions.size()==0)
+		{
+			writeEncode(getString("content:ResourceList.NoArticles"));
+			return;
+		}
+		
 		for (String region : regions)
 		{
 			write("<b>");

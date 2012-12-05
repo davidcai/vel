@@ -94,7 +94,6 @@ public class ViewArticleListPage extends BabyPage
 				write("<br>");
 				writeEncode(Util.getTextAbstract(summary, Article.MAXSIZE_SUMMARY));
 			}
-			write("<br><br>");
 			write("</td></tr>");
 		}
 		write("</table>");

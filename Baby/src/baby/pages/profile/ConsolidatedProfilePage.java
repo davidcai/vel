@@ -1,6 +1,7 @@
 package baby.pages.profile;
 
 import java.util.List;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import samoyan.apps.master.LogoutPage;
@@ -203,8 +204,13 @@ public class ConsolidatedProfilePage extends BabyPage
 		twoCol.write("</small>");
 
 		// Time zone
+		TimeZone tz = user.getTimeZone();
+		if (tz==null)
+		{
+			tz = getTimeZone();
+		}
 		twoCol.writeRow(getString("babyprofile:Consolidated.TimeZone"));
-		twoCol.writeEncode(TimeZoneEx.getDisplayString(user.getTimeZone(), getLocale()));
+		twoCol.writeEncode(TimeZoneEx.getDisplayString(tz, getLocale()));
 		twoCol.write(" <small>");
 		twoCol.writeLink(getString("babyprofile:Consolidated.Edit"), getPageURL(TimeZonePage.COMMAND));
 		twoCol.write("</small>");

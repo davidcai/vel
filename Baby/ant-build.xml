@@ -1,0 +1,15 @@
+<project>
+
+<target name="copyLib">
+    <copy todir="bin/WEB-INF/lib" overwrite="true"><fileset dir="lib"/></copy>
+</target>
+
+<target name="copyWeb">
+    <copy todir="bin" overwrite="true"><fileset dir="web"/></copy>
+</target>
+
+<target name="copySamoyan">
+    <copy todir="bin" overwrite="true"><fileset dir="../Samoyan/bin"/></copy>
+</target>
+
+</project>

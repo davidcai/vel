@@ -59,7 +59,7 @@ public class BabyPage extends WebPage
 		if (cmd1.equals(COMMAND_INFORMATION))
 		{
 			new TabControl(this)
-				.addTab(ViewArticleListPage.COMMAND, getString("information:HealthyBeginnings.Title"), getPageURL(ViewArticleListPage.COMMAND))
+				.addTab(ViewArticleListPage.COMMAND, getString("information:Articles.Title"), getPageURL(ViewArticleListPage.COMMAND))
 				.addTab(ResourcesPage.COMMAND, getString("information:Resources.Title"), getPageURL(ResourcesPage.COMMAND))
 				.addTab(SearchPage.COMMAND, getString("information:Search.Title"), getPageURL(SearchPage.COMMAND))
 				.setCurrentTab(currentTab)

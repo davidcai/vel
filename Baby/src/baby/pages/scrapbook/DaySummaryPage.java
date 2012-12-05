@@ -41,7 +41,6 @@ public class DaySummaryPage extends BabyPage
 	{
 		UUID userID = getContext().getUserID();
 		Mother mother = MotherStore.getInstance().loadByUserID(userID);
-		DateFormat dfDateTime = DateFormatEx.getDateTimeInstance(getLocale(), getTimeZone());
 		DateFormat dfDate = DateFormatEx.getDateInstance(getLocale(), getTimeZone());
 		DateFormat dfTime = DateFormatEx.getTimeInstance(getLocale(), getTimeZone());
 		boolean empty = true;

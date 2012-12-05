@@ -112,6 +112,12 @@ public class Mother extends DataBean
 		return Stage.preconception();
 	}
 
+	/**
+	 * 
+	 * @param target The date in which to calculate the stage of the mother.
+	 * Should typically be midnight GMT of any day.
+	 * @return
+	 */
 	public Stage getEstimatedPregnancyStage(Date target)
 	{
 		Date birthday = getDueDate() == null ? getBirthDate() : getDueDate();
