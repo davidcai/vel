@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" output="bin/WEB-INF/classes" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="/Samoyan/lib/dsn.jar"/>
 	<classpathentry kind="lib" path="/Samoyan/lib/imaging.jar"/>
@@ -9,7 +9,6 @@
 	<classpathentry kind="lib" path="/Samoyan/lib/mail.jar"/>
 	<classpathentry kind="lib" path="/Samoyan/lib/servlet-api.jar"/>
 	<classpathentry kind="lib" path="/Samoyan/lib/sqljdbc4.jar"/>
-	<classpathentry kind="lib" path="/Samoyan/bin/WEB-INF/classes" sourcepath="/Samoyan/src"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Samoyan"/>
 	<classpathentry kind="lib" path="/Samoyan/lib/js.jar"/>
 	<classpathentry kind="lib" path="/Samoyan/lib/twitter4j-core-2.2.5.jar"/>
@@ -18,5 +17,5 @@
 	<classpathentry kind="lib" path="/Samoyan/lib/commons-codec-1.7.jar"/>
 	<classpathentry kind="lib" path="/Samoyan/lib/commons-lang3-3.1.jar"/>
 	<classpathentry kind="lib" path="/Samoyan/lib/commons-pool-1.6.jar"/>
-	<classpathentry kind="output" path="bin/WEB-INF/classes"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>
