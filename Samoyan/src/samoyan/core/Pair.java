@@ -81,7 +81,8 @@ public class Pair<K, V>
 	* @param o
 	* @return
 	*/
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public boolean equals(Object o)
     {
         if (this==o) return true;

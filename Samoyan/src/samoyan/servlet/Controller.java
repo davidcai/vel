@@ -1015,6 +1015,9 @@ public class Controller extends HttpServlet
 			throw new PageNotFoundException();
 		}
 
+		// Redirect to main domain from alternative domain names
+		if (serveAltDomains(ctx, request, response)) return;
+
 		// Serve HTML pages
 		if (serveHtml(ctx, request, response)) return;
 
@@ -1030,6 +1033,20 @@ public class Controller extends HttpServlet
 		throw new PageNotFoundException();
 	}
 	
+	private boolean serveAltDomains(RequestContext ctx, HttpServletRequest request, HttpServletResponse response) throws Exception
+	{
+		// Main domain name
+		String mainHost = Setup.getHost();
+		String host = ctx.getHost();
+		if (host.equalsIgnoreCase(mainHost))
+		{
+			return false;
+		}
+		
+		// Redirect to official domain name
+		throw new RedirectException(ctx.isSecureSocket(), ctx.getMethod(), ctx.getCommand(), ctx.getParameters());
+	}
+
 	private boolean serveHtml(RequestContext ctx, HttpServletRequest request, HttpServletResponse response) throws Exception
 	{
 		long startTime = System.currentTimeMillis();
