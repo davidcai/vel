@@ -93,6 +93,7 @@ public class DaySummaryPage extends BabyPage
 		}
 		if (delivery != null && delivery.before(fromGMT) == false && delivery.before(toGMT))
 		{
+			// TODO: Fix this
 			if (mother.getEstimatedPregnancyStage(fromGMT).isInfancy())
 			{
 				writeEncode(getString("scrapbook:DaySummary.GaveBirth"));

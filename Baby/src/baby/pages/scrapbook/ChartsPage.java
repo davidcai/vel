@@ -17,7 +17,6 @@ import samoyan.controls.GoogleGraph;
 import samoyan.controls.TwoColFormControl;
 import samoyan.core.DateFormatEx;
 import samoyan.core.ParameterMap;
-import samoyan.core.TimeZoneEx;
 import samoyan.database.UserStore;
 import samoyan.servlet.exc.RedirectException;
 import baby.database.Baby;
@@ -79,7 +78,7 @@ public class ChartsPage extends BabyPage
 		}
 	}
 	
-	private DateFormat dateParamFormat = DateFormatEx.getSimpleInstance("MM-dd-yyyy", getLocale(), TimeZoneEx.GMT);
+	private DateFormat dateParamFormat = DateFormatEx.getSimpleInstance("MM-dd-yyyy", getLocale(), getTimeZone());
 	private Mother mom;
 	private Date date;
 	private List<MeasureRecord> records;
@@ -104,7 +103,7 @@ public class ChartsPage extends BabyPage
 		}
 		if (this.date == null)
 		{
-			this.date = Calendar.getInstance(TimeZoneEx.GMT).getTime();
+			this.date = Calendar.getInstance(getTimeZone()).getTime();
 		}
 		
 		Stage stage = this.mom.getEstimatedPregnancyStage(this.date);
@@ -153,7 +152,7 @@ public class ChartsPage extends BabyPage
 		// Pre-populate measure records with saved data of a specified date
 		// 
 
-		Calendar cal = Calendar.getInstance(TimeZoneEx.GMT);
+		Calendar cal = Calendar.getInstance(getTimeZone());
 		cal.setTime(this.date);
 		cal.set(Calendar.HOUR_OF_DAY, 0);
 		cal.set(Calendar.MINUTE, 0);
@@ -239,7 +238,7 @@ public class ChartsPage extends BabyPage
 		writeEncode(getString("scrapbook:Charts.Help"));
 		write("<br>");
 
-		DateFormat df = DateFormatEx.getSimpleInstance("MMMMM d, yyyy", getLocale(), TimeZoneEx.GMT);
+		DateFormat df = DateFormatEx.getSimpleInstance("MMMMM d, yyyy", getLocale(), getTimeZone());
 		write("<p>");
 		writeEncode(df.format(this.date));
 		write("</p>");
@@ -314,7 +313,7 @@ public class ChartsPage extends BabyPage
 		Map<String, GraphData> mapGraphs = new LinkedHashMap<String, GraphData>();
 		UUID userID = getContext().getUserID();
 		String momName = UserStore.getInstance().load(userID).getDisplayName();
-		DateFormat df = DateFormatEx.getMiniDateInstance(getLocale(), TimeZoneEx.GMT);
+		DateFormat df = DateFormatEx.getMiniDateInstance(getLocale(), getTimeZone());
 		
 		for (UUID recID : sortedRecIDs)
 		{

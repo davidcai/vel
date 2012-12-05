@@ -26,35 +26,22 @@ Implement Search page to search over Info articles, resources.
   - support for importing checklists as well: turn UL into checkitems
   - Do not validate HTML content when saving article via editor because it will override html entered through import.
     and/or allow H1/H2... tags
-  - Import from all folders inside the ZIP
-  = Apostrophes don't show in the body of the article, probably because they were no encoded as &quot; in the HTML
-= (1) check mother.getEstimatedPregnancyStage method impl by David
+  - Import from all folders inside the ZIP (recurse)
+  = (1) Apostrophes don't show in the body of the article, probably because they were not encoded as &quot; in the HTML
+= (3) check mother.getEstimatedPregnancyStage method impl by David
   - need timezone as param? pass GMT midnight date into getEstimatedPregnancyStage?
-= Need to have Day class to manage whole day values
+=? Need to have Day class to manage whole day values
   - persistable to DB as YYYYMMDD
   - toDate(tz) to return Date
   - toTimeMillis(tz)
-= (0) kick counter:
+= (2) kick counter:
   - integrate into measures (link to the tool)
   - better design
-+ NullPointerException in WelcomePage line 44 after new user registration. due to www vs nowww redirection.
-  need to perform permanent redirect to "www". see zhibit's code for where to place it.
-+ Portal page doesn't show articles when no pinned article. complement to total of 3 articles (randomly, hourly)
-+ Add the checklist from week 36 "what to bring to hospital" as sample
-x Default baby comes up female from database.
-x show pinned articles in bold or larger font in Info tab
-+ ConsolidatedProfile page null pointer for timezone
-= refactor Scrapbook->Journal, Journal->Diary
+= refactor Scrapbook->Journal, Journal->Diary/Notes
 - fix (C) character in Samoyan. Need to auto-detect UTF-8 vs ISO-8895.
-+ Link mybabyandi@gmail.com to live system
-+ hide tabs when in guided setup
-+ RootPage: showing only 2 articles, add default image if not specified.
-+ row spacing is inconsistent in Info article list
-= ANT:
-  - oragnize with "main" calling the other targets.
-  - include javac to do compilation. Can then remove setting in eclipse.
-  - remove "overwrite" attribute of copy
-  - keep one copy of the build.xml on Samoyan with targets of "BuildPlatform" and "BuildProject"
++ ANT:
+  + remove "overwrite" attribute of copy
+  + keep one copy of the build.xml on Samoyan with targets of "BuildPlatform" and "BuildProject"
 
 - Calendar. click to take to DaySummaryPage
   - highlight Due date, delivery date.
@@ -93,6 +80,8 @@ brent feedback:
 journal: timeline across the top
 pinkpad app calendar with icons: day, month, list views.
 categories for articles. can then let user browser by category.
+
+PHASE II:
 
 = checklists from earlier stages (preconception, pregnancy): show as faded.
 = Use the ControlArray for the BabiesPage to add/remove babies.

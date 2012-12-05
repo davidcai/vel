@@ -1,0 +1,28 @@
+<!-- Ant user manual: http://ant.apache.org/manual/index.html -->
+
+<project>
+
+	<!-- Copies the lib folder into the web-app output folder -->
+	<target name="CopyLib">
+    	<copy todir="bin/WEB-INF/lib" overwrite="true"><fileset dir="lib"/></copy>
+	</target>
+
+	<!-- Copies the web folder into the web-app output folder -->
+	<target name="CopyWeb">
+    	<copy todir="bin" overwrite="true"><fileset dir="web"/></copy>
+	</target>
+
+	<!-- Copies the platform web-app into the project's web-app folder. To be called by projects only. -->
+	<target name="CopyPlatform">
+    	<copy todir="bin" overwrite="true"><fileset dir="../Samoyan/bin"/></copy>
+	</target>
+
+	
+	<!-- Build the platform (Samoyan) project -->
+	<target name="BuildPlatform" depends="CopyLib, CopyWeb">
+	</target>
+	
+	<!-- Build an application project -->
+	<target name="BuildApp" depends="CopyPlatform, CopyLib, CopyWeb">
+	</target>
+</project>
