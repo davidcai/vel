@@ -342,7 +342,7 @@ public final class Util
 
 	/**
 	 * Decode ampersand codes in the <code>encoded</code> string to characters. For example,
-	 * "&lt;" is converted to "<".
+	 * "&amp;lt;" is converted to "&lt;".
 	 */
 	public final static String htmlDecode(String encoded)
 	{
@@ -361,8 +361,8 @@ public final class Util
 
 	/**
 	 * Decodes a string whose array characters represents an array of bytes in UTF-8 encoding.
-	 * @param encoded The encoded string. For example, "AuÃ?er"
-	 * @return The decoded string. For example, "Außer".
+	 * @param encoded The encoded string.
+	 * @return The decoded string.
 	 */
 	public static String utf8Decode(String encoded)
 	{
@@ -1695,10 +1695,9 @@ public final class Util
 			totalCount += count;
 			os.write(buffer, 0, count);
 		}
-		os.close();
-
 		byte[] result = new byte[totalCount];
 		System.arraycopy(os.getBytes(), 0, result, 0, totalCount);
+		os.close();
 		return result;
 	}
 
@@ -1716,8 +1715,9 @@ public final class Util
 			totalCount += count;
 			os.write(buffer, 0, count);
 		}
+		byte[] bytes = os.getBytes();
 		os.close();
-		return new String(os.getBytes(), 0, totalCount, charset);
+		return new String(bytes, 0, totalCount, charset);
 	}
 
 	public static byte[] hexStringToByteArray(String s)

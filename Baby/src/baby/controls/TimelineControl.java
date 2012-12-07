@@ -18,7 +18,8 @@ public class TimelineControl
 	// Label					Range
 	// -----					-----
 	// Preconception			*
-	// Pregnancy week 6-10		1-9
+	// Pregnancy week 1-6		1-5
+	// Pregnancy week 6-10		6-9
 	// Pregnancy week 10-12		10-15
 	// Pregnancy week 16-20		16-19
 	// Pregnancy week 20-24		20-23
@@ -30,10 +31,12 @@ public class TimelineControl
 	// Infancy postpartum		1
 	// Infancy month 2			2-3
 	// Infancy month 4			4-5
-	// Infancy month 6			6-10
-	// Infancy month 12			11-12
+	// Infancy month 6			6-8
+	// Infancy month 9			9-11
+	// Infancy month 12			12
 	private final static String[] labels = {
 		"Preconception",
+		"Week1",
 		"Week6",
 		"Week10",
 		"Week16",
@@ -47,11 +50,13 @@ public class TimelineControl
 		"Month2",
 		"Month4",
 		"Month6",
+		"Month9",
 		"Month12"
 	};
 	private final static int[] ranges = {
 		1, 1,
-		101, 109,
+		101, 105,
+		106, 109,
 		110, 115,
 		116, 119,
 		120, 123,
@@ -63,8 +68,9 @@ public class TimelineControl
 		201, 201,
 		202, 203,
 		204, 205,
-		206, 210,
-		211, 212
+		206, 208,
+		209, 211,
+		210, 212
 	};
 
 	public TimelineControl(WebPage outputPage, Stage stage, String stageParamName)

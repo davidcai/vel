@@ -28,7 +28,8 @@ public final class StringBundle
 		}
 				
 		// Create new and cache for future use
-		ResourceBundle result = Utf8ResourceBundle.getBundle(bundleID, loc);
+//		ResourceBundle result = Utf8ResourceBundle.getBundle(bundleID, loc);
+		ResourceBundle result = ResourceBundle.getBundle(bundleID, loc);
 		localCache.put(key, result);
 		
 		return result;

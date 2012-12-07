@@ -33,9 +33,13 @@ import samoyan.core.Util;
 import samoyan.database.Image;
 import samoyan.database.Server;
 import samoyan.database.ServerStore;
+import samoyan.database.User;
+import samoyan.database.UserStore;
 import samoyan.servlet.RequestContext;
 import samoyan.servlet.Setup;
+import samoyan.servlet.UrlGenerator;
 import samoyan.servlet.WebPage;
+import samoyan.servlet.exc.RedirectException;
 
 public class RootPage extends WebPage
 {
@@ -45,13 +49,21 @@ public class RootPage extends WebPage
 	public void renderHTML() throws Exception
 	{
 		RequestContext ctx = getContext();
+		User user = UserStore.getInstance().load(ctx.getUserID());
 		
-		if (ctx.getUserID()==null)
+		if (user==null)
 		{
+			// Master home page for public
 			renderLoginScreen();
+		}
+		else if (user.isGuidedSetup())
+		{
+			// Redirect to GuidedSetup
+			throw new RedirectException(UrlGenerator.COMMAND_SETUP, null);
 		}
 		else
 		{
+			// Internal portal page for logged in users
 			renderPortal();
 		}
 	}
@@ -123,22 +135,21 @@ public class RootPage extends WebPage
 				status = getString("baby:Root.StatusInfancyMonths", names, babyIDs.size(), stage.getInfancyMonth());
 			}
 		}
-		write("<table><tr valign=middle><td><h2>");
+		write("<h2>");
 		writeEncode(status);
-		write("</h2></td><td>");
+		write("</h2>");
 		if (stage.isPreconception())
 		{
 			write("<small>");
 			writeLink(getString("baby:Root.AreYouPregnant"), getPageURL(StagePage.COMMAND));
-			write("</small>");
+			write("</small><br><br>");
 		}
 		else if (stage.isPregnancy() && stage.getPregnancyWeek()>=35)
 		{
 			write("<small>");
 			writeLink(getString("baby:Root.DidYouGiveBirth"), getPageURL(StagePage.COMMAND));
-			write("</small>");
+			write("</small><br><br>");
 		}
-		write("</td></tr></table>");
 		
 		
 		
@@ -178,7 +189,7 @@ public class RootPage extends WebPage
 				write("<td width=\"1%\">");
 				if (article.getPhoto()==null)
 				{
-					writeImage(article.getPhoto(), Image.SIZE_THUMBNAIL, article.getTitle(), url);
+					writeImage("baby/article-thumbnail.png", article.getTitle(), url);
 				}
 				else
 				{
@@ -283,10 +294,10 @@ public class RootPage extends WebPage
 				writeEncode(getString("baby:Root.ChecklistComplete", complete, checkItemIDs.size()));
 				write("</td></tr>");
 			}
-			if (!first)
-			{
-				write("</table><br>");
-			}
+		}
+		if (!first)
+		{
+			write("</table><br>");
 		}
 
 		

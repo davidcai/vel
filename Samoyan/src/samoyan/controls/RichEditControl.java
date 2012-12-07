@@ -226,6 +226,13 @@ public class RichEditControl extends WebPage
 		simpleTags.add("table");		simpleTags.add("/table");
 		simpleTags.add("tr");			simpleTags.add("/tr");
 		simpleTags.add("td");			simpleTags.add("/td");
+		
+		simpleTags.add("h1");			simpleTags.add("/h1");
+		simpleTags.add("h2");			simpleTags.add("/h2");
+		simpleTags.add("h3");			simpleTags.add("/h3");
+		simpleTags.add("h4");			simpleTags.add("/h4");
+		simpleTags.add("h5");			simpleTags.add("/h5");
+		simpleTags.add("h6");			simpleTags.add("/h6");
 
 		Set<String> ignoreDoubleTags = new HashSet<String>();
 		ignoreDoubleTags.add("script");

@@ -72,10 +72,10 @@ public class ChartsPage extends BabyPage
 			
 			return rows;
 		}
-		public void setRows(Map<String, Float> rows)
-		{
-			this.rows = rows;
-		}
+//		public void setRows(Map<String, Float> rows)
+//		{
+//			this.rows = rows;
+//		}
 	}
 	
 	private DateFormat dateParamFormat = DateFormatEx.getSimpleInstance("MM-dd-yyyy", getLocale(), getTimeZone());

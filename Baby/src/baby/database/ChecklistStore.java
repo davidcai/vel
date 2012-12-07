@@ -57,12 +57,18 @@ public final class ChecklistStore extends DataBeanStore<Checklist>
 
 	public List<UUID> queryBySectionAndTimeline(String section, int lowStage, int highStage) throws SQLException
 	{
-		return Query.queryListUUID("SELECT ID FROM Checklists WHERE Section=? AND ((TimelineFrom<=? AND TimelineTo>=?) OR (TimelineFrom<=? AND TimelineTo>=?)) ORDER BY TimelineFrom DESC, Title ASC", new ParameterList(section).plus(lowStage).plus(lowStage).plus(highStage).plus(highStage));
+		return Query.queryListUUID("SELECT ID FROM Checklists WHERE Section=? AND " +
+				"((TimelineFrom>=? AND TimelineFrom<=?) OR (TimelineTo>=? AND TimelineTo<=?) OR (TimelineFrom<? AND TimelineTo>?))" +
+				"ORDER BY TimelineFrom DESC, Title ASC",
+				new ParameterList(section).plus(lowStage).plus(highStage).plus(lowStage).plus(highStage).plus(lowStage).plus(highStage));
 	}
 	
 	public List<UUID> queryByTimeline(int lowStage, int highStage) throws SQLException
 	{
-		return Query.queryListUUID("SELECT ID FROM Checklists WHERE (TimelineFrom<=? AND TimelineTo>=?) OR (TimelineFrom<=? AND TimelineTo>=?) ORDER BY TimelineFrom DESC, Title ASC", new ParameterList().plus(lowStage).plus(lowStage).plus(highStage).plus(highStage));
+		return Query.queryListUUID("SELECT ID FROM Checklists WHERE " +
+				"(TimelineFrom>=? AND TimelineFrom<=?) OR (TimelineTo>=? AND TimelineTo<=?) OR (TimelineFrom<? AND TimelineTo>?)" +
+				"ORDER BY TimelineFrom DESC, Title ASC",
+				new ParameterList().plus(lowStage).plus(highStage).plus(lowStage).plus(highStage).plus(lowStage).plus(highStage));
 	}
 	
 	public Checklist loadPersonalChecklist(UUID userID) throws Exception

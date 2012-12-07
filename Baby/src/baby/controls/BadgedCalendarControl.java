@@ -29,6 +29,13 @@ public class BadgedCalendarControl extends BigCalendarControl
 	}
 
 	@Override
+	protected boolean isCellEnabled(int yyyy, int mm, int dd)
+	{
+		Set<Badge> badges = getBadges(yyyy, mm + 1, dd); // 0-based to 1-based month
+		return (badges != null && badges.isEmpty() == false);
+	}
+	
+	@Override
 	protected void renderCell(int yyyy, int mm, int dd)
 	{
 		super.renderCell(yyyy, mm, dd);

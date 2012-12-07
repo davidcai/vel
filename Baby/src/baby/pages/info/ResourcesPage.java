@@ -6,6 +6,8 @@ import java.util.UUID;
 import samoyan.controls.SelectInputControl;
 import samoyan.core.ParameterMap;
 import samoyan.core.Util;
+import samoyan.servlet.Setup;
+import samoyan.servlet.UserAgent;
 import baby.database.Article;
 import baby.database.ArticleStore;
 import baby.database.Mother;
@@ -95,9 +97,23 @@ public class ResourcesPage extends BabyPage
 		write("<li>");
 		writeLink(getString("information:Resources.OnlinePregnancyCenter"), "https://healthy.kaiserpermanente.org/health/poc?uri=center:pregnancy&article=EEA2B18C-B19C-11E0-B461-CB58EEF22C59");
 		write("</li>");
-		write("<li>");
-		writeLink(getString("information:Resources.MyMedical"), "http://www.mymedicalapp.com/"); // !$! Confirm link
-		write("</li>");
+		UserAgent ua = getContext().getUserAgent();
+		// !$! Confirm links are correct
+		// If app already installed on the device, have link to open the app directly
+		String ios = "https://itunes.apple.com/us/app/kaiser-permanente/id493390354?mt=8";
+		String android = "https://play.google.com/store/apps/details?id=org.kp.m";
+		if (!ua.isAndroid())
+		{
+			write("<li>");
+			writeLink(getString("information:Resources.IOS", Setup.getAppOwner(getLocale())), ios);
+			write("</li>");
+		}
+		if (!ua.isIOS())
+		{
+			write("<li>");
+			writeLink(getString("information:Resources.Android", Setup.getAppOwner(getLocale())), android);
+			write("</li>");
+		}
 		write("</ul>");
 	}
 }

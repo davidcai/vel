@@ -3,14 +3,12 @@
 Resources:
 - page to view/edit/lock the content of an article. (for author)
 - on crawl of resources, need to remove ones that are no longer relevant. Delete all with CreatedDate before crawl start, but only after crawl is complete.
-  set crawl automatically every 30 days
+  set crawl automatically every 30 days, sunday at 11p
 
-ArticleStore: caching for all queries. Clear after save/remove.
 automatic cached query using DatabeanStore.cachedQuery(). clear all on remove and store.
 Need smarter cache indexing. allowing multiple keys for invalidation. using naming convention with x|y|z.
   convention for db: Table.ColA=ValA|Table.ColB=ValB|Table.ColC=* . Clear on Save (for dirty columns) and Remove (must load object for that).
 
-Implement Search page to search over Info articles, resources.
 
 - iPhone desktop + splash icons for all device sizes.
   fix meta data control to support multiple images
@@ -19,36 +17,51 @@ Implement Search page to search over Info articles, resources.
   ? most recent uploaded image + upload control.
   = Last journal entry (image+text)
   = Nav bar with links to common actions: logout, upload photo, profile, etc.
-  = Calendar
-- Article import:
-  - look for manifest.properties file to indicate timeline range and section/category.
-  - give example of .html and manifest.txt files
-  - support for importing checklists as well: turn UL into checkitems
-  - Do not validate HTML content when saving article via editor because it will override html entered through import.
+  ? Show calendar
+  + Do not show when on guided setup
+    redirect to guided setup when guided setup is on. dont show portal.
+    or hide the master tab icon completely.
+    but need a way to logout.
++ Article import:
+  x look for manifest.properties file to indicate timeline range and section/category.
+    section=Info/Checklist/etc
+    from=pregnancy week 1
+    to=pregnancy week 40
+  x give example of .html and manifest.txt files
+  + Do not validate HTML content when saving article via editor because it will override html entered through import.
     and/or allow H1/H2... tags
-  - Import from all folders inside the ZIP (recurse)
-  = (1) Apostrophes don't show in the body of the article, probably because they were not encoded as &quot; in the HTML
+  x Import from all folders inside the ZIP (recurse)
+  + Apostrophes don't show in the body of the article, probably because they were not encoded as &quot; in the HTML
+    run on text between tags and HTML encode it. Also various double quotes
++ Calendar. click to take to DaySummaryPage
+  + highlight Due date, delivery date.
+  + icons for data points (checklist, images, journal entries, etc.)
+  + don't click on calendar cell if no data.
+    allow subclass to disable
+- support for importing checklists as well: turn UL into checkitems. anything before it as description.
 = (3) check mother.getEstimatedPregnancyStage method impl by David
   - need timezone as param? pass GMT midnight date into getEstimatedPregnancyStage?
-=? Need to have Day class to manage whole day values
-  - persistable to DB as YYYYMMDD
+=? Need to have Day, TimeOfDay class to manage whole day values
+  - persistable to DB as YYYY-MM-DD, hh:mm:ss.mmm
   - toDate(tz) to return Date
   - toTimeMillis(tz)
-= (2) kick counter:
+  - separate Day and Time controls to return Day and TimeOfDay
+  - getParameterDateTime("day", "time", tz) to return Date
+- kick counter:
   - integrate into measures (link to the tool)
   - better design
+  - May need to redo because kicks are counted on several min basis. (how long to reach 10 kicks)
 = refactor Scrapbook->Journal, Journal->Diary/Notes
-- fix (C) character in Samoyan. Need to auto-detect UTF-8 vs ISO-8895.
-+ ANT:
-  + remove "overwrite" attribute of copy
-  + keep one copy of the build.xml on Samoyan with targets of "BuildPlatform" and "BuildProject"
++ (c) character in Samoyan. Need to auto-detect UTF-8 vs ISO-8895.
+  or: remove the Utf8Resource class and adhere to Java standard
 
-- Calendar. click to take to DaySummaryPage
-  - highlight Due date, delivery date.
-  - icons for data points (checklist, images, journal entries, etc.)
-  - Show on portal page
-? multiple sections for Info depending on source of article. Healthy Beginnings, Healthy Kids, etc.
-  can add a column on Article table for "source".
+Content:
+- Run UTF8 conversion
+- Install Notepad++ for Andi
+- Figure out what to do with TABLEs
+
+? Have multiple sections for Info articles depending on source of article. Healthy Beginnings, Healthy Kids, etc.
+  can add a column/property on Article table for "source".
 
 - Horizontal navigation (tab):
   ? render tabs upside down
@@ -66,8 +79,8 @@ Implement Search page to search over Info articles, resources.
     - pass param to the page to pop the stack accordingly. _backpop_ or similar. 
 = Redo iPhone UI:
   - support for ... MORE in tab bar if there are too many tabs
-  = when pressing MENU button, hide tabbar, menu icon. change BACK button functionality to restore.
-  - don't show MENU button if nav bar is empty (i.e. no options). ?but there will be always the default options.
+  - MENU button to work like in Gmail/FB apps: slide the body to the left, reveal menu underneath. possibly hide tabbar.
+  - don't show MENU button if nav bar is empty (i.e. no options).
   - need place to show Login/Logout, Register, Help.
   - need place for Settings/profile link. Also in web UI. See facebook's dropdown corner menu.
   - TwoCol: round cornered group of elements. see http://www.diffen.com/difference/Capex_vs_Opex for nice style
@@ -86,16 +99,15 @@ PHASE II:
 = checklists from earlier stages (preconception, pregnancy): show as faded.
 = Use the ControlArray for the BabiesPage to add/remove babies.
 = in appointments, use date control instead of dropdowns. print time zone.
-
-Integrate the "Birth plan". It's a document the mother should fill out and send to her doctor.
-can be done electronically, or printed/mailed to doctor.
-
-print capability of the journal. or export to PDF. or email to doctor.
-design "notebook" style for journal. lines, margins, etc.
-
-
-compressed "upload only" version of image upload control: don't show thumbnail, don't show "upload new", size.
-allow to pass in the imagesize spec string for the thumbnail. Can then make it 32x32.
+= Implement Search page to search over Info articles, resources.
+= Integrate the "Birth plan". It's a document the mother should fill out and send to her doctor.
+  can be done electronically, or printed/mailed to doctor.
+= print capability of the journal. or export to PDF. or email to doctor.
+  design "notebook" style for journal. lines, margins, etc.
+- compressed "upload only" version of image upload control: don't show thumbnail, don't show "upload new", size.
+  allow to pass in the imagesize spec string for the thumbnail. Can then make it 32x32.
+= ArticleStore: caching for all queries. Clear after save/remove.
+- check/refine printed messages when no results (journal entries, gallery, articles, checklists, etc.)
 
 Future ideas:
 - Promote books for sale on Amazon. Collect commission via Amazon Associates program (approx 7%)

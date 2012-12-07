@@ -184,28 +184,21 @@ public class ImportArticlePage extends BabyPage
 			File file = ctx.getPostedFile("zip" + fn);
 			if (file==null) continue;
 
+			// Look for manifest file
 			ZipFile zipFile = new ZipFile(file);
 			Enumeration<ZipEntry> entriesEnum = (Enumeration<ZipEntry>) zipFile.entries();
 			while (entriesEnum.hasMoreElements())
 			{
 				ZipEntry entry = entriesEnum.nextElement();
+				if (entry.getName().startsWith("__MACOSX")) continue; // Hack for MacOS generated ZIPs
+				
 				if (entry.getName().endsWith(".html"))
 				{
 					String baseName = entry.getName().substring(0, entry.getName().length()-5);
 					String title = baseName;
 					String body = "";
 					
-					byte[] bytes = Util.inputStreamToBytes(zipFile.getInputStream(entry));
-					String html;
-					if (bytes[0]==(byte)0xEF && bytes[1]==(byte)0xBB && bytes[2]==(byte)0xBF) // EF BB BF - UTF-8
-					{
-						html = Util.inputStreamToString(zipFile.getInputStream(entry), "UTF-8");
-					}
-					else
-					{
-						html = Util.inputStreamToString(zipFile.getInputStream(entry), "ISO-8859-1");
-					}
-					
+					String html = Util.inputStreamToString(zipFile.getInputStream(entry), "UTF-8");
 					int p = html.indexOf("<title>");
 					if (p>=0)
 					{
@@ -224,7 +217,7 @@ public class ImportArticlePage extends BabyPage
 						int q = html.indexOf("</body>", p);
 						if (q>=0)
 						{
-							body = Util.htmlDecode(html.substring(p, q));
+							body = html.substring(p, q);
 						}
 					}
 	

@@ -142,6 +142,8 @@ public class Controller extends HttpServlet
 			
 			synchronousUpgrade();
 			
+			Dispatcher.bindEnvelope(EnvelopePage.class);
+
 			// Channel servers
 			EmailServer.init();
 			SmsServer.init();
@@ -158,8 +160,6 @@ public class Controller extends HttpServlet
 			GuidedSetupApp.init();
 			MessagingApp.init();
 			
-			Dispatcher.bindEnvelope(EnvelopePage.class);
-
 			// Tasks
 			TaskManager.addRecurring(new DeleteOldLogEntriesRecurringTask());
 			TaskManager.addRecurring(new DeleteOldTrackbacksRecurringTask());

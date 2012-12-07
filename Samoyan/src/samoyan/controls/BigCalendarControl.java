@@ -220,14 +220,17 @@ public class BigCalendarControl extends WebPage
 				int m = cal.get(Calendar.MONTH);
 				int d = cal.get(Calendar.DAY_OF_MONTH);
 				int y = cal.get(Calendar.YEAR);
+				
+				boolean enabled = (m==mm) && isCellEnabled(y, m, d); // Call subclass for enable/disable flag
+				
 				write("<td class=\"Day");
 				if (m!=mm)
 				{
-					write(" Disabled");
+					write(" Outside");
 				}
 				else if (d==dd)
 				{
-					write(" Selected");
+					write(" Today");
 				}
 				String addlClasses = getCellCSSClass(y, m, d); // Call subclass for additional CSS classes
 				if (!Util.isEmpty(addlClasses))
@@ -236,7 +239,7 @@ public class BigCalendarControl extends WebPage
 					writeEncode(addlClasses);
 				}
 				write("\">");
-				if (m==mm)
+				if (enabled)
 				{
 					params.plus("y", String.valueOf(y));
 					params.plus("m", String.valueOf(m+1));
@@ -256,7 +259,7 @@ public class BigCalendarControl extends WebPage
 				// Call subclass to render the cell's content
 				renderCell(y, m, d);
 
-				if (m==mm)
+				if (enabled)
 				{
 					write("</a>");
 				}
@@ -297,5 +300,17 @@ public class BigCalendarControl extends WebPage
 	protected String getCellCSSClass(int yyyy, int mm, int dd)
 	{
 		return null;
+	}
+	
+	/**
+	 * To be overridden by implementors to disable cells. Disabled cells are not clickable.
+	 * @param yyyy
+	 * @param mm
+	 * @param dd
+	 * @return <code>false</code> to disable the cell.
+	 */
+	protected boolean isCellEnabled(int yyyy, int mm, int dd)
+	{
+		return true;
 	}
 }

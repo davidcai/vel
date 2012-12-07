@@ -442,6 +442,11 @@ public class UserAgent implements Cloneable
 		return this.tags.containsKey(KINDLE);
 	}
 
+	public boolean isAndroid()
+	{
+		return this.tags.containsKey(ANDROID);
+	}
+
 	/**
 	 * Returns the user's screen width, or 0 if cannot be determined.
 	 * @return

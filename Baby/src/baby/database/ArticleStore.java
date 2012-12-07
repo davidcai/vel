@@ -89,7 +89,10 @@ public final class ArticleStore extends DataBeanStore<Article>
 	 */
 	public List<UUID> queryBySectionAndTimeline(String section, int lowStage, int highStage) throws SQLException
 	{
-		return Query.queryListUUID("SELECT ID FROM Articles WHERE Section=? AND ((TimelineFrom<=? AND TimelineTo>=?) OR (TimelineFrom<=? AND TimelineTo>=?)) ORDER BY Priority DESC, Title ASC", new ParameterList(section).plus(lowStage).plus(lowStage).plus(highStage).plus(highStage));
+		return Query.queryListUUID("SELECT ID FROM Articles WHERE Section=? AND " +
+				"((TimelineFrom>=? AND TimelineFrom<=?) OR (TimelineTo>=? AND TimelineTo<=?) OR (TimelineFrom<? AND TimelineTo>?))" +
+				"ORDER BY Priority DESC, Title ASC",
+				new ParameterList(section).plus(lowStage).plus(highStage).plus(lowStage).plus(highStage).plus(lowStage).plus(highStage));
 	}
 
 	public List<String> getRegions() throws SQLException
