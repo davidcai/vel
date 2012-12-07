@@ -106,7 +106,7 @@ public class ChartsPage extends BabyPage
 			this.date = Calendar.getInstance(getTimeZone()).getTime();
 		}
 		
-		Stage stage = this.mom.getEstimatedPregnancyStage(this.date);
+		Stage stage = this.mom.getEstimatedPregnancyStage(this.date, getTimeZone());
 		
 		//
 		// Prepare a list of measure records for new/saved records

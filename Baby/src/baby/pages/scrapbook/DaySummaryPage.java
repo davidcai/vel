@@ -9,7 +9,6 @@ import java.util.UUID;
 import samoyan.controls.TwoColFormControl;
 import samoyan.core.DateFormatEx;
 import samoyan.core.ParameterMap;
-import samoyan.core.TimeZoneEx;
 import samoyan.core.Util;
 import samoyan.database.Image;
 import samoyan.database.UserStore;
@@ -70,14 +69,6 @@ public class DaySummaryPage extends BabyPage
 		cal.add(Calendar.DATE, 1);
 		Date to = cal.getTime();
 		
-		Calendar calGMT = Calendar.getInstance(TimeZoneEx.GMT);
-		calGMT.set(yyyy, mm -1, dd, 0, 0, 0);
-		calGMT.set(Calendar.MILLISECOND, 0);
-		
-		Date fromGMT = calGMT.getTime();
-		calGMT.add(Calendar.DATE, 1);
-		Date toGMT = calGMT.getTime();
-		
 		write("<h2>");
 		writeEncode(dfDate.format(from));
 		write("</h2>");
@@ -86,15 +77,15 @@ public class DaySummaryPage extends BabyPage
 		// Delivery due
 		//
 		
-		Date delivery = mother.getDueDate();
+		Date delivery = mother.getDueDate(getTimeZone());
 		if (delivery == null)
 		{
-			delivery = mother.getBirthDate();
+			delivery = mother.getBirthDate(getTimeZone());
 		}
-		if (delivery != null && delivery.before(fromGMT) == false && delivery.before(toGMT))
+		if (delivery != null && delivery.before(from) == false && delivery.before(to))
 		{
 			// TODO: Fix this
-			if (mother.getEstimatedPregnancyStage(fromGMT).isInfancy())
+			if (mother.getEstimatedPregnancyStage(from, getTimeZone()).isInfancy())
 			{
 				writeEncode(getString("scrapbook:DaySummary.GaveBirth"));
 			}
@@ -218,9 +209,8 @@ public class DaySummaryPage extends BabyPage
 		// Checklist dues
 		//
 		
-		// Note: checklist uses GMT time zone		
-		Stage lowStage = mother.getEstimatedPregnancyStage(fromGMT);
-		Stage highStage = mother.getEstimatedPregnancyStage(toGMT);
+		Stage lowStage = mother.getEstimatedPregnancyStage(from, getTimeZone());
+		Stage highStage = mother.getEstimatedPregnancyStage(to, getTimeZone());
 		
 		List<UUID> checklistIDs = ChecklistStore.getInstance().queryByTimeline(lowStage.toInteger(), highStage.toInteger());
 		if (checklistIDs.isEmpty() == false)
@@ -231,7 +221,7 @@ public class DaySummaryPage extends BabyPage
 			{
 				Checklist checklist = ChecklistStore.getInstance().load(checklistID);
 				Date checklistDue = mother.calcDateOfStage(checklist.getTimelineTo());
-				if (checklistDue != null && checklistDue.before(fromGMT) == false && checklistDue.before(toGMT))
+				if (checklistDue != null && checklistDue.before(from) == false && checklistDue.before(to))
 				{
 					if (first)
 					{

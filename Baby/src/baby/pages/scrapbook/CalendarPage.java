@@ -101,9 +101,9 @@ public class CalendarPage extends BabyPage
 		calChecklist.set(yyyy, mm - 1, dd, 0, 0, 0);
 		calChecklist.set(Calendar.MILLISECOND, 0);
 		
-		Stage lowStage = mother.getEstimatedPregnancyStage(calChecklist.getTime());
+		Stage lowStage = mother.getEstimatedPregnancyStage(calChecklist.getTime(), getTimeZone());
 		calChecklist.add(Calendar.MONTH, 1);
-		Stage highStage = mother.getEstimatedPregnancyStage(calChecklist.getTime());
+		Stage highStage = mother.getEstimatedPregnancyStage(calChecklist.getTime(), getTimeZone());
 		
 		List<UUID> checklistIDs = ChecklistStore.getInstance().queryByTimeline(lowStage.toInteger(), highStage.toInteger());
 		for (UUID checklistID : checklistIDs)

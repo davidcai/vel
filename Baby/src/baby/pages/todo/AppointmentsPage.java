@@ -327,7 +327,7 @@ public class AppointmentsPage extends BabyPage
 	{
 		// Related Articles
 		Mother mother = MotherStore.getInstance().loadByUserID(getContext().getUserID());
-		Stage stage = mother.getEstimatedPregnancyStage(this.curAppointment.getDateTime());
+		Stage stage = mother.getEstimatedPregnancyStage(this.curAppointment.getDateTime(), getTimeZone());
 		int lowStage = TimelineControl.getLowRange(stage.toInteger());
 		int highStage = TimelineControl.getHighRange(stage.toInteger());
 		List<UUID> articleIDs = ArticleStore.getInstance().queryBySectionAndTimeline(this.curAppointment.getType(), lowStage, highStage);

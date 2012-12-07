@@ -2,6 +2,7 @@ package baby.database;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import samoyan.core.TimeZoneEx;
@@ -21,6 +22,11 @@ public class Mother extends DataBean
 	{
 		set("DueDate", date);
 	}
+	public Date getDueDate(TimeZone tz)
+	{
+		long orig = getDueDate().getTime();
+		return new Date(orig - tz.getOffset(orig));
+	}
 	
 	/**
 	 * The date that the mother gave birth (not to be confused with the mother's birthday).
@@ -33,6 +39,11 @@ public class Mother extends DataBean
 	public void setBirthDate(Date date)
 	{
 		set("BirthDate", date);
+	}
+	public Date getBirthDate(TimeZone tz)
+	{
+		long orig = getBirthDate().getTime();
+		return new Date(orig - tz.getOffset(orig));
 	}
 	
 	public boolean isMetric()
@@ -116,17 +127,18 @@ public class Mother extends DataBean
 	 * 
 	 * @param target The date in which to calculate the stage of the mother.
 	 * Should typically be midnight GMT of any day.
+	 * @param tz Target time zone.
 	 * @return
 	 */
-	public Stage getEstimatedPregnancyStage(Date target)
+	public Stage getEstimatedPregnancyStage(Date target, TimeZone tz)
 	{
-		Date birthday = getDueDate() == null ? getBirthDate() : getDueDate();
+		Date birthday = getDueDate(tz) == null ? getBirthDate(tz) : getDueDate(tz);
 		if (birthday == null)
 		{
 			return Stage.preconception();
 		}
 		
-		Calendar cal = Calendar.getInstance(TimeZoneEx.GMT);
+		Calendar cal = Calendar.getInstance(tz);
 		cal.setTime(birthday);
 		cal.add(Calendar.DATE, - Stage.MAX_WEEKS * 7);
 		Date conception = cal.getTime();
