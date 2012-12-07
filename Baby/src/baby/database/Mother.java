@@ -180,7 +180,7 @@ public class Mother extends DataBean
 		return Stage.pregnancy(week);
 	}
 	
-	public Date calcDateOfStage(int timelineTo)
+	public Date calcDateOfStage(int timelineTo, TimeZone tz)
 	{
 		Stage presentStage = getPregnancyStage();
 		Stage dueStage = Stage.fromInteger(timelineTo);
@@ -192,8 +192,8 @@ public class Mother extends DataBean
 		}
 		else if (presentStage.isPregnancy())
 		{
-			Calendar cal = Calendar.getInstance(TimeZoneEx.GMT);
-			cal.setTime(getDueDate());
+			Calendar cal = Calendar.getInstance(tz);
+			cal.setTime(getDueDate(tz));
 
 			if (dueStage.isPreconception())
 			{
@@ -212,8 +212,8 @@ public class Mother extends DataBean
 		}
 		else if (presentStage.isInfancy())
 		{
-			Calendar cal = Calendar.getInstance(TimeZoneEx.GMT);
-			cal.setTime(getBirthDate());
+			Calendar cal = Calendar.getInstance(tz);
+			cal.setTime(getBirthDate(tz));
 			
 			if (dueStage.isPreconception())
 			{

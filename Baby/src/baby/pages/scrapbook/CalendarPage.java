@@ -110,7 +110,7 @@ public class CalendarPage extends BabyPage
 		{
 			Checklist checklist = ChecklistStore.getInstance().load(checklistID);
 			
-			Date checklistDue = mother.calcDateOfStage(checklist.getTimelineTo());
+			Date checklistDue = mother.calcDateOfStage(checklist.getTimelineTo(), getTimeZone());
 			if (checklistDue != null)
 			{
 				// Note: checklist due is in GMT time zone

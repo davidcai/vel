@@ -73,7 +73,6 @@ public class ChecklistControl
 					
 		Mother mother = MotherStore.getInstance().loadByUserID(out.getContext().getUserID());
 		Date now = Calendar.getInstance(TimeZoneEx.GMT).getTime(); // Today's date in GMT
-		int tzOffset = out.getTimeZone().getRawOffset();
 
 		boolean incomplete = false;
 		for (UUID checkitemID : checkitemIDs)
@@ -120,11 +119,11 @@ public class ChecklistControl
 			}
 			out.write("</b>");
 			
-			Date due = mother.calcDateOfStage(checklist.getTimelineTo());
+			Date due = mother.calcDateOfStage(checklist.getTimelineTo(), out.getTimeZone());
 			if (due!=null)
 			{
 				out.write(" ");
-				out.writeEncode(out.getString("baby:ChecklistCtrl.Due", new Date(due.getTime() - tzOffset)));
+				out.writeEncode(out.getString("baby:ChecklistCtrl.Due", due));
 				if (due.before(now) && incomplete)
 				{
 					// out.write "Overdue" label, but only if the checklist is not complete

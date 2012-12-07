@@ -220,7 +220,7 @@ public class DaySummaryPage extends BabyPage
 			for (UUID checklistID : checklistIDs)
 			{
 				Checklist checklist = ChecklistStore.getInstance().load(checklistID);
-				Date checklistDue = mother.calcDateOfStage(checklist.getTimelineTo());
+				Date checklistDue = mother.calcDateOfStage(checklist.getTimelineTo(), getTimeZone());
 				if (checklistDue != null && checklistDue.before(from) == false && checklistDue.before(to))
 				{
 					if (first)
