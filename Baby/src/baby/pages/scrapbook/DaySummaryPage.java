@@ -77,27 +77,24 @@ public class DaySummaryPage extends BabyPage
 		// Delivery due
 		//
 		
-		Date delivery = mother.getDueDate(getTimeZone());
-		if (delivery == null)
+		Date due = mother.getDueDate(getTimeZone());
+		if (due != null && due.before(from) == false && due.before(to))
 		{
-			delivery = mother.getBirthDate(getTimeZone());
-		}
-		if (delivery != null && delivery.before(from) == false && delivery.before(to))
-		{
-			// TODO: Fix this
-			if (mother.getEstimatedPregnancyStage(from, getTimeZone()).isInfancy())
-			{
-				writeEncode(getString("scrapbook:DaySummary.GaveBirth"));
-			}
-			else
-			{
-				writeEncode(getString("scrapbook:DaySummary.Expecting"));
-			}
-			
-			write("<br>");
-			write("<br>");
+			writeEncode(getString("scrapbook:DaySummary.Expecting"));
+			write("<br><br>");
 			
 			empty = false;
+		}
+		else
+		{
+			Date birthday = mother.getBirthDate(getTimeZone());
+			if (birthday != null && birthday.before(from) == false && birthday.before(to))
+			{
+				writeEncode(getString("scrapbook:DaySummary.GaveBirth"));
+				write("<br><br>");
+				
+				empty = false;
+			}
 		}
 		
 		//

@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import samoyan.core.TimeZoneEx;
 import baby.controls.BadgedCalendarControl;
 import baby.controls.BadgedCalendarControl.Badge;
 import baby.database.Appointment;

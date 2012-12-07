@@ -24,8 +24,13 @@ public class Mother extends DataBean
 	}
 	public Date getDueDate(TimeZone tz)
 	{
-		long orig = getDueDate().getTime();
-		return new Date(orig - tz.getOffset(orig));
+		Date orig = getDueDate();
+		if (orig != null)
+		{
+			return new Date(orig.getTime() - tz.getOffset(orig.getTime()));
+		}
+		
+		return null;
 	}
 	
 	/**
@@ -42,8 +47,13 @@ public class Mother extends DataBean
 	}
 	public Date getBirthDate(TimeZone tz)
 	{
-		long orig = getBirthDate().getTime();
-		return new Date(orig - tz.getOffset(orig));
+		Date orig = getBirthDate();
+		if (orig != null)
+		{
+			return new Date(orig.getTime() - tz.getOffset(orig.getTime()));
+		}
+		
+		return null;
 	}
 	
 	public boolean isMetric()
