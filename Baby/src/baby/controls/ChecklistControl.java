@@ -7,7 +7,6 @@ import java.util.UUID;
 
 import samoyan.controls.CheckboxInputControl;
 import samoyan.controls.ImageControl;
-import samoyan.core.TimeZoneEx;
 import samoyan.core.Util;
 import samoyan.servlet.RequestContext;
 import samoyan.servlet.UrlGenerator;
@@ -72,7 +71,7 @@ public class ChecklistControl
 		List<UUID> checkitemIDs = CheckItemStore.getInstance().getByChecklistID(checklistID);
 					
 		Mother mother = MotherStore.getInstance().loadByUserID(out.getContext().getUserID());
-		Date now = Calendar.getInstance(TimeZoneEx.GMT).getTime(); // Today's date in GMT
+		Date now = Calendar.getInstance(out.getTimeZone()).getTime();
 
 		boolean incomplete = false;
 		for (UUID checkitemID : checkitemIDs)

@@ -124,9 +124,7 @@ public class Mother extends DataBean
 	}
 
 	/**
-	 * 
 	 * @param target The date in which to calculate the stage of the mother.
-	 * Should typically be midnight GMT of any day.
 	 * @param tz Target time zone.
 	 * @return
 	 */

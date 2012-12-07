@@ -96,8 +96,7 @@ public class CalendarPage extends BabyPage
 		// Checklist dues
 		//
 		
-		// Note: checklist uses GMT time zone
-		Calendar calChecklist = Calendar.getInstance(TimeZoneEx.GMT);
+		Calendar calChecklist = Calendar.getInstance(getTimeZone());
 		calChecklist.set(yyyy, mm - 1, dd, 0, 0, 0);
 		calChecklist.set(Calendar.MILLISECOND, 0);
 		
@@ -113,7 +112,6 @@ public class CalendarPage extends BabyPage
 			Date checklistDue = mother.calcDateOfStage(checklist.getTimelineTo(), getTimeZone());
 			if (checklistDue != null)
 			{
-				// Note: checklist due is in GMT time zone
 				calChecklist.setTime(checklistDue);
 				calCtrl.getBadges(
 					calChecklist.get(Calendar.YEAR), calChecklist.get(Calendar.MONTH) + 1, calChecklist.get(Calendar.DAY_OF_MONTH))
@@ -140,15 +138,14 @@ public class CalendarPage extends BabyPage
 		// Delivery due
 		//
 		
-		Date due = mother.getDueDate();
+		Date due = mother.getDueDate(getTimeZone());
 		if (due == null)
 		{
-			due = mother.getBirthDate();
+			due = mother.getBirthDate(getTimeZone());
 		}
 		if (due != null)
 		{
-			// Note: delivery due is in GMT time zone
-			Calendar c = Calendar.getInstance(TimeZoneEx.GMT);
+			Calendar c = Calendar.getInstance(getTimeZone());
 			c.setTime(due);
 			calCtrl.getBadges(c.get(Calendar.YEAR), c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH))
 				.add(Badge.DeliveryDue);		
