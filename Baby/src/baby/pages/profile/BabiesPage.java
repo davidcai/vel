@@ -36,7 +36,7 @@ public class BabiesPage extends BabyPage
 	@Override
 	public void commit() throws Exception
 	{
-		List<UUID> oldIDs = BabyStore.getInstance().getByUser(getContext().getUserID());
+		List<UUID> oldIDs = BabyStore.getInstance().getAtLeastOneBaby(getContext().getUserID());
 
 		int count = getParameterInteger(PARAM_NUMBER);
 		for (int i = 0; i < count; i++)
@@ -69,7 +69,7 @@ public class BabiesPage extends BabyPage
 	@Override
 	public void renderHTML() throws Exception
 	{
-		List<UUID> babyIDs = BabyStore.getInstance().getByUser(getContext().getUserID());
+		List<UUID> babyIDs = BabyStore.getInstance().getAtLeastOneBaby(getContext().getUserID());
 		
 		writeFormOpen();
 		

@@ -109,7 +109,7 @@ public class ConsolidatedProfilePage extends BabyPage
 		twoCol.write("</small>");
 		
 		// Babies
-		List<UUID> babyIDs = BabyStore.getInstance().getByUser(userID);
+		List<UUID> babyIDs = BabyStore.getInstance().getAtLeastOneBaby(userID);
 		twoCol.writeRow(getString("babyprofile:Consolidated.Babies", babyIDs.size()));
 		twoCol.writeEncodeLong(babyIDs.size());
 		// !$! TODO: print "Twins (male, female)" or "David, Melissa" or Unspecified

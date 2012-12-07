@@ -160,32 +160,27 @@ public class DaySummaryPage extends BabyPage
 			write("<hr>");
 			
 			TwoColFormControl twoCol = new TwoColFormControl(this);
+			
+			// TODO: Sort records by mother and baby names
+			
+			UUID sectionID = null;
 			for (UUID recordID : recordIDs)
 			{
 				MeasureRecord rec = MeasureRecordStore.getInstance().load(recordID);
-				
-				String name = null;
 				Measure measure = MeasureStore.getInstance().load(rec.getMeasureID());
-				if (measure.isForMother()) 
+
+				if (measure.isForMother() && mother.getUserID().equals(sectionID) == false) 
 				{
-					String momName = UserStore.getInstance().load(mother.getUserID()).getDisplayName(); 
-					if (momName.equals(name) == false)
-					{
-						name = momName;
-						twoCol.writeTextRow(momName);
-					}
+					sectionID = mother.getUserID();
+					twoCol.writeSubtitleRow(UserStore.getInstance().load(mother.getUserID()).getDisplayName());
 				}
-				else
+				else if (rec.getBabyID().equals(sectionID) == false)
 				{
 					Baby baby = BabyStore.getInstance().load(rec.getBabyID());
 					if (baby != null)
 					{
-						String babyName = baby.getName();
-						if (babyName.equals(name) == false)
-						{
-							name = babyName;
-							twoCol.writeTextRow(name);
-						}
+						sectionID = rec.getBabyID();
+						twoCol.writeSubtitleRow(baby.getName());
 					}
 				}
 				
@@ -290,9 +285,12 @@ public class DaySummaryPage extends BabyPage
 		Float val = getMeasureRecordValue(rec, metric);
 		
 		twoCol.writeRow(measure.getLabel());
-		twoCol.writeEncode(val);
-		twoCol.write("&nbsp;");
-		twoCol.writeEncode(metric ? measure.getMetricUnit() : measure.getImperialUnit());
+		if (val != null)
+		{
+			twoCol.writeEncode(val);
+			twoCol.write("&nbsp;");
+			twoCol.writeEncode(metric ? measure.getMetricUnit() : measure.getImperialUnit());
+		}
 	}
 	
 	/**

@@ -40,6 +40,11 @@ public class BabyStore extends DataBeanStore<Baby>
 	
 	public List<UUID> getByUser(UUID userID) throws Exception
 	{
+		return queryByColumn("UserID", userID, "Name", true);
+	}
+	
+	public List<UUID> getAtLeastOneBaby(UUID userID) throws Exception
+	{
 		List<UUID> babies = queryByColumn("UserID", userID, "Name", true);
 		if (babies.size()==0)
 		{

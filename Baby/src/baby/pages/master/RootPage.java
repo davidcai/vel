@@ -86,7 +86,7 @@ public class RootPage extends WebPage
 		else if (stage.isInfancy())
 		{
 			String names = "";
-			List<UUID> babyIDs = BabyStore.getInstance().getByUser(ctx.getUserID());
+			List<UUID> babyIDs = BabyStore.getInstance().getAtLeastOneBaby(ctx.getUserID());
 			if (babyIDs.size()<=2)
 			{
 				for (UUID babyID : babyIDs)

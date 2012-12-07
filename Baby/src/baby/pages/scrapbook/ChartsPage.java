@@ -81,7 +81,11 @@ public class ChartsPage extends BabyPage
 	private DateFormat dateParamFormat = DateFormatEx.getSimpleInstance("MM-dd-yyyy", getLocale(), getTimeZone());
 	private Mother mom;
 	private Date date;
-	private List<MeasureRecord> records;
+	
+	/**
+	 *  Measure records sorted by be mother and baby names
+	 */
+	private List<MeasureRecord> sortedRecords;
 	
 	@Override
 	public void init() throws Exception
@@ -112,7 +116,7 @@ public class ChartsPage extends BabyPage
 		// Prepare a list of measure records for new/saved records
 		//
 		
-		this.records = new ArrayList<MeasureRecord>();
+		this.sortedRecords = new ArrayList<MeasureRecord>();
 		
 		List<UUID> momMeasureIDs = filterByPregnancyStage(MeasureStore.getInstance().getAll(true), stage);
 		for (UUID momMeasureID : momMeasureIDs)
@@ -125,12 +129,12 @@ public class ChartsPage extends BabyPage
 			// By default, use unit system defined in mother's profile
 			rec.setMetric(this.mom.isMetric());
 			
-			this.records.add(rec);
+			this.sortedRecords.add(rec);
 		}
 		
 		// Duplicate measure records for each baby
 		List<UUID> babyMeasureIDs = filterByPregnancyStage(MeasureStore.getInstance().getAll(false), stage);
-		List<UUID> babyIDs = BabyStore.getInstance().getByUser(userID);
+		List<UUID> babyIDs = BabyStore.getInstance().getByUser(userID); // Sorted by baby names
 		for (UUID babyID : babyIDs)
 		{
 			for (UUID babyMeasureID : babyMeasureIDs)
@@ -144,7 +148,7 @@ public class ChartsPage extends BabyPage
 				// By default, use unit system defined in mother's profile
 				rec.setMetric(this.mom.isMetric());
 				
-				this.records.add(rec);
+				this.sortedRecords.add(rec);
 			}
 		}
 		
@@ -170,9 +174,9 @@ public class ChartsPage extends BabyPage
 		{
 			MeasureRecord savedRec = MeasureRecordStore.getInstance().open(savedRecID);
 			
-			for (int i = 0; i < this.records.size(); i++)
+			for (int i = 0; i < this.sortedRecords.size(); i++)
 			{
-				MeasureRecord rec = this.records.get(i);
+				MeasureRecord rec = this.sortedRecords.get(i);
 				
 				// For duplicate records with same measure IDs and baby IDs, 
 				// we use "rec.isSaved() == false" to guarantee that we only pre-populate new record objects. 
@@ -182,7 +186,7 @@ public class ChartsPage extends BabyPage
 				))
 				{
 					// Replace with saved record
-					this.records.set(i, savedRec);
+					this.sortedRecords.set(i, savedRec);
 				}
 			}
 		}
@@ -191,12 +195,12 @@ public class ChartsPage extends BabyPage
 	@Override
 	public void validate() throws Exception
 	{
-		for (int i = 0; i < this.records.size(); i++)
+		for (int i = 0; i < this.sortedRecords.size(); i++)
 		{
 			Float val = getParameterDecimal(PARAM_VALUE_PREFIX + i);
 			if (val != null)
 			{
-				MeasureRecord rec = this.records.get(i);
+				MeasureRecord rec = this.sortedRecords.get(i);
 				Measure m = MeasureStore.getInstance().load(rec.getMeasureID());
 				Float min = this.mom.isMetric() ? m.getMetricMin() : m.getImperialMin();
 				Float max = this.mom.isMetric() ? m.getMetricMax() : m.getImperialMax();
@@ -208,9 +212,9 @@ public class ChartsPage extends BabyPage
 	@Override
 	public void commit() throws Exception
 	{
-		for (int i = 0; i < this.records.size(); i++)
+		for (int i = 0; i < this.sortedRecords.size(); i++)
 		{
-			MeasureRecord rec = this.records.get(i);
+			MeasureRecord rec = this.sortedRecords.get(i);
 			rec.setValue(getParameterDecimal(PARAM_VALUE_PREFIX + i));
 			
 			// Unit system defined in mother's profile always triumph over record's unit system.
@@ -247,14 +251,14 @@ public class ChartsPage extends BabyPage
 		// Input form
 		//
 		
-		if (this.records.isEmpty())
+		if (this.sortedRecords.isEmpty())
 		{
 			writeEncode(getString("scrapbook:Charts.NoRecords"));
 		}
 		else
 		{
 			writeFormOpen();
-			writeMeasureRecords(this.records);
+			writeMeasureRecords(this.sortedRecords);
 			writeHiddenInput(PARAM_DATE, dateParamFormat.format(this.date)); // Date post back
 			write("<br>");
 			writeSaveButton(PARAM_SAVE, null);
@@ -443,35 +447,32 @@ public class ChartsPage extends BabyPage
 		return filteredMeasureIDs;
 	}
 	
-	private void writeMeasureRecords(List<MeasureRecord> records) throws Exception
+	/**
+	 * @param sortedRecords Measure records sorted by mother and baby names
+	 * @throws Exception
+	 */
+	private void writeMeasureRecords(List<MeasureRecord> sortedRecords) throws Exception
 	{
 		TwoColFormControl twoCol = new TwoColFormControl(this);
 		
-		String name = null;
-		for (int i = 0; i < records.size(); i++)
+		UUID sectionID = null;
+		for (int i = 0; i < sortedRecords.size(); i++)
 		{
-			MeasureRecord rec = records.get(i);
+			MeasureRecord rec = sortedRecords.get(i);
 			Measure measure = MeasureStore.getInstance().load(rec.getMeasureID());
-			if (measure.isForMother()) 
+			
+			if (measure.isForMother() && this.mom.getUserID().equals(sectionID) == false) 
 			{
-				String momName = UserStore.getInstance().load(this.mom.getUserID()).getDisplayName(); 
-				if (momName.equals(name) == false)
-				{
-					name = momName;
-					twoCol.writeSubtitleRow(momName);
-				}
+				sectionID = this.mom.getUserID();
+				twoCol.writeSubtitleRow(UserStore.getInstance().load(this.mom.getUserID()).getDisplayName());
 			}
-			else
+			else if (rec.getBabyID().equals(sectionID) == false)
 			{
 				Baby baby = BabyStore.getInstance().load(rec.getBabyID());
 				if (baby != null)
 				{
-					String babyName = baby.getName();
-					if (babyName.equals(name) == false)
-					{
-						name = babyName;
-						twoCol.writeSubtitleRow(name);
-					}
+					sectionID = rec.getBabyID();
+					twoCol.writeSubtitleRow(baby.getName());
 				}
 			}
 			
