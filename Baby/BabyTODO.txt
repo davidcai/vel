@@ -1,82 +1,62 @@
-? HB article editor: change FROM, TO timeline dropdowns from discrete week# to preset stages (e.g. "week 6-10", "week 10-12")
 
 Resources:
 - page to view/edit/lock the content of an article. (for author)
 - on crawl of resources, need to remove ones that are no longer relevant. Delete all with CreatedDate before crawl start, but only after crawl is complete.
   set crawl automatically every 30 days, sunday at 11p
+  Federal object to support setArbirary property("name", obj) so apps can use it to store setting.
+  use this to store last crawl time
 
 automatic cached query using DatabeanStore.cachedQuery(). clear all on remove and store.
 Need smarter cache indexing. allowing multiple keys for invalidation. using naming convention with x|y|z.
   convention for db: Table.ColA=ValA|Table.ColB=ValB|Table.ColC=* . Clear on Save (for dirty columns) and Remove (must load object for that).
 
+(2) DB: data conversion for persistence should be centralized in separate class: DataTypes
+  return Long, String or byte[] + type name
+  Also Query to use this class
+(2) getAllBeanIDs() to be public getAll. allow overriding to control sort order.
+  canRemoveBean -> canRemove
+= (2.5) DataBeanStore registration: use DataBeanStore.define(store) rather than returning list to controller.
+  but need to init right after init of platform tables.
 
-- iPhone desktop + splash icons for all device sizes.
-  fix meta data control to support multiple images
+= Simplify alert timeline.
+  - eliminate concept of delay
+  - screen to let user choose channels per notif.
+  - let admin define defaults per notif type
+
++ fix meta data control to support multiple splash screen and webclip icon sizes
 = Home page when logged in (PortalPage):
   ? what's on your mind? text box to post to journal
   ? most recent uploaded image + upload control.
   = Last journal entry (image+text)
-  = Nav bar with links to common actions: logout, upload photo, profile, etc.
+  ? Nav bar with links to common actions: logout, upload photo, profile, etc.
   ? Show calendar
-  + Do not show when on guided setup
-    redirect to guided setup when guided setup is on. dont show portal.
-    or hide the master tab icon completely.
-    but need a way to logout.
-+ Article import:
-  x look for manifest.properties file to indicate timeline range and section/category.
-    section=Info/Checklist/etc
-    from=pregnancy week 1
-    to=pregnancy week 40
-  x give example of .html and manifest.txt files
-  + Do not validate HTML content when saving article via editor because it will override html entered through import.
-    and/or allow H1/H2... tags
-  x Import from all folders inside the ZIP (recurse)
-  + Apostrophes don't show in the body of the article, probably because they were not encoded as &quot; in the HTML
-    run on text between tags and HTML encode it. Also various double quotes
-+ Calendar. click to take to DaySummaryPage
-  + highlight Due date, delivery date.
-  + icons for data points (checklist, images, journal entries, etc.)
-  + don't click on calendar cell if no data.
-    allow subclass to disable
 - support for importing checklists as well: turn UL into checkitems. anything before it as description.
-= (3) check mother.getEstimatedPregnancyStage method impl by David
-  - need timezone as param? pass GMT midnight date into getEstimatedPregnancyStage?
-=? Need to have Day, TimeOfDay class to manage whole day values
-  - persistable to DB as YYYY-MM-DD, hh:mm:ss.mmm
-  - toDate(tz) to return Date
-  - toTimeMillis(tz)
-  - separate Day and Time controls to return Day and TimeOfDay
-  - getParameterDateTime("day", "time", tz) to return Date
-- kick counter:
-  - integrate into measures (link to the tool)
-  - better design
-  - May need to redo because kicks are counted on several min basis. (how long to reach 10 kicks)
-= refactor Scrapbook->Journal, Journal->Diary/Notes
-+ (c) character in Samoyan. Need to auto-detect UTF-8 vs ISO-8895.
-  or: remove the Utf8Resource class and adhere to Java standard
+? refactor Scrapbook->Journal, Journal->Notes
 
 Content:
 - Run UTF8 conversion
 - Install Notepad++ for Andi
 - Figure out what to do with TABLEs
 
-? Have multiple sections for Info articles depending on source of article. Healthy Beginnings, Healthy Kids, etc.
+? Have multiple "sections" for Info articles depending on source of article. Healthy Beginnings, Healthy Kids, etc.
   can add a column/property on Article table for "source".
 
 - Horizontal navigation (tab):
   ? render tabs upside down
-  - set Fixed to top. Padding at bottom should not be fixed.
+  - set Fixed to top. need solid bg. Padding at bottom should not be fixed.
+  - error message to show below navigation
 
-= (3) GoBACK:
+= GoBACK:
   = when pushing on stack, check history.length. if same as during prev push, may indicate that the browser's back button was pressed.
-    esp. if window.location.pathname is same as that in BACK history at n-1 (before push).
+    pop the stack until current window.location.pathname == top of stack (typically 1 if back pressed) instead of pushing on top of it
+    not necessarily correct. history.length can remain the same if pressed back, then forward.
   = GoBackPage: need to redirect to SELF if BACK stack is empty. when can this happen? after clearing BACK stack? 
     GoBackOrSaveRedirectException
     SaveRedirectException
   = Improve goback redirection: page with JS is slow and flickers
     - always post the top of the stack in a _back_ param.
     - when doing a GoBack redirection, redirect to that URL instead of to the GoBack page.
-    - pass param to the page to pop the stack accordingly. _backpop_ or similar. 
+      - pass param to the page to pop the stack accordingly. _backpop_ or similar. 
 = Redo iPhone UI:
   - support for ... MORE in tab bar if there are too many tabs
   - MENU button to work like in Gmail/FB apps: slide the body to the left, reveal menu underneath. possibly hide tabbar.
@@ -89,27 +69,45 @@ Content:
       use new Back button to return to previous screen
   - action buttons (Save, Cancel) should be fixed to top/bottom (i.e. always visible).
 
-brent feedback:
-journal: timeline across the top
-pinkpad app calendar with icons: day, month, list views.
-categories for articles. can then let user browser by category.
-
 PHASE II:
 
 = checklists from earlier stages (preconception, pregnancy): show as faded.
-= Use the ControlArray for the BabiesPage to add/remove babies.
-= in appointments, use date control instead of dropdowns. print time zone.
 = Implement Search page to search over Info articles, resources.
 = Integrate the "Birth plan". It's a document the mother should fill out and send to her doctor.
   can be done electronically, or printed/mailed to doctor.
-= print capability of the journal. or export to PDF. or email to doctor.
-  design "notebook" style for journal. lines, margins, etc.
 - compressed "upload only" version of image upload control: don't show thumbnail, don't show "upload new", size.
   allow to pass in the imagesize spec string for the thumbnail. Can then make it 32x32.
 = ArticleStore: caching for all queries. Clear after save/remove.
-- check/refine printed messages when no results (journal entries, gallery, articles, checklists, etc.)
+= Better UI for controls on iPhone, esp. the rounded corner rects with > arrows
+- kick counter tool:
+  - integrate into measures (link to the tool)
+  - better design
+  - May need to redo because kicks are counted on several min basis. (how long to reach 10 kicks)
+- Design logo: iPhone webclip icons + splash images for all device sizes.
+= iPhone native notifs 
+= Appointment reminders - send notif
 
-Future ideas:
+DAVID:
+= fix "res/icons" folder. Keep only important icons. Rename them and org in "/actions" folder. remove all other icons.
+  need various sizes: 16, 24, 32, 48 with X2 for all
+= organize tab icons into "/tabs". size to be 48 with X2
+= print capability of the journal. or export to PDF.
+  design "notebook" style for journal. lines, margins, etc.
+- check/refine printed messages when no results (journal entries, gallery, articles, checklists, etc.)
+- separate Day and TimeOfDay input controls to return Day and TimeOfDay
+  - drop downs when not supported natively.
+  - allow setting step for TimeOfDay (1min, 5min, 15min, 30min, 60min)
+  - auto adjust max days of month dropdown (jan 31, feb 28/29, etc.)
+  - getParameterDateTime("day", "time", tz) to return Date
+  - in appointments, use Day+TimeOfDay controls instead of custom dropdowns. print time zone.
+= validate use of timezones, esp. with mother.getEstimatedPregnancyStage
+= Use the ControlArray for the BabiesPage to add/remove babies.
+- Calendar page: list/day/month views like in pink pad.
+
+
+
+FUTURE IDEAS:
+
 - Promote books for sale on Amazon. Collect commission via Amazon Associates program (approx 7%)
   as simple as publishing article with link to Amazon
 - Discussion forums tab.
@@ -145,11 +143,11 @@ INTERNAL MESSAGING:
 - Internal msg to be added as channel to timeline.
 - Where to place link to inbox?
 
-= fix "res/icons" folder. Keep only important icons. Rename them and org in "standard" folder. remove all other icons.
-
 = Leverage foreign keys with optionally ON DELETE CASCADE to keep references in DB.
   create the FK's in controller startup
   remove the DB events (onBeforeSave, etc.)
   see http://stackoverflow.com/questions/6260688/sql-server-cascade-delete
+  MAY NOT WORK because when deleting beans, we also need to clear caches
 
-  
+ leverage HTML application cache (manifest)
+ 

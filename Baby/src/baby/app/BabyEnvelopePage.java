@@ -77,8 +77,8 @@ public class BabyEnvelopePage extends EnvelopePage
 		writeIncludeCSS("baby/baby.less");
 		
 		MetaTagControl ctrl = new MetaTagControl(this);
-		ctrl.appleTouchIcon("baby/apple-touch-icon.png");
-		ctrl.appleTouchStartupImage("baby/iphone-splash.png");
+		ctrl.appleTouchIcon(false, "baby/apple-touch-icon.png", null);
+		ctrl.appleTouchStartupImage("baby/iphone-splash.png", null, null, null, null);
 		ctrl.favicon("baby/favicon.png");
 		ctrl.render();
 	}

@@ -96,8 +96,8 @@ if (user!=null && PermissionStore.getInstance().isUserGrantedPermission(user.get
 		writeIncludeCSS("mind/mind.less");
 		
 		MetaTagControl ctrl = new MetaTagControl(this);
-		ctrl.appleTouchIcon("mind/apple-touch-icon.png");
-		ctrl.appleTouchStartupImage("mind/iphone-splash.png");
+		ctrl.appleTouchIcon(false, "mind/apple-touch-icon.png", null);
+		ctrl.appleTouchStartupImage("mind/iphone-splash.png", null, null, null, null);
 		ctrl.favicon("mind/favicon.png");
 		ctrl.render();
 	}

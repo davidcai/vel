@@ -5,7 +5,10 @@ import java.sql.*;
 import java.util.*;
 import java.util.Date;
 
+import samoyan.core.Day;
 import samoyan.core.Debug;
+import samoyan.core.TimeOfDay;
+import samoyan.core.TimeZoneEx;
 import samoyan.core.Util;
 
 public final class Query
@@ -73,6 +76,14 @@ public final class Query
 			else if (value instanceof Date)
 			{
 				convertedValue = ((Date) value).getTime();
+			}
+			else if (value instanceof Day)
+			{
+				convertedValue = ((Day) value).getDayStart(TimeZoneEx.GMT).getTime();
+			}
+			else if (value instanceof TimeOfDay)
+			{
+				convertedValue = ((TimeOfDay) value).getSeconds();
 			}
 			else if (value instanceof TimeZone)
 			{

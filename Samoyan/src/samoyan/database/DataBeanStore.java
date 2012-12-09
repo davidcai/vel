@@ -8,8 +8,11 @@ import java.sql.SQLException;
 import java.util.*;
 
 import samoyan.core.Cache;
+import samoyan.core.Day;
 import samoyan.core.LocaleEx;
 import samoyan.core.ParameterList;
+import samoyan.core.TimeOfDay;
+import samoyan.core.TimeZoneEx;
 import samoyan.core.Util;
 
 public abstract class DataBeanStore<T extends DataBean>
@@ -359,6 +362,22 @@ public abstract class DataBeanStore<T extends DataBean>
 					prop.value = new Date(v);
 				}
 			}
+			else if (pd.getType().equals(Day.class))
+			{
+				long v = rs.getLong(col);
+				if (!rs.wasNull())
+				{
+					prop.value = new Day(TimeZoneEx.GMT, new Date(v));
+				}
+			}
+			else if (pd.getType().equals(TimeOfDay.class))
+			{
+				int v = rs.getInt(col);
+				if (!rs.wasNull())
+				{
+					prop.value = new TimeOfDay(v);
+				}
+			}
 			else if (pd.getType().equals(UUID.class))
 			{
 				byte[] v = rs.getBytes(col);
@@ -464,6 +483,16 @@ public abstract class DataBeanStore<T extends DataBean>
 		else if (type.equals("Date"))
 		{
 			prop.value = new Date(rs.getLong("ValNum"));
+		}
+//		else if (pd.getType().equals(Day.class))
+		else if (type.equals("Day"))
+		{
+			prop.value = new Day(TimeZoneEx.GMT, new Date(rs.getLong("ValNum")));
+		}
+//		else if (pd.getType().equals(TimeOfDay.class))
+		else if (type.equals("TmDy"))
+		{
+			prop.value = new TimeOfDay(rs.getInt("ValNum"));
 		}
 //		else if (pd.getType().equals(UUID.class))
 		else if (type.equals("UUID"))
@@ -661,6 +690,14 @@ public abstract class DataBeanStore<T extends DataBean>
 					else if (pd.getType().equals(Date.class))
 					{
 						rs.updateLong(++c, ((Date) val).getTime());
+					}
+					else if (pd.getType().equals(Day.class))
+					{
+						rs.updateLong(++c, ((Day) val).getDayStart(TimeZoneEx.GMT).getTime());
+					}
+					else if (pd.getType().equals(TimeOfDay.class))
+					{
+						rs.updateInt(++c, ((TimeOfDay) val).getSeconds());
 					}
 					else if (pd.getType().equals(UUID.class))
 					{
@@ -902,6 +939,26 @@ public abstract class DataBeanStore<T extends DataBean>
 							rs.updateNull(7);
 							rs.updateLong(8, val.getTime());
 							rs.updateString(9, "Date");
+						}
+						else if (prop.value instanceof Day)
+						{
+							Day val = (Day) bean.get(prop.name);
+							rs.updateNull(4);
+							rs.updateNull(5);
+							rs.updateNull(6);
+							rs.updateNull(7);
+							rs.updateLong(8, val.getDayStart(TimeZoneEx.GMT).getTime());
+							rs.updateString(9, "Day");
+						}
+						else if (prop.value instanceof TimeOfDay)
+						{
+							TimeOfDay val = (TimeOfDay) bean.get(prop.name);
+							rs.updateNull(4);
+							rs.updateNull(5);
+							rs.updateNull(6);
+							rs.updateNull(7);
+							rs.updateLong(8, val.getSeconds());
+							rs.updateString(9, "TmDy");
 						}
 						else if (prop.value instanceof UUID)
 						{

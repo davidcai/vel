@@ -190,8 +190,8 @@ public class DaySummaryPage extends BabyPage
 			twoCol.render();
 			
 			write("<br>");
-			writeLink(getString("scrapbook:DaySummary.MoreDetails"), getPageURL(
-				ChartsPage.COMMAND, new ParameterMap(ChartsPage.PARAM_DATE, mm + "-" + dd + "-" + yyyy)));
+			writeLink(getString("scrapbook:DaySummary.MoreDetails"), getPageURL(ChartsPage.COMMAND, 
+				new ParameterMap(ChartsPage.PARAM_YYYY, yyyy).plus(ChartsPage.PARAM_MM, mm).plus(ChartsPage.PARAM_DD, dd)));
 			write("<br>");
 			
 			empty = false;

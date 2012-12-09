@@ -50,7 +50,7 @@ public class RootPage extends WebPage
 	{
 		RequestContext ctx = getContext();
 		User user = UserStore.getInstance().load(ctx.getUserID());
-		
+				
 		if (user==null)
 		{
 			// Master home page for public

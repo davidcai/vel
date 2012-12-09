@@ -113,8 +113,8 @@ public class ElertEnvelopePage extends EnvelopePage
 	protected void renderHTMLMetaTagsAndIncludes() throws Exception
 	{		
 		MetaTagControl ctrl = new MetaTagControl(this);
-		ctrl.appleTouchIcon("elert/apple-touch-icon.png");
-		ctrl.appleTouchStartupImage("elert/iphone-splash.png");
+		ctrl.appleTouchIcon(false, "elert/apple-touch-icon.png", null);
+		ctrl.appleTouchStartupImage("elert/iphone-splash.png", null, null, null, null);
 		ctrl.favicon("elert/favicon.png");
 		ctrl.render();
 		

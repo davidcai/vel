@@ -2,7 +2,6 @@ package baby.pages.scrapbook;
 
 import java.text.Collator;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -36,7 +35,9 @@ public class ChartsPage extends BabyPage
 	
 	public final static String PARAM_VALUE_PREFIX = "value_";
 	public final static String PARAM_ID_PREFIX = "id_";
-	public final static String PARAM_DATE = "date";
+	public final static String PARAM_YYYY = "yyyy";
+	public final static String PARAM_MM = "mm";
+	public final static String PARAM_DD = "dd";
 	public final static String PARAM_SAVE = "save";
 
 	private class GraphData
@@ -72,13 +73,8 @@ public class ChartsPage extends BabyPage
 			
 			return rows;
 		}
-//		public void setRows(Map<String, Float> rows)
-//		{
-//			this.rows = rows;
-//		}
 	}
 	
-	private DateFormat dateParamFormat = DateFormatEx.getSimpleInstance("MM-dd-yyyy", getLocale(), getTimeZone());
 	private Mother mom;
 	private Date date;
 	
@@ -94,15 +90,19 @@ public class ChartsPage extends BabyPage
 		this.mom = MotherStore.getInstance().loadByUserID(userID);
 
 		// Get date
-		if (isParameter(PARAM_DATE))
+		if (isParameterNotEmpty(PARAM_YYYY) && isParameterNotEmpty(PARAM_MM) && isParameterNotEmpty(PARAM_DD))
 		{
-			try
+			Integer yyyy = getParameterInteger(PARAM_YYYY);
+			Integer mm = getParameterInteger(PARAM_MM);
+			Integer dd = getParameterInteger(PARAM_DD);
+			
+			if (yyyy != null && mm != null & dd != null)
 			{
-				this.date = dateParamFormat.parse(getParameterString(PARAM_DATE));
-			}
-			catch (ParseException e)
-			{
-				this.date = null;
+				Calendar cal = Calendar.getInstance(getTimeZone());
+				cal.set(yyyy, mm - 1, dd, 0, 0, 0);
+				cal.set(Calendar.MILLISECOND, 0);
+				
+				this.date = cal.getTime();
 			}
 		}
 		if (this.date == null)
@@ -126,7 +126,7 @@ public class ChartsPage extends BabyPage
 			rec.setMeasureID(momMeasureID);
 			rec.setCreatedDate(this.date);
 			
-			// By default, use unit system defined in mother's profile
+			// By default, use the unit system defined in mother's profile
 			rec.setMetric(this.mom.isMetric());
 			
 			this.sortedRecords.add(rec);
@@ -163,10 +163,7 @@ public class ChartsPage extends BabyPage
 		cal.set(Calendar.SECOND, 0);
 		cal.set(Calendar.MILLISECOND, 0);
 		Date from = cal.getTime();
-		cal.set(Calendar.HOUR_OF_DAY, 24);
-		cal.set(Calendar.MINUTE, 0);
-		cal.set(Calendar.SECOND, 0);
-		cal.set(Calendar.MILLISECOND, 0);
+		cal.add(Calendar.DATE, 1);
 		Date to = cal.getTime();
 		
 		List<UUID> savedRecIDs = MeasureRecordStore.getInstance().getByDate(userID, from, to);
@@ -231,7 +228,13 @@ public class ChartsPage extends BabyPage
 			}
 		}
 		
-		throw new RedirectException(COMMAND, new ParameterMap(PARAM_SAVE, "").plus(PARAM_DATE, dateParamFormat.format(this.date)));
+		Calendar cal = Calendar.getInstance(getTimeZone());
+		cal.setTime(this.date);
+		int yyyy = cal.get(Calendar.YEAR);
+		int mm = cal.get(Calendar.MONTH) + 1;
+		int dd = cal.get(Calendar.DAY_OF_MONTH);
+		
+		throw new RedirectException(COMMAND, new ParameterMap(PARAM_SAVE, "").plus(PARAM_YYYY, yyyy).plus(PARAM_MM, mm).plus(PARAM_DD, dd));
 	}
 	
 	@Override
@@ -242,7 +245,7 @@ public class ChartsPage extends BabyPage
 		writeEncode(getString("scrapbook:Charts.Help"));
 		write("<br>");
 
-		DateFormat df = DateFormatEx.getSimpleInstance("MMMMM d, yyyy", getLocale(), getTimeZone());
+		DateFormat df = DateFormatEx.getDateInstance(getLocale(), getTimeZone());
 		write("<p>");
 		writeEncode(df.format(this.date));
 		write("</p>");
@@ -259,7 +262,17 @@ public class ChartsPage extends BabyPage
 		{
 			writeFormOpen();
 			writeMeasureRecords(this.sortedRecords);
-			writeHiddenInput(PARAM_DATE, dateParamFormat.format(this.date)); // Date post back
+			
+			// Date post back
+			Calendar cal = Calendar.getInstance(getTimeZone());
+			cal.setTime(this.date);
+			int yyyy = cal.get(Calendar.YEAR);
+			int mm = cal.get(Calendar.MONTH) + 1;
+			int dd = cal.get(Calendar.DAY_OF_MONTH);
+			writeHiddenInput(PARAM_YYYY, yyyy); 
+			writeHiddenInput(PARAM_MM, mm); 
+			writeHiddenInput(PARAM_DD, dd); 
+			
 			write("<br>");
 			writeSaveButton(PARAM_SAVE, null);
 			writeFormClose();
