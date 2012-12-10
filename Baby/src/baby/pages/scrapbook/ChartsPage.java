@@ -36,8 +36,8 @@ public class ChartsPage extends BabyPage
 	public final static String PARAM_VALUE_PREFIX = "value_";
 	public final static String PARAM_ID_PREFIX = "id_";
 	public final static String PARAM_YYYY = "yyyy";
-	public final static String PARAM_MM = "mm";
-	public final static String PARAM_DD = "dd";
+	public final static String PARAM_M = "m";
+	public final static String PARAM_D = "d";
 	public final static String PARAM_SAVE = "save";
 
 	private class GraphData
@@ -90,16 +90,16 @@ public class ChartsPage extends BabyPage
 		this.mom = MotherStore.getInstance().loadByUserID(userID);
 
 		// Get date
-		if (isParameterNotEmpty(PARAM_YYYY) && isParameterNotEmpty(PARAM_MM) && isParameterNotEmpty(PARAM_DD))
+		if (isParameterNotEmpty(PARAM_YYYY) && isParameterNotEmpty(PARAM_M) && isParameterNotEmpty(PARAM_D))
 		{
 			Integer yyyy = getParameterInteger(PARAM_YYYY);
-			Integer mm = getParameterInteger(PARAM_MM);
-			Integer dd = getParameterInteger(PARAM_DD);
+			Integer m = getParameterInteger(PARAM_M);
+			Integer d = getParameterInteger(PARAM_D);
 			
-			if (yyyy != null && mm != null & dd != null)
+			if (yyyy != null && m != null & d != null)
 			{
 				Calendar cal = Calendar.getInstance(getTimeZone());
-				cal.set(yyyy, mm - 1, dd, 0, 0, 0);
+				cal.set(yyyy, m - 1, d, 0, 0, 0);
 				cal.set(Calendar.MILLISECOND, 0);
 				
 				this.date = cal.getTime();
@@ -113,7 +113,7 @@ public class ChartsPage extends BabyPage
 		Stage stage = this.mom.getEstimatedPregnancyStage(this.date, getTimeZone());
 		
 		//
-		// Prepare a list of measure records for new/saved records
+		// Prepare a list of measure records for new or saved records
 		//
 		
 		this.sortedRecords = new ArrayList<MeasureRecord>();
@@ -192,16 +192,14 @@ public class ChartsPage extends BabyPage
 	@Override
 	public void validate() throws Exception
 	{
-		for (int i = 0; i < this.sortedRecords.size(); i++)
+		for (MeasureRecord rec : this.sortedRecords)
 		{
-			Float val = getParameterDecimal(PARAM_VALUE_PREFIX + i);
-			if (val != null)
+			if (isParameterNotEmpty(getFieldKey(PARAM_VALUE_PREFIX, rec)))
 			{
-				MeasureRecord rec = this.sortedRecords.get(i);
 				Measure m = MeasureStore.getInstance().load(rec.getMeasureID());
 				Float min = this.mom.isMetric() ? m.getMetricMin() : m.getImperialMin();
 				Float max = this.mom.isMetric() ? m.getMetricMax() : m.getImperialMax();
-				validateParameterDecimal(PARAM_VALUE_PREFIX + i, min, max);
+				validateParameterDecimal(getFieldKey(PARAM_VALUE_PREFIX, rec), min, max);
 			}
 		}
 	}
@@ -209,10 +207,9 @@ public class ChartsPage extends BabyPage
 	@Override
 	public void commit() throws Exception
 	{
-		for (int i = 0; i < this.sortedRecords.size(); i++)
+		for (MeasureRecord rec : this.sortedRecords)
 		{
-			MeasureRecord rec = this.sortedRecords.get(i);
-			rec.setValue(getParameterDecimal(PARAM_VALUE_PREFIX + i));
+			rec.setValue(getParameterDecimal(getFieldKey(PARAM_VALUE_PREFIX, rec)));
 			
 			// Unit system defined in mother's profile always triumph over record's unit system.
 			rec.setMetric(this.mom.isMetric());
@@ -231,10 +228,10 @@ public class ChartsPage extends BabyPage
 		Calendar cal = Calendar.getInstance(getTimeZone());
 		cal.setTime(this.date);
 		int yyyy = cal.get(Calendar.YEAR);
-		int mm = cal.get(Calendar.MONTH) + 1;
-		int dd = cal.get(Calendar.DAY_OF_MONTH);
+		int m = cal.get(Calendar.MONTH) + 1;
+		int d = cal.get(Calendar.DAY_OF_MONTH);
 		
-		throw new RedirectException(COMMAND, new ParameterMap(PARAM_SAVE, "").plus(PARAM_YYYY, yyyy).plus(PARAM_MM, mm).plus(PARAM_DD, dd));
+		throw new RedirectException(COMMAND, new ParameterMap(PARAM_SAVE, "").plus(PARAM_YYYY, yyyy).plus(PARAM_M, m).plus(PARAM_D, d));
 	}
 	
 	@Override
@@ -267,11 +264,11 @@ public class ChartsPage extends BabyPage
 			Calendar cal = Calendar.getInstance(getTimeZone());
 			cal.setTime(this.date);
 			int yyyy = cal.get(Calendar.YEAR);
-			int mm = cal.get(Calendar.MONTH) + 1;
-			int dd = cal.get(Calendar.DAY_OF_MONTH);
+			int m = cal.get(Calendar.MONTH) + 1;
+			int d = cal.get(Calendar.DAY_OF_MONTH);
 			writeHiddenInput(PARAM_YYYY, yyyy); 
-			writeHiddenInput(PARAM_MM, mm); 
-			writeHiddenInput(PARAM_DD, dd); 
+			writeHiddenInput(PARAM_M, m); 
+			writeHiddenInput(PARAM_D, d); 
 			
 			write("<br>");
 			writeSaveButton(PARAM_SAVE, null);
@@ -460,42 +457,108 @@ public class ChartsPage extends BabyPage
 		return filteredMeasureIDs;
 	}
 	
-	/**
-	 * @param sortedRecords Measure records sorted by mother and baby names
-	 * @throws Exception
-	 */
-	private void writeMeasureRecords(List<MeasureRecord> sortedRecords) throws Exception
+	private void writeMeasureRecords(List<MeasureRecord> records) throws Exception
 	{
-		TwoColFormControl twoCol = new TwoColFormControl(this);
-		
-		UUID sectionID = null;
-		for (int i = 0; i < sortedRecords.size(); i++)
+		Map<UUID, List<MeasureRecord>> grouped = new LinkedHashMap<UUID, List<MeasureRecord>>();
+		grouped.put(this.mom.getUserID(), new ArrayList<MeasureRecord>());
+
+		// Group records by mother and baby IDs
+		for (MeasureRecord rec : records)
 		{
-			MeasureRecord rec = sortedRecords.get(i);
 			Measure measure = MeasureStore.getInstance().load(rec.getMeasureID());
 			
-			if (measure.isForMother() && this.mom.getUserID().equals(sectionID) == false) 
+			UUID id = measure.isForMother() ? this.mom.getUserID() : rec.getBabyID();
+			List<MeasureRecord> rs = grouped.get(id);
+			if (rs == null)
 			{
-				sectionID = this.mom.getUserID();
-				twoCol.writeSubtitleRow(UserStore.getInstance().load(this.mom.getUserID()).getDisplayName());
+				rs = new ArrayList<MeasureRecord>();
+				grouped.put(id, rs);
 			}
-			else if (rec.getBabyID().equals(sectionID) == false)
+			
+			rs.add(rec);
+		}
+		
+		TwoColFormControl twoCol = new TwoColFormControl(this);
+		for (UUID id : grouped.keySet())
+		{
+			List<MeasureRecord> rs = grouped.get(id);
+			
+			// Sort record by measure labels
+			Collections.sort(rs, new Comparator<MeasureRecord>()
 			{
-				Baby baby = BabyStore.getInstance().load(rec.getBabyID());
+				@Override
+				public int compare(MeasureRecord r1, MeasureRecord r2)
+				{
+					try
+					{
+						Measure m1 = MeasureStore.getInstance().load(r1.getMeasureID());
+						Measure m2 = MeasureStore.getInstance().load(r2.getMeasureID());
+						
+						return Collator.getInstance(getLocale()).compare(m1.getLabel(), m2.getLabel());
+					}
+					catch (Exception e)
+					{
+						return r1.getID().compareTo(r2.getID());
+					}
+				}
+			});
+			
+			// Section title
+			String title = null;
+			if (id.equals(this.mom.getUserID()))
+			{
+				title = UserStore.getInstance().load(this.mom.getUserID()).getDisplayName();
+			}
+			else
+			{
+				Baby baby = BabyStore.getInstance().load(id);
 				if (baby != null)
 				{
-					sectionID = rec.getBabyID();
-					twoCol.writeSubtitleRow(baby.getName());
+					title = baby.getName();
 				}
 			}
 			
-			writeMeasureRecord(rec, twoCol, i);
+			// Fields
+			if (title != null)
+			{
+				twoCol.writeSubtitleRow(title);
+				for (MeasureRecord rec : rs)
+				{
+					writeMeasureRecord(rec, twoCol);
+				}
+			}
 		}
-		
 		twoCol.render();
 	}
 	
-	private void writeMeasureRecord(MeasureRecord rec, TwoColFormControl twoCol, int index) throws Exception
+	/**
+	 * Field key = prefix + user ID + measure ID.
+	 * 
+	 * @param prefix
+	 * @param rec
+	 * @return
+	 * @throws Exception
+	 */
+	private String getFieldKey(String prefix, MeasureRecord rec) throws Exception
+	{
+		StringBuilder sb = new StringBuilder(prefix);
+		
+		Measure measure = MeasureStore.getInstance().load(rec.getMeasureID());
+		if (measure.isForMother())
+		{
+			sb.append(this.mom.getUserID().toString());
+		}
+		else
+		{
+			sb.append(rec.getBabyID().toString());
+		}
+		
+		sb.append(rec.getMeasureID());
+		
+		return sb.toString();
+	}
+	
+	private void writeMeasureRecord(MeasureRecord rec, TwoColFormControl twoCol) throws Exception
 	{
 		Measure measure = MeasureStore.getInstance().load(rec.getMeasureID());
 		
@@ -505,10 +568,15 @@ public class ChartsPage extends BabyPage
 		Float max = this.mom.isMetric() ? measure.getMetricMax() : measure.getImperialMax();
 		Float val = getMeasureRecordValue(rec);
 		
-		twoCol.writeDecimalInput(PARAM_VALUE_PREFIX + index, val, 16, min, max);
+		if (measure.isForMother())
+		{
+			rec.getBabyID();
+		}
+		
+		twoCol.writeDecimalInput(getFieldKey(PARAM_VALUE_PREFIX, rec), val, 16, min, max);
 		twoCol.write("&nbsp;");
 		twoCol.writeEncode(this.mom.isMetric() ? measure.getMetricUnit() : measure.getImperialUnit());
-		twoCol.writeHiddenInput(PARAM_ID_PREFIX + index, rec.getID().toString());
+		twoCol.writeHiddenInput(getFieldKey(PARAM_ID_PREFIX, rec), rec.getID().toString());
 	}
 	
 	@Override

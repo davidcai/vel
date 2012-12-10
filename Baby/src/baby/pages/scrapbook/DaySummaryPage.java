@@ -1,9 +1,15 @@
 package baby.pages.scrapbook;
 
+import java.text.Collator;
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import samoyan.controls.TwoColFormControl;
@@ -159,39 +165,11 @@ public class DaySummaryPage extends BabyPage
 			write("</h2>");
 			write("<hr>");
 			
-			TwoColFormControl twoCol = new TwoColFormControl(this);
-			
-			// TODO: Sort records by mother and baby names
-			
-			UUID sectionID = null;
-			for (UUID recordID : recordIDs)
-			{
-				MeasureRecord rec = MeasureRecordStore.getInstance().load(recordID);
-				Measure measure = MeasureStore.getInstance().load(rec.getMeasureID());
-
-				if (measure.isForMother() && mother.getUserID().equals(sectionID) == false) 
-				{
-					sectionID = mother.getUserID();
-					twoCol.writeSubtitleRow(UserStore.getInstance().load(mother.getUserID()).getDisplayName());
-				}
-				else if (rec.getBabyID().equals(sectionID) == false)
-				{
-					Baby baby = BabyStore.getInstance().load(rec.getBabyID());
-					if (baby != null)
-					{
-						sectionID = rec.getBabyID();
-						twoCol.writeSubtitleRow(baby.getName());
-					}
-				}
-				
-				writeMeasureRecord(twoCol, rec, mother.isMetric());
-			}
-			
-			twoCol.render();
+			writeMeasureRecords(recordIDs, mother);
 			
 			write("<br>");
 			writeLink(getString("scrapbook:DaySummary.MoreDetails"), getPageURL(ChartsPage.COMMAND, 
-				new ParameterMap(ChartsPage.PARAM_YYYY, yyyy).plus(ChartsPage.PARAM_MM, mm).plus(ChartsPage.PARAM_DD, dd)));
+				new ParameterMap(ChartsPage.PARAM_YYYY, yyyy).plus(ChartsPage.PARAM_M, mm).plus(ChartsPage.PARAM_D, dd)));
 			write("<br>");
 			
 			empty = false;
@@ -277,6 +255,81 @@ public class DaySummaryPage extends BabyPage
 		{
 			writeEncode(getString("scrapbook:DaySummary.Empty"));
 		}
+	}
+
+	private void writeMeasureRecords(List<UUID> recordIDs, Mother mother) throws Exception
+	{
+		Map<UUID, List<MeasureRecord>> grouped = new LinkedHashMap<UUID, List<MeasureRecord>>();
+		grouped.put(mother.getUserID(), new ArrayList<MeasureRecord>());
+
+		// Group records by mother and baby IDs
+		for (UUID recID : recordIDs)
+		{
+			MeasureRecord rec = MeasureRecordStore.getInstance().load(recID);
+			Measure measure = MeasureStore.getInstance().load(rec.getMeasureID());
+			
+			UUID id = measure.isForMother() ? mother.getUserID() : rec.getBabyID();
+			List<MeasureRecord> rs = grouped.get(id);
+			if (rs == null)
+			{
+				rs = new ArrayList<MeasureRecord>();
+				grouped.put(id, rs);
+			}
+			
+			rs.add(rec);
+		}
+		
+		TwoColFormControl twoCol = new TwoColFormControl(this);
+		for (UUID id : grouped.keySet())
+		{
+			List<MeasureRecord> rs = grouped.get(id);
+			
+			// Sort record by measure labels
+			Collections.sort(rs, new Comparator<MeasureRecord>()
+			{
+				@Override
+				public int compare(MeasureRecord r1, MeasureRecord r2)
+				{
+					try
+					{
+						Measure m1 = MeasureStore.getInstance().load(r1.getMeasureID());
+						Measure m2 = MeasureStore.getInstance().load(r2.getMeasureID());
+						
+						return Collator.getInstance(getLocale()).compare(m1.getLabel(), m2.getLabel());
+					}
+					catch (Exception e)
+					{
+						return r1.getID().compareTo(r2.getID());
+					}
+				}
+			});
+			
+			// Section title
+			String title = null;
+			if (id.equals(mother.getUserID()))
+			{
+				title = UserStore.getInstance().load(mother.getUserID()).getDisplayName();
+			}
+			else
+			{
+				Baby baby = BabyStore.getInstance().load(id);
+				if (baby != null)
+				{
+					title = baby.getName();
+				}
+			}
+			
+			// Fields
+			if (title != null)
+			{
+				twoCol.writeSubtitleRow(title);
+				for (MeasureRecord rec : rs)
+				{
+					writeMeasureRecord(twoCol, rec, mother.isMetric());
+				}
+			}
+		}
+		twoCol.render();
 	}
 	
 	private void writeMeasureRecord(TwoColFormControl twoCol, MeasureRecord rec, boolean metric) throws Exception
