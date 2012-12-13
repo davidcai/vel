@@ -28,7 +28,7 @@ public class BabiesPage extends BabyPage
 		int count = getParameterInteger(PARAM_BABIES);
 		for (int i = 0; i < count; i++)
 		{
-			validateParameterString(PARAM_NAME_PREFIX + i, 0, Baby.MAXSIZE_NAME);
+			validateParameterString(PARAM_NAME_PREFIX + i, 1, Baby.MAXSIZE_NAME);
 		}
 	}
 	
