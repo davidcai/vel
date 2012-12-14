@@ -25,6 +25,7 @@ import samoyan.controls.ButtonInputControl;
 import samoyan.controls.CheckboxInputControl;
 import samoyan.controls.DateInputControl;
 import samoyan.controls.DateTimeInputControl;
+import samoyan.controls.DayInputControl;
 import samoyan.controls.DecimalInputControl;
 import samoyan.controls.HiddenInputControl;
 import samoyan.controls.ImageControl;
@@ -38,6 +39,7 @@ import samoyan.controls.TextAreaInputControl;
 import samoyan.controls.TextInputControl;
 import samoyan.core.Captcha;
 import samoyan.core.DateFormatEx;
+import samoyan.core.Day;
 import samoyan.core.LocaleEx;
 import samoyan.core.Pair;
 import samoyan.core.ParameterMap;
@@ -1092,6 +1094,34 @@ public class WebPage
 	}
 	
 	/**
+	 * Returns the value of a <code>Day</code> parameter. 
+	 * @param name The name of the parameter.
+	 * @return The <code>Day</code>, or <code>null</code> otherwise.
+	 */
+	public final Day getParameterDay(String name)
+	{
+		String val = getParameterString(name);
+		if (Util.isEmpty(val)) return null;
+
+		String dfStr = getParameterString("_df_" + name);
+		if (Util.isEmpty(dfStr)) return null;
+		
+		String tzStr = getParameterString("_tz_" + name);
+		if (Util.isEmpty(tzStr)) return null;
+
+		try
+		{
+			TimeZone tz = TimeZone.getTimeZone(tzStr);
+			DateFormat df = DateFormatEx.getSimpleInstance(dfStr, getLocale(), tz);
+			return new Day(tz, df.parse(val));
+		}
+		catch (ParseException pe)
+		{
+			return null;
+		}
+	}
+	
+	/**
 	 * Returns the value of a <code>Date</code> parameter.
 	 * @param name The name of the parameter.
 	 * @return The <code>Date</code>, or <code>null</code>, if no parameter was posted under this name.
@@ -1131,6 +1161,46 @@ public class WebPage
 			}
 			
 			return date;
+		}
+		catch (ParseException pe)
+		{
+			throw new WebFormException(name, getString("common:Errors.InvalidValue"));		
+		}
+	}
+	
+
+	
+	/**
+	 * Returns the value of a <code>Day</code> parameter.
+	 * @param name The name of the parameter.
+	 * @return The <code>Day</code>, or <code>null</code>, if no parameter was posted under this name.
+	 * @throws WebFormException If an invalid value was posted.
+	 */
+	public final Day validateParameterDay(String name) throws WebFormException
+	{
+		String val = getParameterString(name);
+		if (Util.isEmpty(val))
+		{
+			throw new WebFormException(name, getString("common:Errors.MissingField"));
+		}
+
+		String dfStr = getParameterString("_df_" + name);
+		if (Util.isEmpty(dfStr))
+		{
+			throw new WebFormException(name, getString("common:Errors.InvalidValue"));
+		}
+		
+		String tzStr = getParameterString("_tz_" + name);
+		if (Util.isEmpty(tzStr))
+		{
+			throw new WebFormException(name, getString("common:Errors.InvalidValue"));
+		}
+
+		try
+		{
+			TimeZone tz = TimeZone.getTimeZone(tzStr);
+			DateFormat df = DateFormatEx.getSimpleInstance(dfStr, getLocale(), tz);
+			return new Day(tz, df.parse(val));
 		}
 		catch (ParseException pe)
 		{
@@ -1232,6 +1302,18 @@ public class WebPage
 		DateInputControl dt = new DateInputControl(this, name);
 		dt.setInitialValue(initialValue);
 		dt.render();
+	}
+	
+	/**
+	 * Writes a day picker.
+	 * @param name
+	 * @param initialValue Initial day
+	 */
+	public void writeDayInput(String name, Day initialValue)
+	{
+		DayInputControl dc = new DayInputControl(this, name);
+		dc.setInitialValue(initialValue);
+		dc.render();
 	}
 
 	/**
