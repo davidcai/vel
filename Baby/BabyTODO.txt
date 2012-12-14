@@ -3,25 +3,36 @@ Resources:
 - page to view/edit/lock the content of an article. (for author)
 - on crawl of resources, need to remove ones that are no longer relevant. Delete all with CreatedDate before crawl start, but only after crawl is complete.
   set crawl automatically every 30 days, sunday at 11p
-  Federal object to support setArbirary property("name", obj) so apps can use it to store setting.
+  Federal object to support setAdHoc property("name", obj) so apps can use it to store setting.
   use this to store last crawl time
 
 automatic cached query using DatabeanStore.cachedQuery(). clear all on remove and store.
 Need smarter cache indexing. allowing multiple keys for invalidation. using naming convention with x|y|z.
   convention for db: Table.ColA=ValA|Table.ColB=ValB|Table.ColC=* . Clear on Save (for dirty columns) and Remove (must load object for that).
 
-(2) DB: data conversion for persistence should be centralized in separate class: DataTypes
++ DB: data conversion for persistence should be centralized in separate class: DataTypes
   return Long, String or byte[] + type name
   Also Query to use this class
-(2) getAllBeanIDs() to be public getAll. allow overriding to control sort order.
++ getAllBeanIDs() to be public getAll. allow overriding to control sort order.
   canRemoveBean -> canRemove
-= (2.5) DataBeanStore registration: use DataBeanStore.define(store) rather than returning list to controller.
-  but need to init right after init of platform tables.
++ DataBeanStore registration:
+  use DataBeanStore<?>.getInstance().define() rather than returning list to controller.
+  but need to init right after init of platform tables: preStart, start, terminate.
+  do not define store on the fly. throw exception if attempting to run query on undefined store.
++ createTableDef(name) to return table def linked to THIS store, with "ID" added as UUID column.
+  do not let stores call TableDef.newInstance directly.
+  remove exceptions of "ID" in DataBeanStore/Util
++ Same for LinkStore
+
+- renderHTMLMobile to call renderHTML by default
+- ListViewControl (esp for mobile)
+  image/icon, label, main (free rendering), supplemental(right aligned), arrow/link/icon
 
 = Simplify alert timeline.
   - eliminate concept of delay
   - screen to let user choose channels per notif.
-  - let admin define defaults per notif type
+  - let admin define defaults per notif type.
+  - somehow need to get list of notif types with titles.
 
 + fix meta data control to support multiple splash screen and webclip icon sizes
 = Home page when logged in (PortalPage):
@@ -32,6 +43,10 @@ Need smarter cache indexing. allowing multiple keys for invalidation. using nami
   ? Show calendar
 - support for importing checklists as well: turn UL into checkitems. anything before it as description.
 ? refactor Scrapbook->Journal, Journal->Notes
+
+- leverage CSS3 transitions for animation effects on (e.g.) mouseover.
+  see www.w3schools.com/css3/css3_transitions.asp
+  see http://www.mobilerevamp.org/2011/07/02/ios-devices-and-page-transitions/
 
 Content:
 - Run UTF8 conversion
@@ -56,7 +71,8 @@ Content:
   = Improve goback redirection: page with JS is slow and flickers
     - always post the top of the stack in a _back_ param.
     - when doing a GoBack redirection, redirect to that URL instead of to the GoBack page.
-      - pass param to the page to pop the stack accordingly. _backpop_ or similar. 
+      - pass param to the page to pop the stack accordingly. _backpop_ or similar.
+  = (0) Doesn't work well with page params. See Info tab after changing stage dropdown.
 = Redo iPhone UI:
   - support for ... MORE in tab bar if there are too many tabs
   - MENU button to work like in Gmail/FB apps: slide the body to the left, reveal menu underneath. possibly hide tabbar.
@@ -68,6 +84,7 @@ Content:
     - Reimplement Profile page as list of properties with links to edit screens. Then no need for Profile Tab. but then, where to place link to settings? under name of user in nav bar?
       use new Back button to return to previous screen
   - action buttons (Save, Cancel) should be fixed to top/bottom (i.e. always visible).
+= See usatoday.com for < > tabs that perform smooth page transitions.
 
 PHASE II:
 
