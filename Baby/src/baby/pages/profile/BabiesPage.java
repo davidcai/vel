@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import samoyan.apps.profile.ProfilePage;
 import samoyan.controls.ControlArray;
+import samoyan.controls.TextInputControl;
 import samoyan.servlet.exc.GoBackRedirectException;
 import baby.database.Baby;
 import baby.database.BabyStore;
@@ -27,7 +28,10 @@ public class BabiesPage extends BabyPage
 		int count = getParameterInteger(PARAM_BABIES);
 		for (int i = 0; i < count; i++)
 		{
-			validateParameterString(PARAM_NAME_PREFIX + i, 1, Baby.MAXSIZE_NAME);
+			if (isParameter(PARAM_ID_PREFIX + i))
+			{
+				validateParameterString(PARAM_NAME_PREFIX + i, 0, Baby.MAXSIZE_NAME);
+			}
 		}
 	}
 	
@@ -40,22 +44,26 @@ public class BabiesPage extends BabyPage
 		for (int i = 0; i < count; i++)
 		{
 			Baby baby = null;
-			if (isParameterNotEmpty(PARAM_ID_PREFIX + i))
-			{
-				baby = BabyStore.getInstance().open(getParameterUUID(PARAM_ID_PREFIX + i));
-			}
-			else
-			{
-				baby = new Baby();
-			}
-
-			baby.setUserID(getContext().getUserID());
-			baby.setName(getParameterString(PARAM_NAME_PREFIX + i));
-			baby.setGender(Baby.Gender.fromString(getParameterString(PARAM_GENDER_PREFIX + i)));
 			
-			BabyStore.getInstance().save(baby);
-			
-			oldIDs.remove(baby.getID());
+			if (isParameter(PARAM_ID_PREFIX + i))
+			{
+				UUID id = getParameterUUID(PARAM_ID_PREFIX + i);
+				if (id != null)
+				{
+					baby = BabyStore.getInstance().open(getParameterUUID(PARAM_ID_PREFIX + i));	
+				}
+				else
+				{
+					baby = new Baby();
+				}
+				
+				baby.setUserID(getContext().getUserID());
+				baby.setName(getParameterString(PARAM_NAME_PREFIX + i));
+				baby.setGender(Baby.Gender.fromString(getParameterString(PARAM_GENDER_PREFIX + i)));
+				BabyStore.getInstance().save(baby);
+				
+				oldIDs.remove(baby.getID());
+			}
 		}
 		
 		BabyStore.getInstance().removeMany(oldIDs);
@@ -79,17 +87,26 @@ public class BabiesPage extends BabyPage
 			@Override
 			public void renderRow(int i, UUID babyID) throws Exception
 			{
-				Baby baby = BabyStore.getInstance().load(babyID);
-				writeHiddenInput(PARAM_ID_PREFIX + i, baby != null ? baby.getID() : null);
-				writeTextInput(PARAM_NAME_PREFIX + i, 
-					baby != null ? baby.getName() : getString("babyprofile:Babies.Anonymous"), 30, Baby.MAXSIZE_NAME);
-//				write("&nbsp;");
-//				new SelectInputControl(this, PARAM_GENDER_PREFIX + i)
-//					.addOption(getString("babyprofile:Babies.Undetermined"), Baby.Gender.UNDETERMINED)
-//					.addOption(getString("babyprofile:Babies.Male"), Baby.Gender.MALE)
-//					.addOption(getString("babyprofile:Babies.Female"), Baby.Gender.FEMALE)
-//					.setInitialValue(baby != null ? baby.getGender() : Baby.Gender.UNDETERMINED)
-//					.render();
+				if (babyID != null)
+				{
+					Baby baby = BabyStore.getInstance().load(babyID);
+					writeHiddenInput(PARAM_ID_PREFIX + i, baby != null ? baby.getID() : null);
+					new TextInputControl(this, PARAM_NAME_PREFIX + i)
+						.setSize(30)
+						.setMaxLength(Baby.MAXSIZE_NAME)
+						.setPlaceholder(getString("babyprofile:Babies.Anonymous") + (i + 1))
+						.setInitialValue(baby == null ? null : baby.getName())
+						.render();
+				}
+				else
+				{
+					writeHiddenInput(PARAM_ID_PREFIX + i, "");
+					new TextInputControl(this, PARAM_NAME_PREFIX + i)
+						.setSize(30)
+						.setMaxLength(Baby.MAXSIZE_NAME)
+						.setPlaceholder(getString("babyprofile:Babies.Anonymous"))
+						.render();
+				}
 			}
 		}
 		.render();

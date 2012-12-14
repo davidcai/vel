@@ -121,7 +121,14 @@ public class RootPage extends WebPage
 			}
 			if (names.length()==0)
 			{
-				names = getString("baby:Root.BabyCountName." + babyIDs.size());
+				if (babyIDs.size() <= 8)
+				{
+					names = getString("baby:Root.BabyCountName." + babyIDs.size());
+				}
+				else
+				{
+					names = getString("baby:Root.BabyCountName.8plus");
+				}
 			}
 			
 			Date birth = mother.getBirthDate();
