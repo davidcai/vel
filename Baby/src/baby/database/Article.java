@@ -13,6 +13,7 @@ public final class Article extends DataBean
 	public static final int MAXSIZE_TITLE = 128;
 	public static final int MAXSIZE_SUMMARY = 256;
 	public static final int MAXSIZE_SECTION = 64;
+	public static final int MAXSIZE_SUBSECTION = 64;
 	public static final int MAXSIZE_REGION = 64;
 	public static final int MAXSIZE_MEDICAL_CENTER = 64;
 	public static final int MAXSIZE_SOURCE_URL = 2048;
@@ -70,6 +71,15 @@ public final class Article extends DataBean
 	public void setSection(String section)
 	{
 		set("Section", section);
+	}
+
+	public String getSubSection()
+	{
+		return (String) get("SubSection");
+	}
+	public void setSubSection(String subSection)
+	{
+		set("SubSection", subSection);
 	}
 
 	public int getTimelineFrom()

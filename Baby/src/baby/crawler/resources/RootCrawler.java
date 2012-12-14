@@ -1,8 +1,11 @@
 package baby.crawler.resources;
 
+import java.util.Date;
 import java.util.concurrent.Callable;
 
+import baby.app.BabyConsts;
 import baby.crawler.CrawlExecutor;
+import baby.database.ArticleStore;
 
 import samoyan.core.Debug;
 import samoyan.core.Util;
@@ -13,6 +16,8 @@ public class RootCrawler implements Callable<Void>
 	@Override
 	public Void call() throws Exception
 	{
+		final Date now = new Date();
+		
 		Debug.logln("Crawl: /");
 
 		WebBrowser wb = new WebBrowser();
@@ -54,6 +59,18 @@ public class RootCrawler implements Callable<Void>
 			// Crawl each region page
 			CrawlExecutor.submit(new RegionCrawler(key, desc));
 		}
+		
+		// Delete stale resources 5 minutes after crawl
+		CrawlExecutor.submit(new Callable<Void>()
+		{
+			@Override
+			public Void call() throws Exception
+			{
+				ArticleStore.getInstance().removeStaleArticles(BabyConsts.SECTION_RESOURCE, now);
+				return null;
+			}
+		},
+		5L*60L*1000L);
 		
 		return null;
 	}

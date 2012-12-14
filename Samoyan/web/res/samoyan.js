@@ -465,6 +465,10 @@ function backPush()
 		windowStorage.setItem("bkStkID"+sz, window.location.pathname);
 		windowStorage.setItem("bkStkSz", (sz+1));
 	}
+	else
+	{
+		windowStorage.setItem("bkStkU"+(sz-1), window.location.href);
+	}
 }
 function backActivateButton(btnID)
 {

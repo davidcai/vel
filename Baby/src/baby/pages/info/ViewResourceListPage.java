@@ -8,6 +8,7 @@ import samoyan.core.ParameterMap;
 import samoyan.core.Util;
 import samoyan.servlet.Setup;
 import samoyan.servlet.UserAgent;
+import baby.app.BabyConsts;
 import baby.database.Article;
 import baby.database.ArticleStore;
 import baby.database.Mother;
@@ -15,7 +16,7 @@ import baby.database.MotherStore;
 import baby.pages.BabyPage;
 import baby.pages.profile.MedicalCenterPage;
 
-public class ResourcesPage extends BabyPage
+public class ViewResourceListPage extends BabyPage
 {
 	public final static String COMMAND = BabyPage.COMMAND_INFORMATION + "/resources";
 	
@@ -31,7 +32,7 @@ public class ResourcesPage extends BabyPage
 		Mother mother = MotherStore.getInstance().loadByUserID(getContext().getUserID());
 		List<String> medicalCenters = ArticleStore.getInstance().getMedicalCenters(mother.getRegion());
 
-		writeHorizontalNav(ResourcesPage.COMMAND);
+		writeHorizontalNav(ViewResourceListPage.COMMAND);
 
 		if (Util.isEmpty(mother.getMedicalCenter()) || medicalCenters.contains(mother.getMedicalCenter())==false)
 		{
@@ -54,7 +55,7 @@ public class ResourcesPage extends BabyPage
 		{
 			medCenter = mother.getMedicalCenter();
 		}
-		List<UUID> articleIDs = ArticleStore.getInstance().queryByMedicalCenter(mother.getRegion(), medCenter);
+		List<UUID> articleIDs = ArticleStore.getInstance().queryBySectionAndMedicalCenter(BabyConsts.SECTION_RESOURCE, mother.getRegion(), medCenter);
 		
 		// Medical center drop down
 		writeFormOpen("GET", null);
@@ -72,14 +73,19 @@ public class ResourcesPage extends BabyPage
 		write("</td></tr></table><br>");
 		writeFormClose();
 		
+		write("<table width=\"100%\">");
 		for (UUID articleID : articleIDs)
 		{
 			Article article = ArticleStore.getInstance().load(articleID);
 			
+			write("<tr><td>");
 			writeLink(article.getTitle(), getPageURL(ViewArticlePage.COMMAND, new ParameterMap(ViewArticlePage.PARAM_ID, article.getID().toString())));
-			write(" <span class=Faded>(");
-			writeEncode(article.getSection());
-			write(")</span>");
+			if (!Util.isEmpty(article.getSubSection()))
+			{
+				write(" <span class=Faded>(");
+				writeEncode(article.getSubSection());
+				write(")</span>");
+			}
 			write("<br>");
 			String summary = article.getSummary();
 			if (Util.isEmpty(summary))
@@ -87,8 +93,10 @@ public class ResourcesPage extends BabyPage
 				summary = article.getPlainText();
 			}
 			writeEncode(Util.getTextAbstract(summary, Article.MAXSIZE_SUMMARY));
-			write("<br><br>");
+			write("</td></tr>");
+			write("<tr><td>&nbsp;</td></tr>");
 		}
+		write("</table>");
 		
 		// Additional resources
 		write("<br><hr><br>");

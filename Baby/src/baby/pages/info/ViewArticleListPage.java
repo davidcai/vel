@@ -81,9 +81,12 @@ public class ViewArticleListPage extends BabyPage
 			}
 			write("</td><td>");
 			writeLink(article.getTitle(), url);
-//			write(" <span class=Faded>(");
-//			writeEncode(article.getSection());
-//			write(")</span>");
+			if (!Util.isEmpty(article.getSubSection()))
+			{
+				write(" <span class=Faded>(");
+				writeEncode(article.getSubSection());
+				write(")</span>");
+			}
 			String summary = article.getSummary();
 			if (Util.isEmpty(summary))
 			{
@@ -95,6 +98,7 @@ public class ViewArticleListPage extends BabyPage
 				writeEncode(Util.getTextAbstract(summary, Article.MAXSIZE_SUMMARY));
 			}
 			write("</td></tr>");
+			write("<tr><td colspan=2>&nbsp;</td></tr>");
 		}
 		write("</table>");
 	}

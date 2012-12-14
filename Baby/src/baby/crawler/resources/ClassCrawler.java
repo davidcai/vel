@@ -3,6 +3,7 @@ package baby.crawler.resources;
 import java.util.Date;
 import java.util.concurrent.Callable;
 
+import baby.app.BabyConsts;
 import baby.database.Article;
 import baby.database.ArticleStore;
 
@@ -55,7 +56,7 @@ public class ClassCrawler implements Callable<Void>
 		String section = Util.htmlDecode(content.substring(p, q));
 		
 		// Write the article
-		Article article = ArticleStore.getInstance().loadBySourceURL(this.url);
+		Article article = ArticleStore.getInstance().openBySourceURL(this.url);
 		if (article==null)
 		{
 			article = new Article();
@@ -63,7 +64,8 @@ public class ClassCrawler implements Callable<Void>
 		article.setHTML(content);
 		article.setRegion(this.region);
 		article.setMedicalCenter(this.city);
-		article.setSection(section);
+		article.setSection(BabyConsts.SECTION_RESOURCE);
+		article.setSubSection(section);
 		article.setSourceURL(this.url);
 		article.setSummary(summary);
 		article.setTitle(this.title.substring(0, Math.min(Article.MAXSIZE_TITLE, this.title.length())));

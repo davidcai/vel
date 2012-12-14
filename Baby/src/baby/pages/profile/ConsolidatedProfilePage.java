@@ -1,5 +1,6 @@
 package baby.pages.profile;
 
+import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.UUID;
@@ -16,6 +17,7 @@ import samoyan.apps.profile.RealNamePage;
 import samoyan.apps.profile.TimeZonePage;
 import samoyan.controls.LinkToolbarControl;
 import samoyan.controls.TwoColFormControl;
+import samoyan.core.Day;
 import samoyan.core.TimeZoneEx;
 import samoyan.core.Util;
 import samoyan.database.MobileCarrier;
@@ -94,11 +96,11 @@ public class ConsolidatedProfilePage extends BabyPage
 		twoCol.writeRow(getString("babyprofile:Consolidated.Stage"));
 		if (mother.getDueDate()!=null)
 		{
-			twoCol.writeEncode(getString("babyprofile:Consolidated.Pregnancy", mother.getDueDate()));
+			twoCol.writeEncode(getString("babyprofile:Consolidated.Pregnancy", gmtToLocalTimeZone(mother.getDueDate())));
 		}
 		else if (mother.getBirthDate()!=null)
 		{
-			twoCol.writeEncode(getString("babyprofile:Consolidated.Infancy", mother.getBirthDate()));
+			twoCol.writeEncode(getString("babyprofile:Consolidated.Infancy", gmtToLocalTimeZone(mother.getBirthDate())));
 		}
 		else
 		{
@@ -216,5 +218,10 @@ public class ConsolidatedProfilePage extends BabyPage
 		twoCol.write("</small>");
 
 		twoCol.render();
+	}
+
+	private Date gmtToLocalTimeZone(Date date)
+	{
+		return new Day(TimeZoneEx.GMT, date).getDayStart(getTimeZone());
 	}
 }

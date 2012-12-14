@@ -13,7 +13,7 @@ public class InfoTab extends EnvelopeTab
 		NavTreeControl navCtrl = new NavTreeControl(outputPage);
 		navCtrl.addHeader(outputPage.getString("information:Nav.Articles"));
 		navCtrl.addPage(ViewArticleListPage.COMMAND, null);
-		navCtrl.addPage(ResourcesPage.COMMAND, null);
+		navCtrl.addPage(ViewResourceListPage.COMMAND, null);
 		navCtrl.addPage(SearchPage.COMMAND, null);
 		
 		return navCtrl;

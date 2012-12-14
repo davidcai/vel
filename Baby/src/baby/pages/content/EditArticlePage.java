@@ -77,6 +77,9 @@ public final class EditArticlePage extends BabyPage
 		}
 		select.render();
 
+		twoCol.writeRow(getString("content:EditArticle.SubSection"));
+		twoCol.writeTextInput("subsection", this.article.getSubSection(), 40, Article.MAXSIZE_SUBSECTION);
+
 		twoCol.writeRow(getString("content:EditArticle.Timeline"));
 
 		SelectInputControl from = new SelectInputControl(twoCol, "from");
@@ -145,6 +148,9 @@ public final class EditArticlePage extends BabyPage
 		{
 			throw new WebFormException(new String[] {"from", "to"}, getString("content:EditArticle.InvalidTimeline"));
 		}
+		
+		validateParameterString("section", 1, Article.MAXSIZE_SECTION);
+		validateParameterString("subsection", 0, Article.MAXSIZE_SUBSECTION);
 	}
 	
 	@Override
@@ -161,6 +167,7 @@ public final class EditArticlePage extends BabyPage
 		this.article.setPhoto(getParameterImage("image"));
 		this.article.setPriority(isParameter("pinned")? 100 : 0);
 		this.article.setSection(getParameterString("section"));
+		this.article.setSubSection(getParameterString("subsection"));
 		
 		this.article.setTimelineFrom(getParameterInteger("from"));
 		this.article.setTimelineTo(getParameterInteger("to"));

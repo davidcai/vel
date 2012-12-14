@@ -74,6 +74,7 @@ public final class ChecklistPage extends BabyPage
 			.overrideDescription(getString("todo:Checklist.PersonalChecklistDesc"))
 			.setCollapsable(false)
 			.showChecked(false)
+			.showDueDate(false)
 			.render();
 		write("<br>");
 		

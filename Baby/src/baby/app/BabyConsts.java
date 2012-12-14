@@ -14,6 +14,7 @@ public class BabyConsts
 	// Sections
 	public final static String SECTION_TODO = "To do";
 	public final static String SECTION_INFO = "Info";
+	public final static String SECTION_RESOURCE = "Resource";
 	
 	public final static String SECTION_CHECKUP = "Checkup";
 	public final static String SECTION_ULTRASOUND = "Ultrasound";

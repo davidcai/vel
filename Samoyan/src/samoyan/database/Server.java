@@ -21,7 +21,27 @@ public final class Server extends DataBean
 	public static final int MAXSIZE_TIMELINE = 241; // bits, not bytes
 	
 	public static final int SIZE_XCO_API_KEY = 32;
-		
+	
+	/**
+	 * Gets the value of an ad-hoc property previously set by {@link #setAdHoc(String, Object)}.
+	 * @param propName The name of the property.
+	 * @return
+	 */
+	public Object getAdHoc(String propName)
+	{
+		return get("AdHoc."+propName);
+	}
+	/**
+	 * Sets an ad-hoc property on the server object.
+	 * Typically, these properties will come from the application layer.
+	 * @param propName The name of the property.
+	 * @param value The value to set. Must be one of the persistable object types.
+	 */
+	public void setAdHoc(String propName, Object value)
+	{
+		set("AdHoc."+propName, value);
+	}
+
 	public String getName()
 	{
 		return (String) get("Name");

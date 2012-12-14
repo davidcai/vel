@@ -2004,7 +2004,15 @@ public class WebPage
 			String channel = getContext().getChannel();
 			if (channel.equals(Channel.WEB))
 			{
-				this.renderHTML();
+//				boolean mobile = getContext().getUserAgent().isSmartPhone();
+//				if (mobile)
+//				{
+//					this.renderHTMLMobile();
+//				}
+//				else
+//				{
+					this.renderHTML();
+//				}
 			}
 			else if (channel.equals(Channel.EMAIL) || channel.equals(Channel.FACEBOOK_MESSSAGE))
 			{
@@ -2086,6 +2094,25 @@ public class WebPage
 			throw new PageNotFoundException();
 		}
 	}
+
+//	/**
+//	 * To be overridden by the subclass to render the content of the page as HTML for viewing inside a mobile phone browser.
+//	 * The HTML can be complex, and include JavaScript, CSS, CSS includes, etc.
+//	 * Typically, HTML is rendered for the <code>Channel.WEB</code> channel.
+//	 * By default, this method delegates to {@link #renderHTML()} so subclasses should typically override this method only
+//	 * when special handling is required.
+//	 */
+//	public void renderHTMLSmartPhone() throws Exception
+//	{
+//		if (this.child!=null)
+//		{
+//			this.child.renderHTMLSmartPhone();
+//		}
+//		else
+//		{
+//			this.renderHTML();
+//		}
+//	}
 
 	/**
 	 * To be overridden by the subclass to render the content of the page as simple HTML for embedding inside other platforms.

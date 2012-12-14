@@ -46,7 +46,7 @@ public final class ResourceListPage extends BabyPage
 		String medCenter = getParameterString("center");
 		if (!Util.isEmpty(medCenter) && !Util.isEmpty(region))
 		{
-			List<UUID> articleIDs = ArticleStore.getInstance().queryByMedicalCenter(region, medCenter);
+			List<UUID> articleIDs = ArticleStore.getInstance().queryBySectionAndMedicalCenter(BabyConsts.SECTION_RESOURCE, region, medCenter);
 			renderList(articleIDs);
 		}
 		else
@@ -63,6 +63,16 @@ public final class ResourceListPage extends BabyPage
 			write("<div class=InfoMessage>");
 			writeEncode(getString("content:ResourceList.CrawlInitiated", new Date()));
 			write("</div>");
+		}
+		else
+		{
+			Date lastCrawl = ArticleStore.getInstance().queryLastUpdated(BabyConsts.SECTION_RESOURCE);
+			if (lastCrawl!=null)
+			{
+				write("<div class=InfoMessage>");
+				writeEncode(getString("content:ResourceList.LastCrawl", lastCrawl));
+				write("</div>");
+			}
 		}
 		
 		// Toolbar
@@ -108,7 +118,7 @@ public final class ResourceListPage extends BabyPage
 				String center = centers.get(i);
 				writeLink(center, getPageURL(getContext().getCommand(), new ParameterMap("region", region).plus("center", center)));
 				
-				List<UUID> articleIDs = ArticleStore.getInstance().queryByMedicalCenter(region, center);
+				List<UUID> articleIDs = ArticleStore.getInstance().queryBySectionAndMedicalCenter(BabyConsts.SECTION_RESOURCE, region, center);
 				write("<span class=Faded> (" );
 				writeEncodeLong(articleIDs.size());
 				write(")</span>");
@@ -142,7 +152,7 @@ public final class ResourceListPage extends BabyPage
 			{
 				column("").width(1); // checkbox
 				column(getString("content:ResourceList.ArticleTitle"));
-				column(getString("content:ResourceList.Section"));
+				column(getString("content:ResourceList.SubSection"));
 			}
 
 			
@@ -162,10 +172,13 @@ public final class ResourceListPage extends BabyPage
 				writeCheckbox("chk_" + article.getID().toString(), null, false);
 
 				cell();
-				writeEncode(article.getTitle());
+				writeLink(article.getTitle(), getPageURL(ResourcePage.COMMAND, new ParameterMap(ResourcePage.PARAM_ID, article.getID())));
 				
 				cell();
-				writeEncode(article.getSection());
+				if (!Util.isEmpty(article.getSubSection()))
+				{
+					writeEncode(article.getSubSection());
+				}
 			}
 		}.render();
 		

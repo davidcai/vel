@@ -30,6 +30,7 @@ public class ChecklistControl
 	private String desc = null;
 	private boolean collapsable = true;
 	private boolean showChecked = true;
+	private boolean showDueDate = true;
 	
 	public ChecklistControl(WebPage outputPage, UUID userID, UUID checklistID)
 	{
@@ -59,6 +60,12 @@ public class ChecklistControl
 	public ChecklistControl showChecked(boolean b)
 	{
 		this.showChecked = b;
+		return this;
+	}
+
+	public ChecklistControl showDueDate(boolean b)
+	{
+		this.showDueDate = b;
 		return this;
 	}
 
@@ -118,28 +125,31 @@ public class ChecklistControl
 			}
 			out.write("</b>");
 			
-			Date due = mother.calcDateOfStage(checklist.getTimelineTo(), out.getTimeZone());
-			if (due!=null)
+			if (this.showDueDate)
 			{
-				out.write(" ");
-				out.writeEncode(out.getString("baby:ChecklistCtrl.Due", due));
-				if (due.before(now) && incomplete)
+				Date due = mother.calcDateOfStage(checklist.getTimelineTo(), out.getTimeZone());
+				if (due!=null)
 				{
-					// out.write "Overdue" label, but only if the checklist is not complete
 					out.write(" ");
-					out.write("<span class=ChecklistOverdue>");
-					out.writeEncode(out.getString("baby:ChecklistCtrl.Overdue"));
+					out.writeEncode(out.getString("baby:ChecklistCtrl.Due", due));
+					if (due.before(now) && incomplete)
+					{
+						// out.write "Overdue" label, but only if the checklist is not complete
+						out.write(" ");
+						out.write("<span class=ChecklistOverdue>");
+						out.writeEncode(out.getString("baby:ChecklistCtrl.Overdue"));
+						out.write("</span>");
+					}
+				}
+				if (incomplete==false && checkitemIDs.size()>0)
+				{
+					out.write(" ");
+					out.write("<span class=ChecklistComplete>");
+					out.writeEncode(out.getString("baby:ChecklistCtrl.Complete"));
 					out.write("</span>");
 				}
 			}
-			if (incomplete==false && checkitemIDs.size()>0)
-			{
-				out.write(" ");
-				out.write("<span class=ChecklistComplete>");
-				out.writeEncode(out.getString("baby:ChecklistCtrl.Complete"));
-				out.write("</span>");
-			}
-		
+			
 			// Description
 			if (this.desc!=null)
 			{

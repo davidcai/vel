@@ -80,6 +80,9 @@ public class ImportArticlePage extends BabyPage
 		}
 		select.render();
 
+		twoCol.writeRow(getString("content:ImportArticle.SubSection"));
+		twoCol.writeTextInput("subsection", null, 40, Article.MAXSIZE_SUBSECTION);
+
 		twoCol.writeRow(getString("content:ImportArticle.Timeline"));
 
 		SelectInputControl from = new SelectInputControl(twoCol, "from");
@@ -171,6 +174,9 @@ public class ImportArticlePage extends BabyPage
 		{
 			throw new WebFormException(new String[] {"from", "to"}, getString("content:EditHealthBeg.InvalidTimeline"));
 		}
+		
+		validateParameterString("section", 1, Article.MAXSIZE_SECTION);
+		validateParameterString("subsection", 0, Article.MAXSIZE_SUBSECTION);
 	}
 	
 	@Override
@@ -235,6 +241,7 @@ public class ImportArticlePage extends BabyPage
 					
 					Article article = new Article();
 					article.setSection(getParameterString("section"));
+					article.setSubSection(getParameterString("subsection"));
 					article.setTitle(title);
 					article.setHTML(body);
 					article.setPriority(0);
