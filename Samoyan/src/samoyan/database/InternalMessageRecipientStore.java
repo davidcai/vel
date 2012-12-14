@@ -29,7 +29,7 @@ public final class InternalMessageRecipientStore extends DataBeanStore<InternalM
 	@Override
 	protected TableDef defineMapping()
 	{
-		TableDef td = TableDef.newInstance("InternalMessageRecipients", this);
+		TableDef td = createTableDef("InternalMessageRecipients");
 		
 		td.defineCol("RecipientUserID", UUID.class).refersTo("Users").invariant();
 		td.defineCol("InternalMessageID", UUID.class).ownedBy("InternalMessages").invariant();

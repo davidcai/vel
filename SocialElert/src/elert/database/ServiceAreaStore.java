@@ -29,9 +29,9 @@ public class ServiceAreaStore extends DataBeanStore<ServiceArea>
 	}
 
 	@Override
-	public TableDef defineMapping()
+	protected TableDef defineMapping()
 	{
-		TableDef td = TableDef.newInstance("ServiceAreas", this);
+		TableDef td = createTableDef("ServiceAreas");
 
 		td.defineCol("Name", String.class).size(0, ServiceArea.MAXSIZE_NAME);
 		td.defineCol("RegionID", UUID.class).refersTo("Regions").invariant();
@@ -43,7 +43,7 @@ public class ServiceAreaStore extends DataBeanStore<ServiceArea>
 
 	public List<UUID> getAllIDs() throws Exception
 	{
-		return getAllBeanIDs("Name", true);
+		return queryAll("Name", true);
 	}
 
 	public List<UUID> searchByName(String queryString) throws SQLException

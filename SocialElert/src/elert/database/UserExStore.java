@@ -27,7 +27,7 @@ public class UserExStore extends DataBeanStore<UserEx>
 	@Override
 	public TableDef defineMapping()
 	{
-		TableDef td = TableDef.newInstance("UsersEx", this);
+		TableDef td = createTableDef("UsersEx");
 		
 		td.defineCol("UserID", UUID.class).ownedBy("Users");
 		td.defineCol("MRN", String.class).size(0, UserEx.MAXSIZE_MRN);

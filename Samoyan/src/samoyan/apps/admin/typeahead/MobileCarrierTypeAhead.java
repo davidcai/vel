@@ -19,7 +19,7 @@ public class MobileCarrierTypeAhead extends AdminPage
 			@Override
 			protected void doQuery(String q) throws Exception
 			{
-				for (UUID carrierID : MobileCarrierStore.getInstance().getAllBeanIDs())
+				for (UUID carrierID : MobileCarrierStore.getInstance().queryAll())
 				{
 					MobileCarrier mc = MobileCarrierStore.getInstance().load(carrierID);
 					if (mc.getName().toLowerCase(getLocale()).indexOf(q.toLowerCase(getLocale()))>=0)

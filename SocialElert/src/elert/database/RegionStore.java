@@ -29,9 +29,9 @@ public class RegionStore extends DataBeanStore<Region>
 	}
 
 	@Override
-	public TableDef defineMapping()
+	protected TableDef defineMapping()
 	{
-		TableDef td = TableDef.newInstance("Regions", this);
+		TableDef td = createTableDef("Regions");
 
 		td.defineCol("Name", String.class).size(0, Region.MAXSIZE_NAME);
 		
@@ -42,7 +42,7 @@ public class RegionStore extends DataBeanStore<Region>
 
 	public List<UUID> getAllIDs() throws Exception
 	{
-		return getAllBeanIDs("Name", true);
+		return queryAll("Name", true);
 	}
 
 	public List<UUID> searchByName(String queryString) throws SQLException

@@ -31,7 +31,7 @@ public class MeasureRecordStore extends DataBeanStore<MeasureRecord>
 	@Override
 	protected TableDef defineMapping()
 	{
-		TableDef td = TableDef.newInstance("MeasureRecords", this);
+		TableDef td = createTableDef("MeasureRecords");
 
 		td.defineCol("UserID", UUID.class).invariant().ownedBy("Users");
 		td.defineCol("BabyID", UUID.class).invariant().ownedBy("Babies");

@@ -28,7 +28,7 @@ public final class AuthTokenStore extends DataBeanStore<AuthToken>
 	@Override
 	protected TableDef defineMapping()
 	{
-		TableDef td = TableDef.newInstance("AuthTokens", this);
+		TableDef td = createTableDef("AuthTokens");
 		
 		td.defineCol("UserID", UUID.class).invariant().ownedBy("Users");
 		td.defineCol("UserAgentSignature", String.class).size(0, AuthToken.MAXSIZE_SIGNATURE).invariant();

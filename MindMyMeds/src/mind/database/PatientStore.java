@@ -24,9 +24,9 @@ public class PatientStore extends DataBeanStore<Patient>
 	}	
 	
 	@Override
-	public TableDef defineMapping()
+	protected TableDef defineMapping()
 	{
-		TableDef td = TableDef.newInstance("Patients", this);
+		TableDef td = createTableDef("Patients");
 		
 		td.defineCol("LoginID", UUID.class).invariant().ownedBy("Users");
 		td.defineCol("MRN", Long.class);

@@ -1,5 +1,6 @@
 package baby.database;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
@@ -34,7 +35,7 @@ public final class ArticleStore extends DataBeanStore<Article>
 	@Override
 	public TableDef defineMapping()
 	{
-		TableDef td = TableDef.newInstance("Articles", this);
+		TableDef td = createTableDef("Articles");
 
 		td.defineProp("HTML", String.class);
 		td.defineProp("PlainText", String.class);
@@ -52,6 +53,7 @@ public final class ArticleStore extends DataBeanStore<Article>
 		td.defineCol("Priority", Integer.class);
 
 		td.defineProp("Photo", Image.class);
+		td.defineProp("SubSection", String.class).size(0, Article.MAXSIZE_SUBSECTION);
 
 		return td;
 	}
@@ -70,9 +72,45 @@ public final class ArticleStore extends DataBeanStore<Article>
 		return openByColumn("SourceURLHash", urlHash);
 	}
 
-	public List<UUID> queryByMedicalCenter(String region, String medicalCenter) throws SQLException
+	public List<UUID> queryBySectionAndMedicalCenter(String section, String region, String medicalCenter) throws SQLException
 	{
-		return Query.queryListUUID("SELECT ID FROM Articles WHERE Region=? AND MedicalCenter=? ORDER BY Priority DESC, Title ASC", new ParameterList(region).plus(medicalCenter));
+		return Query.queryListUUID("SELECT ID FROM Articles WHERE Section=? AND Region=? AND MedicalCenter=? ORDER BY Priority DESC, Title ASC", new ParameterList(section).plus(region).plus(medicalCenter));
+	}
+	
+	/**
+	 * Queries the database for the latest date of stored resource articles.
+	 * @return
+	 * @throws SQLException 
+	 */
+	public Date queryLastUpdated(String section) throws SQLException
+	{
+		Query q = new Query();
+		try
+		{
+			ResultSet rs = q.select("SELECT MAX(UpdatedDate) FROM Articles WHERE Section=?", new ParameterList(section));
+			if (rs.next())
+			{
+				return new Date(rs.getLong(1));
+			}
+			else
+			{
+				return null;
+			}
+		}
+		finally
+		{
+			q.close();
+		}
+	}
+	
+	/**
+	 * Removes articles that were last updated before the given date.
+	 * @param updatedBefore
+	 * @throws SQLException 
+	 */
+	public void removeStaleArticles(String section, Date updatedBefore) throws Exception
+	{
+		removeMany( Query.queryListUUID("SELECT ID FROM Articles WHERE Section=? AND UpdatedDate<?", new ParameterList(section).plus(updatedBefore)) );
 	}
 	
 	public List<UUID> queryBySection(String section) throws SQLException
@@ -94,7 +132,7 @@ public final class ArticleStore extends DataBeanStore<Article>
 				"ORDER BY Priority DESC, Title ASC",
 				new ParameterList(section).plus(lowStage).plus(highStage).plus(lowStage).plus(highStage).plus(lowStage).plus(highStage));
 	}
-
+	
 	public List<String> getRegions() throws SQLException
 	{
 		return Query.queryListString("SELECT DISTINCT Region FROM Articles WHERE NOT Region IS NULL ORDER BY Region", null);
@@ -112,6 +150,6 @@ public final class ArticleStore extends DataBeanStore<Article>
 
 	public List<UUID> getAll() throws Exception
 	{
-		return super.getAllBeanIDs();
+		return super.queryAll();
 	}
 }

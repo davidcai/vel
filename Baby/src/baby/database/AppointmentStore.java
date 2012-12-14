@@ -31,7 +31,7 @@ public class AppointmentStore extends DataBeanStore<Appointment>
 	@Override
 	protected TableDef defineMapping()
 	{
-		TableDef td = TableDef.newInstance("Appointments", this);
+		TableDef td = createTableDef("Appointments");
 
 		td.defineCol("UserID", UUID.class).invariant().ownedBy("Users");
 		td.defineCol("Description", String.class).size(0, Appointment.MAXSIZE_DESCRIPTION);

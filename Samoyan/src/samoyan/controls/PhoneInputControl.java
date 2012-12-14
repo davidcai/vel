@@ -163,7 +163,7 @@ public class PhoneInputControl extends TextInputControl
 			// Return list of all countries
 			if (allCountries==null)
 			{
-				List<UUID> countryIDs = CountryStore.getInstance().getAllBeanIDs(); // !$! Need to sort, allow to limit
+				List<UUID> countryIDs = CountryStore.getInstance().queryAll(); // !$! Need to sort, allow to limit
 				List<Country> countries = new ArrayList<Country>(countryIDs.size());
 				for (UUID id : countryIDs)
 				{

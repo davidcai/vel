@@ -28,9 +28,9 @@ public class DrugStore extends DataBeanStore<Drug>
 	}	
 
 	@Override
-	public TableDef defineMapping()
+	protected TableDef defineMapping()
 	{
-		TableDef td = TableDef.newInstance("Drugs", this);
+		TableDef td = createTableDef("Drugs");
 		
 		td.defineCol("Name", String.class).size(0, Drug.MAXSIZE_NAME);
 		td.defineCol("GenericName", String.class).size(0, Drug.MAXSIZE_GENERIC_NAME);

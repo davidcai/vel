@@ -23,7 +23,7 @@ public class PhysicianOpeningLinkStore extends LinkStore
 	@Override
 	protected LinkTableDef defineMapping()
 	{
-		LinkTableDef td = LinkTableDef.newInstance("PhysicianOpeningLink");
+		LinkTableDef td = createLinkTableDef("PhysicianOpeningLink");
 
 		td.setKey1("PhysicianID", "Users");
 		td.setKey2("OpeningID", "Openings");

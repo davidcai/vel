@@ -30,9 +30,9 @@ public class FacilityStore extends DataBeanStore<Facility>
 	}
 
 	@Override
-	public TableDef defineMapping()
+	protected TableDef defineMapping()
 	{
-		TableDef td = TableDef.newInstance("Facilities", this);
+		TableDef td = createTableDef("Facilities");
 
 		td.defineCol("Code", String.class).size(Facility.MAXSIZE_CODE, Facility.MAXSIZE_CODE);
 		td.defineCol("Name", String.class).size(0, Facility.MAXSIZE_NAME);	
@@ -50,7 +50,7 @@ public class FacilityStore extends DataBeanStore<Facility>
 
 	public List<UUID> getAllIDs() throws Exception
 	{
-		return getInstance().getAllBeanIDs("Code", true);
+		return getInstance().queryAll("Code", true);
 	}
 
 	public Facility loadByCode(String code) throws Exception

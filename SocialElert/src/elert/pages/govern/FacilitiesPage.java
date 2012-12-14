@@ -84,7 +84,7 @@ public class FacilitiesPage extends ElertPage
 				
 				cell();
 				new CheckboxInputControl(this, "chk_" + facility.getID().toString())
-					.setDisabled(FacilityStore.getInstance().canRemoveBean(facilityID)==false)
+					.setDisabled(FacilityStore.getInstance().canRemove(facilityID)==false)
 					.render();
 //				if (FacilityStore.getInstance().canRemoveBean(facilityID))
 //				{

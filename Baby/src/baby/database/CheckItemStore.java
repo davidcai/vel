@@ -29,7 +29,7 @@ public final class CheckItemStore extends DataBeanStore<CheckItem>
 	@Override
 	public TableDef defineMapping()
 	{
-		TableDef td = TableDef.newInstance("CheckItems", this);
+		TableDef td = createTableDef("CheckItems");
 		
 		td.defineCol("Text", String.class).size(0, CheckItem.MAXSIZE_TEXT);
 		td.defineCol("ChecklistID", UUID.class).ownedBy("Checklists");

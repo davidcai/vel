@@ -32,7 +32,7 @@ public class JournalEntryStore extends DataBeanStore<JournalEntry>
 	@Override
 	public TableDef defineMapping()
 	{
-		TableDef td = TableDef.newInstance("JournalEntries", this);
+		TableDef td = createTableDef("JournalEntries");
 
 		td.defineCol("UserID", UUID.class).invariant().ownedBy("Users");
 		td.defineCol("Text", String.class).size(0, JournalEntry.MAXSIZE_TEXT);

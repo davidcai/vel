@@ -22,7 +22,7 @@ public class ResourceProcedureLinkStore extends LinkStore
 	@Override
 	protected LinkTableDef defineMapping()
 	{
-		LinkTableDef td = LinkTableDef.newInstance("ResourceProcedureLink");
+		LinkTableDef td = createLinkTableDef("ResourceProcedureLink");
 		
 		td.setKey1("ResourceID", "Resources");
 		td.setKey2("ProcedureID", "Procedures");

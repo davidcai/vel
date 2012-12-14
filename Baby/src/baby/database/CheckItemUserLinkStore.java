@@ -22,7 +22,7 @@ public final class CheckItemUserLinkStore extends LinkStore
 	@Override
 	protected LinkTableDef defineMapping()
 	{
-		LinkTableDef td = LinkTableDef.newInstance("CheckItemUserLink");
+		LinkTableDef td = createLinkTableDef("CheckItemUserLink");
 
 		td.setKey1("CheckItemID", "CheckItems");
 		td.setKey2("UserID", "Users");

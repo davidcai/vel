@@ -92,7 +92,7 @@ public class ProceduresPage extends ElertPage
 					
 					cell();
 					new CheckboxInputControl(this, "chk_" + procedure.getID().toString())
-						.setDisabled(ProcedureStore.getInstance().canRemoveBean(procedureID)==false)
+						.setDisabled(ProcedureStore.getInstance().canRemove(procedureID)==false)
 						.render();
 //					if (ProcedureStore.getInstance().canRemoveBean(procedureID))
 //					{

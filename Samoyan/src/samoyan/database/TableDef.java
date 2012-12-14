@@ -17,7 +17,7 @@ public final class TableDef
 	
 	private String name = "";
 	
-	public static TableDef newInstance(String name, DataBeanStore<? extends DataBean> store)
+	static TableDef newInstance(String name, DataBeanStore<? extends DataBean> store)
 	{
 		Debug.logln("TableDef: " + name);
 
@@ -32,11 +32,11 @@ public final class TableDef
 		instances.put(name, td);
 		return td;
 	}
-	public static TableDef getInstance(String name)
+	static TableDef getInstance(String name)
 	{
 		return instances.get(name);
 	}
-	public static DataBeanStore<? extends DataBean> getStore(String name)
+	static DataBeanStore<? extends DataBean> getStore(String name)
 	{
 		DataBeanStore<? extends DataBean> store = stores.get(name);
 		if (store==null)

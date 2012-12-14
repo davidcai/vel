@@ -22,7 +22,7 @@ public final class ChecklistUserLinkStore extends LinkStore
 	@Override
 	protected LinkTableDef defineMapping()
 	{
-		LinkTableDef td = LinkTableDef.newInstance("ChecklistUserLink");
+		LinkTableDef td = createLinkTableDef("ChecklistUserLink");
 
 		td.setKey1("ChecklistID", "Checklists");
 		td.setKey2("UserID", "Users");

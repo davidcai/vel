@@ -19,7 +19,7 @@ public final class UserUserGroupLinkStore extends LinkStore
 	@Override
 	protected LinkTableDef defineMapping()
 	{
-		LinkTableDef td = LinkTableDef.newInstance("UserGroupsLink");
+		LinkTableDef td = createLinkTableDef("UserGroupsLink");
 		
 		td.setKey1("UserID", "Users");
 		td.setKey2("UserGroupID", "UserGroups");

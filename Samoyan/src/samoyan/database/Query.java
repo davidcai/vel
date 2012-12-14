@@ -1,14 +1,9 @@
 package samoyan.database;
 
-import java.net.InetAddress;
 import java.sql.*;
 import java.util.*;
-import java.util.Date;
 
-import samoyan.core.Day;
 import samoyan.core.Debug;
-import samoyan.core.TimeOfDay;
-import samoyan.core.TimeZoneEx;
 import samoyan.core.Util;
 
 public final class Query
@@ -60,49 +55,10 @@ public final class Query
 		{
 			return null;
 		}
-		
 		List<Object> converted = new ArrayList<Object>(params.size());
 		for (Object value : params)
 		{
-			Object convertedValue = value;
-			if (value instanceof UUID)
-			{
-				convertedValue = Util.uuidToBytes((UUID) value);
-			}
-			else if (value instanceof Boolean)
-			{
-				convertedValue = ((Boolean)value)?1:0;
-			}
-			else if (value instanceof Date)
-			{
-				convertedValue = ((Date) value).getTime();
-			}
-			else if (value instanceof Day)
-			{
-				convertedValue = ((Day) value).getDayStart(TimeZoneEx.GMT).getTime();
-			}
-			else if (value instanceof TimeOfDay)
-			{
-				convertedValue = ((TimeOfDay) value).getSeconds();
-			}
-			else if (value instanceof TimeZone)
-			{
-				convertedValue = ((TimeZone) value).getID();
-			}
-			else if (value instanceof Locale)
-			{
-				convertedValue = ((Locale) value).toString();
-			}
-			else if (value instanceof InetAddress)
-			{
-				convertedValue = ((InetAddress) value).getAddress();
-			}
-			else if (value instanceof BitSet)
-			{
-				//convertedValue = ((BitSet) value).toByteArray();
-				convertedValue = Util.bitSetToBytes((BitSet)value);
-			}
-			converted.add(convertedValue);
+			converted.add(DataBeanStoreUtil.convertJavaToSQL(value));
 		}
 		return converted;
 	}

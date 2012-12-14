@@ -193,7 +193,8 @@ public class Database
 			cn = null;
 			
 			// Peak management
-			int open = this.dynOpenConns.decrementAndGet();
+//			int open = 
+			this.dynOpenConns.decrementAndGet();
 			
 //			int max = this.dynMaxOpenConns.get();
 //			int free = this.availableConnections.size();

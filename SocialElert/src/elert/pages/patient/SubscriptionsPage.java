@@ -172,7 +172,7 @@ public class SubscriptionsPage extends ElertPage
 				Subscription sub = SubscriptionStore.getInstance().open(UUID.fromString(paramName.substring(4)));
 				if (sub!=null && sub.getUserID().equals(ctx.getUserID()))
 				{
-					if (SubscriptionStore.getInstance().canRemoveBean(sub.getID()))
+					if (SubscriptionStore.getInstance().canRemove(sub.getID()))
 					{
 						// Remove from the database outright
 						SubscriptionStore.getInstance().remove(sub.getID());

@@ -17,7 +17,7 @@ public final class LinkTableDef
 	private LinkKeyDef key1 = null;
 	private LinkKeyDef key2 = null;
 
-	public static LinkTableDef newInstance(String name)
+	static LinkTableDef newInstance(String name)
 	{
 		LinkTableDef td = new LinkTableDef(name);
 		if (instances.containsKey(name))
@@ -28,7 +28,7 @@ public final class LinkTableDef
 		instances.put(name, td);
 		return td;
 	}
-	public static LinkTableDef getInstance(String name)
+	static LinkTableDef getInstance(String name)
 	{
 		return instances.get(name);
 	}

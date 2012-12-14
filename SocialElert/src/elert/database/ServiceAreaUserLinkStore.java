@@ -25,7 +25,7 @@ public class ServiceAreaUserLinkStore extends LinkStore
 	@Override
 	protected LinkTableDef defineMapping()
 	{
-		LinkTableDef td = LinkTableDef.newInstance("ServiceAreaUserLink");
+		LinkTableDef td = createLinkTableDef("ServiceAreaUserLink");
 		
 		td.setKey1("ServiceAreaID", "ServiceAreas");
 		td.setKey2("UserID", "Users");

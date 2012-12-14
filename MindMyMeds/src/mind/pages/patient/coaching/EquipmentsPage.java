@@ -122,7 +122,7 @@ public class EquipmentsPage extends WebPage
 					Equipment eq = EquipmentStore.getInstance().load(eqId);			
 					
 					cell();
-					new CheckboxInputControl(this, "chk_" + eqId.toString()).setDisabled(!EquipmentStore.getInstance().canRemoveBean(eqId)).render();
+					new CheckboxInputControl(this, "chk_" + eqId.toString()).setDisabled(!EquipmentStore.getInstance().canRemove(eqId)).render();
 					// writeCheckbox
 					
 					cell();

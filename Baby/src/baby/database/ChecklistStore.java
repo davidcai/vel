@@ -31,7 +31,7 @@ public final class ChecklistStore extends DataBeanStore<Checklist>
 	@Override
 	public TableDef defineMapping()
 	{
-		TableDef td = TableDef.newInstance("Checklists", this);
+		TableDef td = createTableDef("Checklists");
 		
 		td.defineCol("Title", String.class).size(0, Checklist.MAXSIZE_TITLE);
 		td.defineCol("Description", String.class).size(0, Checklist.MAXSIZE_DESCRIPTION);
@@ -81,6 +81,8 @@ public final class ChecklistStore extends DataBeanStore<Checklist>
 			cl = new Checklist();
 			cl.setTitle(userID.toString());
 			cl.setUserID(userID);
+			cl.setTimelineFrom(Stage.preconception().toInteger());
+			cl.setTimelineTo(Stage.infancy(Stage.MAX_MONTHS).toInteger());
 			save(cl);
 		}
 		return cl;
@@ -88,6 +90,6 @@ public final class ChecklistStore extends DataBeanStore<Checklist>
 
 	public List<UUID> getAll() throws Exception
 	{
-		return super.getAllBeanIDs();
+		return super.queryAll();
 	}
 }

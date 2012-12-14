@@ -22,7 +22,7 @@ public final class SubscriptionFacilityLinkStore extends LinkStore
 	@Override
 	protected LinkTableDef defineMapping()
 	{
-		LinkTableDef td = LinkTableDef.newInstance("SubscriptionFacilityLink");
+		LinkTableDef td = createLinkTableDef("SubscriptionFacilityLink");
 		
 		td.setKey1("SubscriptionID", "Subscriptions");
 		td.setKey2("FacilityID", "Facilities").disallowRemoveIfHasLinks();

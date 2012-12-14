@@ -455,7 +455,7 @@ public final class VerifySubscriptionPage extends ElertPage
 	{
 		if (isParameter("remove"))
 		{
-			if (SubscriptionStore.getInstance().canRemoveBean(this.sub.getID()))
+			if (SubscriptionStore.getInstance().canRemove(this.sub.getID()))
 			{
 				// Remove from the database outright
 				SubscriptionStore.getInstance().remove(this.sub.getID());

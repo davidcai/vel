@@ -33,7 +33,7 @@ public final class PermissionStore extends DataBeanStore<Permission>
 	@Override
 	protected TableDef defineMapping()
 	{
-		TableDef td = TableDef.newInstance("Permissions", this);
+		TableDef td = createTableDef("Permissions");
 		
 		td.defineCol("Name", String.class).size(0, Permission.MAXSIZE_NAME).invariant();
 		

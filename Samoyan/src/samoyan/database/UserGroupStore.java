@@ -28,7 +28,7 @@ public final class UserGroupStore extends DataBeanStore<UserGroup>
 	@Override
 	protected TableDef defineMapping()
 	{
-		TableDef td = TableDef.newInstance("UserGroups", this);
+		TableDef td = createTableDef("UserGroups");
 		
 		td.defineCol("Name", String.class).size(0, UserGroup.MAXSIZE_NAME);
 		
@@ -69,7 +69,7 @@ public final class UserGroupStore extends DataBeanStore<UserGroup>
 	
 	public List<UUID> getAllIDs() throws Exception
 	{
-		return getAllBeanIDs("Name", true);
+		return queryAll("Name", true);
 	}
 }
 

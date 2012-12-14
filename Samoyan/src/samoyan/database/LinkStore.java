@@ -32,6 +32,23 @@ public abstract class LinkStore
 
 	public LinkTableDef getLinkTableDef()
 	{
+		return this.linkTableDef;
+	}
+	
+	public LinkTableDef createLinkTableDef(String name)
+	{
+		if (this.linkTableDef!=null)
+		{
+			throw new NullPointerException("Definition already created for " + this.getClass().getName());
+		}
+		
+		this.linkTableDef = LinkTableDef.newInstance(name);
+		
+		return this.linkTableDef;
+	}
+
+	public void define()
+	{
 		if (this.linkTableDef==null) { synchronized(this) {	if (this.linkTableDef==null)
 		{
 			this.linkTableDef = defineMapping();
@@ -88,8 +105,6 @@ public abstract class LinkStore
 				});
 			}
 		}}}
-		
-		return this.linkTableDef;
 	}
 	
 	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

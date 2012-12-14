@@ -32,9 +32,9 @@ public class SubscriptionStore extends DataBeanStore<Subscription>
 	}
 
 	@Override
-	public TableDef defineMapping()
+	protected TableDef defineMapping()
 	{
-		TableDef td = TableDef.newInstance("Subscriptions", this);
+		TableDef td = createTableDef("Subscriptions");
 
 		td.defineCol("UserID", UUID.class).ownedBy("Users").invariant();
 		td.defineCol("AreaID", UUID.class).refersTo("ServiceAreas");

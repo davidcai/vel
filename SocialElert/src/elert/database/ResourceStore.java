@@ -29,9 +29,9 @@ public class ResourceStore extends DataBeanStore<Resource>
 	}
 
 	@Override
-	public TableDef defineMapping()
+	protected TableDef defineMapping()
 	{
-		TableDef td = TableDef.newInstance("Resources", this);
+		TableDef td = createTableDef("Resources");
 
 		td.defineCol("Name", String.class).size(0, Resource.MAXSIZE_NAME);
 		

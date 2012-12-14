@@ -29,7 +29,7 @@ public class EquipmentStore extends DataBeanStore<Equipment>
 	@Override
 	protected TableDef defineMapping()
 	{
-		TableDef td = TableDef.newInstance("Equipments", this);
+		TableDef td = createTableDef("Equipments");
 		
 		td.defineCol("Name", String.class).size(0, Equipment.MAXSIZE_NAME);
 		td.defineCol("Industry", String.class).size(0, Equipment.MAXSIZE_INDUSTRY);
@@ -42,7 +42,7 @@ public class EquipmentStore extends DataBeanStore<Equipment>
 	
 	public List<UUID> getAllIDs() throws Exception
 	{
-		return getAllBeanIDs("Name", true);
+		return queryAll("Name", true);
 	}
 
 	public Equipment loadByName(String name) throws Exception

@@ -29,9 +29,9 @@ public class ProcedureTypeStore extends DataBeanStore<ProcedureType>
 	}
 
 	@Override
-	public TableDef defineMapping()
+	protected TableDef defineMapping()
 	{
-		TableDef td = TableDef.newInstance("ProcedureTypes", this);
+		TableDef td = createTableDef("ProcedureTypes");
 
 		td.defineCol("Name", String.class).size(0, ProcedureType.MAXSIZE_NAME);
 		
@@ -47,7 +47,7 @@ public class ProcedureTypeStore extends DataBeanStore<ProcedureType>
 
 	public List<UUID> getAllIDs() throws Exception
 	{
-		return getAllBeanIDs("Name", true);
+		return queryAll("Name", true);
 	}
 
 	public List<UUID> searchByText(String text) throws SQLException

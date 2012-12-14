@@ -24,7 +24,7 @@ public class ProcedureFacilityLinkStore extends LinkStore
 	@Override
 	protected LinkTableDef defineMapping()
 	{
-		LinkTableDef td = LinkTableDef.newInstance("ProcedureFacilityLink");
+		LinkTableDef td = createLinkTableDef("ProcedureFacilityLink");
 
 		td.setKey1("ProcedureID", "Procedures");
 		td.setKey2("FacilityID", "Facilities");

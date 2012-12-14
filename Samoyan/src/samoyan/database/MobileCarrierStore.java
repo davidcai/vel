@@ -29,7 +29,7 @@ public final class MobileCarrierStore extends CsvDataBeanStore<MobileCarrier>
 	@Override
 	protected TableDef defineMapping()
 	{
-		TableDef td = TableDef.newInstance("MobileCarriers", this);
+		TableDef td = createTableDef("MobileCarriers");
 		
 		td.defineCol("Name", String.class).invariant();
 		td.defineCol("SMSEmail", String.class).invariant();

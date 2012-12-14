@@ -28,7 +28,7 @@ public class MotherStore extends DataBeanStore<Mother>
 	@Override
 	public TableDef defineMapping()
 	{
-		TableDef td = TableDef.newInstance("Mothers", this);
+		TableDef td = createTableDef("Mothers");
 
 		td.defineCol("UserID", UUID.class).invariant().ownedBy("Users");
 		td.defineCol("DueDate", Date.class);

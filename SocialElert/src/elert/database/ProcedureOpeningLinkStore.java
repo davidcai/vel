@@ -23,7 +23,7 @@ public class ProcedureOpeningLinkStore extends LinkStore
 	@Override
 	protected LinkTableDef defineMapping()
 	{
-		LinkTableDef td = LinkTableDef.newInstance("ProcedureOpeningLink");
+		LinkTableDef td = createLinkTableDef("ProcedureOpeningLink");
 
 		td.setKey1("ProcedureID", "Procedures").disallowRemoveIfHasLinks();
 		td.setKey2("OpeningID", "Openings");

@@ -1,19 +1,15 @@
 package baby.app;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import samoyan.core.image.LargestCropSizer;
 import samoyan.core.image.ShrinkToFitSizer;
-import samoyan.database.DataBean;
-import samoyan.database.DataBeanStore;
 import samoyan.database.ImageStore;
-import samoyan.database.LinkStore;
 import samoyan.database.PermissionStore;
 import samoyan.database.UserGroup;
 import samoyan.database.UserGroupStore;
 import samoyan.servlet.Controller;
 import samoyan.servlet.Dispatcher;
+import samoyan.tasks.TaskManager;
 import baby.crawler.CrawlExecutor;
 import baby.database.AppointmentStore;
 import baby.database.ArticleStore;
@@ -35,10 +31,11 @@ import baby.pages.content.ImportArticlePage;
 import baby.pages.content.MeasureListPage;
 import baby.pages.content.MeasurePage;
 import baby.pages.content.ResourceListPage;
+import baby.pages.content.ResourcePage;
 import baby.pages.info.ViewArticlePage;
 import baby.pages.info.ViewArticleListPage;
 import baby.pages.info.InformationHomePage;
-import baby.pages.info.ResourcesPage;
+import baby.pages.info.ViewResourceListPage;
 import baby.pages.info.SearchPage;
 import baby.pages.master.LessStylesheetPage;
 import baby.pages.master.LoginPage;
@@ -62,40 +59,29 @@ import baby.pages.todo.AppointmentsPage;
 import baby.pages.todo.ChecklistAjaxPage;
 import baby.pages.todo.ChecklistPage;
 import baby.pages.todo.TodoHomePage;
+import baby.tasks.CrawlResourcesRecurringTask;
 
 public class BabyController extends Controller
-{
+{	
 	@Override
-	protected List<DataBeanStore<? extends DataBean>> getDataBeanStores()
+	protected void preStart() throws Exception
 	{
-		List<DataBeanStore<? extends DataBean>> result = new ArrayList<DataBeanStore<? extends DataBean>>();
+		JournalEntryStore.getInstance().define();
+		MotherStore.getInstance().define();
+		BabyStore.getInstance().define();
+		ArticleStore.getInstance().define();
+		MeasureStore.getInstance().define();
+		MeasureRecordStore.getInstance().define();
+		ChecklistStore.getInstance().define();
+		CheckItemStore.getInstance().define();
+		AppointmentStore.getInstance().define();
 		
-		result.add(JournalEntryStore.getInstance());
-		result.add(MotherStore.getInstance());
-		result.add(BabyStore.getInstance());
-		result.add(ArticleStore.getInstance());
-		result.add(MeasureStore.getInstance());
-		result.add(MeasureRecordStore.getInstance());
-		result.add(ChecklistStore.getInstance());
-		result.add(CheckItemStore.getInstance());
-		result.add(AppointmentStore.getInstance());
-
-		return result;
-	}
-
-	@Override
-	protected List<LinkStore> getLinkStores()
-	{
-		List<LinkStore> result = new ArrayList<LinkStore>();
-		
-		result.add(ChecklistUserLinkStore.getInstance());
-		result.add(CheckItemUserLinkStore.getInstance());
-
-		return result;
+		ChecklistUserLinkStore.getInstance().define();
+		CheckItemUserLinkStore.getInstance().define();
 	}
 	
 	@Override
-	protected void initController() throws Exception
+	protected void start() throws Exception
 	{
 		// Envelope page
 		Dispatcher.bindEnvelope(BabyEnvelopePage.class);
@@ -115,8 +101,8 @@ public class BabyController extends Controller
 		// Info
 		Dispatcher.bindPage(InformationHomePage.COMMAND, 		InformationHomePage.class);
 		Dispatcher.bindPage(ViewArticleListPage.COMMAND, 		ViewArticleListPage.class);
-		Dispatcher.bindPage(ResourcesPage.COMMAND, 				ResourcesPage.class);
-		Dispatcher.bindPage(ViewArticlePage.COMMAND, 				ViewArticlePage.class);
+		Dispatcher.bindPage(ViewResourceListPage.COMMAND, 		ViewResourceListPage.class);
+		Dispatcher.bindPage(ViewArticlePage.COMMAND, 			ViewArticlePage.class);
 		Dispatcher.bindPage(SearchPage.COMMAND, 				SearchPage.class);
 		
 		// Scrapbook
@@ -141,11 +127,12 @@ public class BabyController extends Controller
 		Dispatcher.bindPage(EditArticlePage.COMMAND, 			EditArticlePage.class);
 		Dispatcher.bindPage(ArticleListPage.COMMAND, 			ArticleListPage.class);
 		Dispatcher.bindPage(ResourceListPage.COMMAND, 			ResourceListPage.class);
+		Dispatcher.bindPage(ResourcePage.COMMAND, 				ResourcePage.class);
 		Dispatcher.bindPage(MeasureListPage.COMMAND, 			MeasureListPage.class);
 		Dispatcher.bindPage(MeasurePage.COMMAND, 				MeasurePage.class);
 		Dispatcher.bindPage(ChecklistListPage.COMMAND, 			ChecklistListPage.class);
 		Dispatcher.bindPage(EditChecklistPage.COMMAND, 			EditChecklistPage.class);
-		Dispatcher.bindPage(ImportArticlePage.COMMAND, 		ImportArticlePage.class);
+		Dispatcher.bindPage(ImportArticlePage.COMMAND, 			ImportArticlePage.class);
 
 		// Profile
 		Dispatcher.bindPage(MedicalCenterPage.COMMAND, 			MedicalCenterPage.class);
@@ -171,10 +158,13 @@ public class BabyController extends Controller
 
 		// Crawler
 		CrawlExecutor.init();
+		
+		// Recurring tasks
+		TaskManager.addRecurring(new CrawlResourcesRecurringTask());
 	}
 
 	@Override
-	protected void termController() throws Exception
+	protected void terminate() throws Exception
 	{
 		// Crawler
 		CrawlExecutor.term();

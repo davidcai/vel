@@ -185,7 +185,7 @@ public abstract class CsvDataBeanStore<T extends DataBean> extends DataBeanStore
 	}
 
 	@Override
-	public List<UUID> getAllBeanIDs() throws Exception
+	public List<UUID> queryAll() throws Exception
 	{
 		readAllBeansFromFile();
 		return new ArrayList<UUID>(this.instances.keySet());
@@ -206,12 +206,6 @@ public abstract class CsvDataBeanStore<T extends DataBean> extends DataBeanStore
 	}
 
 	@Override
-	protected void removeByQuery(String sql, List<Object> params) throws Exception
-	{
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
 	public void remove(UUID id) throws Exception
 	{
 		throw new UnsupportedOperationException();
@@ -224,7 +218,7 @@ public abstract class CsvDataBeanStore<T extends DataBean> extends DataBeanStore
 	}
 	
 	@Override
-	protected List<UUID> getAllBeanIDs(String sortColumn, boolean ascending) throws Exception
+	protected List<UUID> queryAll(String sortColumn, boolean ascending) throws Exception
 	{
 		throw new UnsupportedOperationException();
 	}

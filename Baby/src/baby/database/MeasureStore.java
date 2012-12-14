@@ -28,7 +28,7 @@ public class MeasureStore extends DataBeanStore<Measure>
 	@Override
 	protected TableDef defineMapping()
 	{
-		TableDef td = TableDef.newInstance("Measures", this);
+		TableDef td = createTableDef("Measures");
 
 		td.defineCol("Label", String.class).size(0, Measure.MAXSIZE_LABEL);
 		td.defineCol("ForMother", Boolean.class);
@@ -49,7 +49,7 @@ public class MeasureStore extends DataBeanStore<Measure>
 	
 	public List<UUID> getAll() throws Exception
 	{
-		return getAllBeanIDs("Label", true);
+		return queryAll("Label", true);
 	}
 	
 	public List<UUID> getAll(boolean forMother) throws Exception

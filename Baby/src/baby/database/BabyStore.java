@@ -29,7 +29,7 @@ public class BabyStore extends DataBeanStore<Baby>
 	@Override
 	protected TableDef defineMapping()
 	{
-		TableDef td = TableDef.newInstance("Babies", this);
+		TableDef td = createTableDef("Babies");
 
 		td.defineCol("UserID", UUID.class).invariant().ownedBy("Users");
 		td.defineCol("Name", String.class);

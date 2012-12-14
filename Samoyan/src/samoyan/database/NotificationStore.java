@@ -29,7 +29,7 @@ public final class NotificationStore extends DataBeanStore<Notification>
 	@Override
 	protected TableDef defineMapping()
 	{
-		TableDef td = TableDef.newInstance("Notifications", this);
+		TableDef td = createTableDef("Notifications");
 		
 		td.defineCol("UserID", UUID.class).invariant().ownedBy("Users");
 		td.defineCol("EventID", UUID.class).invariant();

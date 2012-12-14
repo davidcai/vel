@@ -1,13 +1,7 @@
 package elert.app;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import samoyan.core.image.LargestCropSizer;
-import samoyan.database.DataBean;
-import samoyan.database.DataBeanStore;
 import samoyan.database.ImageStore;
-import samoyan.database.LinkStore;
 import samoyan.database.PermissionStore;
 import samoyan.database.Server;
 import samoyan.database.ServerStore;
@@ -46,50 +40,39 @@ import elert.pages.typeahead.TypeAheadApp;
 public class ElertController extends Controller
 {
 	@Override
-	protected List<DataBeanStore<? extends DataBean>> getDataBeanStores()
+	protected void preStart() throws Exception
 	{
-		List<DataBeanStore<? extends DataBean>> result = new ArrayList<DataBeanStore<? extends DataBean>>();
+		UserExStore.getInstance().define();
 		
-		result.add(UserExStore.getInstance());
-
 		// Geography
-		result.add(RegionStore.getInstance());
-		result.add(ServiceAreaStore.getInstance());
-		result.add(FacilityStore.getInstance());
+		RegionStore.getInstance().define();
+		ServiceAreaStore.getInstance().define();
+		FacilityStore.getInstance().define();
 		
 		// Procedures
-		result.add(ProcedureTypeStore.getInstance());
-		result.add(ProcedureStore.getInstance());
-		result.add(ResourceStore.getInstance());
+		ProcedureTypeStore.getInstance().define();
+		ProcedureStore.getInstance().define();
+		ResourceStore.getInstance().define();
 		
-		result.add(SubscriptionStore.getInstance());
-		result.add(OpeningStore.getInstance());
-		result.add(ElertStore.getInstance());
+		SubscriptionStore.getInstance().define();
+		OpeningStore.getInstance().define();
+		ElertStore.getInstance().define();
 		
-		return result;
+		// Link tables
+		PhysicianFacilityLinkStore.getInstance().define();
+		ResourceProcedureLinkStore.getInstance().define();
+		ServiceAreaUserLinkStore.getInstance().define();
+		ProcedureFacilityLinkStore.getInstance().define();
+		SubscriptionProcedureLinkStore.getInstance().define();
+		SubscriptionPhysicianLinkStore.getInstance().define();
+		ProcedureOpeningLinkStore.getInstance().define();
+		PhysicianOpeningLinkStore.getInstance().define();
+		PhysicianProcedureTypeLinkStore.getInstance().define();
+		SubscriptionFacilityLinkStore.getInstance().define();
 	}
-
+	
 	@Override
-	protected List<LinkStore> getLinkStores()
-	{
-		List<LinkStore> result = new ArrayList<LinkStore>();
-
-		result.add(PhysicianFacilityLinkStore.getInstance());
-		result.add(ResourceProcedureLinkStore.getInstance());
-		result.add(ServiceAreaUserLinkStore.getInstance());
-		result.add(ProcedureFacilityLinkStore.getInstance());
-		result.add(SubscriptionProcedureLinkStore.getInstance());
-		result.add(SubscriptionPhysicianLinkStore.getInstance());
-		result.add(ProcedureOpeningLinkStore.getInstance());
-		result.add(PhysicianOpeningLinkStore.getInstance());
-		result.add(PhysicianProcedureTypeLinkStore.getInstance());
-		result.add(SubscriptionFacilityLinkStore.getInstance());
-
-		return result;
-	}
-
-	@Override
-	protected void initController() throws Exception
+	protected void start() throws Exception
 	{
 		// Envelopes
 		Dispatcher.bindEnvelope(ElertEnvelopePage.class);

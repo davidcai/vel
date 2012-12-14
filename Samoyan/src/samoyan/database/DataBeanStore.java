@@ -1,18 +1,11 @@
 package samoyan.database;
 
-import java.io.*;
-import java.net.InetAddress;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.*;
 
 import samoyan.core.Cache;
-import samoyan.core.Day;
-import samoyan.core.LocaleEx;
 import samoyan.core.ParameterList;
-import samoyan.core.TimeOfDay;
-import samoyan.core.TimeZoneEx;
 import samoyan.core.Util;
 
 public abstract class DataBeanStore<T extends DataBean>
@@ -36,8 +29,29 @@ public abstract class DataBeanStore<T extends DataBean>
 	 * @param td
 	 */
 	protected abstract TableDef defineMapping();
-
+	
 	public TableDef getTableDef()
+	{
+		if (this.tableDef==null)
+		{
+			throw new NullPointerException("Definition missing for " + this.getClass().getName());
+		}
+		return this.tableDef;
+	}
+	
+	public TableDef createTableDef(String name)
+	{
+		if (this.tableDef!=null)
+		{
+			throw new NullPointerException("Definition already created for " + this.getClass().getName());
+		}
+		
+		this.tableDef = TableDef.newInstance(name, this);
+		
+		return this.tableDef;
+	}
+	
+	public void define()
 	{
 		if (this.tableDef==null) { synchronized(this) { if (this.tableDef==null)
 		{
@@ -82,7 +96,6 @@ public abstract class DataBeanStore<T extends DataBean>
 				}
 			}
 		}}}
-		return this.tableDef;
 	}
 
 	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -226,7 +239,7 @@ public abstract class DataBeanStore<T extends DataBean>
 				ResultSet rs = q.select(sql.toString(), params);
 				if (rs.next())
 				{
-					colsResultSetIntoBean(bean, rs, td);
+					DataBeanStoreUtil.resultSetToBean(rs, bean, td);
 				}
 				else
 				{
@@ -250,9 +263,9 @@ public abstract class DataBeanStore<T extends DataBean>
 //				ResultSet rs = q.select("SELECT ID,Name,Typ,Val,ValBin,ValNum,HasImage=CASE WHEN ValImage IS NULL THEN 0 ELSE 1 END,HasText=CASE WHEN ValText IS NULL THEN 0 ELSE 1 END FROM Props WHERE LinkedID=?", params);
 				while (rs.next())
 				{
-					Prop prop = resultSetToProp(rs);
-					
-					if (td.isColumn(prop.name)==false) // Safety check: do not insert renegade props with same name as a column
+					Prop prop = new Prop();
+					DataBeanStoreUtil.resultSetToProp(rs, prop, td);
+					if (td.isColumn(prop.name)==false) // Safety check: do not insert props with same name as a column
 					{
 						bean.putReadProp(prop.name, prop);
 					}
@@ -300,282 +313,7 @@ public abstract class DataBeanStore<T extends DataBean>
 		}
 		return bean;
 	}
-	
-	private void colsResultSetIntoBean(T bean, ResultSet rs, TableDef td) throws Exception
-	{
-		ResultSetMetaData meta = rs.getMetaData();
-		int colCount = meta.getColumnCount();
-		
-		for (int i=1; i<=colCount; i++)
-		{
-			String col = meta.getColumnName(i);
 			
-			if (col.equalsIgnoreCase("ID"))
-			{
-				bean.setID(Util.bytesToUUID(rs.getBytes(col)));
-				continue;
-			}
-					
-			Prop prop = new Prop();
-			prop.id = null;
-			prop.name = col;
-			prop.img = false;
-
-			PropDef pd = td.getColDef(col);
-			if (pd==null || pd.getType().equals(String.class))
-			{
-				prop.value = rs.getString(col);
-			}
-			else if (pd.getType().equals(Long.class))
-			{
-				prop.value = rs.getLong(col);
-			}
-			else if (pd.getType().equals(Integer.class))
-			{
-				prop.value = rs.getInt(col);
-			}
-			else if (pd.getType().equals(Short.class))
-			{
-				prop.value = rs.getShort(col);
-			}
-			else if (pd.getType().equals(Float.class))
-			{
-				prop.value = rs.getFloat(col);
-			}
-			else if (pd.getType().equals(Double.class))
-			{
-				prop.value = rs.getDouble(col);
-			}
-			else if (pd.getType().equals(Boolean.class))
-			{
-				int v = rs.getInt(col);
-				if (!rs.wasNull())
-				{
-					prop.value = (v!=0);
-				}
-			}
-			else if (pd.getType().equals(Date.class))
-			{
-				long v = rs.getLong(col);
-				if (!rs.wasNull())
-				{
-					prop.value = new Date(v);
-				}
-			}
-			else if (pd.getType().equals(Day.class))
-			{
-				long v = rs.getLong(col);
-				if (!rs.wasNull())
-				{
-					prop.value = new Day(TimeZoneEx.GMT, new Date(v));
-				}
-			}
-			else if (pd.getType().equals(TimeOfDay.class))
-			{
-				int v = rs.getInt(col);
-				if (!rs.wasNull())
-				{
-					prop.value = new TimeOfDay(v);
-				}
-			}
-			else if (pd.getType().equals(UUID.class))
-			{
-				byte[] v = rs.getBytes(col);
-				if (!rs.wasNull())
-				{
-					prop.value = Util.bytesToUUID(v);
-				}
-			}
-			else if (pd.getType().equals(InetAddress.class))
-			{
-				byte[] v = rs.getBytes(col);
-				if (!rs.wasNull())
-				{
-					prop.value = InetAddress.getByAddress(v);
-				}
-			}
-			else if (pd.getType().equals(byte[].class))
-			{
-				prop.value = rs.getBytes(col);
-			}
-			else if (pd.getType().equals(BitSet.class))
-			{
-//				prop.value = BitSet.valueOf(rs.getBytes(++c));
-				prop.value = Util.bytesToBitSet(rs.getBytes(col)); // BitSet.valueOf is JDK 7, using Util to maintain JDK 6 compatibility
-			}
-			else if (pd.getType().equals(TimeZone.class))
-			{
-				String v = rs.getString(col);
-				if (!rs.wasNull())
-				{
-					prop.value = TimeZone.getTimeZone(v);
-				}
-			}
-			else if (pd.getType().equals(Locale.class))
-			{
-				String v = rs.getString(col);
-				if (!rs.wasNull())
-				{
-					prop.value = LocaleEx.fromString(v);
-				}
-			}
-			else if (classImplements(pd.getType(), Serializable.class))
-			{
-				prop.value = deserialize(rs.getBytes(col));
-			}
-			else
-			{
-				throw new SQLException("Unknown type: " + td.getName() + " " + prop.name + " " + pd.getType().getName());
-			}
-
-			if (rs.wasNull()==false)
-			{
-				bean.putReadProp(prop.name, prop);
-			}
-		}
-	}
-	
-	private Prop resultSetToProp(ResultSet rs) throws Exception
-	{
-		Prop prop = new Prop();
-		prop.id = Util.bytesToUUID(rs.getBytes("ID"));
-		prop.name = rs.getString("Name");
-		
-		String type = rs.getString("Typ").trim();
-		
-//		PropDef pd = td.getPropDef(prop.name);
-//		if (pd==null || pd.getType().equals(String.class))
-		if (type.equals("Str"))
-		{
-			prop.value = rs.getString("ValStr");
-		}
-//		else if (pd.getType().equals(Long.class))
-		else if (type.equals("Long"))
-		{
-			prop.value = rs.getLong("ValNum");
-		}
-//		else if (pd.getType().equals(Integer.class))
-		else if (type.equals("Int"))
-		{
-			prop.value = rs.getInt("ValNum");
-		}
-//		else if (pd.getType().equals(Short.class))
-		else if (type.equals("Shrt"))
-		{
-			prop.value = rs.getShort("ValNum");
-		}
-//		else if (pd.getType().equals(Float.class))
-		else if (type.equals("Flot"))
-		{
-			prop.value = rs.getFloat("ValNum");
-		}
-//		else if (pd.getType().equals(Double.class))
-		else if (type.equals("Dbl"))
-		{
-			prop.value = rs.getDouble("ValNum");
-		}
-//		else if (pd.getType().equals(Boolean.class))
-		else if (type.equals("Bool"))
-		{
-			prop.value = (rs.getInt("ValNum")!=0L);
-		}
-//		else if (pd.getType().equals(Date.class))
-		else if (type.equals("Date"))
-		{
-			prop.value = new Date(rs.getLong("ValNum"));
-		}
-//		else if (pd.getType().equals(Day.class))
-		else if (type.equals("Day"))
-		{
-			prop.value = new Day(TimeZoneEx.GMT, new Date(rs.getLong("ValNum")));
-		}
-//		else if (pd.getType().equals(TimeOfDay.class))
-		else if (type.equals("TmDy"))
-		{
-			prop.value = new TimeOfDay(rs.getInt("ValNum"));
-		}
-//		else if (pd.getType().equals(UUID.class))
-		else if (type.equals("UUID"))
-		{
-			prop.value = Util.bytesToUUID(rs.getBytes("ValBytes"));
-		}
-//		else if (pd.getType().equals(InetAddress.class))
-		else if (type.equals("INet"))
-		{
-			prop.value = InetAddress.getByAddress(rs.getBytes("ValBytes"));
-		}
-//		else if (pd.getType().equals(byte[].class))
-		else if (type.equals("Bin"))
-		{
-			prop.value = rs.getBytes("ValBytes");
-		}
-//		else if (pd.getType().equals(BitSet.class))
-		else if (type.equals("BitS"))
-		{
-//			prop.value = BitSet.valueOf(rs.getBytes"ValBytes"5));
-			prop.value = Util.bytesToBitSet(rs.getBytes("ValBytes")); // BitSet.valueOf in JDK 7, using Util to maintain JDK 6 compatibility
-		}
-//		else if (pd.getType().equals(TimeZone.class))
-		else if (type.equals("TmZn"))
-		{
-			prop.value = TimeZone.getTimeZone(rs.getString("ValStr"));
-		}
-		else if (type.equals("Locl"))
-		{
-			prop.value = LocaleEx.fromString(rs.getString("ValStr"));
-		}
-		else if (type.equals("Srlz"))
-		{
-			ByteArrayInputStream bais = new ByteArrayInputStream(rs.getBytes("ValBytes"));
-			ObjectInputStream ois = new ObjectInputStream(bais);
-			prop.value = ois.readObject();
-			ois.close();
-			bais.close();
-		}
-		else
-		{
-//			throw new SQLException("Unknown type: " + beanClass.getName() + " " + prop.name + " " + pd.getType().getName());
-			throw new SQLException("Unknown type: " + prop.name + " " + type);
-		}
-
-		return prop;
-	}
-	
-	private static Object deserialize(byte[] bytes) throws IOException, ClassNotFoundException
-	{
-		if (bytes==null || bytes.length==0) return null;
-		
-		ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-		ObjectInputStream ois = new ObjectInputStream(bais);
-		Object result = ois.readObject();
-		ois.close();
-		bais.close();
-		return result;
-	}
-	
-	private static byte[] serialize(Object obj) throws IOException
-	{
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ObjectOutputStream oos = new ObjectOutputStream(baos);
-		oos.writeObject(obj);
-		oos.close();
-		baos.close();
-		
-		return baos.toByteArray();
-	}
-	
-	private static boolean classImplements(Class<?> cls, Class<?> intrfc)
-	{
-		for (Class<?> i : cls.getInterfaces())
-		{
-			if (i.equals(intrfc))
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-	
 	public void save(T bean) throws Exception
 	{
 		if (bean==null || bean.isDirty()==false) return;
@@ -605,6 +343,10 @@ public abstract class DataBeanStore<T extends DataBean>
 		for (PropDef col : td.getCols())
 		{
 			if (!insert && bean.isDirty(col.getName())==false) continue;
+			if (!insert && col.isInvariant())
+			{
+				throw new SQLException("Invariant column " + td.getName() + "." + col.getName());
+			}
 			dirtyColumns = true;
 
 			sql.append(col.getName());
@@ -631,117 +373,12 @@ public abstract class DataBeanStore<T extends DataBean>
 					if (!rs.next())
 					{
 						// !$! Record has been deleted by another thread?
-						throw new SQLException("Bean record not found in database for given ID");
+						throw new SQLException("Record not found in database for ID " + bean.getID().toString());
 					}
 				}
 				
-				int c = 0;
-				for (PropDef pd : td.getCols())
-				{
-					if (!insert && bean.isDirty(pd.getName())==false) continue;
-											
-					if (!insert && pd.isInvariant())
-					{
-						throw new SQLException("Invariant column: " + bean.getClass().getName() + " " + pd.getName());
-					}
-					
-//					Prop readProp = bean.getReadProp(pd.getName()); // readProp may be null
-
-					Object val = bean.get(pd.getName());					
-					if (val==null)
-					{
-						if (!insert)
-						{
-							rs.updateNull(++c);
-						}
-						else
-						{
-							c++; // Allow default values defined in database to be used
-						}
-					}
-					else if (pd==null || pd.getType().equals(String.class))
-					{
-						rs.updateString(++c, val.toString());
-					}
-					else if (pd.getType().equals(Long.class))
-					{
-						rs.updateLong(++c, (Long) val);
-					}
-					else if (pd.getType().equals(Integer.class))
-					{
-						rs.updateInt(++c, (Integer) val);
-					}
-					else if (pd.getType().equals(Short.class))
-					{
-						rs.updateShort(++c, (Short) val);
-					}
-					else if (pd.getType().equals(Float.class))
-					{
-						rs.updateFloat(++c, (Float) val);
-					}
-					else if (pd.getType().equals(Double.class))
-					{
-						rs.updateDouble(++c, (Double) val);
-					}
-					else if (pd.getType().equals(Boolean.class))
-					{
-						rs.updateInt(++c, ((Boolean) val)? 1 : 0);
-					}
-					else if (pd.getType().equals(Date.class))
-					{
-						rs.updateLong(++c, ((Date) val).getTime());
-					}
-					else if (pd.getType().equals(Day.class))
-					{
-						rs.updateLong(++c, ((Day) val).getDayStart(TimeZoneEx.GMT).getTime());
-					}
-					else if (pd.getType().equals(TimeOfDay.class))
-					{
-						rs.updateInt(++c, ((TimeOfDay) val).getSeconds());
-					}
-					else if (pd.getType().equals(UUID.class))
-					{
-						rs.updateBytes(++c, Util.uuidToBytes((UUID) val));
-					}
-					else if (pd.getType().equals(InetAddress.class))
-					{
-						byte[] bytes = ((InetAddress) val).getAddress();
-						if (bytes.length==4)
-						{
-							// Convert IPv4 address to its IPv6 representation
-							bytes = new byte[] {0, 0, 0, 0,   0, 0, 0, 0,   0, 0, (byte)0xff, (byte)0xff,   bytes[0], bytes[1], bytes[2], bytes[3]};
-						}
-						rs.updateBytes(++c, bytes);
-					}
-					else if (pd.getType().equals(TimeZone.class))
-					{
-						rs.updateString(++c, ((TimeZone) val).getID());
-					}
-					else if (pd.getType().equals(Locale.class))
-					{
-						rs.updateString(++c, ((Locale) val).toString());
-					}
-					else if (pd.getType().equals(byte[].class))
-					{
-						rs.updateBytes(++c, (byte[]) val);
-					}
-					else if (pd.getType().equals(BitSet.class))
-					{
-//						rs.updateBytes(++c, ((BitSet) val).toByteArray());
-						rs.updateBytes(++c, Util.bitSetToBytes((BitSet) val)); // BitSet.toByteArray is JDK 7, using Util to maintain JDK 6 compatibility
-					}
-					else if (classImplements(pd.getType(), Serializable.class))
-					{
-						rs.updateBytes(++c, serialize(val));
-					}
-					else
-					{
-						throw new SQLException("Unknown type: " + bean.getClass().getName() + " " + pd.getName() + " " + pd.getType().getName());
-					}
-				}
+				DataBeanStoreUtil.beanToResultSet(bean, rs, td);
 				
-				rs.updateBytes("ID", beanIDBytes);
-
 				if (insert)
 				{
 					rs.insertRow();
@@ -773,7 +410,7 @@ public abstract class DataBeanStore<T extends DataBean>
 			PropDef pd = td.getPropDef(prop.name); // pd can be null for dynamic properties
 			if (!insert && pd!=null && pd.isInvariant())
 			{
-				throw new SQLException("Invariant property: " + bean.getClass().getName() + " " + prop.name);
+				throw new SQLException("Invariant property " + td.getName() + "." + prop.name);
 			}
 
 			if (prop.value==null)
@@ -837,7 +474,7 @@ public abstract class DataBeanStore<T extends DataBean>
 					{
 						params.clear();
 						params.add(prop.id);
-						ResultSet rs = q.updatableSelect("SELECT ID,LinkedID,Name,Val,ValText,ValBin,ValImage,ValNum,Typ FROM Props WHERE ID=?", params);
+						ResultSet rs = q.updatableSelect("SELECT * FROM Props WHERE ID=?", params);
 						if (insertProp)
 						{
 							rs.moveToInsertRow();
@@ -846,229 +483,9 @@ public abstract class DataBeanStore<T extends DataBean>
 						{
 							rs.next();
 						}
-	
-						rs.updateBytes(2, beanIDBytes);
-						rs.updateString(3, prop.name);
 		
-						if (prop.value instanceof String)
-						{
-							String val = (String) prop.value;
-							if (val.length()<=MAX_VALUE_LEN)
-							{
-								// Store short values in Val (nvarchar 256)
-								rs.updateString(4, val);
-								rs.updateNull(5);
-							}
-							else
-							{
-								// Store long values in ValText (ntext)
-								rs.updateNull(4);
-								rs.updateString(5, val);
-							}
-							rs.updateNull(6);
-							rs.updateNull(7);
-							rs.updateNull(8);
-							rs.updateString(9, "Str");
-						}
-						else if (prop.value instanceof Long)
-						{
-							Long val = (Long) prop.value;
-							rs.updateNull(4);
-							rs.updateNull(5);
-							rs.updateNull(6);
-							rs.updateNull(7);
-							rs.updateLong(8, val);
-							rs.updateString(9, "Long");
-						}
-						else if (prop.value instanceof Integer)
-						{
-							Integer val = (Integer) bean.get(prop.name);
-							rs.updateNull(4);
-							rs.updateNull(5);
-							rs.updateNull(6);
-							rs.updateNull(7);
-							rs.updateLong(8, (long) val);
-							rs.updateString(9, "Int");
-						}
-						else if (prop.value instanceof Short)
-						{
-							Short val = (Short) bean.get(prop.name);
-							rs.updateNull(4);
-							rs.updateNull(5);
-							rs.updateNull(6);
-							rs.updateNull(7);
-							rs.updateLong(8, (long) val);
-							rs.updateString(9, "Shrt");
-						}
-						else if (prop.value instanceof Float)
-						{
-							Float val = (Float) bean.get(prop.name);
-							rs.updateNull(4);
-							rs.updateNull(5);
-							rs.updateNull(6);
-							rs.updateNull(7);
-							rs.updateFloat(8, (float) val);
-							rs.updateString(9, "Flot");
-						}
-						else if (prop.value instanceof Double)
-						{
-							Double val = (Double) bean.get(prop.name);
-							rs.updateNull(4);
-							rs.updateNull(5);
-							rs.updateNull(6);
-							rs.updateNull(7);
-							rs.updateDouble(8, (double) val);
-							rs.updateString(9, "Dbl");
-						}
-						else if (prop.value instanceof Boolean)
-						{
-							Boolean val = (Boolean) bean.get(prop.name);
-							rs.updateNull(4);
-							rs.updateNull(5);
-							rs.updateNull(6);
-							rs.updateNull(7);
-							rs.updateLong(8, val?1L:0L);
-							rs.updateString(9, "Bool");
-						}
-						else if (prop.value instanceof Date)
-						{
-							Date val = (Date) bean.get(prop.name);
-							rs.updateNull(4);
-							rs.updateNull(5);
-							rs.updateNull(6);
-							rs.updateNull(7);
-							rs.updateLong(8, val.getTime());
-							rs.updateString(9, "Date");
-						}
-						else if (prop.value instanceof Day)
-						{
-							Day val = (Day) bean.get(prop.name);
-							rs.updateNull(4);
-							rs.updateNull(5);
-							rs.updateNull(6);
-							rs.updateNull(7);
-							rs.updateLong(8, val.getDayStart(TimeZoneEx.GMT).getTime());
-							rs.updateString(9, "Day");
-						}
-						else if (prop.value instanceof TimeOfDay)
-						{
-							TimeOfDay val = (TimeOfDay) bean.get(prop.name);
-							rs.updateNull(4);
-							rs.updateNull(5);
-							rs.updateNull(6);
-							rs.updateNull(7);
-							rs.updateLong(8, val.getSeconds());
-							rs.updateString(9, "TmDy");
-						}
-						else if (prop.value instanceof UUID)
-						{
-							UUID uuid = (UUID) bean.get(prop.name);
-							rs.updateNull(4);
-							rs.updateNull(5);
-							rs.updateBytes(6, Util.uuidToBytes(uuid));
-							rs.updateNull(7);
-							rs.updateNull(8);
-							rs.updateString(9, "UUID");
-						}
-						else if (prop.value instanceof InetAddress)
-						{
-							InetAddress iNet = (InetAddress) bean.get(prop.name);
-							rs.updateNull(4);
-							rs.updateNull(5);
-							rs.updateBytes(6, iNet.getAddress());
-							rs.updateNull(7);
-							rs.updateNull(8);
-							rs.updateString(9, "INet");
-						}
-						else if (prop.value instanceof TimeZone)
-						{
-							TimeZone val = (TimeZone) bean.get(prop.name);
-							rs.updateString(4, val.getID());
-							rs.updateNull(5);
-							rs.updateNull(6);
-							rs.updateNull(7);
-							rs.updateNull(8);
-							rs.updateString(9, "TmZn");
-						}
-						else if (prop.value instanceof Locale)
-						{
-							Locale val = (Locale) bean.get(prop.name);
-							rs.updateString(4, val.toString());
-							rs.updateNull(5);
-							rs.updateNull(6);
-							rs.updateNull(7);
-							rs.updateNull(8);
-							rs.updateString(9, "Locl");
-						}
-						else if (prop.value instanceof byte[])
-						{
-							byte[] val = (byte[]) bean.get(prop.name);
-							rs.updateNull(4);
-							rs.updateNull(5);
-							if (val.length<=MAX_VALUE_LEN)
-							{
-								// Store short values in ValBin (varbinary 256)
-								rs.updateBytes(6, val);
-								rs.updateNull(7);
-							}
-							else
-							{
-								// Store long values in ValImage (image)
-								rs.updateNull(6);
-								rs.updateBytes(7, val);
-							}
-							rs.updateNull(8);
-							rs.updateString(9, "Bin");
-						}
-						else if (prop.value instanceof BitSet)
-						{
-							BitSet val = (BitSet) bean.get(prop.name);
-							rs.updateNull(4);
-							rs.updateNull(5);
-							if (val.size()*8<=MAX_VALUE_LEN)
-							{
-								// Store short values in ValBin (varbinary 256)
-	//							rs.updateBytes(6, val.toByteArray());
-								rs.updateBytes(6, Util.bitSetToBytes(val)); // BitSet.toByteArray in JDK 7, using Util to maintain JDK 6 compatibility
-								rs.updateNull(7);
-							}
-							else
-							{
-								// Store long values in ValImage (image)
-								rs.updateNull(6);
-	//							rs.updateBytes(7, val.toByteArray());
-								rs.updateBytes(7, Util.bitSetToBytes(val)); // BitSet.toByteArray in JDK 7, using Util to maintain JDK 6 compatibility
-							}
-							rs.updateNull(8);
-							rs.updateString(9, "BitS");
-						}
-						else if (prop.value instanceof Serializable)
-						{
-							byte[] val = serialize(prop.value);
-							rs.updateNull(4);
-							rs.updateNull(5);
-							if (val.length<=MAX_VALUE_LEN)
-							{
-								// Store short values in ValBin (varbinary 256)
-								rs.updateBytes(6, val);
-								rs.updateNull(7);
-							}
-							else
-							{
-								// Store long values in ValImage (image)
-								rs.updateNull(6);
-								rs.updateBytes(7, val);
-							}
-							rs.updateNull(8);
-							rs.updateString(9, "Srlz");
-						}
-						else
-						{
-							throw new SQLException("Unknown type: " + bean.getClass().getName() + " " + prop.name + " " + prop.value.getClass().getName());
-						}
-	
-						rs.updateBytes(1, Util.uuidToBytes(prop.id));
-											
+						DataBeanStoreUtil.propToResultSet(prop, rs, td, bean.getID());
+						
 						if (insertProp)
 						{
 							rs.insertRow();
@@ -1127,109 +544,7 @@ public abstract class DataBeanStore<T extends DataBean>
 			Cache.invalidate(cacheKey);
 		}
 	}
-	
-/*	
-	private void writeBeanIntoResultSet(ResultSet rs, T bean, TableDef td) throws IOException, SQLException
-	{
-		ResultSetMetaData meta = rs.getMetaData();
-		int colCount = meta.getColumnCount();
-	
-		boolean insert = !bean.isSaved();
 		
-		for (int i=1; i<=colCount; i++)
-		{
-			String col = meta.getColumnName(i);
-			Object val = bean.get(col);
-			PropDef pd = td.getPropDef(col);
-			
-			if (!insert && pd.isInvariant())
-			{
-				throw new SQLException("Invariant column: " + bean.getClass().getName() + " " + col);
-			}
-			
-			if (val==null)
-			{
-				if (!insert) // To allow default values defined in database to be used
-				{
-					rs.updateNull(col);
-				}
-			}
-			else if (pd==null || pd.getType().equals(String.class))
-			{
-				rs.updateString(col, val.toString());
-			}
-			else if (pd.getType().equals(Long.class))
-			{
-				rs.updateLong(col, (Long) val);
-			}
-			else if (pd.getType().equals(Integer.class))
-			{
-				rs.updateInt(col, (Integer) val);
-			}
-			else if (pd.getType().equals(Short.class))
-			{
-				rs.updateShort(col, (Short) val);
-			}
-			else if (pd.getType().equals(Float.class))
-			{
-				rs.updateFloat(col, (Float) val);
-			}
-			else if (pd.getType().equals(Double.class))
-			{
-				rs.updateDouble(col, (Double) val);
-			}
-			else if (pd.getType().equals(Boolean.class))
-			{
-				rs.updateInt(col, ((Boolean) val)? 1 : 0);
-			}
-			else if (pd.getType().equals(Date.class))
-			{
-				rs.updateLong(col, ((Date) val).getTime());
-			}
-			else if (pd.getType().equals(UUID.class))
-			{
-				rs.updateBytes(col, Util.uuidToBytes((UUID) val));
-			}
-			else if (pd.getType().equals(InetAddress.class))
-			{
-				rs.updateBytes(col, ((InetAddress) val).getAddress());
-			}
-			else if (pd.getType().equals(TimeZone.class))
-			{
-				rs.updateString(col, ((TimeZone) val).getID());
-			}
-			else if (pd.getType().equals(byte[].class))
-			{
-				rs.updateBytes(col, (byte[]) val);
-			}
-			else if (pd.getType().equals(BitSet.class))
-			{
-//				rs.updateBytes(col, ((BitSet) val).toByteArray());
-				rs.updateBytes(col, Util.bitSetToBytes((BitSet) val)); // BitSet.toByteArray in JDK 7, using Util to maintain JDK 6 compatibility
-			}
-			else if (pd.getType().equals(Serializable.class))
-			{
-				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				ObjectOutputStream oos = new ObjectOutputStream(baos);
-				oos.writeObject(val);
-				oos.close();
-				baos.close();
-				
-				rs.updateBytes(col, baos.toByteArray());
-			}
-			else
-			{
-				throw new SQLException("Unknown type: " + bean.getClass().getName() + " " + col + " " + pd.getType().getName());
-			}
-		}
-		
-		if (insert)
-		{
-			rs.updateBytes("ID", Util.uuidToBytes(UUID.randomUUID()));
-		}
-	}
-*/
-	
 	public void removeMany(List<UUID> beanIDs) throws Exception
 	{
 		for (UUID id : beanIDs)
@@ -1238,104 +553,104 @@ public abstract class DataBeanStore<T extends DataBean>
 		}
 	}
 	
-	/**
-	 * Performs a SQL query to determine which records to delete, then deletes them.
-	 * @param sql A SQL SELECT query that results in a list of IDs of this data bean, e.g.
-	 * "SELECT ID FROM MyTable WHERE Size>?".
-	 * @param params Parameters to pass to the query.
-	 * @throws Exception
-	 */
-	@Deprecated
-	protected void removeByQuery(String sql, List<Object> params) throws Exception
-	{
-		// First, query the database for the IDs
-		List<UUID> idsToDelete = Query.queryListUUID(sql, params);
-		if (idsToDelete.size()==0)
-		{
-			return;
-		}
-
-		// Dispatch events
-		if (eventHandlers!=null)
-		{
-			for (UUID id : idsToDelete)
-			{
-				dispatchBeforeRemove(id);
-			}
-		}
-
-		// Get the table definition
-		TableDef td = getTableDef();
-		
-		boolean onProps = sql.toUpperCase(Locale.US).matches("\bPROPS\b");
-		boolean onSelf = sql.toUpperCase(Locale.US).matches("\b" + td.getName().toUpperCase(Locale.US) + "\b");
-		if (onProps && onSelf && td.hasProps())
-		{
-			throw new IllegalArgumentException("Joined query on " + td.getName() + " and Props is not allowed in this context");
-		}
-		
-		Query q = new Query();
-
-		// Delete from Props table first, if the query is on the table itself
-		if (onSelf && td.hasProps())
-		{
-			try
-			{
-				q.update("DELETE FROM Props WHERE LinkedID IN (" + sql + ")", params);
-			}
-			finally
-			{
-				q.close();
-			}
-		}
-		
-		// Delete from main table
-		try
-		{
-			q.update("DELETE FROM " + td.getName() + " WHERE ID IN (" + sql + ")", params);
-		}
-		finally
-		{
-			q.close();
-		}
-		
-		// Invalidate cache
-		if (td.isCacheOnLoad() || td.isCacheOnSave())
-		{
-			for (UUID id : idsToDelete)
-			{
-				Cache.invalidate("bean:" + td.getName() + "." + id.toString());
-			}
-		}
-		
-		// Delete from Props table last, if the query was not on the table itself
-		if (!onSelf && td.hasProps())
-		{
-			try
-			{
-				q.update("DELETE FROM Props WHERE LinkedID IN (" + sql + ")", params);
-			}
-			finally
-			{
-				q.close();
-			}
-		}
-
-		// Dispatch events
-		if (eventHandlers!=null)
-		{
-			for (UUID id : idsToDelete)
-			{
-				dispatchAfterRemove(id);
-			}
-		}
-	}
+//	/**
+//	 * Performs a SQL query to determine which records to delete, then deletes them.
+//	 * @param sql A SQL SELECT query that results in a list of IDs of this data bean, e.g.
+//	 * "SELECT ID FROM MyTable WHERE Size>?".
+//	 * @param params Parameters to pass to the query.
+//	 * @throws Exception
+//	 */
+//	@Deprecated
+//	protected void removeByQuery(String sql, List<Object> params) throws Exception
+//	{
+//		// First, query the database for the IDs
+//		List<UUID> idsToDelete = Query.queryListUUID(sql, params);
+//		if (idsToDelete.size()==0)
+//		{
+//			return;
+//		}
+//
+//		// Dispatch events
+//		if (eventHandlers!=null)
+//		{
+//			for (UUID id : idsToDelete)
+//			{
+//				dispatchBeforeRemove(id);
+//			}
+//		}
+//
+//		// Get the table definition
+//		TableDef td = getTableDef();
+//		
+//		boolean onProps = sql.toUpperCase(Locale.US).matches("\bPROPS\b");
+//		boolean onSelf = sql.toUpperCase(Locale.US).matches("\b" + td.getName().toUpperCase(Locale.US) + "\b");
+//		if (onProps && onSelf && td.hasProps())
+//		{
+//			throw new IllegalArgumentException("Joined query on " + td.getName() + " and Props is not allowed in this context");
+//		}
+//		
+//		Query q = new Query();
+//
+//		// Delete from Props table first, if the query is on the table itself
+//		if (onSelf && td.hasProps())
+//		{
+//			try
+//			{
+//				q.update("DELETE FROM Props WHERE LinkedID IN (" + sql + ")", params);
+//			}
+//			finally
+//			{
+//				q.close();
+//			}
+//		}
+//		
+//		// Delete from main table
+//		try
+//		{
+//			q.update("DELETE FROM " + td.getName() + " WHERE ID IN (" + sql + ")", params);
+//		}
+//		finally
+//		{
+//			q.close();
+//		}
+//		
+//		// Invalidate cache
+//		if (td.isCacheOnLoad() || td.isCacheOnSave())
+//		{
+//			for (UUID id : idsToDelete)
+//			{
+//				Cache.invalidate("bean:" + td.getName() + "." + id.toString());
+//			}
+//		}
+//		
+//		// Delete from Props table last, if the query was not on the table itself
+//		if (!onSelf && td.hasProps())
+//		{
+//			try
+//			{
+//				q.update("DELETE FROM Props WHERE LinkedID IN (" + sql + ")", params);
+//			}
+//			finally
+//			{
+//				q.close();
+//			}
+//		}
+//
+//		// Dispatch events
+//		if (eventHandlers!=null)
+//		{
+//			for (UUID id : idsToDelete)
+//			{
+//				dispatchAfterRemove(id);
+//			}
+//		}
+//	}
 	
 	public void remove(UUID id) throws Exception
 	{
 		if (id==null) return;
 		
-		if (canRemoveBean(id)==false)
+		if (canRemove(id)==false)
 		{
 			throw new SQLException("Bean cannot be removed");
 		}
@@ -1427,17 +742,17 @@ public abstract class DataBeanStore<T extends DataBean>
 		return true;
 	}
 
-	public boolean canRemoveBean(UUID beanID) throws Exception
+	public boolean canRemove(UUID beanID) throws Exception
 	{
 		return dispatchCanRemove(beanID);
 	}
 	
-	protected List<UUID> getAllBeanIDs() throws Exception
+	protected List<UUID> queryAll() throws Exception
 	{
-		return getAllBeanIDs(null, true);
+		return queryAll(null, true);
 	}
 	
-	protected List<UUID> getAllBeanIDs(String sortColumn, boolean ascending) throws Exception
+	protected List<UUID> queryAll(String sortColumn, boolean ascending) throws Exception
 	{
 		// Get the table definition
 		TableDef td = getTableDef();
@@ -1580,7 +895,7 @@ public abstract class DataBeanStore<T extends DataBean>
 			protected T fromResultSet(ResultSet rs) throws Exception
 			{
 				T bean = getBeanClass().newInstance();
-				colsResultSetIntoBean(bean, rs, getTableDef());
+				DataBeanStoreUtil.resultSetToBean(rs, bean, getTableDef());
 				bean.setWritable(false);
 				bean.setSaved(true);
 				return bean;

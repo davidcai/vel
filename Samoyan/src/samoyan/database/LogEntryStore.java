@@ -32,7 +32,7 @@ public final class LogEntryStore extends DataBeanStore<LogEntry>
 	@Override
 	protected TableDef defineMapping()
 	{
-		TableDef td = TableDef.newInstance("LogEntries", this);
+		TableDef td = createTableDef("LogEntries");
 		td.setCacheOnSave(false);
 		
 		td.defineCol("Server", String.class).size(0, LogEntry.MAXSIZE_SERVER).invariant();

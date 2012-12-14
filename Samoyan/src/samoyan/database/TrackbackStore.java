@@ -29,7 +29,7 @@ public final class TrackbackStore extends DataBeanStore<Trackback>
 	@Override
 	protected TableDef defineMapping()
 	{
-		TableDef td = TableDef.newInstance("Trackbacks", this);
+		TableDef td = createTableDef("Trackbacks");
 		
 		td.defineCol("Addressee", String.class).size(0, Trackback.MAXSIZE_ADDRESSEE).invariant();
 		td.defineCol("Channel", String.class).size(0, Trackback.MAXSIZE_CHANNEL).invariant();

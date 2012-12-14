@@ -28,7 +28,7 @@ public final class UserStore extends DataBeanStore<User>
 	@Override
 	protected TableDef defineMapping()
 	{
-		TableDef td = TableDef.newInstance("Users", this);
+		TableDef td = createTableDef("Users");
 		
 		td.defineCol("LoginName", String.class).size(User.MINSIZE_LOGINNAME, User.MAXSIZE_LOGINNAME);
 		td.defineCol("Password", String.class).size(User.MINSIZE_PASSWORD, User.MAXSIZE_PASSWORD);
@@ -267,7 +267,7 @@ public final class UserStore extends DataBeanStore<User>
 			PermissionStore.getInstance().deauthorize(userID, perm);
 		}
 
-		if (canRemoveBean(userID))
+		if (canRemove(userID))
 		{
 			super.remove(userID);
 		}

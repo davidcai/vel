@@ -30,7 +30,7 @@ public final class CountryStore extends CsvDataBeanStore<Country>
 	@Override
 	protected TableDef defineMapping()
 	{
-		TableDef td = TableDef.newInstance("Countries", this);
+		TableDef td = createTableDef("Countries");
 		
 		td.defineCol("Name", String.class).invariant();
 		td.defineCol("ISO2", String.class).invariant();
@@ -51,7 +51,7 @@ public final class CountryStore extends CsvDataBeanStore<Country>
 	{
 		List<String> result = new ArrayList<String>();
 
-		List<UUID> all = getInstance().getAllBeanIDs();
+		List<UUID> all = getInstance().queryAll();
 		for (UUID id : all)
 		{
 			Country c = load(id);
@@ -97,7 +97,7 @@ public final class CountryStore extends CsvDataBeanStore<Country>
 		if (Util.isEmpty(phoneNumber)) return result;
 
 		int longestMatch = 0;
-		List<UUID> all = getInstance().getAllBeanIDs();
+		List<UUID> all = getInstance().queryAll();
 		for (UUID id : all)
 		{
 			Country country = load(id);
@@ -126,7 +126,7 @@ public final class CountryStore extends CsvDataBeanStore<Country>
 		String result = "";
 		if (Util.isEmpty(phoneNumber)) return result;
 
-		List<UUID> all = getInstance().getAllBeanIDs();
+		List<UUID> all = getInstance().queryAll();
 		for (UUID id : all)
 		{
 			Country country = load(id);
@@ -148,7 +148,7 @@ public final class CountryStore extends CsvDataBeanStore<Country>
 		List<UUID> result = new ArrayList<UUID>(); 
 		
 		String lcQ = q.toLowerCase(loc);
-		List<UUID> all = getInstance().getAllBeanIDs();
+		List<UUID> all = getInstance().queryAll();
 		for (UUID id : all)
 		{
 			Country country = load(id);

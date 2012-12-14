@@ -34,9 +34,9 @@ public final class ElertStore extends DataBeanStore<Elert>
 	}
 
 	@Override
-	public TableDef defineMapping()
+	protected TableDef defineMapping()
 	{
-		TableDef td = TableDef.newInstance("Elerts", this);
+		TableDef td = createTableDef("Elerts");
 
 		td.defineCol("SubscriptionID", UUID.class).refersTo("Subscriptions").invariant();
 		td.defineCol("OpeningID", UUID.class).refersTo("Openings").invariant();

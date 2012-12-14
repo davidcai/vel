@@ -22,7 +22,7 @@ public final class SubscriptionPhysicianLinkStore extends LinkStore
 	@Override
 	protected LinkTableDef defineMapping()
 	{
-		LinkTableDef td = LinkTableDef.newInstance("SubscriptionPhysicianLink");
+		LinkTableDef td = createLinkTableDef("SubscriptionPhysicianLink");
 		
 		td.setKey1("SubscriptionID", "Subscriptions");
 		td.setKey2("PhysicianID", "Users");

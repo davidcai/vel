@@ -33,9 +33,9 @@ public class OpeningStore extends DataBeanStore<Opening>
 	}	
 
 	@Override
-	public TableDef defineMapping()
+	protected TableDef defineMapping()
 	{
-		TableDef td = TableDef.newInstance("Openings", this);
+		TableDef td = createTableDef("Openings");
 
 		td.defineCol("RegionID", UUID.class).refersTo("Regions").invariant();	
 		td.defineCol("ServiceAreaID", UUID.class).refersTo("ServiceAreas").invariant();	

@@ -69,7 +69,7 @@ public class UnresolvedOpeningsPage extends ElertPage
 			for (String p : getContext().getParameterNamesThatStartWith("chk_"))
 			{
 				UUID openingID = UUID.fromString(p.substring(4));
-				if (OpeningStore.getInstance().canRemoveBean(openingID))
+				if (OpeningStore.getInstance().canRemove(openingID))
 				{
 					// Delete the opening
 					OpeningStore.getInstance().remove(openingID);

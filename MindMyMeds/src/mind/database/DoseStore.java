@@ -27,9 +27,9 @@ public class DoseStore extends DataBeanStore<Dose>
 	}	
 	
 	@Override
-	public TableDef defineMapping()
+	protected TableDef defineMapping()
 	{
-		TableDef td = TableDef.newInstance("Doses", this);
+		TableDef td = createTableDef("Doses");
 		
 		td.defineCol("PatientID", UUID.class).invariant().ownedBy("Patients");
 		td.defineCol("PrescriptionID", UUID.class).invariant().ownedBy("Prescriptions");

@@ -24,13 +24,10 @@ import samoyan.core.less.LessEngine;
 import samoyan.core.less.LessException;
 import samoyan.database.AuthTokenStore;
 import samoyan.database.CountryStore;
-import samoyan.database.DataBean;
-import samoyan.database.DataBeanStore;
 import samoyan.database.Database;
 import samoyan.database.Image;
 import samoyan.database.ImageStore;
 import samoyan.database.InternalMessageStore;
-import samoyan.database.LinkStore;
 import samoyan.database.LogEntryStore;
 import samoyan.database.LogTypeStore;
 import samoyan.database.MobileCarrierStore;
@@ -97,38 +94,22 @@ public class Controller extends HttpServlet
 			ImageStore.getInstance().bindSizer(Image.SIZE_THUMBNAIL, new LargestCropSizer(72, 72));
 			
 			// Load database object model
-			UserStore.getInstance().getTableDef();
-			CountryStore.getInstance().getTableDef();
-			LogEntryStore.getInstance().getTableDef();
-			LogTypeStore.getInstance().getTableDef();
-			MobileCarrierStore.getInstance().getTableDef();
-			NotificationStore.getInstance().getTableDef();
-			PermissionStore.getInstance().getTableDef();
-			ServerStore.getInstance().getTableDef();
-			TrackbackStore.getInstance().getTableDef();
-			UserGroupStore.getInstance().getTableDef();
-			AuthTokenStore.getInstance().getTableDef();
-			InternalMessageStore.getInstance().getTableDef();
+			UserStore.getInstance().define();
+			CountryStore.getInstance().define();
+			LogEntryStore.getInstance().define();
+			LogTypeStore.getInstance().define();
+			MobileCarrierStore.getInstance().define();
+			NotificationStore.getInstance().define();
+			PermissionStore.getInstance().define();
+			ServerStore.getInstance().define();
+			TrackbackStore.getInstance().define();
+			UserGroupStore.getInstance().define();
+			AuthTokenStore.getInstance().define();
+			InternalMessageStore.getInstance().define();
 			
-			UserUserGroupLinkStore.getInstance().getLinkTableDef();
+			UserUserGroupLinkStore.getInstance().define();
 			
-			List<DataBeanStore<? extends DataBean>> beanStores = this.getDataBeanStores(); // Call subclass
-			if (beanStores!=null)
-			{
-				for (DataBeanStore<? extends DataBean> store : beanStores)
-				{
-					store.getTableDef();
-				}
-			}
-			
-			List<LinkStore> linkStores = this.getLinkStores(); // Call subclass
-			if (linkStores!=null)
-			{
-				for (LinkStore store : linkStores)
-				{
-					store.getLinkTableDef();
-				}
-			}
+			this.preStart(); // Call subclass			
 			
 			// Init database
 			Database.createInstance(
@@ -167,7 +148,7 @@ public class Controller extends HttpServlet
 			TaskManager.addRecurring(new DeleteExpiredAuthTokensRecurringTask());
 			
 			// Subclass
-			this.initController(); // Call subclass
+			this.start(); // Call subclass
 			
 			// Log system start event
 			SystemStartLogEntry logEvent = new SystemStartLogEntry(System.currentTimeMillis() - startTime);
@@ -209,7 +190,7 @@ public class Controller extends HttpServlet
 			long start = System.currentTimeMillis();
 			
 			// Subclass
-			this.termController(); // Call subclass
+			this.terminate(); // Call subclass
 			
 			// Execution manager
 			TaskManager.terminateAll();
@@ -243,36 +224,28 @@ public class Controller extends HttpServlet
 	
 	/**
 	 * To be overridden by subclass to initialize the controller.
+	 * Called after the platform database is defined, but before the system is started.
+	 * Subclasses should use this method to define the database.
 	 */
-	protected void initController() throws Exception
+	protected void preStart() throws Exception
+	{	
+	}
+
+	/**
+	 * To be overridden by subclass to initialize the controller.
+	 * Called after the database is started and the platform started.
+	 */
+	protected void start() throws Exception
 	{	
 	}
 	
 	/**
 	 * To be overridden by subclass to terminate the controller.
 	 */
-	protected void termController() throws Exception
+	protected void terminate() throws Exception
 	{	
 	}
-	
-	/**
-	 * To be overridden by subclass to return the data bean stores used by the app.
-	 * At this point the database is not initialized, so no other actions may be performed.
-	 */
-	protected List<DataBeanStore<? extends DataBean>> getDataBeanStores()
-	{
-		return null;
-	}
-	
-	/**
-	 * To be overridden by subclass to return the link stores used by the app.
-	 * At this point the database is not initialized, so no other actions may be performed.
-	 */
-	protected List<LinkStore> getLinkStores()
-	{
-		return null;
-	}
-	
+		
 	public final static String getServletPath()
 	{
 		String servletPath = instance.getServletContext().getContextPath();

@@ -26,7 +26,7 @@ public final class LogTypeStore extends DataBeanStore<LogType>
 	@Override
 	protected TableDef defineMapping()
 	{
-		TableDef td = TableDef.newInstance("LogTypes", this);
+		TableDef td = createTableDef("LogTypes");
 		
 		td.defineCol("Name", String.class).size(0, LogEntry.MAXSIZE_NAME).invariant();
 		td.defineCol("Severity", Integer.class);

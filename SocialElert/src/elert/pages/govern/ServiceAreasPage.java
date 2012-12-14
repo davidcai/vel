@@ -90,7 +90,7 @@ public class ServiceAreasPage extends ElertPage
 
 					cell();
 					new CheckboxInputControl(this, "chk_" + area.getID().toString())
-						.setDisabled(ServiceAreaStore.getInstance().canRemoveBean(areaID)==false)
+						.setDisabled(ServiceAreaStore.getInstance().canRemove(areaID)==false)
 						.render();
 //					if (ServiceAreaStore.getInstance().canRemoveBean(areaID))
 //					{

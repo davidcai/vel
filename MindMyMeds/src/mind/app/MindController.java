@@ -1,8 +1,5 @@
 package mind.app;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import mind.database.DoseStore;
 import mind.database.DrugStore;
 import mind.database.PatientStore;
@@ -14,8 +11,6 @@ import mind.pages.patient.coaching.*;
 import mind.pages.patient.reminders.*;
 import mind.pages.profile.ProfileExtraPage;
 import mind.tasks.GenerateNewDosesRecurringTask;
-import samoyan.database.DataBean;
-import samoyan.database.DataBeanStore;
 import samoyan.servlet.Controller;
 import samoyan.servlet.Dispatcher;
 import samoyan.tasks.TaskManager;
@@ -23,24 +18,19 @@ import samoyan.tasks.TaskManager;
 public class MindController extends Controller
 {
 	@Override
-	protected List<DataBeanStore<? extends DataBean>> getDataBeanStores()
+	protected void preStart()
 	{
-		List<DataBeanStore<? extends DataBean>> result = new ArrayList<DataBeanStore<? extends DataBean>>();
-		
-		result.add(PatientStore.getInstance());
-		result.add(DrugStore.getInstance());
-		result.add(PrescriptionStore.getInstance());
-		result.add(DoseStore.getInstance());
-
-		return result;
+		PatientStore.getInstance().define();
+		DrugStore.getInstance().define();
+		PrescriptionStore.getInstance().define();
+		DoseStore.getInstance().define();
 	}
-
+	
 	@Override
-	protected void initController()
+	protected void start()
 	{
 		// Envelope page
 		Dispatcher.bindEnvelope(MindEnvelopePage.class);
-		
 		
 		// General
 		Dispatcher.bindPage(LoginPage.COMMAND,				LoginPage.class);

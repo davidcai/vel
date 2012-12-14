@@ -27,7 +27,7 @@ public final class ServerStore extends DataBeanStore<Server>
 	@Override
 	protected TableDef defineMapping()
 	{
-		TableDef td = TableDef.newInstance("Servers", this);
+		TableDef td = createTableDef("Servers");
 		
 		td.defineCol("Name", String.class).size(0, Server.MAXSIZE_NAME).invariant();
 		

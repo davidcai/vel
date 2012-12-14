@@ -18,7 +18,7 @@ public class CountriesTypeAhead extends TypeAhead
 	{
 		q = q.toLowerCase(getLocale());
 		
-		List<UUID> countryIDs = CountryStore.getInstance().getAllBeanIDs();
+		List<UUID> countryIDs = CountryStore.getInstance().queryAll();
 		for (UUID id : countryIDs)
 		{
 			Country country = CountryStore.getInstance().load(id);
