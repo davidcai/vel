@@ -4,9 +4,8 @@ import java.util.List;
 import java.util.UUID;
 
 import samoyan.apps.profile.ProfilePage;
+import samoyan.controls.ControlArray;
 import samoyan.controls.SelectInputControl;
-import samoyan.controls.TextInputControl;
-import samoyan.controls.TwoColFormControl;
 import samoyan.servlet.exc.GoBackRedirectException;
 import baby.database.Baby;
 import baby.database.BabyStore;
@@ -18,7 +17,7 @@ public class BabiesPage extends BabyPage
 	
 	public static final int MAXSIZE_BABY = 8;
 	public static final String PARAM_SAVE = "save";
-	public static final String PARAM_NUMBER = "number";
+	public static final String PARAM_BABIES = "babies";
 	public static final String PARAM_NAME_PREFIX = "name_";
 	public static final String PARAM_GENDER_PREFIX = "gender_";
 	public static final String PARAM_ID_PREFIX = "id_";
@@ -26,10 +25,10 @@ public class BabiesPage extends BabyPage
 	@Override
 	public void validate() throws Exception
 	{
-		int count = getParameterInteger(PARAM_NUMBER);
+		int count = getParameterInteger(PARAM_BABIES);
 		for (int i = 0; i < count; i++)
 		{
-			validateParameterString(PARAM_NAME_PREFIX + i, 0, Baby.MAXSIZE_NAME);
+			validateParameterString(PARAM_NAME_PREFIX + i, 1, Baby.MAXSIZE_NAME);
 		}
 	}
 	
@@ -38,7 +37,7 @@ public class BabiesPage extends BabyPage
 	{
 		List<UUID> oldIDs = BabyStore.getInstance().getAtLeastOneBaby(getContext().getUserID());
 
-		int count = getParameterInteger(PARAM_NUMBER);
+		int count = getParameterInteger(PARAM_BABIES);
 		for (int i = 0; i < count; i++)
 		{
 			Baby baby = null;
@@ -69,98 +68,118 @@ public class BabiesPage extends BabyPage
 	@Override
 	public void renderHTML() throws Exception
 	{
-		List<UUID> babyIDs = BabyStore.getInstance().getAtLeastOneBaby(getContext().getUserID());
-		
-		writeFormOpen();
-		
-		//
-		// Number of babies dropdown
-		//
-		
-		write("<div id=\"BabyNumber\">");
+		// Help
 		writeEncode(getString("babyprofile:Babies.TellUs"));
+		write("<br><br>");
 		
-		TwoColFormControl twoCol = new TwoColFormControl(this);
-		
-		twoCol.writeSpaceRow();
-		twoCol.writeRow(getString("babyprofile:Babies.Number"));
-		
-		SelectInputControl sel = new SelectInputControl(twoCol, PARAM_NUMBER);
-		for (int i = 1; i <= MAXSIZE_BABY; i++)
-		{
-			sel.addOption(getString("babyprofile:Babies.Number." + i), i);
-		}
-		
-		int selectedNum;
-		try
-		{
-			selectedNum = getParameterInteger(PARAM_NUMBER);
-		}
-		catch (Exception e)
-		{
-			selectedNum = babyIDs.size();
-		}
-		if (selectedNum == 0)
-		{
-			selectedNum = 1;
-		}
-		sel.setInitialValue(selectedNum);
-		sel.render();
-		
-		twoCol.writeSpaceRow();
-		twoCol.render();
-		write("</div>");
-		
-		//
 		// Baby list
-		//
-		
-		write("<ul id=\"BabyList\" class=\"PlainList\">");
-		for (int i = 0; i < MAXSIZE_BABY; i++)
+		writeFormOpen();
+		List<UUID> babyIDs = BabyStore.getInstance().getAtLeastOneBaby(getContext().getUserID());
+		new ControlArray<UUID>(this, PARAM_BABIES, babyIDs)
 		{
-			Baby baby = null;
-			if (i < babyIDs.size())
+			@Override
+			public void renderRow(int i, UUID babyID) throws Exception
 			{
-				baby = BabyStore.getInstance().load(babyIDs.get(i));
+				Baby baby = BabyStore.getInstance().load(babyID);
+				writeHiddenInput(PARAM_ID_PREFIX + i, baby != null ? baby.getID() : null);
+				writeTextInput(PARAM_NAME_PREFIX + i, 
+					baby != null ? baby.getName() : getString("babyprofile:Babies.Anonymous"), 30, Baby.MAXSIZE_NAME);
+				write("&nbsp;");
+				new SelectInputControl(this, PARAM_GENDER_PREFIX + i)
+					.addOption(getString("babyprofile:Babies.Undetermined"), Baby.Gender.UNDETERMINED)
+					.addOption(getString("babyprofile:Babies.Male"), Baby.Gender.MALE)
+					.addOption(getString("babyprofile:Babies.Female"), Baby.Gender.FEMALE)
+					.setInitialValue(baby != null ? baby.getGender() : Baby.Gender.UNDETERMINED)
+					.render();
 			}
-			else
-			{
-				baby = new Baby();
-			}
-			
-			if (i < selectedNum)
-			{
-				write("<li>");
-			}
-			else
-			{
-				write("<li style=\"display: none;\">");
-			}
-			
-			new TextInputControl(this, PARAM_NAME_PREFIX + i)
-				.setPlaceholder(getString("babyprofile:Babies.DefaultName") + (i + 1))
-				.setSize(32)
-				.setMaxLength(Baby.MAXSIZE_NAME)
-				.setInitialValue(baby.getName() == null ?  null : baby.getName())
-				.render();
-			write("&nbsp;");
-			new SelectInputControl(this, PARAM_GENDER_PREFIX + i)
-				.addOption(getString("babyprofile:Babies.Undetermined"), Baby.Gender.UNDETERMINED)
-				.addOption(getString("babyprofile:Babies.Male"), Baby.Gender.MALE)
-				.addOption(getString("babyprofile:Babies.Female"), Baby.Gender.FEMALE)
-				.setInitialValue(baby.getGender())
-				.render();
-			writeHiddenInput(PARAM_ID_PREFIX + i, baby.isSaved() ? baby.getID().toString() : "");
-			write("</li>");
 		}
-		write("</ul>");
+		.render();
+		
+//		TwoColFormControl twoCol = new TwoColFormControl(this);
+//
+//		//
+//		// Number of babies dropdown
+//		//
+//		
+//		twoCol.writeSpaceRow();
+//		twoCol.writeRow(getString("babyprofile:Babies.Number"));
+//		
+//		SelectInputControl sel = new SelectInputControl(twoCol, PARAM_NUMBER);
+//		for (int i = 1; i <= MAXSIZE_BABY; i++)
+//		{
+//			sel.addOption(getString("babyprofile:Babies.Number." + i), i);
+//		}
+//		
+//		int selectedNum;
+//		try
+//		{
+//			selectedNum = getParameterInteger(PARAM_NUMBER);
+//		}
+//		catch (Exception e)
+//		{
+//			selectedNum = babyIDs.size();
+//		}
+//		if (selectedNum == 0)
+//		{
+//			selectedNum = 1;
+//		}
+//		sel.setInitialValue(selectedNum);
+//		sel.render();
+//		
+//		twoCol.writeSpaceRow();
+//		twoCol.render();
+//		write("</div>");
+//		
+//		//
+//		// Baby list
+//		//
+//		
+//		write("<ul id=\"BabyList\" class=\"PlainList\">");
+//		for (int i = 0; i < MAXSIZE_BABY; i++)
+//		{
+//			Baby baby = null;
+//			if (i < babyIDs.size())
+//			{
+//				baby = BabyStore.getInstance().load(babyIDs.get(i));
+//			}
+//			else
+//			{
+//				baby = new Baby();
+//			}
+//			
+//			if (i < selectedNum)
+//			{
+//				write("<li>");
+//			}
+//			else
+//			{
+//				write("<li style=\"display: none;\">");
+//			}
+//			
+//			new TextInputControl(this, PARAM_NAME_PREFIX + i)
+//				.setPlaceholder(getString("babyprofile:Babies.DefaultName") + (i + 1))
+//				.setSize(32)
+//				.setMaxLength(Baby.MAXSIZE_NAME)
+//				.setInitialValue(baby.getName() == null ?  null : baby.getName())
+//				.render();
+//			write("&nbsp;");
+//			new SelectInputControl(this, PARAM_GENDER_PREFIX + i)
+//				.addOption(getString("babyprofile:Babies.Undetermined"), Baby.Gender.UNDETERMINED)
+//				.addOption(getString("babyprofile:Babies.Male"), Baby.Gender.MALE)
+//				.addOption(getString("babyprofile:Babies.Female"), Baby.Gender.FEMALE)
+//				.setInitialValue(baby.getGender())
+//				.render();
+//			writeHiddenInput(PARAM_ID_PREFIX + i, baby.isSaved() ? baby.getID().toString() : "");
+//			write("</li>");
+//		}
+//		write("</ul>");
 		
 		write("<br>");
 		writeSaveButton(PARAM_SAVE, null);
 		
 		writeFormClose();
 		
-		writeIncludeJS("baby/babies.js");
+//		writeIncludeJS("baby/babies.js");
 	}
 	
 	@Override

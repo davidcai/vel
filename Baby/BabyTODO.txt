@@ -110,14 +110,14 @@ DAVID:
 = organize tab icons into "/tabs". size to be 48 with X2
 = print capability of the journal. or export to PDF.
   design "notebook" style for journal. lines, margins, etc.
-- check/refine printed messages when no results (journal entries, gallery, articles, checklists, etc.)
+x check/refine printed messages when no results (journal entries, gallery, articles, checklists, etc.)
 - separate Day and TimeOfDay input controls to return Day and TimeOfDay
   - drop downs when not supported natively.
   - allow setting step for TimeOfDay (1min, 5min, 15min, 30min, 60min)
   - auto adjust max days of month dropdown (jan 31, feb 28/29, etc.)
   - getParameterDateTime("day", "time", tz) to return Date
   - in appointments, use Day+TimeOfDay controls instead of custom dropdowns. print time zone.
-= validate use of timezones, esp. with mother.getEstimatedPregnancyStage
+x validate use of timezones, esp. with mother.getEstimatedPregnancyStage
 = Use the ControlArray for the BabiesPage to add/remove babies.
 - Calendar page: list/day/month views like in pink pad.
 
