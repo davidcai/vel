@@ -3,7 +3,6 @@ package baby.app;
 import java.util.ArrayList;
 import java.util.List;
 
-import samoyan.apps.admin.AdminTab;
 import samoyan.apps.guidedsetup.GuidedSetupTab;
 import samoyan.controls.MetaTagControl;
 import samoyan.database.Permission;
@@ -13,12 +12,12 @@ import samoyan.database.UserStore;
 import samoyan.servlet.EnvelopePage;
 import samoyan.servlet.EnvelopeTab;
 import samoyan.servlet.RequestContext;
+import baby.pages.admin.AdminTab;
 import baby.pages.content.ContentTab;
 import baby.pages.info.InfoTab;
 import baby.pages.master.MasterTab;
 import baby.pages.profile.BabyProfileTab;
 import baby.pages.scrapbook.ScrapbookTab;
-import baby.pages.todo.TodoTab;
 
 public class BabyEnvelopePage extends EnvelopePage
 {
@@ -27,7 +26,6 @@ public class BabyEnvelopePage extends EnvelopePage
 	private static EnvelopeTab contentTab = new ContentTab();
 	private static EnvelopeTab infoTab = new InfoTab();
 	private static EnvelopeTab scrapbookTab = new ScrapbookTab();
-	private static EnvelopeTab todoTab = new TodoTab();
 	private static EnvelopeTab profileTab = new BabyProfileTab();
 //	private static EnvelopeTab messagingTab = new MessagingTab();
 	private static EnvelopeTab setupTab = new GuidedSetupTab();
@@ -38,7 +36,7 @@ public class BabyEnvelopePage extends EnvelopePage
 		RequestContext ctx = getContext();
 		User user = UserStore.getInstance().load(ctx.getUserID());
 		
-		List<EnvelopeTab> result = new ArrayList<EnvelopeTab>(6);		
+		List<EnvelopeTab> result = new ArrayList<EnvelopeTab>(6);
 		result.add(masterTab);
 		if (user!=null)
 		{
@@ -62,7 +60,6 @@ public class BabyEnvelopePage extends EnvelopePage
 			{
 				result.add(infoTab);
 				result.add(scrapbookTab);
-				result.add(todoTab);
 	//			result.add(messagingTab); // !$! Testing only
 				result.add(profileTab);
 			}
@@ -77,7 +74,7 @@ public class BabyEnvelopePage extends EnvelopePage
 		writeIncludeCSS("baby/baby.less");
 		
 		MetaTagControl ctrl = new MetaTagControl(this);
-		ctrl.appleTouchIcon(false, "baby/apple-touch-icon.png", null);
+		ctrl.appleTouchIcon(false, "baby/apple-touch-icon-114.png", "baby/apple-touch-icon-144.png");
 		ctrl.appleTouchStartupImage("baby/iphone-splash.png", null, null, null, null);
 		ctrl.favicon("baby/favicon.png");
 		ctrl.render();

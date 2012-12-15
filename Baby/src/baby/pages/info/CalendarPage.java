@@ -1,4 +1,4 @@
-package baby.pages.scrapbook;
+package baby.pages.info;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -19,15 +19,16 @@ import baby.database.Mother;
 import baby.database.MotherStore;
 import baby.database.Stage;
 import baby.pages.BabyPage;
+import baby.pages.scrapbook.DaySummaryPage;
 
 public class CalendarPage extends BabyPage
 {
-	public final static String COMMAND = BabyPage.COMMAND_SCRAPBOOK + "/calendar";
+	public final static String COMMAND = BabyPage.COMMAND_INFORMATION + "/calendar";
 
 	@Override
 	public void renderHTML() throws Exception
 	{
-		writeHorizontalNav(CalendarPage.COMMAND);
+//		writeHorizontalNav(CalendarPage.COMMAND);
 		
 		UUID userID = getContext().getUserID();
 		Mother mother = MotherStore.getInstance().loadByUserID(userID);
@@ -165,7 +166,7 @@ public class CalendarPage extends BabyPage
 			write("<span class=\"CalendarBadge ");
 			write(badge.toString());
 			write("\"></span>");
-			writeEncode(getString("scrapbook:Calendar." + badge.toString()));
+			writeEncode(getString("information:Calendar." + badge.toString()));
 			write("<br>");
 		}
 		write("</div>");
@@ -176,6 +177,6 @@ public class CalendarPage extends BabyPage
 	@Override
 	public String getTitle() throws Exception
 	{
-		return getString("scrapbook:Calendar.Title");
+		return getString("information:Calendar.Title");
 	}
 }

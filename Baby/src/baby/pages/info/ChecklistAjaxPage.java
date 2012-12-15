@@ -1,4 +1,4 @@
-package baby.pages.todo;
+package baby.pages.info;
 
 import java.util.List;
 import java.util.UUID;
@@ -15,7 +15,7 @@ import baby.pages.BabyPage;
 
 public class ChecklistAjaxPage extends BabyPage
 {
-	public final static String COMMAND = BabyPage.COMMAND_TODO + "/checklist.ajax";
+	public final static String COMMAND = BabyPage.COMMAND_INFORMATION + "/checklist.ajax";
 	
 	@Override
 	public boolean isEnvelope() throws Exception

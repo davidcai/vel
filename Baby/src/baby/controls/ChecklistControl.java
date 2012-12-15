@@ -19,7 +19,7 @@ import baby.database.ChecklistStore;
 import baby.database.ChecklistUserLinkStore;
 import baby.database.Mother;
 import baby.database.MotherStore;
-import baby.pages.todo.ChecklistAjaxPage;
+import baby.pages.info.ChecklistAjaxPage;
 
 public class ChecklistControl
 {
@@ -74,7 +74,7 @@ public class ChecklistControl
 		RequestContext ctx = this.out.getContext();
 		
 		Checklist checklist = ChecklistStore.getInstance().load(checklistID);
-		boolean collapsed = ChecklistUserLinkStore.getInstance().isCollapsed(checklistID, userID);
+		boolean collapsed = this.collapsable && ChecklistUserLinkStore.getInstance().isCollapsed(checklistID, userID);
 		List<UUID> checkitemIDs = CheckItemStore.getInstance().getByChecklistID(checklistID);
 					
 		Mother mother = MotherStore.getInstance().loadByUserID(out.getContext().getUserID());

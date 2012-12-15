@@ -54,7 +54,7 @@ public class ViewArticleListPage extends BabyPage
 		
 		List<UUID> articleIDs = ArticleStore.getInstance().queryBySectionAndTimeline(BabyConsts.SECTION_INFO, low, high);
 		
-		writeHorizontalNav(ViewArticleListPage.COMMAND);
+//		writeHorizontalNav(ViewArticleListPage.COMMAND);
 
 		// Render timeline
 		write("<table><tr valign=middle><td>");

@@ -1,5 +1,3 @@
-+ page to view the content of a resource. (for author)
-
 automatic cached query using DatabeanStore.cachedQuery(). clear all on remove and store.
 Need smarter cache indexing. allowing multiple keys for invalidation. using naming convention with x|y|z.
   convention for db: Table.ColA=ValA|Table.ColB=ValB|Table.ColC=* . Clear on Save (for dirty columns) and Remove (must load object for that).
@@ -12,14 +10,28 @@ Need smarter cache indexing. allowing multiple keys for invalidation. using nami
   - let admin define defaults per notif type.
   - somehow need to get list of notif types with titles.
 
-= Home page when logged in (PortalPage):
-  ? what's on your mind? text box to post to journal
-  ? most recent uploaded image + upload control.
-  = Last journal entry (image+text)
-  ? Nav bar with links to common actions: logout, upload photo, profile, etc.
-  ? Show calendar
-- support for importing checklists as well: turn UL into checkitems. anything before it as description.
+= (3) support for importing checklists as well: turn UL into checkitems. anything before it as description.
 ? refactor Scrapbook->Journal, Journal->Notes
+
++ Profile page to be broken down into Account and Pregnancy
+  + tab control to switch between the two screens
++ InfoHomePage to show WideLinkGroupControl to point to 4 pages.
+  also show current stage of pregnancy (week X, 256 days to go) + link to change status
+  also inject logo using JS right after H1. then hide h1.
+= (01) Render tab control as adjacent buttons on phone, or support this style as option. Center within page.
+= margin on iphone
+= add arrow icon + padding for SELECT tags on iphone
+
+- catch exceptions and redirect to error page rather than "500 server error".
+  otherwise, can get stuck in app.
+- master tab is not highlighted when clicked (on phone)
+
+- Home page when logged in:
+  - Link to Help pages
+  - About the app
+  - Copyright/terms
+  - If emergency, call 911...
+  - Contact us page
 
 - leverage CSS3 transitions for animation effects on (e.g.) mouseover.
   see www.w3schools.com/css3/css3_transitions.asp
@@ -28,7 +40,7 @@ Need smarter cache indexing. allowing multiple keys for invalidation. using nami
 Content:
 - Run UTF8 conversion
 - Install Notepad++ for Andi
-- Figure out what to do with TABLEs
+= (4) Figure out what to do with TABLEs
 
 - Horizontal navigation (tab):
   ? render tabs upside down
@@ -55,6 +67,8 @@ Content:
     - MENU button to work like in Gmail/FB apps: slide the body to the left, reveal menu underneath. possibly hide tabbar, ACTION button.
   = (1) ACTION button on right should automatically take on default button in form. use jQuery to find button and show OK button accordingly.
     - button control to support "defaultAction" property (true by default). If false, render as input=type=button rather than type=submit
+    - when default is on, insert JS to look for mirrored ACTION button and show/enable it.
+    - allow mirroring more than 1 button.
   - need place to show Login/Logout, Register, Help.
   - need place for Settings/profile link. Also in web UI. See facebook's dropdown corner menu.
   - TwoCol: round cornered group of elements. see http://www.diffen.com/difference/Capex_vs_Opex (using Firefox) for nice style
@@ -66,11 +80,14 @@ Content:
   header area
   with or without outside borders and/or line separators
 = See usatoday.com for < > tabs that perform smooth page transitions. using AJAX.
++ Adding checkitem to personal checklist doesn't work. Personal checklist got auto-collapsed and therefore hidden.
 
 PHASE II:
 
 - checklists from earlier stages (preconception, pregnancy): show as faded.
-= Implement Search page to search over Info articles, resources.
+= (2) Implement Search page to search over Info articles, resources.
+  need to mirror content of articles as plain text (without the HTML tags)
+  use free text search when possible, default to %q% if exception thrown
 = Integrate the "Birth plan". It's a document the mother should fill out and send to her doctor.
   can be done electronically, or printed/mailed to doctor.
 = ArticleStore: caching for all queries. Clear after save/remove.
@@ -79,7 +96,7 @@ PHASE II:
   - better design
   - May need to redo because kicks are counted on several min basis. (how long to reach 10 kicks)
 - Design logo: iPhone webclip icons + splash images for all device sizes.
-= iPhone native notifs 
+= iPhone native notifs
 = Appointment reminders - send notif
 
 DAVID:

@@ -16,6 +16,10 @@ public class InfoTab extends EnvelopeTab
 		navCtrl.addPage(ViewResourceListPage.COMMAND, null);
 		navCtrl.addPage(SearchPage.COMMAND, null);
 		
+		navCtrl.addHeader(outputPage.getString("information:Nav.ToDo"));
+		navCtrl.addPage(ChecklistPage.COMMAND, null);
+		navCtrl.addPage(CalendarPage.COMMAND, null);
+
 		return navCtrl;
 	}
 	

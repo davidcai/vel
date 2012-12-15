@@ -1,4 +1,4 @@
-package baby.pages.todo;
+package baby.pages.info;
 
 import java.util.List;
 import java.util.UUID;
@@ -21,13 +21,13 @@ import baby.pages.BabyPage;
 
 public final class ChecklistPage extends BabyPage
 {
-	public final static String COMMAND = BabyPage.COMMAND_TODO + "/checklist";
+	public final static String COMMAND = BabyPage.COMMAND_INFORMATION + "/checklist";
 	private static final String PARAM_STAGE = "stage";
 	
 	@Override
 	public String getTitle() throws Exception
 	{
-		return getString("todo:Checklist.Title");
+		return getString("information:Checklist.Title");
 	}
 		
 	@Override
@@ -58,11 +58,11 @@ public final class ChecklistPage extends BabyPage
 		
 		TimelineControl tlCtrl = new TimelineControl(this, stage, PARAM_STAGE);
 		
-		writeHorizontalNav(ChecklistPage.COMMAND);
+//		writeHorizontalNav(ChecklistPage.COMMAND);
 
 		// Render timeline
 		write("<table><tr valign=middle><td>");
-		writeEncode(getString("todo:Checklist.YourChecklists"));
+		writeEncode(getString("information:Checklist.YourChecklists"));
 		write("</td><td>");
 		tlCtrl.render();
 		write("</td></tr></table><br>");
@@ -70,8 +70,8 @@ public final class ChecklistPage extends BabyPage
 		// Personal checklist
 		Checklist personalChecklist = ChecklistStore.getInstance().loadPersonalChecklist(userID);
 		new ChecklistControl(this, userID, personalChecklist.getID())
-			.overrideTitle(getString("todo:Checklist.PersonalChecklist"))
-			.overrideDescription(getString("todo:Checklist.PersonalChecklistDesc"))
+			.overrideTitle(getString("information:Checklist.PersonalChecklist"))
+			.overrideDescription(getString("information:Checklist.PersonalChecklistDesc"))
 			.setCollapsable(false)
 			.showChecked(false)
 			.showDueDate(false)
@@ -81,7 +81,7 @@ public final class ChecklistPage extends BabyPage
 		// Add
 		writeFormOpen();
 		new TextInputControl(this, "add")
-			.setPlaceholder(getString("todo:Checklist.AddCheckitem"))
+			.setPlaceholder(getString("information:Checklist.AddCheckitem"))
 			.setSize(ctx.getUserAgent().isSmartPhone()? 30 : 40)
 			.setMaxLength(CheckItem.MAXSIZE_TEXT)
 			.render();
@@ -114,16 +114,23 @@ public final class ChecklistPage extends BabyPage
 		if (isParameter("add"))
 		{
 			Checklist personalChecklist = ChecklistStore.getInstance().loadPersonalChecklist(getContext().getUserID());
+			
+			int seq = 0;
 			List<UUID> checkitemIDs = CheckItemStore.getInstance().getByChecklistID(personalChecklist.getID());
-
+			if (checkitemIDs.size()>0)
+			{
+				CheckItem lastCheckitem = CheckItemStore.getInstance().load(checkitemIDs.get(checkitemIDs.size()-1));
+				seq = lastCheckitem.getOrderSequence() + 1;
+			}
+			
 			CheckItem checkitem = new CheckItem();
 			checkitem.setChecklistID(personalChecklist.getID());
-			checkitem.setOrderSequence(checkitemIDs.size());
+			checkitem.setOrderSequence(seq);
 			checkitem.setText(getParameterString("add"));
 			CheckItemStore.getInstance().save(checkitem);
 			
 			// Redirect to self
 			throw new RedirectException(getContext().getCommand(), null);
 		}
-	}	
+	}
 }

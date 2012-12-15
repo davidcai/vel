@@ -1,4 +1,4 @@
-package baby.pages.todo;
+package baby.pages.info;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -30,7 +30,7 @@ import baby.pages.BabyPage;
 
 public class AppointmentsPage extends BabyPage
 {
-	public final static String COMMAND = BabyPage.COMMAND_TODO + "/appointments";
+	public final static String COMMAND = BabyPage.COMMAND_INFORMATION + "/appointments";
 	
 	public final static String PARAM_ID = "id";
 	public final static String PARAM_DESC = "desc";
@@ -99,7 +99,7 @@ public class AppointmentsPage extends BabyPage
 			if (getParameterDateTime() == null) 
 			{
 				throw new WebFormException(new String[] { PARAM_DATE_MON, PARAM_DATE_DAY, PARAM_DATE_YEAR }, 
-					getString("todo:Appointments.InvalidDate"));
+					getString("information:Appointments.InvalidDate"));
 			}
 		}
 	}
@@ -169,9 +169,9 @@ public class AppointmentsPage extends BabyPage
 	@Override
 	public void renderHTML() throws Exception
 	{
-		writeHorizontalNav(AppointmentsPage.COMMAND);
+//		writeHorizontalNav(AppointmentsPage.COMMAND);
 		
-		writeEncode(getString("todo:Appointments.Help"));
+		writeEncode(getString("information:Appointments.Help"));
 		write("<br><br>");
 		
 		// Appointment form
@@ -193,11 +193,11 @@ public class AppointmentsPage extends BabyPage
 		TwoColFormControl twoCol = new TwoColFormControl(this);
 		
 		// Description
-		twoCol.writeRow(getString("todo:Appointments.Description"));
+		twoCol.writeRow(getString("information:Appointments.Description"));
 		twoCol.writeTextInput(PARAM_DESC, this.curAppointment.getDescription(), 40, Appointment.MAXSIZE_DESCRIPTION);
 		
 		// Type
-		twoCol.writeRow(getString("todo:Appointments.Type"));
+		twoCol.writeRow(getString("information:Appointments.Type"));
 		SelectInputControl select = new SelectInputControl(twoCol, PARAM_TYPE);
 		select.setInitialValue(this.curAppointment.getType());
 		for (String s : BabyConsts.SECTIONS_APPOINTMENT)
@@ -210,17 +210,17 @@ public class AppointmentsPage extends BabyPage
 		writeDateTime(twoCol, this.curAppointment.getDateTime());
 		
 //		// Remind me
-//		twoCol.writeRow(getString("todo:Appointments.RemindMe"));
-//		twoCol.writeCheckbox(PARAM_REMINDME_ONE_DAY_BEFORE, getString("todo:Appointments.OneDayBefore"), this.curAppointment.isRemindMeOneDayBefore());
+//		twoCol.writeRow(getString("information:Appointments.RemindMe"));
+//		twoCol.writeCheckbox(PARAM_REMINDME_ONE_DAY_BEFORE, getString("information:Appointments.OneDayBefore"), this.curAppointment.isRemindMeOneDayBefore());
 //		twoCol.write("&nbsp;");
-//		twoCol.writeCheckbox(PARAM_REMINDME_FOUR_HOURS_BEFORE, getString("todo:Appointments.FourHoursBefore"), this.curAppointment.isRemindMeFourHoursBefore());
+//		twoCol.writeCheckbox(PARAM_REMINDME_FOUR_HOURS_BEFORE, getString("information:Appointments.FourHoursBefore"), this.curAppointment.isRemindMeFourHoursBefore());
 //		twoCol.write("&nbsp;");
-//		twoCol.writeCheckbox(PARAM_REMINDME_TWO_HOURS_BEFORE, getString("todo:Appointments.TwoHoursBefore"), this.curAppointment.isRemindMeTwoHoursBefore());
+//		twoCol.writeCheckbox(PARAM_REMINDME_TWO_HOURS_BEFORE, getString("information:Appointments.TwoHoursBefore"), this.curAppointment.isRemindMeTwoHoursBefore());
 //		twoCol.write("&nbsp;");
-//		twoCol.writeCheckbox(PARAM_REMINDME_ONE_HOUR_BEFORE, getString("todo:Appointments.OneHourBefore"), this.curAppointment.isRemindMeOneHourBefore());
+//		twoCol.writeCheckbox(PARAM_REMINDME_ONE_HOUR_BEFORE, getString("information:Appointments.OneHourBefore"), this.curAppointment.isRemindMeOneHourBefore());
 		
 		// Ask my doctor
-		twoCol.writeRow(getString("todo:Appointments.AskMyDoctor"));
+		twoCol.writeRow(getString("information:Appointments.AskMyDoctor"));
 		twoCol.writeTextAreaInput(PARAM_ASKMYDOCTOR, this.curAppointment.getAskMyDoctor(), 70, 5, 0);
 		
 		twoCol.render();
@@ -245,7 +245,7 @@ public class AppointmentsPage extends BabyPage
 			
 			// New appointment link
 			write("&nbsp;&nbsp;");
-			writeLink(getString("todo:Appointments.NewAppointment"), getPageURL(AppointmentsPage.COMMAND, new ParameterMap(PARAM_NEW, "")));
+			writeLink(getString("information:Appointments.NewAppointment"), getPageURL(AppointmentsPage.COMMAND, new ParameterMap(PARAM_NEW, "")));
 		}
 		
 		writeFormClose();
@@ -253,7 +253,7 @@ public class AppointmentsPage extends BabyPage
 	
 	private void writeDateTime(TwoColFormControl twoCol, Date datetime)
 	{
-		twoCol.writeRow(getString("todo:Appointments.DateTime"));
+		twoCol.writeRow(getString("information:Appointments.DateTime"));
 		
 		Calendar calToday = Calendar.getInstance(getTimeZone(), getLocale());
 		int y = calToday.get(Calendar.YEAR);
@@ -375,7 +375,7 @@ public class AppointmentsPage extends BabyPage
 			write("<br><hr><br>");
 
 			write("<h2>");
-			writeEncode(getString("todo:Appointments.History"));
+			writeEncode(getString("information:Appointments.History"));
 			write("</h2>");
 			
 			write("<table>");
@@ -394,7 +394,7 @@ public class AppointmentsPage extends BabyPage
 				write("</td>");
 				
 				write("<td>");
-				String caption = getString("todo:Appointments.DescAndType", appointment.getDescription(), appointment.getType());
+				String caption = getString("information:Appointments.DescAndType", appointment.getDescription(), appointment.getType());
 				writeLink(caption, getPageURL(AppointmentsPage.COMMAND, new ParameterMap(PARAM_ID, appointment.getID().toString())));
 				write("</td>");
 				
@@ -407,6 +407,6 @@ public class AppointmentsPage extends BabyPage
 	@Override
 	public String getTitle() throws Exception
 	{
-		return getString("todo:Appointments.Title");
+		return getString("information:Appointments.Title");
 	}
 }

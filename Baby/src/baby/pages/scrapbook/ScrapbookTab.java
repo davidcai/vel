@@ -1,6 +1,7 @@
 package baby.pages.scrapbook;
 
 import baby.pages.BabyPage;
+import baby.pages.info.CalendarPage;
 import samoyan.controls.NavTreeControl;
 import samoyan.servlet.EnvelopeTab;
 import samoyan.servlet.WebPage;

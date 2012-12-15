@@ -1,7 +1,5 @@
 package baby.pages.profile;
 
-import java.util.Date;
-import java.util.List;
 import java.util.TimeZone;
 import java.util.UUID;
 
@@ -15,9 +13,8 @@ import samoyan.apps.profile.PhonePage;
 import samoyan.apps.profile.ProfilePage;
 import samoyan.apps.profile.RealNamePage;
 import samoyan.apps.profile.TimeZonePage;
-import samoyan.controls.LinkToolbarControl;
-import samoyan.controls.TwoColFormControl;
-import samoyan.core.Day;
+import samoyan.controls.ButtonInputControl;
+import samoyan.controls.WideLinkGroupControl;
 import samoyan.core.TimeZoneEx;
 import samoyan.core.Util;
 import samoyan.database.MobileCarrier;
@@ -27,15 +24,14 @@ import samoyan.database.ServerStore;
 import samoyan.database.User;
 import samoyan.database.UserStore;
 import samoyan.servlet.Channel;
-import baby.database.BabyStore;
 import baby.database.Mother;
 import baby.database.MotherStore;
 import baby.pages.BabyPage;
 
 public class ConsolidatedProfilePage extends BabyPage
 {
-	public final static String COMMAND = ProfilePage.COMMAND;
-			
+	public final static String COMMAND = ProfilePage.COMMAND + "/account";
+	
 	@Override
 	public String getTitle() throws Exception
 	{
@@ -50,160 +46,83 @@ public class ConsolidatedProfilePage extends BabyPage
 		Mother mother = MotherStore.getInstance().loadByUserID(userID);
 		Server fed = ServerStore.getInstance().loadFederation();
 		
-		if (getContext().getUserAgent().isSmartPhone())
-		{
-			new LinkToolbarControl(this)
-				.addLink(getString("babyprofile:Consolidated.Logout"), getPageURL(LogoutPage.COMMAND), "icons/basic1/key_16.png")
-				.addLink(getString("babyprofile:Consolidated.Unsubscribe"), getPageURL(CloseAccountPage.COMMAND), "icons/basic1/delete_16.png")
-				.render();
-		}
-		
-		TwoColFormControl twoCol = new TwoColFormControl(this);
+		writeHorizontalNav(ConsolidatedProfilePage.COMMAND);
+
+		WideLinkGroupControl wlg = new WideLinkGroupControl(this);
 		
 		// Real name
-		twoCol.writeRow(getString("babyprofile:Consolidated.Name"));
-		if (!Util.isEmpty(user.getName()))
-		{
-			twoCol.writeEncode(user.getName());
-		}
-		else
-		{
-			twoCol.write("<span class=Faded>");
-			twoCol.writeEncode(getString("babyprofile:Consolidated.EmptyField"));
-			twoCol.write("</span>");
-		}
-		twoCol.write(" <small>");
-		twoCol.writeLink(getString("babyprofile:Consolidated.Edit"), getPageURL(RealNamePage.COMMAND));
-		twoCol.write("</small>");
+		wlg.addLink()
+			.setTitle(getString("babyprofile:Consolidated.Name"))
+			.setValue(!Util.isEmpty(user.getName()) ? user.getName() : getString("babyprofile:Consolidated.EmptyField"))
+			.setURL(getPageURL(RealNamePage.COMMAND));
+		
 		
 		// Login name
-		twoCol.writeRow(getString("babyprofile:Consolidated.LoginName"));
-		twoCol.writeEncode(user.getLoginName());
-		twoCol.write(" <small>");
-		twoCol.writeLink(getString("babyprofile:Consolidated.Edit"), getPageURL(ChangeLoginNamePage.COMMAND));
-		twoCol.write("</small>");
+		wlg.addLink()
+			.setTitle(getString("babyprofile:Consolidated.LoginName"))
+			.setValue(user.getLoginName())
+			.setURL(getPageURL(ChangeLoginNamePage.COMMAND));
 		
 		// Password
-		twoCol.writeRow(getString("babyprofile:Consolidated.Password"));
-		twoCol.writeEncode("********");
-		twoCol.write(" <small>");
-		twoCol.writeLink(getString("babyprofile:Consolidated.Edit"), getPageURL(ChangePasswordPage.COMMAND));
-		twoCol.write("</small>");
-		
-		twoCol.writeSpaceRow();
-		
-		// Stage
-		twoCol.writeRow(getString("babyprofile:Consolidated.Stage"));
-		if (mother.getDueDate()!=null)
-		{
-			twoCol.writeEncode(getString("babyprofile:Consolidated.Pregnancy", gmtToLocalTimeZone(mother.getDueDate())));
-		}
-		else if (mother.getBirthDate()!=null)
-		{
-			twoCol.writeEncode(getString("babyprofile:Consolidated.Infancy", gmtToLocalTimeZone(mother.getBirthDate())));
-		}
-		else
-		{
-			twoCol.writeEncode(getString("babyprofile:Consolidated.Preconception"));
-		}
-		twoCol.write(" <small>");
-		twoCol.writeLink(getString("babyprofile:Consolidated.Edit"), getPageURL(StagePage.COMMAND));
-		twoCol.write("</small>");
-		
-		// Babies
-		List<UUID> babyIDs = BabyStore.getInstance().getAtLeastOneBaby(userID);
-		twoCol.writeRow(getString("babyprofile:Consolidated.Babies", babyIDs.size()));
-		twoCol.writeEncodeLong(babyIDs.size());
-		// !$! TODO: print "Twins (male, female)" or "David, Melissa" or Unspecified
-		// Always return at least 1 baby from BabyStore?
-		twoCol.write(" <small>");
-		twoCol.writeLink(getString("babyprofile:Consolidated.Edit"), getPageURL(BabiesPage.COMMAND));
-		twoCol.write("</small>");
-		
-		// Medical center
-		twoCol.writeRow(getString("babyprofile:Consolidated.MedicalCenter"));
-		if (!Util.isEmpty(mother.getMedicalCenter()))
-		{
-			twoCol.writeEncode(mother.getMedicalCenter());
-		}
-		else
-		{
-			twoCol.write("<span class=Faded>");
-			twoCol.writeEncode(getString("babyprofile:Consolidated.EmptyField"));
-			twoCol.write("</span>");
-		}
-		twoCol.write(" <small>");
-		twoCol.writeLink(getString("babyprofile:Consolidated.Edit"), getPageURL(MedicalCenterPage.COMMAND));
-		twoCol.write("</small>");
-		
-		twoCol.writeSpaceRow();
+		wlg.addLink()
+			.setTitle(getString("babyprofile:Consolidated.Password"))
+			.setValue("********")
+			.setURL(getPageURL(ChangePasswordPage.COMMAND));
 
+		
 		// Email
-		twoCol.writeRow(getString("babyprofile:Consolidated.Email"));
-		twoCol.writeEncode(user.getEmail());
-		twoCol.write(" <small>");
-		twoCol.writeLink(getString("babyprofile:Consolidated.Edit"), getPageURL(EmailPage.COMMAND));
-		twoCol.write("</small>");
+		wlg.addLink()
+			.setTitle(getString("babyprofile:Consolidated.Email"))
+			.setValue(user.getEmail())
+			.setURL(getPageURL(EmailPage.COMMAND));
 		
 		// Mobile
 		if (fed.isChannelEnabled(Channel.SMS))
 		{
-			twoCol.writeRow(getString("babyprofile:Consolidated.Mobile"));
+			String val;
 			if (!Util.isEmpty(user.getMobile()))
 			{
-				twoCol.writeEncode(Util.stripCountryCodeFromPhoneNumber(user.getMobile()));
+				val = Util.stripCountryCodeFromPhoneNumber(user.getMobile());
 				MobileCarrier mc = MobileCarrierStore.getInstance().load(user.getMobileCarrierID());
 				if (mc!=null)
 				{
-					write(" ");
-					writeEncode(mc.getName());
+					val += " ";
+					val += mc.getName();
 				}
 			}
 			else
 			{
-				twoCol.write("<span class=Faded>");
-				twoCol.writeEncode(getString("babyprofile:Consolidated.EmptyField"));
-				twoCol.write("</span>");
+				val = getString("babyprofile:Consolidated.EmptyField");
 			}
-			twoCol.write(" <small>");
-			twoCol.writeLink(getString("babyprofile:Consolidated.Edit"), getPageURL(MobilePage.COMMAND));
-			twoCol.write("</small>");
+			wlg.addLink()
+				.setTitle(getString("babyprofile:Consolidated.Mobile"))
+				.setValue(val)
+				.setURL(getPageURL(MobilePage.COMMAND));
 		}
 		
 		// Phone
 		if (fed.isChannelEnabled(Channel.VOICE))
 		{
-			twoCol.writeRow(getString("babyprofile:Consolidated.Phone"));
+			String val;
 			if (!Util.isEmpty(user.getPhone()))
 			{
-				twoCol.writeEncode(Util.stripCountryCodeFromPhoneNumber(user.getPhone()));
+				val = Util.stripCountryCodeFromPhoneNumber(user.getPhone());
 			}
 			else
 			{
-				twoCol.write("<span class=Faded>");
-				twoCol.writeEncode(getString("babyprofile:Consolidated.EmptyField"));
-				twoCol.write("</span>");
+				val = getString("babyprofile:Consolidated.EmptyField");
 			}
-			twoCol.write(" <small>");
-			twoCol.writeLink(getString("babyprofile:Consolidated.Edit"), getPageURL(PhonePage.COMMAND));
-			twoCol.write("</small>");
+			wlg.addLink()
+				.setTitle(getString("babyprofile:Consolidated.Phone"))
+				.setValue(val)
+				.setURL(getPageURL(PhonePage.COMMAND));
 		}
-
-		twoCol.writeSpaceRow();
 				
 		// Units
-		twoCol.writeRow(getString("babyprofile:Consolidated.Units"));
-		if (mother.isMetric()==false)
-		{
-			twoCol.writeEncode(getString("babyprofile:Consolidated.Imperial"));
-		}
-		else
-		{
-			twoCol.writeEncode(getString("babyprofile:Consolidated.Metric"));
-		}
-		twoCol.write(" <small>");
-		twoCol.writeLink(getString("babyprofile:Consolidated.Edit"), getPageURL(UnitsPage.COMMAND));
-		twoCol.write("</small>");
+		wlg.addLink()
+			.setTitle(getString("babyprofile:Consolidated.Units"))
+			.setValue(mother.isMetric()==false ? getString("babyprofile:Consolidated.Imperial") : getString("babyprofile:Consolidated.Metric"))
+			.setURL(getPageURL(UnitsPage.COMMAND));
 
 		// Time zone
 		TimeZone tz = user.getTimeZone();
@@ -211,17 +130,25 @@ public class ConsolidatedProfilePage extends BabyPage
 		{
 			tz = getTimeZone();
 		}
-		twoCol.writeRow(getString("babyprofile:Consolidated.TimeZone"));
-		twoCol.writeEncode(TimeZoneEx.getDisplayString(tz, getLocale()));
-		twoCol.write(" <small>");
-		twoCol.writeLink(getString("babyprofile:Consolidated.Edit"), getPageURL(TimeZonePage.COMMAND));
-		twoCol.write("</small>");
+		wlg.addLink()
+			.setTitle(getString("babyprofile:Consolidated.TimeZone"))
+			.setValue(TimeZoneEx.getDisplayString(tz, getLocale()))
+			.setURL(getPageURL(TimeZonePage.COMMAND));
 
-		twoCol.render();
-	}
-
-	private Date gmtToLocalTimeZone(Date date)
-	{
-		return new Day(TimeZoneEx.GMT, date).getDayStart(getTimeZone());
+		wlg.render();
+		
+		// Logout and close account
+		write("<br><br><table><tr><td>");
+		writeFormOpen("GET", LogoutPage.COMMAND);
+		writeButton(getString("babyprofile:Consolidated.Logout"));
+		writeFormClose();
+		write("</td><td>");
+		writeFormOpen("GET", CloseAccountPage.COMMAND);
+		new ButtonInputControl(this, null)
+			.setStrong(true)
+			.setValue(getString("babyprofile:Consolidated.Unsubscribe"))
+			.render();
+		writeFormClose();
+		write("</td></tr></table>");
 	}
 }

@@ -53,4 +53,10 @@ public class BabyProfileTab extends ProfileTab
 
 		return navCtrl;
 	}
+	
+	@Override
+	public String getIcon(WebPage outputPage)
+	{
+		return "baby/tab-profile.png";
+	}
 }

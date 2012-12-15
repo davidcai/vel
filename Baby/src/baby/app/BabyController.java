@@ -32,6 +32,10 @@ import baby.pages.content.MeasureListPage;
 import baby.pages.content.MeasurePage;
 import baby.pages.content.ResourceListPage;
 import baby.pages.content.ResourcePage;
+import baby.pages.info.AppointmentsPage;
+import baby.pages.info.CalendarPage;
+import baby.pages.info.ChecklistAjaxPage;
+import baby.pages.info.ChecklistPage;
 import baby.pages.info.ViewArticlePage;
 import baby.pages.info.ViewArticleListPage;
 import baby.pages.info.InformationHomePage;
@@ -44,9 +48,9 @@ import baby.pages.master.WelcomePage;
 import baby.pages.profile.BabiesPage;
 import baby.pages.profile.ConsolidatedProfilePage;
 import baby.pages.profile.MedicalCenterPage;
+import baby.pages.profile.PregnancyProfilePage;
 import baby.pages.profile.StagePage;
 import baby.pages.profile.UnitsPage;
-import baby.pages.scrapbook.CalendarPage;
 import baby.pages.scrapbook.ChartsPage;
 import baby.pages.scrapbook.DaySummaryPage;
 import baby.pages.scrapbook.GalleryPage;
@@ -55,10 +59,6 @@ import baby.pages.scrapbook.JournalPage;
 import baby.pages.scrapbook.KickCounterPage;
 import baby.pages.scrapbook.PhotoPage;
 import baby.pages.scrapbook.ScrapbookHomePage;
-import baby.pages.todo.AppointmentsPage;
-import baby.pages.todo.ChecklistAjaxPage;
-import baby.pages.todo.ChecklistPage;
-import baby.pages.todo.TodoHomePage;
 import baby.tasks.CrawlResourcesRecurringTask;
 
 public class BabyController extends Controller
@@ -104,6 +104,10 @@ public class BabyController extends Controller
 		Dispatcher.bindPage(ViewResourceListPage.COMMAND, 		ViewResourceListPage.class);
 		Dispatcher.bindPage(ViewArticlePage.COMMAND, 			ViewArticlePage.class);
 		Dispatcher.bindPage(SearchPage.COMMAND, 				SearchPage.class);
+		Dispatcher.bindPage(ChecklistPage.COMMAND, 				ChecklistPage.class);
+		Dispatcher.bindPage(AppointmentsPage.COMMAND, 			AppointmentsPage.class);
+		Dispatcher.bindPage(ChecklistAjaxPage.COMMAND, 			ChecklistAjaxPage.class);
+		Dispatcher.bindPage(CalendarPage.COMMAND, 				CalendarPage.class);
 		
 		// Scrapbook
 		Dispatcher.bindPage(ScrapbookHomePage.COMMAND, 			ScrapbookHomePage.class);
@@ -112,15 +116,8 @@ public class BabyController extends Controller
 		Dispatcher.bindPage(GalleryPage.COMMAND, 				GalleryPage.class);
 		Dispatcher.bindPage(PhotoPage.COMMAND, 					PhotoPage.class);
 		Dispatcher.bindPage(ChartsPage.COMMAND, 				ChartsPage.class);
-		Dispatcher.bindPage(CalendarPage.COMMAND, 				CalendarPage.class);
 		Dispatcher.bindPage(KickCounterPage.COMMAND, 			KickCounterPage.class);
 		Dispatcher.bindPage(DaySummaryPage.COMMAND, 			DaySummaryPage.class);
-
-		// To do
-		Dispatcher.bindPage(TodoHomePage.COMMAND, 				TodoHomePage.class);
-		Dispatcher.bindPage(ChecklistPage.COMMAND, 				ChecklistPage.class);
-		Dispatcher.bindPage(AppointmentsPage.COMMAND, 			AppointmentsPage.class);
-		Dispatcher.bindPage(ChecklistAjaxPage.COMMAND, 			ChecklistAjaxPage.class);
 		
 		// Content
 		Dispatcher.bindPage(ContentHomePage.COMMAND, 			ContentHomePage.class);
@@ -138,6 +135,7 @@ public class BabyController extends Controller
 		Dispatcher.bindPage(MedicalCenterPage.COMMAND, 			MedicalCenterPage.class);
 		Dispatcher.bindPage(StagePage.COMMAND, 					StagePage.class);
 		Dispatcher.bindPage(ConsolidatedProfilePage.COMMAND, 	ConsolidatedProfilePage.class);
+		Dispatcher.bindPage(PregnancyProfilePage.COMMAND, 		PregnancyProfilePage.class);
 //		Dispatcher.bindPage(BabyProfileHomePage.COMMAND, 		BabyProfileHomePage.class);
 		Dispatcher.bindPage(UnitsPage.COMMAND, 					UnitsPage.class);
 		Dispatcher.bindPage(BabiesPage.COMMAND, 				BabiesPage.class);

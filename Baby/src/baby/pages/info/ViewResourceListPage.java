@@ -32,7 +32,7 @@ public class ViewResourceListPage extends BabyPage
 		Mother mother = MotherStore.getInstance().loadByUserID(getContext().getUserID());
 		List<String> medicalCenters = ArticleStore.getInstance().getMedicalCenters(mother.getRegion());
 
-		writeHorizontalNav(ViewResourceListPage.COMMAND);
+//		writeHorizontalNav(ViewResourceListPage.COMMAND);
 
 		if (Util.isEmpty(mother.getMedicalCenter()) || medicalCenters.contains(mother.getMedicalCenter())==false)
 		{

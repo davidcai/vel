@@ -44,8 +44,8 @@ public class ViewArticlePage extends BabyPage
 //		writeEncode(this.article.getSourceURL());
 //		write("<br><br>");
 		
-		boolean healthyBeginnings = this.article.getSection().equals(BabyConsts.SECTION_INFO);
-		writeHorizontalNav(healthyBeginnings? ViewArticleListPage.COMMAND : ViewResourceListPage.COMMAND);
+//		boolean healthyBeginnings = this.article.getSection().equals(BabyConsts.SECTION_INFO);
+//		writeHorizontalNav(healthyBeginnings? ViewArticleListPage.COMMAND : ViewResourceListPage.COMMAND);
 		
 		if (this.article.getPhoto()!=null)
 		{

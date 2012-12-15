@@ -35,7 +35,7 @@ import baby.database.Mother;
 import baby.database.MotherStore;
 import baby.database.Stage;
 import baby.pages.BabyPage;
-import baby.pages.todo.AppointmentsPage;
+import baby.pages.info.AppointmentsPage;
 
 public class DaySummaryPage extends BabyPage
 {
@@ -239,7 +239,7 @@ public class DaySummaryPage extends BabyPage
 				write("</td>");
 				
 				write("<td>");
-				String caption = getString("todo:Appointments.DescAndType", appointment.getDescription(), appointment.getType());
+				String caption = getString("information:Appointments.DescAndType", appointment.getDescription(), appointment.getType());
 				writeLink(caption, getPageURL(AppointmentsPage.COMMAND, new ParameterMap(AppointmentsPage.PARAM_ID, appointment.getID().toString())));
 				write("</td>");
 				

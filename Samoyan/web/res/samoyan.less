@@ -343,6 +343,52 @@ DIV.InfoMessage {
 	}
 }
 
+// ---------- Wide links ----------
+.WideLinks {
+	> A {
+		display: block;
+		background: url("navtree-right-arrow.png") center right no-repeat;
+		padding: 0.5em 25px 0.5em 5px;
+		text-decoration: none;
+		color: inherit;
+		&:hover {
+			background-color: @color-background-dark;
+		}
+		> SPAN:last-child {
+			clear: both;
+		}
+		border-bottom: 1px solid @color-text-light;
+		&:first-child {
+			border-top: 1px solid @color-text-light;
+		}
+	}
+	> DIV {
+		padding: 0.5em 5px;
+		> SPAN:last-child {
+			clear: both;
+		}
+		border-bottom: 1px solid @color-text-light;
+		&:first-child {
+			border-top: 1px solid @color-text-light;
+		}
+	}
+	> IMG {
+		float: left;
+		margin-right: 5px;
+	}
+	.Title {
+		font-weight: bold;
+	}
+	.Value {
+		float: right;
+		clear: right;
+	}
+	.Extra {
+		margin-top: 0.5em;
+		color: @color-text-light;
+	}
+}
+
 // ---------- Tab control ----------
 .TabCtrl {
 	width: 100%;
