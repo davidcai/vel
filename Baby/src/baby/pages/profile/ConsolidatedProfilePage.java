@@ -1,20 +1,22 @@
 package baby.pages.profile;
 
+import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 import java.util.UUID;
 
-import samoyan.apps.master.LogoutPage;
 import samoyan.apps.profile.ChangeLoginNamePage;
 import samoyan.apps.profile.ChangePasswordPage;
 import samoyan.apps.profile.CloseAccountPage;
 import samoyan.apps.profile.EmailPage;
 import samoyan.apps.profile.MobilePage;
 import samoyan.apps.profile.PhonePage;
-import samoyan.apps.profile.ProfilePage;
 import samoyan.apps.profile.RealNamePage;
 import samoyan.apps.profile.TimeZonePage;
 import samoyan.controls.ButtonInputControl;
 import samoyan.controls.WideLinkGroupControl;
+import samoyan.controls.WideLinkGroupControl.WideLink;
+import samoyan.core.Day;
 import samoyan.core.TimeZoneEx;
 import samoyan.core.Util;
 import samoyan.database.MobileCarrier;
@@ -24,38 +26,91 @@ import samoyan.database.ServerStore;
 import samoyan.database.User;
 import samoyan.database.UserStore;
 import samoyan.servlet.Channel;
+import samoyan.servlet.RequestContext;
+import baby.database.BabyStore;
 import baby.database.Mother;
 import baby.database.MotherStore;
 import baby.pages.BabyPage;
 
-public class ConsolidatedProfilePage extends BabyPage
+public final class ConsolidatedProfilePage extends BabyPage
 {
-	public final static String COMMAND = ProfilePage.COMMAND + "/account";
+	public final static String COMMAND = BabyPage.COMMAND_PROFILE;
+		
+	private Date gmtToLocalTimeZone(Date date)
+	{
+		return new Day(TimeZoneEx.GMT, date).getDayStart(getTimeZone());
+	}
 	
 	@Override
 	public String getTitle() throws Exception
 	{
 		return getString("babyprofile:Consolidated.Title");
 	}
-	
+
 	@Override
 	public void renderHTML() throws Exception
 	{
-		UUID userID = getContext().getUserID();
-		User user = UserStore.getInstance().load(userID);
+		RequestContext ctx = getContext();
+		UUID userID = ctx.getUserID();
 		Mother mother = MotherStore.getInstance().loadByUserID(userID);
+		User user = UserStore.getInstance().load(userID);
 		Server fed = ServerStore.getInstance().loadFederation();
-		
-		writeHorizontalNav(ConsolidatedProfilePage.COMMAND);
+				
+		// - - -
 
+		write("<h2>");
+		writeEncode(getString("babyprofile:Consolidated.SubtitlePregnancy"));
+		write("</h2>");
+			
 		WideLinkGroupControl wlg = new WideLinkGroupControl(this);
+		
+		// Stage
+		WideLink wl = wlg.addLink()
+			.setTitle(getString("babyprofile:Consolidated.Stage"))
+			.setURL(getPageURL(StagePage.COMMAND));
+		if (mother.getDueDate()!=null)
+		{
+			wl.setValue(getString("babyprofile:Consolidated.Pregnancy", gmtToLocalTimeZone(mother.getDueDate())));
+		}
+		else if (mother.getBirthDate()!=null)
+		{
+			wl.setValue(getString("babyprofile:Consolidated.Infancy", gmtToLocalTimeZone(mother.getBirthDate())));
+		}
+		else
+		{
+			wl.setValue(getString("babyprofile:Consolidated.Preconception"));
+		}
+
+		// Babies
+		// !$! TODO: print "Twins (male, female)" or "David, Melissa" or Unspecified
+		// Always return at least 1 baby from BabyStore?
+		List<UUID> babyIDs = BabyStore.getInstance().getAtLeastOneBaby(userID);
+		wlg.addLink()
+			.setTitle(getString("babyprofile:Consolidated.Babies", babyIDs.size()))
+			.setValue(String.valueOf(babyIDs.size()))
+			.setURL(getPageURL(BabiesPage.COMMAND));
+					
+		// Medical center
+		wlg.addLink()
+			.setTitle(getString("babyprofile:Consolidated.MedicalCenter"))
+			.setValue(!Util.isEmpty(mother.getMedicalCenter()) ? mother.getMedicalCenter() : getString("babyprofile:Consolidated.EmptyField"))
+			.setURL(getPageURL(MedicalCenterPage.COMMAND));
+		
+		wlg.render();
+
+		// - - -
+		
+		write("<br><h2>");
+		writeEncode(getString("babyprofile:Consolidated.SubtitleAccount"));
+		write("</h2>");
+			
+		wlg = new WideLinkGroupControl(this);
 		
 		// Real name
 		wlg.addLink()
 			.setTitle(getString("babyprofile:Consolidated.Name"))
 			.setValue(!Util.isEmpty(user.getName()) ? user.getName() : getString("babyprofile:Consolidated.EmptyField"))
 			.setURL(getPageURL(RealNamePage.COMMAND));
-		
 		
 		// Login name
 		wlg.addLink()
@@ -132,23 +187,26 @@ public class ConsolidatedProfilePage extends BabyPage
 		}
 		wlg.addLink()
 			.setTitle(getString("babyprofile:Consolidated.TimeZone"))
-			.setValue(TimeZoneEx.getDisplayString(tz, getLocale()))
+			.setValue(tz.getDisplayName(getLocale()))
 			.setURL(getPageURL(TimeZonePage.COMMAND));
 
 		wlg.render();
 		
+		// - - -
+
 		// Logout and close account
-		write("<br><br><table><tr><td>");
-		writeFormOpen("GET", LogoutPage.COMMAND);
-		writeButton(getString("babyprofile:Consolidated.Logout"));
-		writeFormClose();
-		write("</td><td>");
+		write("<br>");
+//		write("<table><tr><td>");
+//		writeFormOpen("GET", LogoutPage.COMMAND);
+//		writeButton(getString("babyprofile:Consolidated.Logout"));
+//		writeFormClose();
+//		write("</td><td>");
 		writeFormOpen("GET", CloseAccountPage.COMMAND);
 		new ButtonInputControl(this, null)
 			.setStrong(true)
 			.setValue(getString("babyprofile:Consolidated.Unsubscribe"))
 			.render();
 		writeFormClose();
-		write("</td></tr></table>");
+//		write("</td></tr></table>");
 	}
 }

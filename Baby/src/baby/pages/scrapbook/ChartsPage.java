@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import samoyan.controls.GoogleGraph;
+import samoyan.controls.TabControl;
 import samoyan.controls.TwoColFormControl;
 import samoyan.core.DateFormatEx;
 import samoyan.core.ParameterMap;
@@ -237,7 +238,18 @@ public class ChartsPage extends BabyPage
 	@Override
 	public void renderHTML() throws Exception
 	{
-		writeHorizontalNav(ChartsPage.COMMAND);
+		// Horizontal nav bar
+		if (getContext().getUserAgent().isSmartPhone())
+		{
+			new TabControl(this)
+				.addTab(JournalPage.COMMAND, getString("scrapbook:Journal.Title"), getPageURL(JournalPage.COMMAND))
+				.addTab(ChartsPage.COMMAND, getString("scrapbook:Charts.Title"), getPageURL(ChartsPage.COMMAND))
+				.addTab(GalleryPage.COMMAND, getString("scrapbook:Gallery.Title"), getPageURL(GalleryPage.COMMAND))
+				.setCurrentTab(getContext().getCommand())
+				.setStyleButton()
+				.setAlignStretch()
+				.render();
+		}
 		
 		writeEncode(getString("scrapbook:Charts.Help"));
 		write("<br>");

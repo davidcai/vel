@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import samoyan.controls.TabControl;
 import samoyan.controls.TextAreaInputControl;
 import samoyan.core.DateFormatEx;
 import samoyan.core.ParameterMap;
@@ -76,7 +77,18 @@ public class JournalPage extends BabyPage
 	@Override
 	public void renderHTML() throws Exception
 	{
-		writeHorizontalNav(JournalPage.COMMAND);
+		// Horizontal nav bar
+		if (getContext().getUserAgent().isSmartPhone())
+		{
+			new TabControl(this)
+				.addTab(JournalPage.COMMAND, getString("scrapbook:Journal.Title"), getPageURL(JournalPage.COMMAND))
+				.addTab(ChartsPage.COMMAND, getString("scrapbook:Charts.Title"), getPageURL(ChartsPage.COMMAND))
+				.addTab(GalleryPage.COMMAND, getString("scrapbook:Gallery.Title"), getPageURL(GalleryPage.COMMAND))
+				.setCurrentTab(getContext().getCommand())
+				.setStyleButton()
+				.setAlignStretch()
+				.render();
+		}
 
 		// Date param
 		Date date = null;

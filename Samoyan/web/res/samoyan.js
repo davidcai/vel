@@ -99,10 +99,18 @@ $(document).ready(function()
 			$(".TopBar .Tabs TABLE").show();
 			$(".Fixed").css("position", "fixed");
 		});
+//		// Hide the address bar
+//		setTimeout(function(){
+//			window.scrollTo(0, window.pageYOffset + 1);
+//			$('body').append($('<div></div>').attr('id','iOsScrollFix').css('height','101%').css('overflow','hidden'));
+//			setTimeout(function() {
+//			  $('#iOsScrollFix').remove();
+//			},0);
+//		},500);
 	}
 	if (UserAgent.AppleTouch)
 	{
-		// Hack to open links in same window on iPhone
+		// Open links in same window on iPhone
 		$("A[href]").on("click", function(ev){
 			var href = $(this).attr("href");
 			if (!href.indexOf("javascript:")==0)
@@ -470,13 +478,34 @@ function backPush()
 		windowStorage.setItem("bkStkU"+(sz-1), window.location.href);
 	}
 }
-function backActivateButton(btnID)
+function backActivateButton(backBtnID, menuBtnID)
 {
 	var sz = backStackSize();
 	if (sz>1)
 	{
-		$("#"+btnID).show().on("click", backPopAndRedirect);
+		$("#"+backBtnID).show().on("click", backPopAndRedirect);
 	}
+	else
+	{
+		$("#"+menuBtnID).show().on("click", backRevealMenu);
+	}
+}
+var backMenuVisible = false;
+function backRevealMenu(ev)
+{
+	if (backMenuVisible==false)
+	{
+		$('#page').toggle();
+		$('#hotButtons').css('visibility','hidden');
+		$('#navbar').slideToggle(200);
+	}
+	else
+	{
+		$('#navbar').toggle();
+		$('#page').toggle();
+		$('#hotButtons').css('visibility','visible');
+	}
+	backMenuVisible = !backMenuVisible;
 }
 function backPopAndRedirect(ev)
 {

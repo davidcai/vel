@@ -5,7 +5,7 @@ import samoyan.servlet.RequestContext;
 
 public class RenderHTMLLogEntry extends LogEntry
 {
-	public RenderHTMLLogEntry(long renderDuration, long deliverDuration, int sizeBytes)
+	public RenderHTMLLogEntry(int httpResultCode, long renderDuration, long deliverDuration, int sizeBytes)
 	{
 		super("Render HTML", INFO);
 		
@@ -14,6 +14,8 @@ public class RenderHTMLLogEntry extends LogEntry
 		setMeasure(3, "Size (bytes)", sizeBytes);
 		
 		RequestContext ctx = RequestContext.getCurrent();
-		setString(1, "Command", "/" + ctx.getCommand());
+		setString(1, "Result", String.valueOf(httpResultCode));
+		setString(2, "Method", ctx.getMethod());
+		setString(3, "Command", "/" + ctx.getCommand());
 	}
 }

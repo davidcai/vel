@@ -8,6 +8,30 @@ package baby.pages.master;
 public final class LessStylesheetPage extends samoyan.apps.master.LessStylesheetPage
 {
 	@Override
+	protected String getFontNormal()
+	{
+		if (getContext().getUserAgent().isSmartPhone())
+		{
+			return "12pt Helvetica Neue,Helvetica,Arial Narrow,Arial,Sans-Serif";
+		}
+		else
+		{
+			return "12pt Arial,Sans-Serif";
+		}
+	}
+	protected String getFontSmall()
+	{
+		if (getContext().getUserAgent().isSmartPhone())
+		{
+			return "10pt Helvetica Neue,Helvetica,Arial Narrow,Arial,Sans-Serif";
+		}
+		else
+		{
+			return "10pt Arial,Sans-Serif";
+		}
+	}
+
+	@Override
 	protected String getColorNegativeBackground()
 	{
 //		return "#929FD0"; // Light blue

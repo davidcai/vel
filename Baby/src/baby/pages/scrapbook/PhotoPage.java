@@ -65,8 +65,6 @@ public class PhotoPage extends BabyPage
 	@Override
 	public void renderHTML() throws Exception
 	{
-		writeHorizontalNav(GalleryPage.COMMAND);
-
 		UserAgent ua = getContext().getUserAgent();
 		
 		String imgSz = BabyConsts.IMAGESIZE_BOX_800X800;

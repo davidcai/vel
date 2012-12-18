@@ -20,7 +20,8 @@ public final class MasterApp
 		Dispatcher.bindPage(TermsPage.COMMAND,					TermsPage.class);
 		Dispatcher.bindPage(PrivacyPage.COMMAND,				PrivacyPage.class);
 		Dispatcher.bindPage(HelpPage.COMMAND,					HelpPage.class);
-
+		
+		Dispatcher.bindPage(ErrorPage.COMMAND,					ErrorPage.class);
 		Dispatcher.bindPage(OverrideUserAgentPage.COMMAND,		OverrideUserAgentPage.class);
 		Dispatcher.bindPage(ControlsUnitTestPage.COMMAND,		ControlsUnitTestPage.class);
 		

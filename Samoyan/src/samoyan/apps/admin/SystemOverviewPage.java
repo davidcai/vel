@@ -125,13 +125,11 @@ public class SystemOverviewPage extends AdminPage
 		File[] roots = File.listRoots();
 		for (int i=0; i<roots.length; i++)
 		{
-			if (roots[i].canWrite()==false) continue; // Skip CD-ROM drives
-			
 			if (diskPrinted)
 			{
 				twoCol.write("<br>");
 			}
-			long diskSpace = Util.getFreeSpace(roots[i].getCanonicalPath());
+			long diskSpace = roots[i].getFreeSpace();
 			twoCol.writeEncode(getString("admin:Overview.FreeDiskSpace", roots[i].getCanonicalPath(), diskSpace/1024L/1024L));
 			diskPrinted = true;
 		}
@@ -184,15 +182,14 @@ public class SystemOverviewPage extends AdminPage
 		// Java stats
 		Properties sysProps = System.getProperties();
 		twoCol.writeRow(getString("admin:Overview.JavaVM"));
-		twoCol.write(sysProps.getProperty("java.vm.name"));
+		twoCol.writeEncode(sysProps.getProperty("java.vm.name"));
 		twoCol.write(" / ");
-		twoCol.write(sysProps.getProperty("java.vm.vendor"));
+		twoCol.writeEncode(sysProps.getProperty("java.vm.vendor"));
 
 		twoCol.write("<br>");
-		twoCol.write(sysProps.getProperty("java.vm.version"));
-		twoCol.write(" (");
-		twoCol.write(sysProps.getProperty("java.home"));
-		twoCol.write(")");
+		twoCol.writeEncode(getString("admin:Overview.JavaVersion", sysProps.getProperty("java.vm.version")));
+		twoCol.write("<br>");
+		twoCol.writeEncode(Util.strReplace(sysProps.getProperty("java.home"), File.separator, " " + File.separator + " "));
 
 		twoCol.render();
 	}

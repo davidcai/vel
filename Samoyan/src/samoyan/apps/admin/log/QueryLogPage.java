@@ -289,14 +289,29 @@ public class QueryLogPage extends AdminPage
 							writeEncode(label);
 							write("\">");
 						}
+						String measureStr;
 						if (measure==Math.round(measure))
 						{
-							writeEncodeLong(measure.longValue());
+							measureStr = String.valueOf(Math.round(measure));
 						}
 						else
 						{
-							writeEncodeFloat((float) measure.floatValue(), 2);
+							measureStr = String.valueOf(measure);
+							int dot = measureStr.indexOf(".");
+							if (dot>=0 && dot<measureStr.length()-3)
+							{
+								measureStr = measureStr.substring(0, dot+3);
+							}
 						}
+						writeEncode(measureStr);
+//						if (measure==Math.round(measure))
+//						{
+//							writeEncodeLong(measure.longValue());
+//						}
+//						else
+//						{
+//							writeEncodeFloat((float) measure.floatValue(), 2);
+//						}
 						if (!Util.isEmpty(label))
 						{
 							write("</span>");

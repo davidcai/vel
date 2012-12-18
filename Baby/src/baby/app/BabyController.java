@@ -48,7 +48,6 @@ import baby.pages.master.WelcomePage;
 import baby.pages.profile.BabiesPage;
 import baby.pages.profile.ConsolidatedProfilePage;
 import baby.pages.profile.MedicalCenterPage;
-import baby.pages.profile.PregnancyProfilePage;
 import baby.pages.profile.StagePage;
 import baby.pages.profile.UnitsPage;
 import baby.pages.scrapbook.ChartsPage;
@@ -134,8 +133,7 @@ public class BabyController extends Controller
 		// Profile
 		Dispatcher.bindPage(MedicalCenterPage.COMMAND, 			MedicalCenterPage.class);
 		Dispatcher.bindPage(StagePage.COMMAND, 					StagePage.class);
-		Dispatcher.bindPage(ConsolidatedProfilePage.COMMAND, 	ConsolidatedProfilePage.class);
-		Dispatcher.bindPage(PregnancyProfilePage.COMMAND, 		PregnancyProfilePage.class);
+		Dispatcher.bindPage(ConsolidatedProfilePage.COMMAND, 		ConsolidatedProfilePage.class);
 //		Dispatcher.bindPage(BabyProfileHomePage.COMMAND, 		BabyProfileHomePage.class);
 		Dispatcher.bindPage(UnitsPage.COMMAND, 					UnitsPage.class);
 		Dispatcher.bindPage(BabiesPage.COMMAND, 				BabiesPage.class);

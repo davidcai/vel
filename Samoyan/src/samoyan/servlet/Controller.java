@@ -11,6 +11,7 @@ import javax.servlet.http.*;
 
 import samoyan.apps.admin.AdminApp;
 import samoyan.apps.guidedsetup.GuidedSetupApp;
+import samoyan.apps.master.ErrorPage;
 import samoyan.apps.master.LoginPage;
 import samoyan.apps.master.MasterApp;
 import samoyan.apps.messaging.MessagingApp;
@@ -323,7 +324,7 @@ public class Controller extends HttpServlet
 			System.gc();
 			System.gc();
 			
-			outputException(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal server error", memErr);
+			outputException(request, response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal server error", memErr);
 		}
 		catch (SecureSocketException sslExc)
 		{
@@ -354,12 +355,12 @@ public class Controller extends HttpServlet
 		catch (HttpException httpExc)
 		{
 			exc = httpExc;			
-			outputException(response, httpExc.getHttpCode(), httpExc.getHttpTitle(), httpExc);
+			outputException(request, response, httpExc.getHttpCode(), httpExc.getHttpTitle(), httpExc);
 		}
 		catch (Throwable genErr)
 		{
 			exc = genErr;
-			outputException(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal server error", genErr);
+			outputException(request, response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal server error", genErr);
 			
 			LogEntryStore.log(genErr);
 		}
@@ -952,19 +953,30 @@ public class Controller extends HttpServlet
 		return totalLen;
 	}
 
-	private void outputException(HttpServletResponse response, int httpCode, String httpTitle, Throwable exc) throws IOException
+	private void outputException(HttpServletRequest request, HttpServletResponse response, int httpCode, String httpTitle, Throwable exc) throws IOException
 	{
-		response.setStatus(httpCode);
-		response.setContentType("text/plain");
-
-		PrintWriter wrt = response.getWriter();
-		wrt.write(String.valueOf(httpCode) + " " + httpTitle);
-		if (exc!=null && Setup.isDebug())
+		if (Setup.isDebug())
 		{
-			wrt.write("\r\n\r\n");
-			wrt.write(Util.exceptionDesc(exc));
+			// Print exception
+			response.setStatus(httpCode);
+			response.setContentType("text/plain");
+	
+			PrintWriter wrt = response.getWriter();
+			wrt.write(String.valueOf(httpCode) + " " + httpTitle);
+			if (exc!=null && Setup.isDebug())
+			{
+				wrt.write("\r\n\r\n");
+				wrt.write(Util.exceptionDesc(exc));
+			}
+			wrt.flush();
 		}
-		wrt.flush();
+		else
+		{
+			// Redirect to error page
+			String url = UrlGenerator.getPageURL(request.isSecure(), null, ErrorPage.COMMAND, null);
+			response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
+			response.setHeader("Location", url);
+		}
 	}
 	
 	private void serviceInternal(RequestContext ctx, HttpServletRequest request, HttpServletResponse response) throws Exception
@@ -1036,6 +1048,15 @@ public class Controller extends HttpServlet
 			Dispatcher.execute(page, ctx);
 			
 			renderDuration = System.currentTimeMillis() - startTime;
+		}
+		catch (HttpException httpExc)
+		{
+			// Log the event
+			if (page.isLog())
+			{
+				LogEntryStore.log(new RenderHTMLLogEntry(httpExc.getHttpCode(), renderDuration, 0, 0));
+			}
+			throw httpExc;
 		}
 		finally
 		{
@@ -1168,7 +1189,7 @@ if (Setup.isDebug() && ctx.getChannel().equalsIgnoreCase(Channel.VOICE))
 		// Log the event
 		if (page.isLog())
 		{
-			LogEntryStore.log(new RenderHTMLLogEntry(renderDuration, deliverDuration, len));
+			LogEntryStore.log(new RenderHTMLLogEntry(HttpServletResponse.SC_OK, renderDuration, deliverDuration, len));
 		}
 		
 		pageHitCount++;

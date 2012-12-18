@@ -37,6 +37,8 @@ public class MotherStore extends DataBeanStore<Mother>
 		td.defineCol("MedicalCenter", String.class);
 		td.defineCol("Region", String.class);
 
+		td.defineProp("ChecklistViewAll", Boolean.class);
+		
 		return td;
 	}
 	

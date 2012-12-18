@@ -83,8 +83,6 @@ public class JournalEntryPage extends BabyPage
 	@Override
 	public void renderHTML() throws Exception
 	{
-		writeHorizontalNav(JournalPage.COMMAND);
-
 		writeFormOpen();
 		
 		TwoColFormControl twoCol = new TwoColFormControl(this);

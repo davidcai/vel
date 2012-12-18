@@ -16,8 +16,6 @@ public final class SearchPage extends BabyPage
 	@Override
 	public void renderHTML() throws Exception
 	{
-		writeHorizontalNav(SearchPage.COMMAND);
-
 		writeFormOpen("GET", null);
 		writeTextInput("q", null, 60, 256);
 		write(" ");

@@ -182,15 +182,22 @@ public class EnvelopePage extends WebPage
 					write("<div id=titlebar>");
 					write("<table class=Fixed><tr><td>");
 					
-					// Render the button initially hidden
+					// Render the BACK and MENU buttons initially hidden
 					String id = UUID.randomUUID().toString();
 					new ImageControl(this)
 						.resource("navbar-back.png")
 						.setStyleAttribute("display", "none")
 						.setAttribute("id", "backBtn"+id)
 						.render();
+					new ImageControl(this)
+						.resource("navbar-toggle.png")
+						.setStyleAttribute("display", "none")
+						.setAttribute("id", "menuBtn"+id)
+						.render();
 					// Show it, if the page ID is at the top of the stack
 					write("<script type=\"text/javascript\">backActivateButton('backBtn");
+					write(id);
+					write("','menuBtn");
 					write(id);
 					write("');</script>");
 					
@@ -200,8 +207,7 @@ public class EnvelopePage extends WebPage
 					{
 						writeEncode(pageTitle);
 					}
-					write("</h1></td><td align=right>");
-					new ImageControl(this).resource("navbar-toggle.png").setAttribute("onclick", "$('#page').toggle();$('#navbar').toggle();").render();
+					write("</h1></td><td align=right id=hotButtons>");
 					write("</td></tr>");
 					write("</table>");
 					write("</div>");

@@ -1,7 +1,6 @@
 package baby.pages.scrapbook;
 
 import baby.pages.BabyPage;
-import baby.pages.info.CalendarPage;
 import samoyan.controls.NavTreeControl;
 import samoyan.servlet.EnvelopeTab;
 import samoyan.servlet.WebPage;
@@ -17,7 +16,6 @@ public class ScrapbookTab extends EnvelopeTab
 		navCtrl.addPage(JournalPage.COMMAND, null);
 		navCtrl.addPage(GalleryPage.COMMAND, null);
 		navCtrl.addPage(ChartsPage.COMMAND, null);
-		navCtrl.addPage(CalendarPage.COMMAND, null);
 		
 		return navCtrl;
 	}

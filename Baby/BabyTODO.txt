@@ -10,23 +10,28 @@ Need smarter cache indexing. allowing multiple keys for invalidation. using nami
   - let admin define defaults per notif type.
   - somehow need to get list of notif types with titles.
 
-= (3) support for importing checklists as well: turn UL into checkitems. anything before it as description.
-? refactor Scrapbook->Journal, Journal->Notes
+? refactor package names to match UI.
+  also COMMAND consts in BabyPage
+  also .properties file names
 
-+ Profile page to be broken down into Account and Pregnancy
-  + tab control to switch between the two screens
-+ InfoHomePage to show WideLinkGroupControl to point to 4 pages.
-  also show current stage of pregnancy (week X, 256 days to go) + link to change status
-  also inject logo using JS right after H1. then hide h1.
-= (01) Render tab control as adjacent buttons on phone, or support this style as option. Center within page.
-= margin on iphone
-= add arrow icon + padding for SELECT tags on iphone
+= margin on smartphone ui
+= (02) min-height on body area to prevent tabbar from popping to top when editing field. see info articles when no results.
+= (01) on mobile, title to say "Article" or "Resource", and print article title as H2
+= (03) don't show fully complete checklists if preference is to show only in progress
+- (00) Design logo: iPhone webclip icons + splash images for all device sizes.
+= (05) External links under Resources, should open in new window
+= (06) auto-check "remember me on this device" on smartphone
+= (07) Can't save Babies due to null in gender.
+= (1) Implement Search page to search over Info articles, resources.
+  need to mirror content of articles as plain text (without the HTML tags)
+  use free text search when possible, default to %q% if exception thrown
+= (2) import
+  - support for importing checklists as well: turn UL into checkitems. anything before it as description.
+  - detect TYPE(article/checklist) FROM/TO/SECTION/SUBSECTION values inside the page. Do not import if not present.
+  - option to clear all articles/resources/checklists from DB
+  - auto-import from WEB-INF directory on system load. Use path as src and override existing. run in another thread. put in crawler module.
 
-- catch exceptions and redirect to error page rather than "500 server error".
-  otherwise, can get stuck in app.
-- master tab is not highlighted when clicked (on phone)
-
-- Home page when logged in:
+- Master root page when logged in:
   - Link to Help pages
   - About the app
   - Copyright/terms
@@ -42,11 +47,6 @@ Content:
 - Install Notepad++ for Andi
 = (4) Figure out what to do with TABLEs
 
-- Horizontal navigation (tab):
-  ? render tabs upside down
-  - set Fixed to top. need solid bg. Padding at bottom should not be fixed.
-  - error message to show below navigation
-
 = GoBACK:
   = when pushing on stack, check history.length. if same as during prev push, may indicate that the browser's back button was pressed.
     pop the stack until current window.location.pathname == top of stack (typically 1 if back pressed) instead of pushing on top of it
@@ -58,46 +58,44 @@ Content:
     - always post the top of the stack in a _back_ param.
     - when doing a GoBack redirection, redirect to that URL instead of to the GoBack page.
       - pass param to the page to pop the stack accordingly. _backpop_ or similar.
+  - use Back functionality in profile pages
 = Redo iPhone UI:
   - support for ... MORE in tab bar if there are too many tabs
-  = (0) MENU item to show only when there's no BACK button on the left, instead of the <- icon.
-    - don't show MENU button if nav bar is empty (i.e. no options).
-    - or, show login/logout/register/help/copyright/terms links there, so it's never empty.
-      then can remove from ConsolidatedProfile
-    - MENU button to work like in Gmail/FB apps: slide the body to the left, reveal menu underneath. possibly hide tabbar, ACTION button.
-  = (1) ACTION button on right should automatically take on default button in form. use jQuery to find button and show OK button accordingly.
-    - button control to support "defaultAction" property (true by default). If false, render as input=type=button rather than type=submit
-    - when default is on, insert JS to look for mirrored ACTION button and show/enable it.
-    - allow mirroring more than 1 button.
-  - need place to show Login/Logout, Register, Help.
+  = MENU item:
+    + to show only when there's no BACK button on the left, instead of the <- icon.
+    - show login/logout/register/help/copyright/terms links in nav bar.
+    - MENU button to work like in Gmail/FB apps: slide the body to the left, reveal menu underneath.
+    - different bg color for navbar
+    - navbar style to be like WideLinkGroupControl.
+    + on click, show/hide ACTION button area
+  + HOT ACTION BUTTON
+    + button control to support "defaultAction" property (true by default). If false, render as input=type=button rather than type=submit
+    + Button.setMobileHotAction(true/false)
+    + Buttons to forward clicks to real buttons by #id, or redirect to URL (link)
+      x hide real buttons when they have equivalent hot buttons
+    + Render elements into the #hotSection DIV (use JS to copy)
+    + perform automatically for Save buttons
+  _ Mobile HotAction area (top-right corner buttons) to support search input box: widen on focus
   - need place for Settings/profile link. Also in web UI. See facebook's dropdown corner menu.
-  - TwoCol: round cornered group of elements. see http://www.diffen.com/difference/Capex_vs_Opex (using Firefox) for nice style
-    support > links for rows.
-    - Reimplement Profile page as list of properties with links to edit screens. Then no need for Profile Tab. but then, where to place link to settings? under name of user in nav bar?
-      use new Back button to return to previous screen
-- ListViewControl (esp for mobile)
-  image/icon on left, label, main (free rendering), supplemental(right aligned), link for entire row, arrow/icon on right
-  header area
-  with or without outside borders and/or line separators
-= See usatoday.com for < > tabs that perform smooth page transitions. using AJAX.
-+ Adding checkitem to personal checklist doesn't work. Personal checklist got auto-collapsed and therefore hidden.
+  - detect orientation change, set class on BODY tag. in iOS, do same trick a scrollTo to recalc width of fixed elements.
 
 PHASE II:
 
 - checklists from earlier stages (preconception, pregnancy): show as faded.
-= (2) Implement Search page to search over Info articles, resources.
-  need to mirror content of articles as plain text (without the HTML tags)
-  use free text search when possible, default to %q% if exception thrown
 = Integrate the "Birth plan". It's a document the mother should fill out and send to her doctor.
   can be done electronically, or printed/mailed to doctor.
-= ArticleStore: caching for all queries. Clear after save/remove.
+- ArticleStore: caching for all queries. Clear after save/remove.
+  warm up cache on system load: load all articles/checklists to memory
 - kick counter tool:
   - integrate into measures (link to the tool)
   - better design
   - May need to redo because kicks are counted on several min basis. (how long to reach 10 kicks)
-- Design logo: iPhone webclip icons + splash images for all device sizes.
 = iPhone native notifs
 = Appointment reminders - send notif
+_ Horizontal navigation (tab):
+  ? render tabs upside down
+  - set Fixed to top. need solid bg. Padding at bottom should not be fixed.
+  - error message to show below navigation
 
 DAVID:
 - compressed "upload only" version of image upload control: don't show thumbnail, don't show "upload new", size.

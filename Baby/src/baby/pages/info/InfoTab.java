@@ -11,15 +11,16 @@ public class InfoTab extends EnvelopeTab
 	public NavTreeControl getNavTree(WebPage outputPage) throws Exception
 	{
 		NavTreeControl navCtrl = new NavTreeControl(outputPage);
+
+		navCtrl.addHeader(outputPage.getString("information:Nav.ToDo"));
+		navCtrl.addPage(ChecklistPage.COMMAND, null);
+		navCtrl.addPage(CalendarPage.COMMAND, null);
+		
 		navCtrl.addHeader(outputPage.getString("information:Nav.Articles"));
 		navCtrl.addPage(ViewArticleListPage.COMMAND, null);
 		navCtrl.addPage(ViewResourceListPage.COMMAND, null);
 		navCtrl.addPage(SearchPage.COMMAND, null);
 		
-		navCtrl.addHeader(outputPage.getString("information:Nav.ToDo"));
-		navCtrl.addPage(ChecklistPage.COMMAND, null);
-		navCtrl.addPage(CalendarPage.COMMAND, null);
-
 		return navCtrl;
 	}
 	

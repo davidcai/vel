@@ -1581,11 +1581,11 @@ public class WebPage
 		{
 			label = "controls:Button.Create";
 		}
-		writeButton(name, getString(label));
+		new ButtonInputControl(this, name).setValue(getString(label)).setMobileHotAction(true).render();
 	}
 	public void writeRemoveButton()
 	{
-		writeButtonRed(null, getString("controls:Button.Remove"));
+		writeRemoveButton(null);
 	}
 	public void writeRemoveButton(String name)
 	{
@@ -1595,94 +1595,11 @@ public class WebPage
 	public void writeButton(String name, String caption)
 	{
 		new ButtonInputControl(this, name).setValue(caption).render();
-//		write("<input type=submit");
-//		if (name!=null)
-//		{
-//			write(" name=\"");
-//			writeEncode(name);
-//			write("\"");
-//		}
-//		if (caption!=null)
-//		{
-//			write(" value=\"");
-//			writeEncode(caption);
-//			write("\"");
-//		}
-//		write(">");
 	}
 	
 	public void writeButtonRed(String name, String caption)
 	{
 		new ButtonInputControl(this, name).setValue(caption).setStrong(true).render();
-//		write("<input type=submit");
-//		if (name!=null)
-//		{
-//			write(" name=\"");
-//			writeEncode(name);
-//			write("\"");
-//		}
-//		if (caption!=null)
-//		{
-//			write(" value=\"");
-//			writeEncode(caption);
-//			write("\"");
-//		}
-//		write(" red>");
-	}
-
-	/**
-	 * Renders a button that takes the user to the preceding page.
-	 * @param caption The caption to use for the button. Can be <code>null</code>.
-	 * @param pageID Any identifier that can uniquely identify the page. if <code>null</code>, defaults to the command.
-	 */
-	public void writeBackButton(String caption, String pageID)
-	{
-//		if (pageID==null)
-//		{
-//			pageID = getContext().getCommand();
-//		}
-//		
-//		// Push the _back_ param into the sessionStorage stack
-//		String ephem = getEphemeral("BackBtnPush");
-//		if (ephem==null)
-//		{
-//			setEphemeral("BackBtnPush", "1");
-//
-//			String back = getContext().getParameter(RequestContext.PARAM_BACK);
-//			if (back==null)
-//			{
-//				back = getContext().getHeader("referer");
-//			}
-//			String backCaption = getContext().getParameter(RequestContext.PARAM_BACK_CAPTION);
-//			
-//			if (back!=null)
-//			{
-//				write("<script type=\"text/javascript\">backPush('");
-//				write(Util.jsonEncode(back));
-//				write("','");
-//				if (!Util.isEmpty(backCaption))
-//				{
-//					write(Util.jsonEncode(backCaption));
-//				}
-//				write("','");
-//				write(pageID);
-//				write("');</script>");
-//			}			
-//		}
-		
-		// Render the button initially hidden
-		String id = UUID.randomUUID().toString();
-		new ButtonInputControl(this, null)
-			.setValue(Util.isEmpty(caption)? getString("controls:Button.Back") : caption)
-			.setStyleAttribute("display", "none")
-			.setAttribute("id", "backBtn"+id)
-			.setAttribute("class", "Back")
-			.render();
-		
-		// Show it, if the page ID is at the top of the stack
-		write("<script type=\"text/javascript\">backActivateButton('backBtn");
-		write(id);
-		write("');</script>");
 	}
 
 	public void writeAjaxFrameOpen()

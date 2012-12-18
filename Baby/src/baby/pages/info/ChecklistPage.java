@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import samoyan.controls.TextInputControl;
+import samoyan.core.ParameterMap;
 import samoyan.servlet.RequestContext;
 import samoyan.servlet.exc.RedirectException;
 
@@ -35,6 +36,7 @@ public final class ChecklistPage extends BabyPage
 	{
 		RequestContext ctx = getContext();
 		UUID userID = ctx.getUserID();
+		boolean phone = ctx.getUserAgent().isSmartPhone();
 		
 		// Figure out the stage and its range (high, low)
 		Mother mother = MotherStore.getInstance().loadByUserID(getContext().getUserID());
@@ -55,25 +57,64 @@ public final class ChecklistPage extends BabyPage
 			low = TimelineControl.getLowRange(stage.toInteger());
 			high = TimelineControl.getHighRange(stage.toInteger());
 		}
-		
-		TimelineControl tlCtrl = new TimelineControl(this, stage, PARAM_STAGE);
-		
+				
 //		writeHorizontalNav(ChecklistPage.COMMAND);
 
 		// Render timeline
 		write("<table><tr valign=middle><td>");
 		writeEncode(getString("information:Checklist.YourChecklists"));
 		write("</td><td>");
-		tlCtrl.render();
+		new TimelineControl(this, stage, PARAM_STAGE).render();
 		write("</td></tr></table><br>");
-				
+		
+		// View: in progress or all
+		if (isParameter("vu"))
+		{
+			mother = (Mother) mother.clone(); // Open for writing
+			if (getParameterString("vu").equals("all"))
+			{
+				mother.setChecklistViewAll(true);
+			}
+			else if (getParameterString("vu").equals("progress"))
+			{
+				mother.setChecklistViewAll(false);
+			}
+			MotherStore.getInstance().save(mother);
+		}
+		boolean showAll = mother.isChecklistViewAll();
+		write("<div");
+		if (phone)
+		{
+			write(" align=center");
+		}
+		write(">");
+		writeEncode(getString("information:Checklist.View"));
+		write(" ");
+		if (showAll)
+		{
+			writeLink(getString("information:Checklist.ViewInProgress"), getPageURL(ctx.getCommand(), new ParameterMap("vu", "progress")));
+			write(" | ");
+			write("<b>");
+			writeEncode(getString("information:Checklist.ViewAll"));
+			write("</b>");
+		}
+		else
+		{
+			write("<b>");
+			writeEncode(getString("information:Checklist.ViewInProgress"));
+			write("</b>");
+			write(" | ");
+			writeLink(getString("information:Checklist.ViewAll"), getPageURL(ctx.getCommand(), new ParameterMap("vu", "all")));
+		}
+		write("</div><br>");
+		
 		// Personal checklist
 		Checklist personalChecklist = ChecklistStore.getInstance().loadPersonalChecklist(userID);
 		new ChecklistControl(this, userID, personalChecklist.getID())
 			.overrideTitle(getString("information:Checklist.PersonalChecklist"))
 			.overrideDescription(getString("information:Checklist.PersonalChecklistDesc"))
 			.setCollapsable(false)
-			.showChecked(false)
+			.showChecked(showAll)
 			.showDueDate(false)
 			.render();
 		write("<br>");
@@ -94,7 +135,7 @@ public final class ChecklistPage extends BabyPage
 		List<UUID> checklistIDs = ChecklistStore.getInstance().queryBySectionAndTimeline(BabyConsts.SECTION_TODO, Stage.preconception().toInteger(), high);
 		for (UUID checklistID : checklistIDs)
 		{
-			new ChecklistControl(this, userID, checklistID).render();
+			new ChecklistControl(this, userID, checklistID).showChecked(showAll).render();
 			write("<br>");
 		}
 	}

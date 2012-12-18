@@ -24,17 +24,16 @@ public class BabyProfileTab extends ProfileTab
 
 		NavTreeControl navCtrl = new NavTreeControl(outputPage);
 		
-		navCtrl.addHeader(outputPage.getString("babyprofile:Nav.Settings"));
-		
-		navCtrl.addPage(RealNamePage.COMMAND, null);
-		navCtrl.addPage(ChangeLoginNamePage.COMMAND, null);
-		navCtrl.addPage(ChangePasswordPage.COMMAND, null);
-		navCtrl.addPage(CloseAccountPage.COMMAND, null);
-		
 		navCtrl.addHeader(outputPage.getString("babyprofile:Nav.Pregnancy"));
 		navCtrl.addPage(StagePage.COMMAND, null);
 		navCtrl.addPage(BabiesPage.COMMAND, null);
 		navCtrl.addPage(MedicalCenterPage.COMMAND, null);
+		
+		navCtrl.addHeader(outputPage.getString("babyprofile:Nav.Account"));
+		navCtrl.addPage(RealNamePage.COMMAND, null);
+		navCtrl.addPage(ChangeLoginNamePage.COMMAND, null);
+		navCtrl.addPage(ChangePasswordPage.COMMAND, null);
+		navCtrl.addPage(CloseAccountPage.COMMAND, null);
 		
 		navCtrl.addHeader(outputPage.getString("babyprofile:Nav.ContactInfo"));
 		navCtrl.addPage(EmailPage.COMMAND, null);

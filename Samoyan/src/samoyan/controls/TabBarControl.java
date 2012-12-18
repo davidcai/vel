@@ -52,10 +52,10 @@ public class TabBarControl extends WebPage
 		write("\"><tr>");
 		for (Icon t : this.tabs)
 		{
-			boolean homeTab = Util.isEmpty(t.command);
+//			boolean homeTab = Util.isEmpty(t.command);
 			
 			write("<td class=\"Tab");
-			if (!homeTab && command1.equals(t.command))
+			if (/*!homeTab &&*/ command1.equals(t.command))
 			{
 				write(" Current");
 			}
@@ -82,10 +82,13 @@ public class TabBarControl extends WebPage
 					.render();
 				write("<br>");
 			}
-			if (smartPhone || !homeTab || t.image==null)
-			{
-				writeEncode(t.title);
-			}
+//			if (smartPhone || !homeTab || t.image==null)
+//			{
+				if (!Util.isEmpty(t.title))
+				{
+					writeEncode(t.title);
+				}
+//			}
 			write("</a>");
 			
 			write("</td>");

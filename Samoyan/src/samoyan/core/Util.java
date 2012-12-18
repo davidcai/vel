@@ -812,63 +812,6 @@ public final class Util
 //		return true;									// Looks OK but not certain
 //	}
 	
-	public static long getFreeSpace(String path) throws Exception
-	{
-		if (System.getProperty("os.name").startsWith("Windows"))
-		{
-			return getFreeSpaceOnWindows(path);
-		}
-		else
-		{
-			return 0;
-		}
-	}
-	
-	private static long getFreeSpaceOnWindows(String path) throws Exception
-	{
-		long bytesFree = -1;
-
-		// Create the .bat file
-		File script = new File(System.getProperty("java.io.tmpdir"), "freebytes" + nextRoundRobin() + ".bat");
-		PrintWriter writer = new PrintWriter(new FileWriter(script, false));
-		writer.println("dir \"" + path + "\"");
-		writer.flush();
-		writer.close();
-		
-		// Get the output from running the .bat file
-		Process p = Runtime.getRuntime().exec(script.getAbsolutePath());
-		InputStream reader = new BufferedInputStream(p.getInputStream());
-		StringBuffer buffer = new StringBuffer();
-		for (;;)
-		{
-			int c = reader.read();
-			if (c<0) break;
-			buffer.append((char) c);
-		}
-		String outputText = buffer.toString();
-		reader.close();
-
-		// Parse the output text for the bytes free info
-		StringTokenizer tokenizer = new StringTokenizer(outputText, "\n");
-		while (tokenizer.hasMoreTokens())
-		{
-			String line = tokenizer.nextToken().trim();
-			// See if line contains the bytes free information
-			if (line.endsWith("bytes free"))
-			{
-				tokenizer = new StringTokenizer(line, " ");
-				tokenizer.nextToken();
-				tokenizer.nextToken();
-				bytesFree = Long.parseLong(tokenizer.nextToken().replaceAll(",", ""));
-			}
-		}
-		
-		// Delete the batch file
-		script.delete();
-		
-		return bytesFree;
-	}
-
 	/**
 	 * Encodes all special characters and convert newlines to &lt;br&gt; or &lt;p&gt; tags
 	 * Also detect titles automatically - short lines with no period at end 

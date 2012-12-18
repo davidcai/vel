@@ -92,6 +92,15 @@ public class Mother extends DataBean
 		set("MedicalCenter", city);
 	}
 	
+	public boolean isChecklistViewAll()
+	{
+		return (Boolean) get("ChecklistViewAll", false);
+	}
+	public void setChecklistViewAll(boolean b)
+	{
+		set("ChecklistViewAll", b);
+	}
+
 	public Stage getPregnancyStage()
 	{
 		Date due = getDueDate();

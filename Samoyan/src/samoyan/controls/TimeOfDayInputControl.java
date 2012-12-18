@@ -13,11 +13,12 @@ import samoyan.servlet.WebPage;
 public class TimeOfDayInputControl extends TextInputControl
 {
 	private boolean timeInputSupported;
+	private boolean includeSeconds;
 
-	public TimeOfDayInputControl(WebPage outputPage, String name)
+	public TimeOfDayInputControl(WebPage outputPage, String name, boolean includeSeconds)
 	{
 		super(outputPage, name);
-		
+
 		UserAgent ua = outputPage.getContext().getUserAgent();
 		this.timeInputSupported =
 			((ua.isAppleTouch() && ua.isIOS() && ua.getVersionIOS() >= 5F) ||
@@ -25,33 +26,39 @@ public class TimeOfDayInputControl extends TextInputControl
 //			(ua.isChrome() && ua.getVersionChrome() >= 10F) ||
 			(ua.isOpera() && ua.getVersionOpera() >= 9F));
 		
-		if (this.timeInputSupported == false)
+		this.includeSeconds = includeSeconds;
+		
+		if (this.includeSeconds || this.timeInputSupported == false)
 		{
-			DateFormat df = DateFormatEx.getY4DateTimeInstance(outputPage.getLocale(), TimeZoneEx.GMT);
+			// Edit box
+			DateFormat df = (this.includeSeconds) ? DateFormat.getTimeInstance(DateFormat.LONG, outputPage.getLocale())
+					: DateFormatEx.getTimeInstance(outputPage.getLocale(), TimeZoneEx.GMT);
+			
 			String pattern = DateFormatEx.getPattern(df);
-			if (pattern.indexOf("MM")<0)
+			if (pattern.indexOf("hh") < 0)
 			{
-				pattern = Util.strReplace(pattern, "M", "MM");
+				pattern = Util.strReplace(pattern, "h", "hh");
 			}
-			if (pattern.indexOf("dd")<0)
+			if (pattern.indexOf("mm") < 0)
 			{
-				pattern = Util.strReplace(pattern, "d", "dd");
+				pattern = Util.strReplace(pattern, "m", "mm");
 			}
+			if (pattern.indexOf("ss") < 0)
+			{
+				pattern = Util.strReplace(pattern, "s", "ss");
+			}
+			
+			// TODO: Strip 'a' (AM/PM) from pattern?
+			
 			setPlaceholder(pattern.toLowerCase(Locale.US));
 		}
+		else
+		{
+			// Time input
+		}
 		
-		setAttribute("size", "22");
-		setAttribute("maxlength", "22");
-	}
-
-	public TimeOfDayInputControl setPlaceholder(String placeholder)
-	{
-		setAttribute("placeholder", placeholder);
-		return this;
-	}
-	public String getPlaceholder()
-	{
-		return getAttribute("placeholder");
+		setSize(22);
+		setMaxLength(22);
 	}
 
 	@Override

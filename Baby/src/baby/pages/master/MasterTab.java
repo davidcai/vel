@@ -8,7 +8,6 @@ import samoyan.database.User;
 import samoyan.database.UserStore;
 import samoyan.servlet.EnvelopeTab;
 import samoyan.servlet.RequestContext;
-import samoyan.servlet.Setup;
 import samoyan.servlet.WebPage;
 
 public class MasterTab extends EnvelopeTab
@@ -45,7 +44,8 @@ public class MasterTab extends EnvelopeTab
 	@Override
 	public String getLabel(WebPage outputPage)
 	{
-		return Setup.getAppTitle(outputPage.getLocale());
+		return "";
+//		return Setup.getAppTitle(outputPage.getLocale());
 	}
 
 	@Override

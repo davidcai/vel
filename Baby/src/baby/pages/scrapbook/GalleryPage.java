@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import samoyan.controls.TabControl;
 import samoyan.core.ParameterMap;
 import samoyan.database.Image;
 import samoyan.servlet.exc.RedirectException;
@@ -61,7 +62,18 @@ public class GalleryPage extends BabyPage
 	@Override
 	public void renderHTML() throws Exception
 	{
-		writeHorizontalNav(GalleryPage.COMMAND);
+		// Horizontal nav bar
+		if (getContext().getUserAgent().isSmartPhone())
+		{
+			new TabControl(this)
+				.addTab(JournalPage.COMMAND, getString("scrapbook:Journal.Title"), getPageURL(JournalPage.COMMAND))
+				.addTab(ChartsPage.COMMAND, getString("scrapbook:Charts.Title"), getPageURL(ChartsPage.COMMAND))
+				.addTab(GalleryPage.COMMAND, getString("scrapbook:Gallery.Title"), getPageURL(GalleryPage.COMMAND))
+				.setCurrentTab(getContext().getCommand())
+				.setStyleButton()
+				.setAlignStretch()
+				.render();
+		}
 		
 		writeFormOpen();
 		writeImageInput("photo", null);

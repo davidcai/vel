@@ -1,7 +1,6 @@
 package samoyan.apps.profile;
 
 import samoyan.apps.master.GoodbyePage;
-import samoyan.controls.TextInputControl;
 import samoyan.controls.TwoColFormControl;
 import samoyan.database.LogEntryStore;
 import samoyan.database.User;
@@ -28,16 +27,16 @@ public class CloseAccountPage extends ProfilePage
 			throw new WebFormException("pw", getString("common:Errors.InvalidValue"));
 		}
 		
-		// Captcha
-		validateParameterCaptcha("captcha");
+//		// Captcha
+//		validateParameterCaptcha("captcha");
 		
-		// Confirmation
-		String msg = getString("profile:CloseAccount.CloseMyAccount");
-		String confirm = getParameterString("confirm");
-		if (confirm.equalsIgnoreCase(msg)==false)
-		{
-			throw new WebFormException("confirm", getString("profile:CloseAccount.ConfirmError", msg));
-		}
+//		// Confirmation
+//		String msg = getString("profile:CloseAccount.CloseMyAccount");
+//		String confirm = getParameterString("confirm");
+//		if (confirm.equalsIgnoreCase(msg)==false)
+//		{
+//			throw new WebFormException("confirm", getString("profile:CloseAccount.ConfirmError", msg));
+//		}
 	}
 	
 	@Override
@@ -104,20 +103,20 @@ public class CloseAccountPage extends ProfilePage
 
 		twoCol.writeSpaceRow();
 
-		// Captcha
-		twoCol.writeRow(getString("profile:CloseAccount.Captcha"));
-		twoCol.writeCaptcha("captcha");
+//		// Captcha
+//		twoCol.writeRow(getString("profile:CloseAccount.Captcha"));
+//		twoCol.writeCaptcha("captcha");
+//
+//		twoCol.writeSpaceRow();
 
-		twoCol.writeSpaceRow();
-
-		// Signature
-		String msg = getString("profile:CloseAccount.CloseMyAccount");
-		twoCol.writeRow(getString("profile:CloseAccount.Signature"), getString("profile:CloseAccount.ConfirmationMessage", msg));
-		TextInputControl text = new TextInputControl(twoCol, "confirm");
-		text.setSize(20);
-		text.setMaxLength(msg.length());
-		text.setPlaceholder(msg);
-		text.render();
+//		// Signature
+//		String msg = getString("profile:CloseAccount.CloseMyAccount");
+//		twoCol.writeRow(getString("profile:CloseAccount.Signature"), getString("profile:CloseAccount.ConfirmationMessage", msg));
+//		TextInputControl text = new TextInputControl(twoCol, "confirm");
+//		text.setSize(20);
+//		text.setMaxLength(msg.length());
+//		text.setPlaceholder(msg);
+//		text.render();
 				
 		twoCol.render();
 		
@@ -129,15 +128,15 @@ public class CloseAccountPage extends ProfilePage
 		
 		writeFormClose();
 		
-		// Script to disable copy&paste on signature field
-		write("<script type=\"text/javascript\">");
-		write(	"function disableCtrl(ev){");
-		write(		"if(ev.ctrlKey){");
-		write(			"ev.preventDefault()");
-		write(		"}");
-		write(	"}");
-		write(	"$('INPUT[name=confirm]').keydown(disableCtrl);");
-		write("</script>");
+//		// Script to disable copy&paste on signature field
+//		write("<script type=\"text/javascript\">");
+//		write(	"function disableCtrl(ev){");
+//		write(		"if(ev.ctrlKey){");
+//		write(			"ev.preventDefault()");
+//		write(		"}");
+//		write(	"}");
+//		write(	"$('INPUT[name=confirm]').keydown(disableCtrl);");
+//		write("</script>");
 	}
 	
 	
