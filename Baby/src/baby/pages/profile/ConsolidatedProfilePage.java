@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.TimeZone;
 import java.util.UUID;
 
+import samoyan.apps.master.LogoutPage;
 import samoyan.apps.profile.ChangeLoginNamePage;
 import samoyan.apps.profile.ChangePasswordPage;
 import samoyan.apps.profile.CloseAccountPage;
@@ -27,6 +28,7 @@ import samoyan.database.User;
 import samoyan.database.UserStore;
 import samoyan.servlet.Channel;
 import samoyan.servlet.RequestContext;
+import baby.database.Baby;
 import baby.database.BabyStore;
 import baby.database.Mother;
 import baby.database.MotherStore;
@@ -82,12 +84,39 @@ public final class ConsolidatedProfilePage extends BabyPage
 		}
 
 		// Babies
-		// !$! TODO: print "Twins (male, female)" or "David, Melissa" or Unspecified
-		// Always return at least 1 baby from BabyStore?
 		List<UUID> babyIDs = BabyStore.getInstance().getAtLeastOneBaby(userID);
+		String names = "";
+		if (babyIDs.size()<=3)
+		{
+			for (UUID babyID : babyIDs)
+			{
+				Baby b = BabyStore.getInstance().load(babyID);
+				if (Util.isEmpty(b.getName()))
+				{
+					names = "";
+					break;
+				}
+				else
+				{
+					if (names.length()>0)
+					{
+						names += ", ";
+					}
+					names += b.getName();
+				}
+			}
+		}
+		else if (babyIDs.size()<=8)
+		{
+			names = getString("babyprofile:Consolidated.BabyCountName." + babyIDs.size());
+		}
+		else
+		{
+			names = getString("babyprofile:Consolidated.BabyCountName.N", babyIDs.size());
+		}
 		wlg.addLink()
 			.setTitle(getString("babyprofile:Consolidated.Babies", babyIDs.size()))
-			.setValue(String.valueOf(babyIDs.size()))
+			.setValue(names)
 			.setURL(getPageURL(BabiesPage.COMMAND));
 					
 		// Medical center
@@ -208,5 +237,14 @@ public final class ConsolidatedProfilePage extends BabyPage
 			.render();
 		writeFormClose();
 //		write("</td></tr></table>");
+		
+		write("<div class=NoShow>");
+		writeFormOpen("GET", LogoutPage.COMMAND);
+		new ButtonInputControl(this, null)
+			.setValue(getString("babyprofile:Consolidated.Logout"))
+			.setMobileHotAction(true)
+			.render();
+		writeFormClose();
+		write("</div>");
 	}
 }

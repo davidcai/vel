@@ -40,7 +40,9 @@ public class DoseReminderNotif extends RemindersPage
 		if (this.dose.getResolution()==Dose.UNRESOLVED)
 		{
 			if (action.equalsIgnoreCase(getString("mind:DoseReminderNotif.ActionYes"))==false &&
-				action.equalsIgnoreCase(getString("mind:DoseReminderNotif.ActionNo"))==false)
+				action.equalsIgnoreCase(getString("mind:DoseReminderNotif.ActionNo"))==false &&
+				action.equalsIgnoreCase(getString("mind:DoseReminderNotif.ActionTaken"))==false &&
+				action.equalsIgnoreCase(getString("mind:DoseReminderNotif.ActionSkipped"))==false)
 			{
 				throw new WebFormException(getString("mind:DoseReminderNotif.ResponseError", action));
 			}
@@ -70,13 +72,13 @@ public class DoseReminderNotif extends RemindersPage
 		this.dose = DoseStore.getInstance().open(this.dose.getID()); // Open for writing
 		if (this.dose.getResolution()==Dose.UNRESOLVED)
 		{
-			if (action.equalsIgnoreCase(getString("mind:DoseReminderNotif.ActionYes")))
+			if (action.equalsIgnoreCase(getString("mind:DoseReminderNotif.ActionYes")) || action.equalsIgnoreCase(getString("mind:DoseReminderNotif.ActionTaken")))
 			{
 				this.dose.setResolution(Dose.TAKEN);
 				this.dose.setResolutionDate(new Date());
 				DoseStore.getInstance().save(this.dose);				
 			}
-			else if (action.equalsIgnoreCase(getString("mind:DoseReminderNotif.ActionNo")))
+			else if (action.equalsIgnoreCase(getString("mind:DoseReminderNotif.ActionNo")) || action.equalsIgnoreCase(getString("mind:DoseReminderNotif.ActionSkipped")))
 			{
 				this.dose.setResolution(Dose.SKIPPED);
 				this.dose.setResolutionDate(new Date());
@@ -351,148 +353,39 @@ Debug.logln(getContext().toString());
 	@Override
 	public void renderVoiceXML() throws Exception
 	{
-		// !$! Voice notif not yet implemented
-		throw new PageNotFoundException();
-	}
-	
-/*
-	This code was written by Ilya. It is kept here for reference when reimplementing the voice API.
- 
- # {0} - App.Owner
-DoseReminderNotif.VoiceBody = This is a medication reminder from {0}. It''s time to take your next dose of
-DoseReminderNotif.VoiceBodySkipped = Please tell us why you skipped your dose of
-DoseReminderNotif.VoiceActionPrompt = Please, press 1 if you have taken this dose. Press 2 if you have skipped this dose.
-
-	@Override
-	public void renderVoiceXML() throws Exception
-	{		
-		StringBuilder builder = new StringBuilder();
-		if(!this.isActionable())
+		if (!this.isActionable())
 		{
-			// Dose is fully resolved - send vxml to end the call
-			builder.append("<form>");
-			builder.append("<block>");
-			builder.append("<prompt>");
-			builder.append("Thank you. Goodbye!");
-			builder.append("</prompt>");
-			builder.append("</block>");
-			builder.append("</form>");
-		}			
-		else if(this.dose.getResolution() == Dose.UNRESOLVED)
-		{			
-			//initial vxml document			
-			builder.append("<form id=\"welcome\">");
-			builder.append("<field name=\"userinput\">");
-			builder.append("<prompt>");
-			builder.append(getString("mind:DoseReminderNotif.VoiceBody", Setup.getAppOwner(getLocale())));			
-			builder.append("<break strength=\"weak\"/>").append(this.drugName);
-			//if(!Util.isEmpty(this.rx.getDoseInfo()))
-			//	builder.append(this.rx.getDoseInfo());			
-			
-			builder.append(" at ");
-			SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMMM d", getLocale());
-			String dateText = dateFormat.format(this.dose.getTakeDate());
- 			builder.append("<say-as interpret-as=\"vxml:date\">");
- 			builder.append(dateText);
-			builder.append("</say-as>");
-			dateFormat.applyPattern("h:mm a");
-			String timeText = dateFormat.format(this.dose.getTakeDate());
-			builder.append("<say-as interpret-as=\"vxml:time\">");
-			builder.append(timeText);
-			builder.append("<break strength=\"weak\"/>");
-			builder.append("</say-as>");
-			
-			builder.append(getString("mind:DoseReminderNotif.VoiceActionPrompt"));
-			
-			builder.append("</prompt>");
-			builder.append("<grammar xml:lang=\"en-US\" root=\"MYRULE\" mode=\"dtmf\">");
-			builder.append("<rule id=\"MYRULE\" scope=\"public\">");
-			builder.append("<one-of>");
-			builder.append("<item> 1 </item>");
-			builder.append("<item> 2 </item>");
-			builder.append("</one-of>");
-			builder.append("</rule>");
-			builder.append("</grammar>");
-			builder.append("<noinput>");
-			builder.append("<prompt>");
-			builder.append("The system is waiting for your response.");
-			builder.append("</prompt>");
-			builder.append("<reprompt />");
-			builder.append("</noinput>");
-			builder.append("<nomatch>");
-			builder.append("<prompt>");
-			builder.append("Wrong number pressed. Please try again.");
-			builder.append("</prompt>");
-			builder.append("<reprompt />");
-			builder.append("</nomatch>");
-			builder.append("</field>");
-			builder.append("<filled namelist=\"userinput\" mode=\"all\">");
-			builder.append("<var name=\"action\" expr=\"'YES'\"/>"); 
-			builder.append("<var name=\"callerid\" expr=\"session.callerid\"/>"); 
-			builder.append("<if cond=\"userinput==2\">");
-			builder.append("<assign name=\"action\" expr=\"'NO'\"/>");
-			builder.append("</if>");
-			builder.append("<submit next=\"http://");
-			builder.append(Setup.getHost()).append(":").append(Setup.getPort());
-			builder.append(Controller.getServletPath()).append("/").append(VoiceXMLPage.COMMAND);
-			builder.append("\" namelist=\"action callerid\" method=\"post\"/>");  
-			builder.append("</filled>");
-			builder.append("</form>");		
+			// Dose is fully resolved
+			throw new PageNotFoundException();
 		}
-		else if(this.dose.getResolution() == Dose.SKIPPED && Util.isEmpty(this.dose.getSkipReason()))
+		
+		// Greeting
+		if (this.dose.getResolution()==Dose.UNRESOLVED)
 		{
-			builder.append("<form id=\"skip\">");
-			builder.append("<field name=\"action\">");
-			builder.append("<prompt>");
-			builder.append(getString("mind:DoseReminderNotif.VoiceBodySkipped"));	
-			builder.append("<break strength=\"weak\"/>").append(this.drugName);				
+			write("<block><prompt bargein=\"true\" bargeintype=\"hotword\">");
+			writeEncode(getString("mind:DoseReminderNotif.VoiceBody", Setup.getAppOwner(getLocale()), this.drugName, this.dose.getTakeDate()));
+			write("<break time=\"500ms\"/>");
+			write("</prompt></block>");
 
-			for(int i = 1; i <= 8; i++)
+			new ActionListControl(this)
+				.setPrompt(getString("mind:DoseReminderNotif.ActionPrompt"))
+				.addAction(getString("mind:DoseReminderNotif.ActionTaken"), getString("mind:DoseReminderNotif.ActionYesHelp"))
+				.addAction(getString("mind:DoseReminderNotif.ActionSkipped"), getString("mind:DoseReminderNotif.ActionNoHelp"))
+				.render();
+		}
+		else if (this.dose.getResolution()==Dose.SKIPPED && Util.isEmpty(this.dose.getSkipReason()))
+		{
+			write("<block><prompt>");
+			write("<break time=\"500ms\"/>");
+			write("</prompt></block>");
+
+			ActionListControl actionListCtrl = new ActionListControl(this);
+			actionListCtrl.setPrompt(getString("mind:DoseReminderNotif.SkippedPrompt"));
+			for (int i=1; i<=8; i++)
 			{
-				builder.append("<break strength=\"weak\"/>");
-				builder.append(" for ");
-				builder.append(getString("mind:DoseReminderNotif.SkipReason_" + i));
-				builder.append(" press ").append(i);
+				actionListCtrl.addAction(String.valueOf(i), getString("mind:DoseReminderNotif.VoiceSkipReason_" + i));
 			}
-			
-			builder.append("</prompt>");
-			builder.append("<grammar xml:lang=\"en-US\" root=\"MYRULE\" mode=\"dtmf\">");
-			builder.append("<rule id=\"MYRULE\" scope=\"public\">");
-			builder.append("<one-of>");
-			builder.append("<item> 1 </item>");
-			builder.append("<item> 2 </item>");
-			builder.append("<item> 3 </item>");
-			builder.append("<item> 4 </item>");
-			builder.append("<item> 5 </item>");
-			builder.append("<item> 6 </item>");
-			builder.append("<item> 7 </item>");
-			builder.append("<item> 8 </item>");
-			builder.append("</one-of>");
-			builder.append("</rule>");
-			builder.append("</grammar>");
-			builder.append("<noinput>");
-			builder.append("<prompt>");
-			builder.append("The system is waiting for your response.");
-			builder.append("</prompt>");
-			builder.append("<reprompt />");
-			builder.append("</noinput>");
-			builder.append("<nomatch>");
-			builder.append("<prompt>");
-			builder.append("Wrong number pressed. Please try again.");
-			builder.append("</prompt>");
-			builder.append("<reprompt />");
-			builder.append("</nomatch>");
-			builder.append("</field>");
-			builder.append("<filled namelist=\"action\" mode=\"all\">");
-			builder.append("<var name=\"callerid\" expr=\"session.callerid\"/>"); 
-			builder.append("<submit next=\"http://");
-			builder.append(Setup.getHost()).append(":").append(Setup.getPort());
-			builder.append(Controller.getServletPath()).append("/").append(VoiceXMLPage.COMMAND);
-			builder.append("\" namelist=\"action callerid\" method=\"post\"/>"); 
-			builder.append("</filled>");
-			builder.append("</form>");						
-		}				
-		write(builder.toString());		
-	}
-*/
+			actionListCtrl.render();
+		}
+	}	
 }

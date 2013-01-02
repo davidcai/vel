@@ -38,7 +38,7 @@ public class CheckboxInputControl extends InputControl
 	public void render()
 	{
 		WebPage out = this.getOutputPage();
-		String name = this.getName();
+		String name = this.getName(); // Can be null for dummy checkboxes
 
 		// Create unique ID for checkbox control, if it has a label attached
 		String id = getID();
@@ -61,7 +61,7 @@ public class CheckboxInputControl extends InputControl
 		
 		// Checked?
 		boolean checked = false;
-		if (out.isParameter("_cb_" + name)) // Check shadow var
+		if (name!=null && out.isParameter("_cb_" + name)) // Check shadow var
 		{
 			checked = out.isParameter(name);
 		}
@@ -75,12 +75,12 @@ public class CheckboxInputControl extends InputControl
 			setAttribute("checked", "");
 		}
 		
-		if (out.isFormException(name))
+		if (name!=null && out.isFormException(name))
 		{
 			write("<span class=Error>");
 		}
 		writeTag("input");
-		if (out.isFormException(name))
+		if (name!=null && out.isFormException(name))
 		{
 			write("</span>");
 		}
@@ -96,8 +96,11 @@ public class CheckboxInputControl extends InputControl
 		}
 		
 		// Shadow hidden var
-		write("<input type=hidden name=\"_cb_");
-		writeEncode(name);
-		write("\" value=1>");
+		if (name!=null)
+		{
+			write("<input type=hidden name=\"_cb_");
+			writeEncode(name);
+			write("\" value=1>");
+		}
 	}
 }

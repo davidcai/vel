@@ -62,8 +62,8 @@ public class Notifier implements EmailListener, SmsListener, TwitterListener
 		SmsServer.removeListener(instance);
 		EmailServer.removeListener(instance);
 		
-		Util.shutdownAndAwaitTermination(instance.scheduledExecutor);
-		Util.shutdownAndAwaitTermination(instance.executor);
+		Util.shutdownNowAndAwaitTermination(instance.scheduledExecutor);
+		Util.shutdownNowAndAwaitTermination(instance.executor);
 	}
 	
 	private void doSend(final UUID notifID, final Date when)

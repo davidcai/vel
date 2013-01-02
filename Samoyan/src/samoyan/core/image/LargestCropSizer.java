@@ -21,10 +21,10 @@ public class LargestCropSizer implements ImageSizer
 	}
 	
 	@Override
-	public JaiImage process(JaiImage src, int pixelRatio) throws Exception
+	public JaiImage process(JaiImage src, float pixelRatio) throws Exception
 	{
-		int w = this.width * pixelRatio;
-		int h = this.height * pixelRatio;
+		int w = Math.round( this.width * pixelRatio );
+		int h = Math.round( this.height * pixelRatio );
 		
 		src.thumbnail(w, h);
 		

@@ -57,16 +57,16 @@ public class ImageControl extends TagControl
 
 	public ImageControl img(Image image, String sizeSpec) throws Exception
 	{
-		int ratio = out.getContext().getUserAgent().getPixelRatio();
+		float ratio = out.getContext().getUserAgent().getPixelRatio();
 		Image resized = ImageStore.getInstance().loadAndResize(image.getID(), sizeSpec, ratio);
 		
 		if (this.width<=0)
 		{
-			this.width = resized.getWidth() / ratio;
+			this.width = Math.round( resized.getWidth() / ratio );
 		}
 		if (this.height<=0)
 		{
-			this.height = resized.getHeight() / ratio;
+			this.height = Math.round( resized.getHeight() / ratio );
 		}
 		
 		this.image = image;

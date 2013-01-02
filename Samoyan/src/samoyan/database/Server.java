@@ -583,6 +583,9 @@ public final class Server extends DataBean
 		set("Twitter.User", userName);
 	}
 
+	// - - -
+	// Voice
+
 	public boolean isVoxeoActive()
 	{
 		return (Boolean) get("Voxeo.Active", false);
@@ -705,4 +708,60 @@ public final class Server extends DataBean
 			set("VoiceCountries", str);
 		}
 	}
+
+	// - - -
+	// Apple push notif
+	
+	public boolean isApplePushActive()
+	{
+		return (Boolean) get("APN.Active", false);
+	}
+	public void setApplePushActive(boolean active)
+	{
+		set("APN.Active", active);
+	}
+	
+	public byte[] getApplePushKeystore()
+	{
+		return (byte[]) get("APN.Keystore");
+	}
+	public void setApplePushKeystore(byte[] keystoreBytes)
+	{
+		set("APN.Keystore", keystoreBytes);
+	}
+	
+	public String getApplePushKeystorePassword()
+	{
+		return (String) get("APN.KeystorePassword");
+	}
+	public void setApplePushKeystorePassword(String pw)
+	{
+		set("APN.KeystorePassword", pw);
+	}
+	
+	public boolean isApplePushProduction()
+	{
+		return (Boolean) get("APN.Production", false);
+	}
+	/**
+	 * Whether to connect to Apple's production or sandbox servers.
+	 * @param prod
+	 */
+	public void setApplePushProduction(boolean prod)
+	{
+		set("APN.Production", prod);
+	}
+	
+	public String getApplePushDownloadURL()
+	{
+		return (String) get("APN.DownloadURL");
+	}
+	/**
+	 * The URL where the app can be downloaded from, typically a URL to the Apple AppStore.
+	 * @param url
+	 */
+	public void setApplePushDownloadURL(String url)
+	{
+		set("APN.DownloadURL", url);
+	}		
 }

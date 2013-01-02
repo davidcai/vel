@@ -39,8 +39,8 @@ public class UserListPage extends AdminPage
 	{
 		// Invite/import
 		new LinkToolbarControl(this)
-			.addLink(	getString("admin:UserList.InviteUsers"), getPageURL(InviteUsersPage.COMMAND), "icons/basic1/letter_16.png")
-			.addLink(	getString("admin:UserList.ImportUsers"), getPageURL(ImportUsersPage.COMMAND), "icons/basic1/user_16.png")
+			.addLink(	getString("admin:UserList.InviteUsers"), getPageURL(InviteUsersPage.COMMAND), "icons/standard/open-envelope-16.png")
+			.addLink(	getString("admin:UserList.ImportUsers"), getPageURL(ImportUsersPage.COMMAND), "icons/standard/cardboard-box-16.png")
 			.render();
 
 		// Search

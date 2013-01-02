@@ -98,7 +98,7 @@ public final class EmailServer implements EmailListener
 	
 	public static void terminate()
 	{
-		Util.shutdownAndAwaitTermination(instance.executor);
+		Util.shutdownNowAndAwaitTermination(instance.executor);
 		instance.executor = null;
 
 		try

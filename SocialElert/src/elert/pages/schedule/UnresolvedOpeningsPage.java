@@ -125,7 +125,7 @@ public class UnresolvedOpeningsPage extends ElertPage
 		final boolean phone = getContext().getUserAgent().isSmartPhone(); 
 
 		new LinkToolbarControl(this)
-			.addLink(getString("schedule:Unresolved.LogNew"), getPageURL(LogNewOpeningPage.COMMAND), "icons/basic1/pencil_16.png")
+			.addLink(getString("schedule:Unresolved.LogNew"), getPageURL(LogNewOpeningPage.COMMAND), "icons/standard/pencil-16.png")
 			.render();
 
 		renderSorters();

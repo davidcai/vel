@@ -203,11 +203,11 @@ public final class OutgoingNotifsReportPage extends AdminPage
 				cell();
 				if (notif.getStatusCode()==Notification.STATUS_FAILED)
 				{
-					writeImage("crossmark.gif", "");
+					writeImage("icons/standard/crossmark-16.png", "");
 				}
 				else if (notif.getStatusCode()==Notification.STATUS_SENT || notif.getStatusCode()==Notification.STATUS_DELIVERED)
 				{
-					writeImage("checkmark.gif", "");
+					writeImage("icons/standard/checkmark-16.png", "");
 				}
 				
 				cell();

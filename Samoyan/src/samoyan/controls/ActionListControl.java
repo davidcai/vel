@@ -472,7 +472,7 @@ public class ActionListControl extends WebPage
 			paramNameRegEx = Pattern.compile("^[_\\w]*$"); // underline,a-z,0-9
 			for (String p : this.params.keySet())
 			{
-				if (paramNameRegEx.matcher(p).matches() && this.params.get(p)!=null)
+				if (paramNameRegEx.matcher(p).matches() && this.params.get(p)!=null && !p.equals(RequestContext.PARAM_ACTION))
 				{
 					write("<var name=\"");
 					writeEncode(p);

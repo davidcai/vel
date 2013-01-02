@@ -1,7 +1,3 @@
-- Implement voice rendering for MMM notif
-
-- In PersonalInfo extra page: MRN should be allowed to be less than 12 digits (remove leading 0's).
-  also fix help balloon to "medical record number". See My eLert for code.
 
 - keep UsersExtended table, like in Social eLert.
   - No need for Patients table.

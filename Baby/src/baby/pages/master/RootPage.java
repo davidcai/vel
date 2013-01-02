@@ -122,7 +122,7 @@ public class RootPage extends WebPage
 			}
 		write("</style>");
 	}
-		
+	
 	@Override
 	public String getTitle() throws Exception
 	{

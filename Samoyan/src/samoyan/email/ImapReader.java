@@ -41,7 +41,7 @@ import samoyan.database.Trackback;
 import samoyan.database.TrackbackStore;
 import samoyan.servlet.Channel;
 
-public class ImapReader implements Runnable, MessageCountListener
+final class ImapReader implements Runnable, MessageCountListener
 {
 	private Session session = null;
 	private Store store = null;
@@ -52,6 +52,7 @@ public class ImapReader implements Runnable, MessageCountListener
 	private long lastPoll = 0; 
 	private long lastReconnect = 0; 
 	private EmailListener listener = null; 
+	private boolean shuttingDown = false;
 	
 	public ImapReader(EmailListener listener)
 	{
@@ -112,11 +113,7 @@ public class ImapReader implements Runnable, MessageCountListener
 			Debug.logln("IMAP disconnecting from " + this.session.getProperty("mail.imap.host") + ":" + this.session.getProperty("mail.imap.port"));
 		}
 		
-		if (this.executor!=null)
-		{
-			Util.shutdownAndAwaitTermination(this.executor);
-			this.executor = null;
-		}
+		this.shuttingDown = true;
 		
 		if (this.inbox!=null)
 		{
@@ -132,6 +129,14 @@ public class ImapReader implements Runnable, MessageCountListener
 		}
 
 		this.session = null;
+		
+		if (this.executor!=null)
+		{
+			Util.shutdownNowAndAwaitTermination(this.executor);
+			this.executor = null;
+		}
+		
+		this.shuttingDown = false;
 	}
 	
 	public void poll()
@@ -154,6 +159,11 @@ public class ImapReader implements Runnable, MessageCountListener
 	@Override
 	public void run()
 	{
+		if (this.shuttingDown)
+		{
+			return;
+		}
+		
 		// Reconnect every 2min if the connection dropped
 		if (this.store==null || this.store.isConnected()==false || 
 			this.inbox==null || this.inbox.isOpen()==false)
@@ -191,12 +201,15 @@ public class ImapReader implements Runnable, MessageCountListener
 		{
 			try
 			{
-				Debug.logln("IMAP before IDLE");
+				Debug.logln("IMAP entering IDLE");
 				this.inbox.idle(true); // Wait IDLE until one event occurs, or timeout (5 minutes on gmail)
-				Debug.logln("IMAP after IDLE");
+//				Debug.logln("IMAP after IDLE");
 				
 				// Process the inbox
-				poll();
+				if (!this.shuttingDown)
+				{
+					poll();
+				}
 			}
 			catch (MessagingException me)
 			{
@@ -208,7 +221,7 @@ public class ImapReader implements Runnable, MessageCountListener
 		}
 		
 		// Default to polling
-		if (!this.idleSupported && this.lastPoll + this.interval < System.currentTimeMillis())
+		if (!this.shuttingDown && !this.idleSupported && this.lastPoll + this.interval < System.currentTimeMillis())
 		{
 			poll();
 		}

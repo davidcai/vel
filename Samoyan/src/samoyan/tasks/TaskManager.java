@@ -53,7 +53,7 @@ public class TaskManager
 		// Initiate shutdown of all tasks
 		for (TaskSlot slot : taskSlots)
 		{
-			Util.shutdownAndAwaitTermination(slot.es);
+			Util.shutdownNowAndAwaitTermination(slot.es);
 		}
 	}
 }

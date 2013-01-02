@@ -11,6 +11,7 @@ public class BabyPage extends WebPage
 {
 	public final static String COMMAND_INFORMATION = "info";
 	public final static String COMMAND_SCRAPBOOK = "scrapbook";
+	public final static String COMMAND_JOURNEY = "journey";
 	public static final String COMMAND_CONTENT = "content";
 	public static final String COMMAND_PROFILE = ProfilePage.COMMAND;
 
@@ -26,6 +27,7 @@ public class BabyPage extends WebPage
 		}
 		else if (cmd1.equalsIgnoreCase(COMMAND_INFORMATION) ||
 				cmd1.equalsIgnoreCase(COMMAND_SCRAPBOOK) ||
+				cmd1.equalsIgnoreCase(COMMAND_JOURNEY) ||
 				cmd1.equalsIgnoreCase(ProfilePage.COMMAND) ||
 				cmd1.equalsIgnoreCase(MessagingPage.COMMAND))
 		{

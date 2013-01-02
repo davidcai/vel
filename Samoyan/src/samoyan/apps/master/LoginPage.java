@@ -3,8 +3,8 @@ package samoyan.apps.master;
 import java.io.IOException;
 import java.util.*;
 
-import samoyan.apps.master.JoinPage;
 import samoyan.apps.master.WelcomePage;
+import samoyan.controls.LoginControl;
 import samoyan.core.BCrypt;
 import samoyan.core.Cache;
 import samoyan.core.LocaleEx;
@@ -135,7 +135,8 @@ public class LoginPage extends WebPage
 		
 		// Create auth token and set as cookie
 		boolean keep = isParameter(PARAM_KEEP);
-		setCookie(RequestContext.COOKIE_AUTH, AuthTokenStore.getInstance().createAuthToken(user.getID(), getContext().getUserAgent().getString(), keep).toString());
+		UUID authToken = AuthTokenStore.getInstance().createAuthToken(user.getID(), getContext().getUserAgent().getString(), keep, getParameterString(RequestContext.PARAM_APPLE_PUSH_TOKEN));
+		setCookie(RequestContext.COOKIE_AUTH, authToken.toString());
 
 		
 		// Log the event
@@ -191,110 +192,13 @@ public class LoginPage extends WebPage
 	@Override
 	public void renderHTML() throws Exception
 	{
-		RequestContext ctx = getContext();
-//		UserAgent ua = ctx.getUserAgent();
-		
-		writeFormOpen();
-		
 		write("<div align=center>"); // center
 
-//		if (ua.isSmartPhone()==false)
-//		{
-//			write("<br><br><br>");
-//		}
 		renderLogo(); // subclass
-//		if (ua.isSmartPhone()==false)
-//		{
-//			write("<br><br><br>");
-//		}
-//		else
-		{
-			write("<br>");
-		}
+		write("<br>");
+		new LoginControl(this).postbackRedirect(true).showPrompt(true).showRememberMe(true).render();
 		
-		// Prompt
-//		if (!Util.isEmpty(loginUser) || !Util.isEmpty(loginPassword))
-//		{
-//			// An unsuccessful attempt was made to login
-//			writeEncode(getString("master:Login.AccessDenied"));
-//		}
-//		else
-		{
-			writeEncode(getString("master:Login.EnterCredentials"));
-		}
-		
-		// Register for access
-		Server fed = ServerStore.getInstance().loadFederation();
-		if (fed.isOpenRegistration())
-		{
-			write("<br><small>");
-	
-			StringBuffer regLink = new StringBuffer();
-			regLink.append("<a href=\"");
-			regLink.append(getPageURL(JoinPage.COMMAND));
-			regLink.append("\">");
-			regLink.append(Util.htmlEncode(getString("master:Login.Register")));
-			regLink.append("</a>");
-			
-			String pattern = Util.htmlEncode(getString("master:Login.NewMember", "$link$"));
-			pattern = Util.strReplace(pattern, "$link$", regLink.toString());
-			write(pattern);
-	
-			write("</small>");
-		}
-		write("<br><br>");
-		
-		write("<table align=center><tr valign=middle><td align=left>"); // Inner
-		writeEncode(getString("master:Login.LoginName"));
-		write("</td><td align=right>");
-		super.writeTextInput(PARAM_LOGINNAME, null, 20, User.MAXSIZE_LOGINNAME);
-		write("</td></tr><tr valign=middle><td align=left>");
-		writeEncode(getString("master:Login.Password"));
-		write("</td><td align=right>");
-		super.writePasswordInput(PARAM_PASSWORD, null, 20, User.MAXSIZE_PASSWORD);
-		write("</td></tr>");
-		
-		write("<tr><td colspan=2>"); // Inner
-		
-		write("<table width=\"100%\"><tr valign=middle><td align=left>"); // Button table
-		
-			// Forgot your password?
-			write("<small><a href=\"");
-			write(getPageURL(PasswordResetPage.COMMAND));
-			write("\">");
-			writeEncode(getString("master:Login.ForgotPassword"));
-			write("</a>&nbsp;</small>");
-
-		write("</td><td align=right nowrap>"); // Button table
-		
-			super.writeButton(getString("master:Login.Login"));
-			
-		write("</td></tr></table>"); // Button table
-		
-			write("</td></tr><tr><td colspan=2 align=center>"); // Inner
-			
-			write("<small><br>");
-			super.writeCheckbox(PARAM_KEEP, null, false);
-			write(" ");
-			writeTooltip(getString("master:Login.KeepLogin"), getString("master:Login.KeepHelp"));
-			write("</small>");
-		
-		write("</td></tr></table>"); // Inner
-		
-		write("</div>"); // center
-		
-		// Postback redirection params
-		for (String p : ctx.getParameters().keySet())
-		{
-			if (p.startsWith(PARAM_REDIRECT_PARAM_PREFIX) ||
-				p.equals(PARAM_REDIRECT_METHOD) ||
-				p.equals(PARAM_REDIRECT_COMMAND))
-			{
-				writeHiddenInput(p, null);
-			}
-		}
-		
-		writeFormClose();
+		write("</div>");
 	}
 	
 	@Override

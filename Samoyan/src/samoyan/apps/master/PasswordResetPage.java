@@ -253,7 +253,8 @@ public class PasswordResetPage extends WebPage
 			UserStore.getInstance().save(user);
 			
 			// Create auth token and set as cookie
-			setCookie(RequestContext.COOKIE_AUTH, AuthTokenStore.getInstance().createAuthToken(user.getID(), getContext().getUserAgent().getString(), false).toString());
+			UUID authToken = AuthTokenStore.getInstance().createAuthToken(user.getID(), getContext().getUserAgent().getString(), false, getParameterString(RequestContext.PARAM_APPLE_PUSH_TOKEN));
+			setCookie(RequestContext.COOKIE_AUTH, authToken.toString());
 
 			throw new RedirectException(WelcomePage.COMMAND, null);
 		}
@@ -312,6 +313,10 @@ public class PasswordResetPage extends WebPage
 		
 		writeHiddenInput("codesent", "1");
 		writeHiddenInput("radio", null);
+
+		// Will be filled by PhoneGap wrapper with the Apple Push Notification token
+		writeHiddenInput(RequestContext.PARAM_APPLE_PUSH_TOKEN, "");
+
 		writeFormClose();
 	}
 	

@@ -70,6 +70,7 @@ public class ClassCrawler implements Callable<Void>
 		article.setSummary(summary);
 		article.setTitle(this.title.substring(0, Math.min(Article.MAXSIZE_TITLE, this.title.length())));
 		article.setUpdatedDate(new Date());
+		article.setByCrawler(true);
 		ArticleStore.getInstance().save(article);
 		
 		return null;

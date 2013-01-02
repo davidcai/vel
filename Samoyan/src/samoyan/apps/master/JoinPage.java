@@ -1,6 +1,8 @@
 package samoyan.apps.master;
 
 import java.util.Locale;
+import java.util.UUID;
+
 import samoyan.apps.master.PrivacyPage;
 import samoyan.apps.master.TermsPage;
 import samoyan.apps.master.WelcomePage;
@@ -118,7 +120,8 @@ public class JoinPage extends WebPage
 		Notifier.send(Channel.EMAIL, null, user.getID(), null, JoinNotif.COMMAND, null);
 		
 		// Create auth token and set as cookie
-		setCookie(RequestContext.COOKIE_AUTH, AuthTokenStore.getInstance().createAuthToken(user.getID(), getContext().getUserAgent().getString(), false).toString());
+		UUID authToken = AuthTokenStore.getInstance().createAuthToken(user.getID(), getContext().getUserAgent().getString(), false, getParameterString(RequestContext.PARAM_APPLE_PUSH_TOKEN));
+		setCookie(RequestContext.COOKIE_AUTH, authToken.toString());
 		
 		// Redirect admins to overview page, all others to welcome page.
 		throw new RedirectException(WelcomePage.COMMAND, null);
@@ -221,6 +224,9 @@ public class JoinPage extends WebPage
 		write("<br><br>");	
 		super.writeButton(getString("master:Join.Join"));
 		
+		// Will be filled by PhoneGap wrapper with the Apple Push Notification token
+		writeHiddenInput(RequestContext.PARAM_APPLE_PUSH_TOKEN, "");
+
 		writeFormClose();
 		
 //		// Neat caps script

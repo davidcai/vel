@@ -43,7 +43,7 @@ public class ServiceAreasPage extends ElertPage
 		
 		//create new service area link
 		new LinkToolbarControl(this)
-			.addLink(getString("govern:ServiceAreas.CreateNew"), getPageURL(ServiceAreaPage.COMMAND), "icons/basic1/pencil_16.png")
+			.addLink(getString("govern:ServiceAreas.CreateNew"), getPageURL(ServiceAreaPage.COMMAND), "icons/standard/pencil-16.png")
 			.render();
 
 		// Load regions

@@ -29,7 +29,7 @@ public class ChecklistControl
 	private String title = null;
 	private String desc = null;
 	private boolean collapsable = true;
-	private boolean showChecked = true;
+	private boolean showCompleted = true;
 	private boolean showDueDate = true;
 	
 	public ChecklistControl(WebPage outputPage, UUID userID, UUID checklistID)
@@ -57,9 +57,9 @@ public class ChecklistControl
 		return this;
 	}
 
-	public ChecklistControl showChecked(boolean b)
+	public ChecklistControl showCompleted(boolean b)
 	{
-		this.showChecked = b;
+		this.showCompleted = b;
 		return this;
 	}
 
@@ -88,6 +88,12 @@ public class ChecklistControl
 				incomplete = true;
 				break;
 			}
+		}
+		
+		if (incomplete==false && this.showCompleted==false)
+		{
+			// Render nothing if checklist is complete and caller asked not to show complete items
+			return;
 		}
 		
 		out.write("<div class=Checklist>");
@@ -175,7 +181,7 @@ public class ChecklistControl
 		{
 			CheckItem checkitem = CheckItemStore.getInstance().load(checkitemID);
 			boolean checked = CheckItemUserLinkStore.getInstance().isChecked(checkitemID, userID);
-			if (checked && !this.showChecked)
+			if (checked && !this.showCompleted)
 			{
 				continue;
 			}

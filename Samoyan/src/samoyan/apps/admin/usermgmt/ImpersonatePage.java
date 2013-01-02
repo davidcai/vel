@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import samoyan.apps.admin.AdminPage;
 import samoyan.apps.master.WelcomePage;
+import samoyan.database.AuthToken;
 import samoyan.database.AuthTokenStore;
 import samoyan.database.Permission;
 import samoyan.database.PermissionStore;
@@ -31,10 +32,12 @@ public class ImpersonatePage extends AdminPage
 		}
 		
 		// Deauth the current admin cookie
-		AuthTokenStore.getInstance().remove(UUID.fromString(ctx.getCookie(RequestContext.COOKIE_AUTH)));
+		AuthToken oldToken = AuthTokenStore.getInstance().load(UUID.fromString(ctx.getCookie(RequestContext.COOKIE_AUTH)));
+		AuthTokenStore.getInstance().remove(oldToken.getID());
 		
 		// Create auth token and set as cookie
-		setCookie(RequestContext.COOKIE_AUTH, AuthTokenStore.getInstance().createAuthToken(userToImpersonate.getID(), getContext().getUserAgent().getString(), false).toString());
+		UUID authToken = AuthTokenStore.getInstance().createAuthToken(userToImpersonate.getID(), getContext().getUserAgent().getString(), false, oldToken.getApplePushToken());
+		setCookie(RequestContext.COOKIE_AUTH, authToken.toString());
 		
 		throw new RedirectException(WelcomePage.COMMAND, null);
 	}

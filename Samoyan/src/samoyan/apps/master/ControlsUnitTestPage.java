@@ -33,8 +33,8 @@ public final class ControlsUnitTestPage extends WebPage
 		
 		write("\r\n<!--LinkToolbar-->");
 		new LinkToolbarControl(this)
-			.addLink("Link 1", "http://www.example.com", "icons/basic1/pencil_16.png")
-			.addLink("Link 2", "http://www.example.com", "icons/basic1/pencil_16.png")
+			.addLink("Link 1", "http://www.example.com", "icons/standard/pencil-16.png")
+			.addLink("Link 2", "http://www.example.com", "icons/standard/pencil-16.png")
 			.render();
 		
 		write("\r\n<!--TabControl-->");

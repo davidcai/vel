@@ -59,10 +59,26 @@ public class AppointmentStore extends DataBeanStore<Appointment>
 		return queryByColumn("UserID", userID, "DateTime", false);
 	}
 	
-	public List<UUID> getByDate(UUID userID, Date from, Date to) throws Exception
+	public List<UUID> getByDate(UUID userID, Date from, Date to, boolean desc) throws Exception
 	{
 		return Query.queryListUUID(
-			"SELECT ID FROM Appointments WHERE UserID=? AND DateTime>=? AND DateTime<? ORDER BY DateTime DESC", 
+			"SELECT ID FROM Appointments WHERE UserID=? AND DateTime>=? AND DateTime<? ORDER BY DateTime " + (desc ? "DESC" : "ASC"), 
 			new ParameterList().plus(userID).plus(from.getTime()).plus(to.getTime()));
+	}
+	
+	public List<UUID> getAfter(UUID userID, Date after, boolean inclusive, boolean desc) throws Exception
+	{
+		return Query.queryListUUID(
+			"SELECT ID FROM Appointments WHERE UserID=? AND DateTime" + 
+				(inclusive ? ">=" : ">") + "? ORDER BY DateTime " + (desc ? "DESC" : "ASC"), 
+			new ParameterList().plus(userID).plus(after.getTime()));
+	}
+	
+	public List<UUID> getBefore(UUID userID, Date before, boolean inclusive, boolean desc) throws Exception
+	{
+		return Query.queryListUUID(
+			"SELECT ID FROM Appointments WHERE UserID=? AND DateTime" + 
+				(inclusive ? "<=" : "<") + "? ORDER BY DateTime " + (desc ? "DESC" : "ASC"), 
+			new ParameterList().plus(userID).plus(before.getTime()));
 	}
 }

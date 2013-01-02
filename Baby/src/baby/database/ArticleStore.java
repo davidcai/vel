@@ -1,13 +1,19 @@
 package baby.database;
 
+import java.io.InputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
+import baby.app.BabyConsts;
+
+import samoyan.core.DateFormatEx;
 import samoyan.core.ParameterList;
 import samoyan.core.Util;
+import samoyan.core.image.JaiImage;
 import samoyan.database.DataBeanStore;
 import samoyan.database.Image;
 import samoyan.database.Query;
@@ -45,6 +51,7 @@ public final class ArticleStore extends DataBeanStore<Article>
 		td.defineCol("Title", String.class).size(0, Article.MAXSIZE_TITLE);
 		td.defineCol("SourceURLHash", byte[].class);
 		td.defineCol("Section", String.class).size(0, Article.MAXSIZE_SECTION);
+		td.defineCol("SubSection", String.class).size(0, Article.MAXSIZE_SUBSECTION);
 		td.defineCol("TimelineFrom", Integer.class);
 		td.defineCol("TimelineTo", Integer.class);
 		td.defineCol("UpdatedDate", Date.class);
@@ -53,7 +60,8 @@ public final class ArticleStore extends DataBeanStore<Article>
 		td.defineCol("Priority", Integer.class);
 
 		td.defineProp("Photo", Image.class);
-		td.defineProp("SubSection", String.class).size(0, Article.MAXSIZE_SUBSECTION);
+		td.defineProp("YouTube", String.class);
+		td.defineProp("ByCrawler", Boolean.class);
 
 		return td;
 	}
@@ -72,11 +80,6 @@ public final class ArticleStore extends DataBeanStore<Article>
 		return openByColumn("SourceURLHash", urlHash);
 	}
 
-	public List<UUID> queryBySectionAndMedicalCenter(String section, String region, String medicalCenter) throws SQLException
-	{
-		return Query.queryListUUID("SELECT ID FROM Articles WHERE Section=? AND Region=? AND MedicalCenter=? ORDER BY Priority DESC, Title ASC", new ParameterList(section).plus(region).plus(medicalCenter));
-	}
-	
 	/**
 	 * Queries the database for the latest date of stored resource articles.
 	 * @return
@@ -133,6 +136,52 @@ public final class ArticleStore extends DataBeanStore<Article>
 				new ParameterList(section).plus(lowStage).plus(highStage).plus(lowStage).plus(highStage).plus(lowStage).plus(highStage));
 	}
 	
+	public List<UUID> queryBySectionAndMedicalCenter(String section, String region, String medicalCenter) throws SQLException
+	{
+		return Query.queryListUUID("SELECT ID FROM Articles WHERE Section=? AND Region=? AND MedicalCenter=? ORDER BY Priority DESC, Title ASC", new ParameterList(section).plus(region).plus(medicalCenter));
+	}
+	
+//	/**
+//	 * Query the article store according to the optional parameters.
+//	 * @param section The section. <code>null</code> for all sections.
+//	 * @param lowStage Pregnancy stage integer value, <code>Stage.invalid().toInteger()</code> to ignore.
+//	 * @param highStage Pregnancy stage integer value, <code>Stage.invalid().toInteger()</code> to ignore.
+//	 * @param region The region. <code>null</code> for all regions.
+//	 * @param medicalCenter The medical center. <code>null</code> for all medical centers.
+//	 * @return
+//	 * @throws SQLException 
+//	 */
+//	public List<UUID> query(String section, int lowStage, int highStage, String region, String medicalCenter) throws SQLException
+//	{
+//		StringBuilder sql = new StringBuilder();
+//		ParameterList params = new ParameterList();
+//		
+//		sql.append("SELECT ID FROM Articles WHERE 1=1");
+//		if (section!=null)
+//		{
+//			sql.append(" AND Section=?");
+//			params.plus(section);
+//		}
+//		if (lowStage!=Stage.invalid().toInteger() && highStage!=Stage.invalid().toInteger())
+//		{
+//			sql.append(" AND ((TimelineFrom>=? AND TimelineFrom<=?) OR (TimelineTo>=? AND TimelineTo<=?) OR (TimelineFrom<? AND TimelineTo>?))");
+//			params.plus(lowStage).plus(highStage).plus(lowStage).plus(highStage).plus(lowStage).plus(highStage);
+//		}
+//		if (region!=null)
+//		{
+//			sql.append(" AND Region=?");
+//			params.plus(region);
+//		}
+//		if (medicalCenter!=null)
+//		{
+//			sql.append(" AND MedicalCenter=?");
+//			params.plus(medicalCenter);
+//		}
+//		sql.append(" ORDER BY Priority DESC, Title ASC");
+//		
+//		return Query.queryListUUID(sql.toString(), params);
+//	}
+	
 	public List<String> getRegions() throws SQLException
 	{
 		return Query.queryListString("SELECT DISTINCT Region FROM Articles WHERE NOT Region IS NULL ORDER BY Region", null);
@@ -140,7 +189,12 @@ public final class ArticleStore extends DataBeanStore<Article>
 	
 	public List<String> getMedicalCenters(String region) throws SQLException
 	{
-		return Query.queryListString("SELECT DISTINCT MedicalCenter FROM Articles WHERE Region=? ORDER BY MedicalCenter ASC", new ParameterList(region));
+		return Query.queryListString("SELECT DISTINCT MedicalCenter FROM Articles WHERE NOT MedicalCenter IS NULL AND Region=? ORDER BY MedicalCenter ASC", new ParameterList(region));
+	}
+
+	public List<String> getMedicalCenters() throws SQLException
+	{
+		return Query.queryListString("SELECT DISTINCT MedicalCenter FROM Articles WHERE NOT MedicalCenter IS NULL ORDER BY MedicalCenter ASC", null);
 	}
 
 	public List<String> getSections() throws SQLException
@@ -151,5 +205,188 @@ public final class ArticleStore extends DataBeanStore<Article>
 	public List<UUID> getAll() throws Exception
 	{
 		return super.queryAll();
+	}
+	
+	public List<UUID> searchByText(String q, String region) throws SQLException
+	{
+		try
+		{
+			ParameterList params = new ParameterList();
+			String sql = "SELECT p.LinkedID FROM Props AS p, Articles AS a " +
+					"WHERE a.ID=p.LinkedID AND p.Name='PlainText' AND FREETEXT(p.*, ?)";
+			params.add(q);
+			if (!Util.isEmpty(region))
+			{
+				sql += " AND (a.Region IS NULL OR a.Region=?)";
+				params.add(region);
+			}
+			return Query.queryListUUID(sql, params);
+		}
+		catch (SQLException exc)
+		{
+			// If FREETEXT is not supported, default to using LIKE %q%
+			ParameterList params = new ParameterList();
+			String sql = "SELECT p.LinkedID FROM Props AS p, Articles AS a " +
+					"WHERE a.ID=p.LinkedID AND p.Name='PlainText' AND (p.Val LIKE ? OR p.ValText LIKE ?)";
+			params.add("%" + q + "%");
+			params.add("%" + q + "%");
+			if (!Util.isEmpty(region))
+			{
+				sql += " AND (a.Region IS NULL OR a.Region=?)";
+				params.add(region);
+			}
+			return Query.queryListUUID(sql, params);
+		}
+	}
+	
+	/**
+	 * Create an article from the given input streams and add it to the database.
+	 * @param text A stream pointing to HTML text in the proper format. Must be a UTF-8 encoded stream.
+	 * @param img A stream pointing to an image file to associate with the article, may be <code>null</code>.
+	 * @return The persisted article, or <code>null</code>.
+	 */
+	public Article importFromStream(InputStream text, InputStream img) throws Exception
+	{
+		String title = "";
+		String body = "";
+		
+		String html = Util.inputStreamToString(text, "UTF-8");
+		int p = html.indexOf("<title>");
+		if (p>=0)
+		{
+			p += 7;
+			int q = html.indexOf("</title>", p);
+			if (q>=0)
+			{
+				title = Util.htmlDecode(html.substring(p, q));
+			}
+		}
+		
+		p = html.indexOf("<body>");
+		if (p>=0)
+		{
+			p += 6;
+			int q = html.indexOf("</body>", p);
+			if (q>=0)
+			{
+				body = html.substring(p, q);
+			}
+		}
+		
+		String type = getMetaTagValue(html, "Type");
+		if (type!=null && type.equalsIgnoreCase("Article")==false)
+		{
+			return null;
+		}
+		
+		String section = getMetaTagValue(html, "Section");
+		if (section==null) section = BabyConsts.SECTION_INFO;
+		String subsection = getMetaTagValue(html, "Subsection");
+		String uri = getMetaTagValue(html, "URI");
+		String desc = getMetaTagValue(html, "Description");
+		String pinned = getMetaTagValue(html, "Pinned");
+		Stage from = parseTimeline(getMetaTagValue(html, "From"));
+		if (from==null) from = Stage.preconception();
+		Stage to = parseTimeline(getMetaTagValue(html, "To"));
+		if (to==null) to = Stage.pregnancy(Stage.MAX_MONTHS);
+		Date updated;
+		try
+		{
+			updated = DateFormatEx.getISO8601Instance().parse(getMetaTagValue(html, "Updated"));
+		}
+		catch (Exception e)
+		{
+			updated = new Date();
+		}
+		String youTube = getMetaTagValue(html, "YouTube");
+		
+		JaiImage jai = null;
+		if (img!=null)
+		{
+			jai = new JaiImage(Util.inputStreamToBytes(img));
+		}
+
+		Article article = loadBySourceURL(uri);
+		if (article==null)
+		{
+			article = new Article();
+		}
+//		else if (!article.getUpdatedDate().before(updated))
+//		{
+//			return article;
+//		}
+		
+		article.setSection(section);
+		article.setSubSection(subsection);
+		article.setSourceURL(uri);
+		article.setTitle(title);
+		article.setSummary(desc);
+		article.setHTML(body);
+		article.setPriority(pinned!=null && pinned.equalsIgnoreCase("true")? 100 : 0);
+		article.setTimelineFrom(from.toInteger());
+		article.setTimelineTo(to.toInteger());
+		article.setUpdatedDate(updated);
+		if (jai!=null)
+		{
+			article.setPhoto(new Image(jai));
+		}
+		article.setYouTubeVideoID(youTube);
+		
+		save(article);
+
+		return article;
+	}
+	
+	private String getMetaTagValue(String html, String name)
+	{
+		String lcHTML = html.toLowerCase(Locale.US);
+		int p = lcHTML.indexOf("<meta name=\"" + name.toLowerCase(Locale.US) + "\"");
+		if (p>=0)
+		{
+			int q = lcHTML.indexOf("content=\"", p);
+			if (q>=0)
+			{
+				q += 9;
+				int r = lcHTML.indexOf("\"", q);
+				if (r>=0)
+				{
+					return html.substring(q, r);
+				}
+			}
+		}
+		return null;
+	}
+	
+	private Stage parseTimeline(String s)
+	{
+		if (s==null)
+		{
+			return null;
+		}
+		s = s.toLowerCase(Locale.US);
+		if (s.startsWith("week "))
+		{
+			return Stage.pregnancy(Integer.parseInt(s.substring(5)));
+		}
+		else if (s.startsWith("pregnancy "))
+		{
+			return Stage.pregnancy(Integer.parseInt(s.substring(10)));
+		}
+		else if (s.startsWith("month "))
+		{
+			return Stage.infancy(Integer.parseInt(s.substring(5)));
+		}
+		else if (s.startsWith("infancy "))
+		{
+			return Stage.infancy(Integer.parseInt(s.substring(8)));
+		}
+		else if (s.startsWith("pre"))
+		{
+			return Stage.preconception();
+		}
+		else
+		{
+			return null;
+		}
 	}
 }

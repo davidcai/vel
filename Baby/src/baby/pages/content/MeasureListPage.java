@@ -26,7 +26,7 @@ public class MeasureListPage extends BabyPage
 	public void renderHTML() throws Exception
 	{
 		new LinkToolbarControl(this)
-			.addLink(getString("content:MeasureList.NewMeasure"), getPageURL(MeasurePage.COMMAND), "icons/basic1/pencil_16.png")
+			.addLink(getString("content:MeasureList.NewMeasure"), getPageURL(MeasurePage.COMMAND), "icons/standard/pencil-16.png")
 			.render();
 		
 		List<UUID> measureIDs = MeasureStore.getInstance().getAll();

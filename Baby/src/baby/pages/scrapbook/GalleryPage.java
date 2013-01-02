@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import samoyan.controls.ImageInputControl;
 import samoyan.controls.TabControl;
 import samoyan.core.ParameterMap;
 import samoyan.database.Image;
@@ -76,7 +77,7 @@ public class GalleryPage extends BabyPage
 		}
 		
 		writeFormOpen();
-		writeImageInput("photo", null);
+		new ImageInputControl(this, "photo").showThumbnail(false).render();
 		write("<br>");
 		writeButton(PARAM_POST, getString("scrapbook:Gallery.Post"));
 		writeFormClose();
@@ -97,39 +98,47 @@ public class GalleryPage extends BabyPage
 		
 		if (entries.isEmpty() == false)
 		{
-			int entryCount = entries.size();
-			int colCountMax = getContext().getUserAgent().getScreenWidth() / 150; // BabyConsts.IMAGESIZE_THUMB_150X150
-			int rowCount = (int) Math.ceil((entryCount + 0d) / colCountMax);
-			
+			int COLS = 4;
+			String imgSize = BabyConsts.IMAGESIZE_THUMB_150X150;
+			if (getContext().getUserAgent().isSmartPhone())
+			{
+				COLS = getContext().getUserAgent().getScreenWidth() / 75;
+				imgSize = Image.SIZE_THUMBNAIL;
+			}
+			if (COLS>5)
+			{
+				COLS = 5;
+			}
+						
 			write("<table class=\"PhotoGrid\">");
 			
-			for (int r = 0; r < rowCount; r++)
+			for (int i=0; i<entries.size(); i++)
 			{
-				write("<tr>");
-				
-				for (int c = 0; c < colCountMax; c++)
+				if (i%COLS==0)
 				{
-					int index = r * colCountMax + c;
-					if (index < entryCount)
-					{
-						JournalEntry entry = entries.get(index);
-						
-						write("<td>");
-						write("<a href=\"");
-						writeEncode(getPageURL(PhotoPage.COMMAND, 
-							new ParameterMap(PhotoPage.PARAM_ID, entry.getID().toString())));
-						write("\">");
-						writeImage(entry.getPhoto(), BabyConsts.IMAGESIZE_THUMB_150X150, null, null);
-						write("</a>");
-						write("<br>");
-						writeEncodeDate(entry.getCreated());
-						write("</td>");
-					}
+					write("<tr>");
 				}
+				write("<td>");
 				
-				write("</tr>");
+				JournalEntry entry = entries.get(i);
+				writeImage(entry.getPhoto(), imgSize, null,
+					getPageURL(PhotoPage.COMMAND, new ParameterMap(PhotoPage.PARAM_ID, entry.getID().toString())));
+//				write("<br>");
+//				writeEncodeDate(entry.getCreated());
+
+				write("</td>");
+				if (i%COLS==COLS-1)
+				{
+					write("</tr>");
+				}
 			}
-			
+			if (entries.size()%COLS!=0)
+			{
+				write("<td colspan=");
+				write(COLS-entries.size()%COLS);
+				write(">&nbsp;</td></tr>");
+			}
+						
 			write("</table>");
 		}
 		else

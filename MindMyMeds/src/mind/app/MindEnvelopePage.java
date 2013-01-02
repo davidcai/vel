@@ -70,7 +70,7 @@ public class MindEnvelopePage extends EnvelopePage
 		}
 		
 // !$! For demo 2012-11-05
-if (user!=null && PermissionStore.getInstance().isUserGrantedPermission(user.getID(), "Messaging"))
+if (user!=null && PermissionStore.getInstance().isUserGrantedPermission(user.getID(), "Demo"))
 {
 	result.add(messagingTab);
 }

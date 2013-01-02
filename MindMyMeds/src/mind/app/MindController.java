@@ -51,9 +51,6 @@ public class MindController extends Controller
 		Dispatcher.bindPage(DrugInfoPage.COMMAND,			DrugInfoPage.class);
 		Dispatcher.bindPage(SearchDrugsPage.COMMAND,		SearchDrugsPage.class);
 		Dispatcher.bindPage(DrugInteractionPage.COMMAND,	DrugInteractionPage.class);
-		Dispatcher.bindPage(EquipmentsPage.COMMAND, 		EquipmentsPage.class);
-		Dispatcher.bindPage(EquipmentPage.COMMAND, 			EquipmentPage.class);
-		Dispatcher.bindPage(IndustryTypeAhead.COMMAND,  	IndustryTypeAhead.class);
 		
 		// Account
 		Dispatcher.bindPage(ProfileExtraPage.COMMAND,			ProfileExtraPage.class);

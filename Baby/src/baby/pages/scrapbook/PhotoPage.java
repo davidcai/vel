@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import samoyan.controls.ImageControl;
 import samoyan.core.ParameterMap;
+import samoyan.core.Util;
 import samoyan.servlet.UserAgent;
 import samoyan.servlet.exc.PageNotFoundException;
 import baby.app.BabyConsts;
@@ -103,5 +104,13 @@ public class PhotoPage extends BabyPage
 		}
 		
 		write("</div>");
-	}	
+		
+		if (!Util.isEmpty(this.curEntry.getText()))
+		{
+//			write("<div align=center>");
+			write("<br>");
+			writeEncode(this.curEntry.getText());
+//			write("</div>");
+		}
+	}
 }

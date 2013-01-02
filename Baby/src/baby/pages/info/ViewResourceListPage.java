@@ -4,12 +4,11 @@ import java.util.List;
 import java.util.UUID;
 
 import samoyan.controls.SelectInputControl;
-import samoyan.core.ParameterMap;
 import samoyan.core.Util;
 import samoyan.servlet.Setup;
 import samoyan.servlet.UserAgent;
 import baby.app.BabyConsts;
-import baby.database.Article;
+import baby.controls.ArticleListControl;
 import baby.database.ArticleStore;
 import baby.database.Mother;
 import baby.database.MotherStore;
@@ -29,6 +28,7 @@ public class ViewResourceListPage extends BabyPage
 	@Override
 	public void renderHTML() throws Exception
 	{
+		boolean phone = getContext().getUserAgent().isSmartPhone();
 		Mother mother = MotherStore.getInstance().loadByUserID(getContext().getUserID());
 		List<String> medicalCenters = ArticleStore.getInstance().getMedicalCenters(mother.getRegion());
 
@@ -73,53 +73,46 @@ public class ViewResourceListPage extends BabyPage
 		write("</td></tr></table><br>");
 		writeFormClose();
 		
-		write("<table width=\"100%\">");
-		for (UUID articleID : articleIDs)
-		{
-			Article article = ArticleStore.getInstance().load(articleID);
-			
-			write("<tr><td>");
-			writeLink(article.getTitle(), getPageURL(ViewArticlePage.COMMAND, new ParameterMap(ViewArticlePage.PARAM_ID, article.getID().toString())));
-			if (!Util.isEmpty(article.getSubSection()))
-			{
-				write(" <span class=Faded>(");
-				writeEncode(article.getSubSection());
-				write(")</span>");
-			}
-			write("<br>");
-			String summary = article.getSummary();
-			if (Util.isEmpty(summary))
-			{
-				summary = article.getPlainText();
-			}
-			writeEncode(Util.getTextAbstract(summary, Article.MAXSIZE_SUMMARY));
-			write("</td></tr>");
-			write("<tr><td>&nbsp;</td></tr>");
-		}
-		write("</table>");
+		// Render resources
+		new ArticleListControl(this, articleIDs).showImages(false).showRegion(false).showSummary(!phone).render();
 		
 		// Additional resources
 		write("<br><hr><br>");
 		writeEncode(getString("information:Resources.AdditionalResources"));
 		write("<br><ul>");
 		write("<li>");
-		writeLink(getString("information:Resources.OnlinePregnancyCenter"), "https://healthy.kaiserpermanente.org/health/poc?uri=center:pregnancy&article=EEA2B18C-B19C-11E0-B461-CB58EEF22C59");
+		write("<a target=_blank href=\"");
+		writeEncode("https://healthy.kaiserpermanente.org/health/poc?uri=center:pregnancy&article=EEA2B18C-B19C-11E0-B461-CB58EEF22C59");
+		write("\">");
+		writeEncode(getString("information:Resources.OnlinePregnancyCenter"));
+		write("</a>");
+//		writeLink(getString("information:Resources.OnlinePregnancyCenter"), "https://healthy.kaiserpermanente.org/health/poc?uri=center:pregnancy&article=EEA2B18C-B19C-11E0-B461-CB58EEF22C59");
 		write("</li>");
 		UserAgent ua = getContext().getUserAgent();
-		// !$! Confirm links are correct
+		// !$! Confirm with customer that these links are correct
 		// If app already installed on the device, have link to open the app directly
 		String ios = "https://itunes.apple.com/us/app/kaiser-permanente/id493390354?mt=8";
 		String android = "https://play.google.com/store/apps/details?id=org.kp.m";
 		if (!ua.isAndroid())
 		{
 			write("<li>");
-			writeLink(getString("information:Resources.IOS", Setup.getAppOwner(getLocale())), ios);
+			write("<a target=_blank href=\"");
+			writeEncode(ios);
+			write("\">");
+			writeEncode(getString("information:Resources.IOS", Setup.getAppOwner(getLocale())));
+			write("</a>");
+//			writeLink(getString("information:Resources.IOS", Setup.getAppOwner(getLocale())), ios);
 			write("</li>");
 		}
 		if (!ua.isIOS())
 		{
 			write("<li>");
-			writeLink(getString("information:Resources.Android", Setup.getAppOwner(getLocale())), android);
+			write("<a target=_blank href=\"");
+			writeEncode(android);
+			write("\">");
+			writeEncode(getString("information:Resources.Android", Setup.getAppOwner(getLocale())));
+			write("</a>");
+//			writeLink(getString("information:Resources.Android", Setup.getAppOwner(getLocale())), android);
 			write("</li>");
 		}
 		write("</ul>");

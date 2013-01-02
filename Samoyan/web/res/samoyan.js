@@ -113,7 +113,8 @@ $(document).ready(function()
 		// Open links in same window on iPhone
 		$("A[href]").on("click", function(ev){
 			var href = $(this).attr("href");
-			if (!href.indexOf("javascript:")==0)
+			var target = $(this).attr("target");
+			if (!href.indexOf("javascript:")==0 && !target)
 			{
 				ev.preventDefault();
 				window.location = href;
@@ -476,7 +477,7 @@ function backPush()
 	else
 	{
 		windowStorage.setItem("bkStkU"+(sz-1), window.location.href);
-	}
+	}	
 }
 function backActivateButton(backBtnID, menuBtnID)
 {

@@ -49,7 +49,7 @@ public final class StagePage extends BabyPage
 		if (!phone)
 		{
 			write("<td>");
-			writeImage("baby/stage-preconception.jpg", getString("babyprofile:Stage.Preconception"));
+			writeImage("baby/stage-preconception.png", getString("babyprofile:Stage.Preconception"));
 			write("</td>");
 		}
 		write("<td>");
@@ -62,7 +62,7 @@ public final class StagePage extends BabyPage
 		if (!phone)
 		{
 			write("<td>");
-			writeImage("baby/stage-pregnancy.jpg", getString("babyprofile:Stage.Pregnancy"));
+			writeImage("baby/stage-pregnancy.png", getString("babyprofile:Stage.Pregnancy"));
 			write("</td>");
 		}
 		write("<td>");
@@ -83,7 +83,7 @@ public final class StagePage extends BabyPage
 		if (!phone)
 		{
 			write("<td>");
-			writeImage("baby/stage-infancy.jpg", getString("babyprofile:Stage.Infancy"));
+			writeImage("baby/stage-infancy.png", getString("babyprofile:Stage.Infancy"));
 			write("</td>");
 		}
 		write("<td>");

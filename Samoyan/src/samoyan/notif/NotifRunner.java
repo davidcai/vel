@@ -10,9 +10,11 @@ import java.util.StringTokenizer;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import samoyan.applepush.ApplePushServer;
 import samoyan.core.Cache;
 import samoyan.core.Debug;
 import samoyan.core.Util;
+import samoyan.database.AuthTokenStore;
 import samoyan.database.LogEntryStore;
 import samoyan.database.Notification;
 import samoyan.database.NotificationStore;
@@ -207,7 +209,7 @@ final class NotifRunner implements Runnable
 			}
 			
 			// Prevent SecureSocketExceptions. Always use the "correct" SSL mode for notifs.
-			ctx.setSecureSocket(page.isSecureSocket());
+			ctx.setSecureSocket(page.isSecureSocket() && Setup.isSSL());
 			
 			// Execute the page
 			try
@@ -401,7 +403,7 @@ final class NotifRunner implements Runnable
 			}
 		}
 		
-		//Voice
+		// Voice
 		else if (channel.equalsIgnoreCase(Channel.VOICE))
 		{
 //			if (Util.isValidPhoneNumber(user.getPhone())==false || user.isPhoneVerified()==false)
@@ -441,6 +443,22 @@ final class NotifRunner implements Runnable
 			}			
 		}
 			
+		// Apple Push Notification
+		else if (channel.equalsIgnoreCase(Channel.APPLE_PUSH))
+		{
+			List<String> deviceIDs = AuthTokenStore.getInstance().getApplePushTokensByUser(user.getID());
+			if (deviceIDs.size()>0)
+			{
+				String url = UrlGenerator.getPageURL(false, null, notif.getCommand(), notif.getParameters());
+				ApplePushServer.sendPayload(deviceIDs, content, url, ApplePushServer.SOUND_DEFAULT, -1);
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		
 		// Unknown channel
 		else
 		{

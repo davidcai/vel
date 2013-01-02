@@ -7,6 +7,7 @@ import samoyan.core.Util;
 import samoyan.database.Server;
 import samoyan.database.ServerStore;
 import samoyan.database.User;
+import samoyan.servlet.RequestContext;
 import samoyan.servlet.WebPage;
 
 public class LoginControl
@@ -14,6 +15,7 @@ public class LoginControl
 	private WebPage out;
 	private boolean prompt = true;
 	private boolean remember = true;
+	private boolean postbackRedirect = false;
 	
 	public LoginControl(WebPage outputPage)
 	{
@@ -29,6 +31,12 @@ public class LoginControl
 	public LoginControl showRememberMe(boolean show)
 	{
 		this.remember = show;
+		return this;
+	}
+
+	public LoginControl postbackRedirect(boolean postback)
+	{
+		this.postbackRedirect = postback;
 		return this;
 	}
 
@@ -98,14 +106,34 @@ public class LoginControl
 			if (this.remember)
 			{
 				out.write("<small><br>");
-				out.writeCheckbox(LoginPage.PARAM_KEEP, null, false);
+				out.writeCheckbox(LoginPage.PARAM_KEEP, null, this.out.getContext().getUserAgent().isSmartPhone());
 				out.write(" ");
 				out.writeTooltip(out.getString("controls:Login.KeepLogin"), out.getString("controls:Login.KeepHelp"));
 				out.write("</small>");
 			}
 		
 		out.write("</td></tr></table>"); // Inner
-						
+		
+		// Postback redirection params
+		if (this.postbackRedirect)
+		{
+			for (String p : this.out.getContext().getParameters().keySet())
+			{
+				if (p.startsWith(LoginPage.PARAM_REDIRECT_PARAM_PREFIX) ||
+					p.equals(LoginPage.PARAM_REDIRECT_METHOD) ||
+					p.equals(LoginPage.PARAM_REDIRECT_COMMAND))
+				{
+					out.writeHiddenInput(p, null);
+				}
+			}
+		}
+		
+		// Support for Apple push notifications
+		if (this.out.getContext().getUserAgent().isAppleTouch())
+		{
+			out.writeHiddenInput(RequestContext.PARAM_APPLE_PUSH_TOKEN, "");
+		}
+
 		out.writeFormClose();
 	}
 }

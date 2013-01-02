@@ -10,6 +10,7 @@ import samoyan.controls.CheckboxInputControl;
 import samoyan.controls.ViewTableControl;
 import samoyan.core.ParameterMap;
 import samoyan.core.Util;
+import samoyan.database.AuthTokenStore;
 import samoyan.database.Server;
 import samoyan.database.ServerStore;
 import samoyan.database.User;
@@ -102,14 +103,16 @@ public class AlertTimelinePage extends ProfilePage
 		userChannelSettings.put(Channel.FACEBOOK_MESSSAGE, user.getFacebook());
 		userChannelSettings.put(Channel.TWITTER, user.getTwitter());
 		userChannelSettings.put(Channel.INSTANT_MESSAGE, user.getXMPP());
+		userChannelSettings.put(Channel.APPLE_PUSH, AuthTokenStore.getInstance().getApplePushTokensByUser(user.getID()).size()>0?"APN":null);
 		
 		final Map<String, String> channelEditScreens = new HashMap<String, String>();
 		channelEditScreens.put(Channel.EMAIL, EmailPage.COMMAND);
 		channelEditScreens.put(Channel.SMS, MobilePage.COMMAND);
 		channelEditScreens.put(Channel.VOICE, PhonePage.COMMAND);
-		channelEditScreens.put(Channel.FACEBOOK_MESSSAGE, ContactInfoPage.COMMAND); // !$! FacebookPage not yet impl.
+		channelEditScreens.put(Channel.FACEBOOK_MESSSAGE, null); // !$! FacebookPage not yet impl.
 		channelEditScreens.put(Channel.TWITTER, TwitterPage.COMMAND);
-		channelEditScreens.put(Channel.INSTANT_MESSAGE, ContactInfoPage.COMMAND); // !$! InstantMessagePage not yet impl.
+		channelEditScreens.put(Channel.INSTANT_MESSAGE, null); // !$! InstantMessagePage not yet impl.
+		channelEditScreens.put(Channel.APPLE_PUSH, fed.getApplePushDownloadURL());
 		
 		writeFormOpen();
 		
@@ -177,7 +180,7 @@ public class AlertTimelinePage extends ProfilePage
 				{
 					write("<span class=Faded>");
 				}
-				if (disabled && smartPhone)
+				if (disabled && smartPhone && channelEditScreens.get(channel)!=null)
 				{
 					writeLink(Channel.getDescription(channel, getLocale()), getPageURL(channelEditScreens.get(channel)));
 				}
@@ -191,7 +194,7 @@ public class AlertTimelinePage extends ProfilePage
 				}
 				if (disabled)
 				{
-					if (!smartPhone)
+					if (!smartPhone && channelEditScreens.get(channel)!=null)
 					{
 						write(" <small>");
 						writeLink(getString("profile:AlertTimeline.Enable"), getPageURL(channelEditScreens.get(channel)));

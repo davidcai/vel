@@ -33,6 +33,6 @@ public class MessagingTab extends EnvelopeTab
 	@Override
 	public String getIcon(WebPage outputPage)
 	{
-		return "tab-messaging.png";
+		return "icons/standard/open-envelope-48.png";
 	}
 }

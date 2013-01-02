@@ -58,6 +58,6 @@ public class GuidedSetupTab extends EnvelopeTab
 	@Override
 	public String getIcon(WebPage outputPage)
 	{
-		return "tab-setup.png";
+		return "icons/standard/top-hat-48.png";
 	}
 }

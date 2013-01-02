@@ -338,7 +338,7 @@ public class ProceduresPage extends ElertPage
 
 		//create new procedure link
 		new LinkToolbarControl(this)
-			.addLink(getString("schedule:Procedures.CreateNew"), getPageURL(ProcedurePage.COMMAND), "icons/basic1/pencil_16.png")
+			.addLink(getString("schedule:Procedures.CreateNew"), getPageURL(ProcedurePage.COMMAND), "icons/standard/pencil-16.png")
 			.render();
 
 		if(customProcedures.size() == 0)

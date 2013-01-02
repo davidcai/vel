@@ -15,6 +15,7 @@ import samoyan.servlet.RequestContext;
 import baby.pages.admin.AdminTab;
 import baby.pages.content.ContentTab;
 import baby.pages.info.InfoTab;
+import baby.pages.journey.JourneyTab;
 import baby.pages.master.MasterTab;
 import baby.pages.profile.BabyProfileTab;
 import baby.pages.scrapbook.ScrapbookTab;
@@ -26,6 +27,7 @@ public class BabyEnvelopePage extends EnvelopePage
 	private static EnvelopeTab contentTab = new ContentTab();
 	private static EnvelopeTab infoTab = new InfoTab();
 	private static EnvelopeTab scrapbookTab = new ScrapbookTab();
+	private static EnvelopeTab journeyTab = new JourneyTab();
 	private static EnvelopeTab profileTab = new BabyProfileTab();
 //	private static EnvelopeTab messagingTab = new MessagingTab();
 	private static EnvelopeTab setupTab = new GuidedSetupTab();
@@ -60,6 +62,7 @@ public class BabyEnvelopePage extends EnvelopePage
 			{
 				result.add(infoTab);
 				result.add(scrapbookTab);
+				result.add(journeyTab);
 	//			result.add(messagingTab); // !$! Testing only
 				result.add(profileTab);
 			}
@@ -75,7 +78,12 @@ public class BabyEnvelopePage extends EnvelopePage
 		
 		MetaTagControl ctrl = new MetaTagControl(this);
 		ctrl.appleTouchIcon(false, "baby/apple-touch-icon-114.png", "baby/apple-touch-icon-144.png");
-		ctrl.appleTouchStartupImage("baby/iphone-splash.png", null, null, null, null);
+		ctrl.appleTouchStartupImage(
+			"baby/iphone-splash-320x480.png",
+			"baby/iphone-splash-640x920.png",
+			"baby/iphone-splash-640x1096.png",
+			"baby/ipad-splash-768x1004.png",
+			"baby/ipad-splash-1536x2008.png");
 		ctrl.favicon("baby/favicon.png");
 		ctrl.render();
 	}

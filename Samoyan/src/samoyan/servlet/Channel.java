@@ -16,6 +16,7 @@ public class Channel
 	public final static String EMAIL = "email";
 	public final static String SMS = "sms";
 	public final static String VOICE = "voice";
+	public final static String APPLE_PUSH = "apn";
 	public final static String INSTANT_MESSAGE = "im";
 	public final static String FACEBOOK_MESSSAGE = "fbmsg";
 	public final static String TWITTER = "twitter";
@@ -27,12 +28,14 @@ public class Channel
 												Channel.EMAIL,
 												Channel.SMS,
 												Channel.VOICE,
+												Channel.APPLE_PUSH,
 												Channel.INSTANT_MESSAGE,
 												Channel.FACEBOOK_MESSSAGE,
 												Channel.TWITTER};
 	private final static String[] pushChannels = {	Channel.EMAIL,
 													Channel.SMS,
 													Channel.VOICE,
+													Channel.APPLE_PUSH,
 													Channel.INSTANT_MESSAGE,
 													Channel.FACEBOOK_MESSSAGE,
 													Channel.TWITTER};
@@ -49,8 +52,14 @@ public class Channel
 	
 	public final static boolean isPush(String channel)
 	{
-		return	channel.equalsIgnoreCase(WEB)==false &&
-				channel.equalsIgnoreCase(FACEBOOK)==false;
+		for (String s : pushChannels)
+		{
+			if (s.equals(channel))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public final static String[] getAll()

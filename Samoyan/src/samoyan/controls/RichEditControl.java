@@ -106,7 +106,7 @@ public class RichEditControl extends WebPage
 //		if (phone)
 //		{
 //			write("<table><tr><td>");
-//			writeImage("icons/basic1/warning_16.png", getString("controls:RichEdit.UnsupportedDevice"));
+//			writeImage("icons/standard/warning-16.png", getString("controls:RichEdit.UnsupportedDevice"));
 //			write("</td><td><small>");
 //			writeEncode(getString("controls:RichEdit.UnsupportedDevice"));
 //			write("</small></td></tr></table>");

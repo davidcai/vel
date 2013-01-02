@@ -18,6 +18,7 @@ public class BigCalendarControl extends WebPage
 	private boolean links = true;
 	private String command;
 	private Map<String, String> params;
+	private boolean highlightSelectedDay = true;
 	
 	public BigCalendarControl(WebPage outputPage)
 	{
@@ -228,7 +229,7 @@ public class BigCalendarControl extends WebPage
 				{
 					write(" Outside");
 				}
-				else if (d==dd)
+				else if (d==dd && highlightSelectedDay)
 				{
 					write(" Today");
 				}
@@ -312,5 +313,15 @@ public class BigCalendarControl extends WebPage
 	protected boolean isCellEnabled(int yyyy, int mm, int dd)
 	{
 		return true;
+	}
+	
+	public void setHighlightSelectedDay(boolean highlightSelectedDay)
+	{
+		this.highlightSelectedDay = highlightSelectedDay;
+	}
+	
+	public boolean isHighlightSelectedDay()
+	{
+		return highlightSelectedDay;
 	}
 }

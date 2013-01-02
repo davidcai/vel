@@ -38,7 +38,7 @@ public class AuthenticatePage extends OmhPage
 		}
 
 		// Expire in 1 hour
-		UUID token = AuthTokenStore.getInstance().createAuthToken(user.getID(), ctx.getUserAgent().getString(), false);
+		UUID token = AuthTokenStore.getInstance().createAuthToken(user.getID(), ctx.getUserAgent().getString(), false, null);
 
 		write("{ ");
 		writeJsonStrAttr("auth_token", token.toString(), false);

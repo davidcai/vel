@@ -28,6 +28,7 @@ import samoyan.database.CountryStore;
 import samoyan.database.Database;
 import samoyan.database.Image;
 import samoyan.database.ImageStore;
+import samoyan.database.InternalMessageRecipientStore;
 import samoyan.database.InternalMessageStore;
 import samoyan.database.LogEntryStore;
 import samoyan.database.LogTypeStore;
@@ -107,6 +108,7 @@ public class Controller extends HttpServlet
 			UserGroupStore.getInstance().define();
 			AuthTokenStore.getInstance().define();
 			InternalMessageStore.getInstance().define();
+			InternalMessageRecipientStore.getInstance().define();
 			
 			UserUserGroupLinkStore.getInstance().define();
 			
@@ -447,12 +449,12 @@ public class Controller extends HttpServlet
 		// Screen dimensions
 		int screenWidth = 0;
 		int screenHeight = 0;
-		int pixelRatio = 1;
+		float pixelRatio = 1F;
 		String screen = ctx.getCookie(RequestContext.COOKIE_OVERRIDE_SCREEN);
 		if (screen==null) screen = ctx.getCookie(RequestContext.COOKIE_SCREEN);
 		if (screen!=null)
 		{
-			int p = screen.indexOf("x"); // e.g. 1280x900x1
+			int p = screen.indexOf("x"); // e.g. 1280x900x1 or 480x800x1.5
 			int q = screen.indexOf("x", p+1);
 			if (p>0 && q>p)
 			{
@@ -460,13 +462,13 @@ public class Controller extends HttpServlet
 				{
 					screenWidth = Integer.parseInt(screen.substring(0, p));
 					screenHeight = Integer.parseInt(screen.substring(p+1, q));
-					pixelRatio = Integer.parseInt(screen.substring(q+1));
+					pixelRatio = Float.parseFloat(screen.substring(q+1));
 				}
 				catch (Exception e)
 				{
 					screenWidth = 0;
 					screenHeight = 0;
-					pixelRatio = 1;
+					pixelRatio = 1F;
 				}
 			}
 		}
@@ -973,7 +975,16 @@ public class Controller extends HttpServlet
 		else
 		{
 			// Redirect to error page
-			String url = UrlGenerator.getPageURL(request.isSecure(), null, ErrorPage.COMMAND, null);
+			String url;
+			if (exc instanceof HttpException)
+			{
+				HttpException httpExc = (HttpException) exc;
+				url = UrlGenerator.getPageURL(request.isSecure(), null, ErrorPage.COMMAND + "/" + httpExc.getHttpCode(), null);
+			}
+			else
+			{
+				url = UrlGenerator.getPageURL(request.isSecure(), null, ErrorPage.COMMAND, null);
+			}
 			response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
 			response.setHeader("Location", url);
 		}
@@ -1254,7 +1265,7 @@ if (Setup.isDebug() && ctx.getChannel().equalsIgnoreCase(Channel.VOICE))
 	{
 		String path = ctx.getCommand();
 		String mimeType = instance.getServletContext().getMimeType(path);
-		int ratio = ctx.getUserAgent().getPixelRatio();
+		int ratio = Math.round(ctx.getUserAgent().getPixelRatio());
 
 		// Obtain InputStream to the resource file.
 		// Must not access the file system directly because webapp can be running inside a WAR.
@@ -1264,8 +1275,24 @@ if (Setup.isDebug() && ctx.getChannel().equalsIgnoreCase(Channel.VOICE))
 			// Look for the high-resolution image by getting the file name with X2 appended,
 			// i.e. helloX2.jpg is the Retina version of hello.jpg
 			int p = path.lastIndexOf(".");
-			if (p<0) p = path.length();
+			if (p<0) p = path.length();						
 			stm = instance.getServletContext().getResourceAsStream(path.substring(0, p) + "X" + ratio + path.substring(p));
+			
+			if (stm==null)
+			{
+				// Look for the a high-resolution image by changing the numerical size suffix,
+				// i.e. for "image-32.png", look for "image-64.png"
+				int q = p;
+				while (q>0 && Character.isDigit(path.charAt(q-1)))
+				{
+					q--;
+				}
+				if (q<p)
+				{
+					int size = Integer.parseInt(path.substring(q, p));
+					stm = instance.getServletContext().getResourceAsStream(path.substring(0, q) + (size*ratio) + path.substring(p));
+				}
+			}
 		}
 		if (stm==null)
 		{
@@ -1300,7 +1327,8 @@ if (Setup.isDebug() && ctx.getChannel().equalsIgnoreCase(Channel.VOICE))
 
 		String size = ctx.getCommand(3);
 		
-		int ratio = ctx.getUserAgent().getPixelRatio();
+		float ratio = ctx.getUserAgent().getPixelRatio();
+		
 		Image img = ImageStore.getInstance().loadAndResize(imgID, size, ratio);
 		if (img==null)
 		{

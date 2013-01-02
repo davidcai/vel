@@ -14,7 +14,11 @@ public class ProfileExtraPage extends PersonalInfoPage
 	{
 		if (isParameter("mrn"))
 		{
-			String mrn = validateParameterString("mrn", Patient.SIZE_MRN, Patient.SIZE_MRN);
+			String mrn = validateParameterString("mrn", 1, Patient.SIZE_MRN);
+			while (mrn.startsWith("0"))
+			{
+				mrn = mrn.substring(1);
+			}
 			if (mrn.matches("[0-9]*")==false)
 			{
 				throw new WebFormException("mrn", getString("common:Errors.InvalidValue"));

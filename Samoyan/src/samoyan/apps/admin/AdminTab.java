@@ -56,6 +56,7 @@ if (user.getLoginName().equalsIgnoreCase("admin"))
 			navCtrl.addPage(EmailConfigPage.COMMAND, null);
 			navCtrl.addPage(SmsConfigPage.COMMAND, null);
 			navCtrl.addPage(VoiceConfigPage.COMMAND, null);
+			navCtrl.addPage(ApplePushConfigPage.COMMAND, null);
 			navCtrl.addPage(TwitterConfigPage.COMMAND, null);
 			navCtrl.addPage(ExternalServicesConfigPage.COMMAND, null);
 }
@@ -80,6 +81,6 @@ if (user.getLoginName().equalsIgnoreCase("admin"))
 	@Override
 	public String getIcon(WebPage outputPage)
 	{
-		return "tab-admin.png";
+		return "icons/standard/cogwheel-48.png";
 	}
 }

@@ -108,6 +108,13 @@ public final class ServerStore extends DataBeanStore<Server>
 		
 		td.defineProp("VoiceCountries", String.class);
 
+		// Apple Push Notifications
+		td.defineProp("APN.Active", Boolean.class);
+		td.defineProp("APN.Keystore", byte[].class);
+		td.defineProp("APN.KeystorePassword", String.class);
+		td.defineProp("APN.Production", Boolean.class);
+		td.defineProp("APN.DownloadURL", String.class);
+		
 		return td;
 	}
 

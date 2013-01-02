@@ -40,7 +40,7 @@ public class InboxPage extends MessagingPage
 		
 		// Toolbar
 		new LinkToolbarControl(this)
-			.addLink(getString("messaging:Inbox.ComposeNewMessage"), getPageURL(ComposePage.COMMAND), "icons/basic1/pencil_16.png")
+			.addLink(getString("messaging:Inbox.ComposeNewMessage"), getPageURL(ComposePage.COMMAND), "icons/standard/pencil-16.png")
 			.render();
 		
 		// List messages

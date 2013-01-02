@@ -31,6 +31,16 @@ public class DateFormatEx
 		return applyTimeZone(DateFormat.getDateInstance(DateFormat.SHORT, locale), tz);
 	}
 	
+	public final static DateFormat getMediumDateInstance(Locale locale, TimeZone tz)
+	{
+		return applyTimeZone(DateFormat.getDateInstance(DateFormat.MEDIUM, locale), tz);
+	}
+	
+	public final static DateFormat getLongDateInstance(Locale locale, TimeZone tz)
+	{
+		return applyTimeZone(DateFormat.getDateInstance(DateFormat.LONG, locale), tz);
+	}
+	
 	public final static DateFormat getTimeInstance(Locale locale, TimeZone tz)
 	{
 		return applyTimeZone(DateFormat.getTimeInstance(DateFormat.SHORT, locale), tz);

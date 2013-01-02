@@ -1,5 +1,6 @@
 package samoyan.apps.admin;
 
+import samoyan.apps.admin.config.ApplePushConfigPage;
 import samoyan.apps.admin.config.EmailConfigPage;
 import samoyan.apps.admin.config.ExternalServicesConfigPage;
 import samoyan.apps.admin.config.GeneralConfig;
@@ -59,6 +60,7 @@ public final class AdminApp
 		Dispatcher.bindPage(ExternalServicesConfigPage.COMMAND,	ExternalServicesConfigPage.class);
 		Dispatcher.bindPage(TimelineConfigPage.COMMAND,			TimelineConfigPage.class);
 		Dispatcher.bindPage(GeneralConfig.COMMAND,				GeneralConfig.class);
+		Dispatcher.bindPage(ApplePushConfigPage.COMMAND,		ApplePushConfigPage.class);
 		
 		// User management
 		Dispatcher.bindPage(UserListPage.COMMAND, 				UserListPage.class);

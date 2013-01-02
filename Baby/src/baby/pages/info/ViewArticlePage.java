@@ -2,6 +2,7 @@ package baby.pages.info;
 
 import samoyan.controls.ImageControl;
 import samoyan.core.Util;
+import samoyan.servlet.UserAgent;
 import samoyan.servlet.exc.PageNotFoundException;
 import baby.app.BabyConsts;
 import baby.database.Article;
@@ -28,9 +29,16 @@ public class ViewArticlePage extends BabyPage
 	@Override
 	public String getTitle() throws Exception
 	{
-		if (Util.isEmpty(this.article.getTitle()))
+		if (Util.isEmpty(this.article.getTitle()) || getContext().getUserAgent().isSmartPhone())
 		{
-			return getString("information:Article.Untitled");
+			if (this.article.getSection().equalsIgnoreCase(BabyConsts.SECTION_RESOURCE))
+			{
+				return getString("information:Article.Resource");
+			}
+			else
+			{
+				return getString("information:Article.Article");
+			}
 		}
 		else
 		{
@@ -41,11 +49,42 @@ public class ViewArticlePage extends BabyPage
 	@Override
 	public void renderHTML() throws Exception
 	{
+		UserAgent ua = getContext().getUserAgent();
+		
 //		writeEncode(this.article.getSourceURL());
 //		write("<br><br>");
 		
 //		boolean healthyBeginnings = this.article.getSection().equals(BabyConsts.SECTION_INFO);
 //		writeHorizontalNav(healthyBeginnings? ViewArticleListPage.COMMAND : ViewResourceListPage.COMMAND);
+		
+		write("<div class=Article>");
+		
+		if (!Util.isEmpty(this.article.getSubSection()))
+		{
+			write("<div class=Subsection>");
+			writeEncode(this.article.getSubSection());
+			write("</div>");
+		}
+		
+		if (ua.isSmartPhone() && !Util.isEmpty(this.article.getTitle()))
+		{
+			write("<h2>");
+			writeEncode(this.article.getTitle());
+			write("</h2>");
+		}
+		
+		if (!Util.isEmpty(this.article.getYouTubeVideoID()))
+		{
+			write("<div align=center>");
+			int width = 600;
+			if (width > ua.getScreenWidth())
+			{
+				width = ua.getScreenWidth() - 10;
+			}
+			int height = width * 2 / 3;
+			writeYouTubeVideo(this.article.getYouTubeVideoID(), width, height);
+			write("</div><br>");
+		}
 		
 		if (this.article.getPhoto()!=null)
 		{
@@ -56,5 +95,7 @@ public class ViewArticlePage extends BabyPage
 		}
 		
 		write(this.article.getHTML());
+				
+		write("</div>");
 	}
 }

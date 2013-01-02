@@ -324,26 +324,14 @@ public class MobilePage extends ProfilePage
 				}
 			}
 			
-			String code = user.getMobileVerificationCode();
-			if (Util.isEmpty(code))
+			Random r = new Random();
+			String code = "";
+			while (code.length()<CODE_LEN)
 			{
-				Random r = new Random();
-				code = "";
-				while (code.length()<CODE_LEN)
-				{
-					code += String.valueOf(r.nextInt(10));
-				}
-				user.setMobileVerificationCode(code + ":" + getParameterString("fullnumber"));
-				UserStore.getInstance().save(user);
+				code += String.valueOf(r.nextInt(10));
 			}
-			else
-			{
-				int p = code.indexOf(":");
-				if (p>=0)
-				{
-					code = code.substring(0, p);
-				}
-			}
+			user.setMobileVerificationCode(code + ":" + getParameterString("fullnumber"));
+			UserStore.getInstance().save(user);
 			
 //			if (Setup.isDebug())
 			{

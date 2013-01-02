@@ -2,9 +2,11 @@ package samoyan.database;
 
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import samoyan.core.ParameterList;
+import samoyan.core.Util;
 import samoyan.servlet.Setup;
 
 public final class AuthTokenStore extends DataBeanStore<AuthToken>
@@ -34,14 +36,30 @@ public final class AuthTokenStore extends DataBeanStore<AuthToken>
 		td.defineCol("UserAgentSignature", String.class).size(0, AuthToken.MAXSIZE_SIGNATURE).invariant();
 		td.defineCol("Life", Long.class).invariant();
 		td.defineCol("LastAccessed", Date.class);
+		td.defineCol("ApplePushToken", byte[].class);
 
 		return td;
 	}
 
 	// - - -
 
-	public UUID createAuthToken(UUID userID, String userAgentString, boolean longSession) throws Exception
+	public UUID createAuthToken(UUID userID, String userAgentString, boolean longSession, String applePushToken) throws Exception
 	{
+		// The token may be in the form "<d742ba4f c3c22bca 140d0253 f7341a9f 75cb3c14 54adabd7 0d85049c 39e3a27c>"
+		if (applePushToken!=null)
+		{
+			StringBuilder cleanToken = new StringBuilder(64);
+			for (int i=0; i<applePushToken.length(); i++)
+			{
+				char ch = applePushToken.charAt(i);
+				if ((ch>='0' && ch<='9') || (ch>='a' && ch<='f') || (ch>='A' && ch<='F'))
+				{
+					cleanToken.append(ch);
+				}
+			}
+			applePushToken = cleanToken.toString();
+		}
+		
 		AuthToken token = new AuthToken();
 		token.setUserID(userID);
 		token.setUserAgentSignature(userAgentString);
@@ -49,6 +67,7 @@ public final class AuthTokenStore extends DataBeanStore<AuthToken>
 		{
 			token.setLife(Setup.getCookieExpires());
 		}
+		token.setApplePushToken(applePushToken);
 		AuthTokenStore.getInstance().save(token);
 		
 		return token.getID();
@@ -101,5 +120,23 @@ public final class AuthTokenStore extends DataBeanStore<AuthToken>
 	public void removeExpired() throws SQLException, Exception
 	{
 		removeMany(Query.queryListUUID("SELECT ID FROM AuthTokens WHERE LastAccessed+Life<?", new ParameterList(new Date())));
+	}
+	
+	public List<String> getApplePushTokensByUser(UUID userID) throws SQLException
+	{
+		return Query.queryListString("SELECT ApplePushToken FROM AuthTokens WHERE UserID=? AND (LastAccessed+Life>=?)", new ParameterList(userID).plus(new Date()));
+	}
+	
+	public void invalidateApplePushToken(String token) throws SQLException
+	{
+		Query q = new Query();
+		try
+		{
+			q.update("UPDATE AuthTokens SET ApplePushToken=NULL WHERE ApplePushToken=?", new ParameterList(Util.hexStringToByteArray(token)));
+		}
+		finally
+		{
+			q.close();
+		}
 	}
 }

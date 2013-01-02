@@ -30,7 +30,8 @@ public final class ChecklistListPage extends BabyPage
 		List<UUID> checklistIDs = ChecklistStore.getInstance().getAllStandard();
 		
 		new LinkToolbarControl(this)
-			.addLink(getString("content:ChecklistList.NewChecklist"), getPageURL(EditChecklistPage.COMMAND), "icons/basic1/pencil_16.png")
+			.addLink(getString("content:ChecklistList.NewChecklist"), getPageURL(EditChecklistPage.COMMAND), "icons/standard/pencil-16.png")
+			.addLink(getString("content:ChecklistList.ImportChecklists"), getPageURL(ImportChecklistPage.COMMAND), "icons/standard/cardboard-box-16.png")
 			.render();
 		
 		if (checklistIDs.size()==0)

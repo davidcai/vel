@@ -15,7 +15,7 @@ import samoyan.core.Util;
 import samoyan.database.Server;
 import samoyan.database.ServerStore;
 
-public class SmtpConnectionPool extends StackObjectPool<TransportSession>
+final class SmtpConnectionPool extends StackObjectPool<TransportSession>
 {
 	public SmtpConnectionPool()
 	{

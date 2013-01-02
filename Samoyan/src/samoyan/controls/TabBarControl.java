@@ -52,12 +52,16 @@ public class TabBarControl extends WebPage
 		write("\"><tr>");
 		for (Icon t : this.tabs)
 		{
-//			boolean homeTab = Util.isEmpty(t.command);
+			boolean homeTab = Util.isEmpty(t.command);
 			
 			write("<td class=\"Tab");
 			if (/*!homeTab &&*/ command1.equals(t.command))
 			{
 				write(" Current");
+			}
+			if (homeTab)
+			{
+				write(" Home");
 			}
 			write("\" width=\"");
 			if (smartPhone)

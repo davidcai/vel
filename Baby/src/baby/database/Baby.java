@@ -8,33 +8,9 @@ public class Baby extends DataBean
 {
 	public static final int MAXSIZE_NAME = 64;
 
-	public static enum Gender
-	{
-		UNDETERMINED, MALE, FEMALE;
-
-		@Override
-		public String toString()
-		{
-			return name().toLowerCase();
-		}
-
-		public static Gender fromString(String str)
-		{
-			Gender ret = UNDETERMINED;
-
-			for (Gender gender : Gender.values())
-			{
-				if (gender.toString().equalsIgnoreCase(str))
-				{
-					ret = gender;
-					break;
-				}
-			}
-
-			return ret;
-		}
-	}
-
+	public final static String GENDER_MALE = "M";
+	public final static String GENDER_FEMALE = "F";
+	
 	public UUID getUserID()
 	{
 		return (UUID) get("UserID");
@@ -55,29 +31,13 @@ public class Baby extends DataBean
 		set("Name", name);
 	}
 
-	public Gender getGender()
+	public String getGender()
 	{
-		Gender g = Gender.UNDETERMINED;
-
-		Object oMale = get("Male");
-		if (oMale != null)
-		{
-			Boolean male = (Boolean) oMale;
-			g = (male) ? Gender.MALE : Gender.FEMALE;
-		}
-
-		return g;
+		return (String) get("Gender");
 	}
 
-	public void setGender(Gender gender)
+	public void setGender(String gender)
 	{
-		if (gender == null || Gender.UNDETERMINED == gender)
-		{
-			set("Male", null);
-		}
-		else
-		{
-			set("Male", Gender.MALE == gender);
-		}
+		set("Gender", gender);
 	}
 }

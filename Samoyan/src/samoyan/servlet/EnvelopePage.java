@@ -109,6 +109,10 @@ public class EnvelopePage extends WebPage
 			{
 				writeIncludeJS("jquery-1.7.1.min.js");
 			}
+			if (ua.isAppleTouch())
+			{
+				writeIncludeJS("cordova-2.1.0.js");
+			}
 			writeIncludeJS("sessionstorage-1.4.js"); // Session storage for older browsers
 			writeIncludeJS("samoyan.js");
 			
@@ -212,7 +216,16 @@ public class EnvelopePage extends WebPage
 					write("</table>");
 					write("</div>");
 										
-					write("<div id=page>");
+					write("<div id=page");
+					if (ua.getScreenHeight()>0)
+					{
+						// Prevents the footer bar from moving up the page when focusing on an edit box
+						// in pages with not enough content (height less than screen height)
+						write(" style=\"min-height:");
+						write(ua.getScreenHeight());
+						write("px\"");
+					}
+					write(">");
 					renderHTMLPage();
 					write("</div>");
 	

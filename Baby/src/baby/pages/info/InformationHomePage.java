@@ -7,7 +7,6 @@ import java.util.UUID;
 import samoyan.controls.WideLinkGroupControl;
 import samoyan.core.Util;
 import samoyan.servlet.RequestContext;
-import baby.database.Baby;
 import baby.database.BabyStore;
 import baby.database.Mother;
 import baby.database.MotherStore;
@@ -31,8 +30,8 @@ public class InformationHomePage extends BabyPage
 			.setURL(getPageURL(ChecklistPage.COMMAND));
 		
 		wlg.addLink()
-			.setTitle(getString("information:Calendar.Title"))
-			.setURL(getPageURL(CalendarPage.COMMAND));
+			.setTitle(getString("information:AppointmentsList.Title"))
+			.setURL(getPageURL(AppointmentsListPage.COMMAND));
 		
 		wlg.addLink()
 			.setTitle(getString("information:Articles.Title"))
@@ -44,8 +43,8 @@ public class InformationHomePage extends BabyPage
 
 		// !$! Temp code, should not be here. Appointments should be linked with Calendar
 		wlg.addLink()
-			.setTitle(getString("information:Appointments.Title"))
-			.setURL(getPageURL(AppointmentsPage.COMMAND));
+			.setTitle(getString("information:Search.Title"))
+			.setURL(getPageURL(SearchPage.COMMAND));
 
 		wlg.render();
 
@@ -88,29 +87,13 @@ public class InformationHomePage extends BabyPage
 		}
 		else if (stage.isInfancy())
 		{
-			String names = "";
+			String names = null;
 			List<UUID> babyIDs = BabyStore.getInstance().getAtLeastOneBaby(ctx.getUserID());
-			if (babyIDs.size()<=2)
+			if (babyIDs.size()==1)
 			{
-				for (UUID babyID : babyIDs)
-				{
-					Baby baby = BabyStore.getInstance().load(babyID);
-					if (Util.isEmpty(baby.getName()))
-					{
-						names = "";
-						break;
-					}
-					else
-					{
-						if (names.length()>0)
-						{
-							names += getString("information:Home.And");
-						}
-						names += baby.getName();
-					}
-				}
+				names = BabyStore.getInstance().load(babyIDs.get(0)).getName();
 			}
-			if (names.length()==0)
+			if (Util.isEmpty(names))
 			{
 				names = getString("information:Home.BabyCountName." + (babyIDs.size()<=8 ? babyIDs.size() : "N"));
 			}

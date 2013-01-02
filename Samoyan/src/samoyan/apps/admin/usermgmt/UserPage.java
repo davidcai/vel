@@ -255,7 +255,7 @@ public class UserPage extends AdminPage
 			new LinkToolbarControl(this)
 				.addLink(	getString("admin:User.Impersonate"),
 							getPageURL(ImpersonatePage.COMMAND, new ParameterMap(ImpersonatePage.PARAM_ID, this.user.getID().toString())),
-							"icons/basic1/key_16.png")
+							"icons/standard/padlock-16.png")
 				.render();
 		}
 		

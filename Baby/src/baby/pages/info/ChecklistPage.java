@@ -106,7 +106,7 @@ public final class ChecklistPage extends BabyPage
 			write(" | ");
 			writeLink(getString("information:Checklist.ViewAll"), getPageURL(ctx.getCommand(), new ParameterMap("vu", "all")));
 		}
-		write("</div><br>");
+		write("</div><hr><br>");
 		
 		// Personal checklist
 		Checklist personalChecklist = ChecklistStore.getInstance().loadPersonalChecklist(userID);
@@ -114,7 +114,7 @@ public final class ChecklistPage extends BabyPage
 			.overrideTitle(getString("information:Checklist.PersonalChecklist"))
 			.overrideDescription(getString("information:Checklist.PersonalChecklistDesc"))
 			.setCollapsable(false)
-			.showChecked(showAll)
+			.showCompleted(showAll)
 			.showDueDate(false)
 			.render();
 		write("<br>");
@@ -135,7 +135,7 @@ public final class ChecklistPage extends BabyPage
 		List<UUID> checklistIDs = ChecklistStore.getInstance().queryBySectionAndTimeline(BabyConsts.SECTION_TODO, Stage.preconception().toInteger(), high);
 		for (UUID checklistID : checklistIDs)
 		{
-			new ChecklistControl(this, userID, checklistID).showChecked(showAll).render();
+			new ChecklistControl(this, userID, checklistID).showCompleted(showAll).render();
 			write("<br>");
 		}
 	}

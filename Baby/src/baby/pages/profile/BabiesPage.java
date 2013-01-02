@@ -15,12 +15,9 @@ public class BabiesPage extends BabyPage
 {
 	public static final String COMMAND = ProfilePage.COMMAND + "/babies";
 	
-	public static final int MAXSIZE_BABY = 8;
-	public static final String PARAM_SAVE = "save";
-	public static final String PARAM_BABIES = "babies";
-	public static final String PARAM_NAME_PREFIX = "name_";
-	public static final String PARAM_GENDER_PREFIX = "gender_";
-	public static final String PARAM_ID_PREFIX = "id_";
+	private static final String PARAM_BABIES = "babies";
+	private static final String PARAM_NAME_PREFIX = "name_";
+	private static final String PARAM_ID_PREFIX = "id_";
 
 	@Override
 	public void validate() throws Exception
@@ -59,7 +56,8 @@ public class BabiesPage extends BabyPage
 				
 				baby.setUserID(getContext().getUserID());
 				baby.setName(getParameterString(PARAM_NAME_PREFIX + i));
-				baby.setGender(Baby.Gender.fromString(getParameterString(PARAM_GENDER_PREFIX + i)));
+// !$! No support for Gender for now
+//				baby.setGender(null);
 				BabyStore.getInstance().save(baby);
 				
 				oldIDs.remove(baby.getID());
@@ -112,7 +110,7 @@ public class BabiesPage extends BabyPage
 		.render();
 		
 		write("<br>");
-		writeSaveButton(PARAM_SAVE, null);
+		writeSaveButton(null);
 		
 		writeFormClose();
 	}

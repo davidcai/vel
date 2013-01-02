@@ -46,7 +46,7 @@ public class UserAgent implements Cloneable
 	private HashMap<String, Float> tags = new HashMap<String, Float>();
 	private int screenWidth = 0;
 	private int screenHeight = 0;
-	private int pixelRatio = 1;
+	private float pixelRatio = 1F;
 	
 	@Override
 	public Object clone() throws CloneNotSupportedException
@@ -62,7 +62,7 @@ public class UserAgent implements Cloneable
 		return (screenWidth + "x" + screenHeight + "x" + pixelRatio + ":" + userAgentString).hashCode();
 	}
 
-	public static UserAgent createInstance(String userAgentString, int screenWidth, int screenHeight, int pixelRatio)
+	public static UserAgent createInstance(String userAgentString, int screenWidth, int screenHeight, float pixelRatio)
 	{
 		if (userAgentString==null)
 		{
@@ -84,7 +84,7 @@ public class UserAgent implements Cloneable
 		}
 	}
 	
-	private UserAgent(String userAgentString, int screenWidth, int screenHeight, int pixelRatio)
+	private UserAgent(String userAgentString, int screenWidth, int screenHeight, float pixelRatio)
 	{
 		this.userAgentString = userAgentString;
 		this.screenHeight = screenHeight;
@@ -158,8 +158,8 @@ public class UserAgent implements Cloneable
 		sniff(VOXEO, "Voxeo-VXML/", "Voxeo-VXML/");
 		
 		// Apple already divides the reported number of pixels by the pixel ratio.
-		// Android phones don't, so we do it here.
-		if (this.pixelRatio>1 && !isAppleTouch())
+		// Others don't, so we do it here.
+		if (this.pixelRatio>1 && !isAppleTouch() && !isMacOSX())
 		{
 			this.screenWidth /= this.pixelRatio;
 			this.screenHeight /= this.pixelRatio;
@@ -172,13 +172,13 @@ public class UserAgent implements Cloneable
 			{
 				this.screenWidth = 320;
 				this.screenHeight = 480;
-				this.pixelRatio = 2;
+				this.pixelRatio = 2F;
 			}
 			else if (isIPad())
 			{
 				this.screenWidth = 768;
 				this.screenHeight = 1024;
-				this.pixelRatio = 2;
+				this.pixelRatio = 2F;
 			}
 			else if (isKindle())
 			{
@@ -418,6 +418,15 @@ public class UserAgent implements Cloneable
 	{
 		return this.tags.get(IOS);
 	}
+	
+	public boolean isMacOSX()
+	{
+		return this.tags.containsKey(MAC_OS_X);
+	}
+	public float getVersionMacOSX()
+	{
+		return this.tags.get(MAC_OS_X);
+	}
 
 	public boolean isBlackBerry()
 	{
@@ -466,15 +475,11 @@ public class UserAgent implements Cloneable
 	}
 	
 	/**
-	 * Retina displays will have pixel ratio of 2, others 1.
+	 * Retina displays will have pixel ratio of 2, some devices such as Galaxy S2 can have 1.5, normal screens have 1.
 	 * @return
 	 */
-	public int getPixelRatio()
+	public float getPixelRatio()
 	{
 		return this.pixelRatio;
-	}
-	public boolean isRetina()
-	{
-		return this.pixelRatio==2;
 	}
 }

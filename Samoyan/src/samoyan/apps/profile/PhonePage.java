@@ -197,18 +197,14 @@ public class PhonePage extends ProfilePage
 
 		if (isParameter("send"))
 		{
-			String code = user.getPhoneVerificationCode();
-			if (Util.isEmpty(code))
+			Random r = new Random();
+			String code = "";
+			while (code.length()<CODE_LEN)
 			{
-				Random r = new Random();
-				code = "";
-				while (code.length()<CODE_LEN)
-				{
-					code += String.valueOf(r.nextInt(10));
-				}
-				user.setPhoneVerificationCode(code + ":" + getParameterString("fullnumber"));
-				UserStore.getInstance().save(user);
+				code += String.valueOf(r.nextInt(10));
 			}
+			user.setPhoneVerificationCode(code + ":" + getParameterString("fullnumber"));
+			UserStore.getInstance().save(user);
 
 			// Initiate call to phone number with verification code
 			new Thread()

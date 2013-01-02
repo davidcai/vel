@@ -35,7 +35,7 @@ import baby.database.Mother;
 import baby.database.MotherStore;
 import baby.database.Stage;
 import baby.pages.BabyPage;
-import baby.pages.info.AppointmentsPage;
+import baby.pages.info.AppointmentPage;
 
 public class DaySummaryPage extends BabyPage
 {
@@ -219,7 +219,7 @@ public class DaySummaryPage extends BabyPage
 		// Appointment dues
 		//
 		
-		List<UUID> appointmentIDs = AppointmentStore.getInstance().getByDate(userID, from, to);
+		List<UUID> appointmentIDs = AppointmentStore.getInstance().getByDate(userID, from, to, true);
 		if (appointmentIDs.isEmpty() == false)
 		{
 			write("<h2>");
@@ -239,8 +239,8 @@ public class DaySummaryPage extends BabyPage
 				write("</td>");
 				
 				write("<td>");
-				String caption = getString("information:Appointments.DescAndType", appointment.getDescription(), appointment.getType());
-				writeLink(caption, getPageURL(AppointmentsPage.COMMAND, new ParameterMap(AppointmentsPage.PARAM_ID, appointment.getID().toString())));
+				String caption = getString("information:EditAppointment.DescAndType", appointment.getDescription(), appointment.getType());
+				writeLink(caption, getPageURL(AppointmentPage.COMMAND, new ParameterMap(AppointmentPage.PARAM_ID, appointment.getID().toString())));
 				write("</td>");
 				
 				write("</tr>");

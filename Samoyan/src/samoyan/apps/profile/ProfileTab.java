@@ -39,6 +39,6 @@ public class ProfileTab extends EnvelopeTab
 	@Override
 	public String getIcon(WebPage outputPage)
 	{
-		return "tab-account.png";
+		return "icons/standard/id-card-48.png";
 	}
 }

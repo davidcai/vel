@@ -49,7 +49,7 @@ public class ProceduresPage extends ElertPage
 
 		//create new procedure link
 		new LinkToolbarControl(this)
-			.addLink(getString("govern:Procedures.CreateNew"), getPageURL(ProcedurePage.COMMAND), "icons/basic1/pencil_16.png")
+			.addLink(getString("govern:Procedures.CreateNew"), getPageURL(ProcedurePage.COMMAND), "icons/standard/pencil-16.png")
 			.render();
 		
 		boolean hasProcs = false;

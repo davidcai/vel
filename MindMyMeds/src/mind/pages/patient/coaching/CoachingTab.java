@@ -21,7 +21,6 @@ public class CoachingTab extends EnvelopeTab
 		navCtrl.addHeader(outputPage.getString("mind:Nav.Learn"));
 		navCtrl.addPage(BotChatPage.COMMAND, null);
 		navCtrl.addPage(SearchDrugsPage.COMMAND, null);
-		navCtrl.addPage(EquipmentsPage.COMMAND, null);
 
 		// My drugs
 		Patient patient = PatientStore.getInstance().loadByUserID(ctx.getUserID());

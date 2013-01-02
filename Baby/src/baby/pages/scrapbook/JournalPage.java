@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import samoyan.controls.ImageInputControl;
 import samoyan.controls.TabControl;
 import samoyan.controls.TextAreaInputControl;
 import samoyan.core.DateFormatEx;
@@ -124,8 +125,8 @@ public class JournalPage extends BabyPage
 			.setPlaceholder(getString("scrapbook:Journal.WhatIsOnYourMind"))
 			.render();
 //		writeTextAreaInput("text", "", 80, 3, JournalEntry.MAXSIZE_TEXT);
-		write("<br><br>");
-		writeImageInput("photo", null);
+		write("<br>");
+		new ImageInputControl(this, "photo").showThumbnail(false).render();
 		write("<br>");
 		writeButton(PARAM_POST, getString("scrapbook:Journal.Post"));
 		

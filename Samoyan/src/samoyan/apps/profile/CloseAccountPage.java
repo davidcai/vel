@@ -101,8 +101,8 @@ public class CloseAccountPage extends ProfilePage
 		twoCol.writeRow(getString("profile:CloseAccount.Password"));
 		twoCol.writePasswordInput("pw", null, 20, User.MAXSIZE_PASSWORD);
 
-		twoCol.writeSpaceRow();
-
+//		twoCol.writeSpaceRow();
+//
 //		// Captcha
 //		twoCol.writeRow(getString("profile:CloseAccount.Captcha"));
 //		twoCol.writeCaptcha("captcha");

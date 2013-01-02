@@ -49,6 +49,11 @@ public class Stage
 		return result;
 	}
 	
+	public static Stage invalid()
+	{
+		return new Stage();
+	}
+	
 	/**
 	 * 
 	 * @param week The age of the baby in months, between 1 and 12.

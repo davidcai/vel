@@ -12,6 +12,7 @@ CREATE TABLE [MeasureRecords](
 	[UserID] [binary](16) NOT NULL, 
 	[BabyID] [binary](16) NULL, 
 	[MeasureID] [binary](16) NOT NULL, 
+	[JournalEntryID] [binary](16) NOT NULL, 
 	[Value] [numeric](28, 8) NULL,
 	[Metric] [bit] NOT NULL, 
 	[CreatedDate] [bigint] NOT NULL, 
@@ -44,5 +45,11 @@ GO
 CREATE NONCLUSTERED INDEX [IX_MeasureRecords_MeasureID] ON [MeasureRecords] 
 (
 	[MeasureID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+GO
+
+CREATE NONCLUSTERED INDEX [IX_MeasureRecords_JournalEntryID] ON [MeasureRecords] 
+(
+	[JournalEntryID] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
 GO

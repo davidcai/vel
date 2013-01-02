@@ -1,26 +1,19 @@
 package baby.pages.content;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import samoyan.controls.ControlArray;
-import samoyan.controls.SelectInputControl;
-import samoyan.controls.TwoColFormControl;
 import samoyan.core.ParameterMap;
-import samoyan.core.Util;
-import samoyan.core.image.JaiImage;
-import samoyan.database.Image;
 import samoyan.servlet.RequestContext;
 import samoyan.servlet.exc.WebFormException;
-import baby.app.BabyConsts;
 import baby.database.Article;
 import baby.database.ArticleStore;
-import baby.database.Stage;
 import baby.pages.BabyPage;
 
 public class ImportArticlePage extends BabyPage
@@ -53,11 +46,12 @@ public class ImportArticlePage extends BabyPage
 		writeFormOpen();
 		
 		writeEncode(getString("content:ImportArticle.UploadHelp"));
-		write("<br><br>");
+		write("<br><br><small><pre>");
+		writeEncode(getString("content:ImportArticle.Sample"));
+		write("</pre></small>");
+		write("<br>");
 		
-		TwoColFormControl twoCol = new TwoColFormControl(this);
-		twoCol.writeRow(getString("content:ImportArticle.ZipFile"));
-		new ControlArray<Void>(twoCol, "zips", null)
+		new ControlArray<Void>(this, "zips", null)
 		{
 			@Override
 			public void renderRow(int rowNum, Void rowElement) throws Exception
@@ -67,38 +61,7 @@ public class ImportArticlePage extends BabyPage
 				write(" accept=\"application/zip\">");
 			}
 		}.render();
-
-		twoCol.writeSpaceRow();
 		
-		twoCol.writeRow(getString("content:ImportArticle.Section"));
-		SelectInputControl select = new SelectInputControl(twoCol, "section");
-		select.setInitialValue(BabyConsts.SECTION_INFO);
-		select.addOption(BabyConsts.SECTION_INFO, BabyConsts.SECTION_INFO);
-		for (String s : BabyConsts.SECTIONS_APPOINTMENT)
-		{
-			select.addOption(s,s);
-		}
-		select.render();
-
-		twoCol.writeRow(getString("content:ImportArticle.SubSection"));
-		twoCol.writeTextInput("subsection", null, 40, Article.MAXSIZE_SUBSECTION);
-
-		twoCol.writeRow(getString("content:ImportArticle.Timeline"));
-
-		SelectInputControl from = new SelectInputControl(twoCol, "from");
-		populateTimelineCombo(from);
-		from.render();
-		
-		twoCol.write(" ");
-		twoCol.writeEncode(getString("content:ImportArticle.Through"));
-		twoCol.write(" ");
-				
-		SelectInputControl to = new SelectInputControl(twoCol, "to");
-		populateTimelineCombo(to);
-		to.render();
-
-		twoCol.render();
-				
 		write("<br>");
 		writeButton("upload", getString("content:ImportArticle.Import"));
 		
@@ -119,22 +82,7 @@ public class ImportArticlePage extends BabyPage
 		}
 		write("</table>");
 	}
-	
-	private void populateTimelineCombo(SelectInputControl select)
-	{
-		select.addOption("", 0);
-
-		select.addOption(getString("content:ImportArticle.Preconception"), Stage.preconception().toInteger());
-		for (int i=1; i<=40; i++)
-		{
-			select.addOption(getString("content:ImportArticle.Pregnancy", i), Stage.pregnancy(i).toInteger());
-		}
-		for (int i=1; i<=12; i++)
-		{
-			select.addOption(getString("content:ImportArticle.Infancy", i), Stage.infancy(i).toInteger());
-		}
-	}
-	
+		
 	@Override
 	public void validate() throws Exception
 	{
@@ -158,25 +106,6 @@ public class ImportArticlePage extends BabyPage
 				}
 			}
 		}
-		
-		// Validate "from" and "to"
-		Stage from = Stage.fromInteger(getParameterInteger("from"));
-		if (from.isValid()==false)
-		{
-			throw new WebFormException("from", getString("common:Errors.MissingField"));
-		}
-		Stage to = Stage.fromInteger(getParameterInteger("to"));
-		if (to.isValid()==false)
-		{
-			throw new WebFormException("to", getString("common:Errors.MissingField"));
-		}
-		if (from.toInteger() > to.toInteger())
-		{
-			throw new WebFormException(new String[] {"from", "to"}, getString("content:EditHealthBeg.InvalidTimeline"));
-		}
-		
-		validateParameterString("section", 1, Article.MAXSIZE_SECTION);
-		validateParameterString("subsection", 0, Article.MAXSIZE_SUBSECTION);
 	}
 	
 	@Override
@@ -190,7 +119,6 @@ public class ImportArticlePage extends BabyPage
 			File file = ctx.getPostedFile("zip" + fn);
 			if (file==null) continue;
 
-			// Look for manifest file
 			ZipFile zipFile = new ZipFile(file);
 			Enumeration<ZipEntry> entriesEnum = (Enumeration<ZipEntry>) zipFile.entries();
 			while (entriesEnum.hasMoreElements())
@@ -198,62 +126,28 @@ public class ImportArticlePage extends BabyPage
 				ZipEntry entry = entriesEnum.nextElement();
 				if (entry.getName().startsWith("__MACOSX")) continue; // Hack for MacOS generated ZIPs
 				
-				if (entry.getName().endsWith(".html"))
+				if (entry.getName().endsWith(".html") || entry.getName().endsWith(".txt"))
 				{
-					String baseName = entry.getName().substring(0, entry.getName().length()-5);
-					String title = baseName;
-					String body = "";
+					String baseName = entry.getName().substring(0, entry.getName().lastIndexOf("."));
+
+					InputStream html = zipFile.getInputStream(entry);
+					InputStream img = null;
 					
-					String html = Util.inputStreamToString(zipFile.getInputStream(entry), "UTF-8");
-					int p = html.indexOf("<title>");
-					if (p>=0)
-					{
-						p += 7;
-						int q = html.indexOf("</title>", p);
-						if (q>=0)
-						{
-							title = Util.htmlDecode(html.substring(p, q));
-						}
-					}
-					
-					p = html.indexOf("<body>");
-					if (p>=0)
-					{
-						p += 6;
-						int q = html.indexOf("</body>", p);
-						if (q>=0)
-						{
-							body = html.substring(p, q);
-						}
-					}
-	
-					JaiImage jai = null;
 					String[] imgExt = {".png", ".jpg", ".jpeg"};
 					for (int i=0; i<imgExt.length; i++)
 					{
 						ZipEntry imgEntry = zipFile.getEntry(baseName + imgExt[i]);
 						if (imgEntry!=null)
 						{
-							jai = new JaiImage(Util.inputStreamToBytes(zipFile.getInputStream(imgEntry)));
+							img = zipFile.getInputStream(imgEntry);
 							break;
 						}
 					}
+				
+					Article article = ArticleStore.getInstance().importFromStream(html, img);
 					
-					Article article = new Article();
-					article.setSection(getParameterString("section"));
-					article.setSubSection(getParameterString("subsection"));
-					article.setTitle(title);
-					article.setHTML(body);
-					article.setPriority(0);
-					article.setTimelineFrom(getParameterInteger("from"));
-					article.setTimelineTo(getParameterInteger("to"));
-					article.setUpdatedDate(new Date());
-					if (jai!=null)
-					{
-						article.setPhoto(new Image(jai));
-					}
-					
-					ArticleStore.getInstance().save(article);
+					html.close();
+					if (img!=null) img.close();
 					
 					this.imported.add(article);
 				}

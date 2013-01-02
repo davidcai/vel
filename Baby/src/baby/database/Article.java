@@ -17,7 +17,15 @@ public final class Article extends DataBean
 	public static final int MAXSIZE_REGION = 64;
 	public static final int MAXSIZE_MEDICAL_CENTER = 64;
 	public static final int MAXSIZE_SOURCE_URL = 2048;
-		
+	public static final int MAXSIZE_YOUTUBE = 16;
+	
+	public Article()
+	{
+		init("TimelineFrom", Stage.preconception().toInteger());
+		init("TimelineTo", Stage.infancy(Stage.MAX_MONTHS).toInteger());
+		init("UpdatedDate", new Date());
+	}
+	
 	public String getHTML()
 	{
 		return (String) get("HTML");
@@ -25,15 +33,7 @@ public final class Article extends DataBean
 	public void setHTML(String html)
 	{
 		set("HTML", html);
-		set("PlainText", html==null? null : Util.htmlToText(html));
-	}
-	/**
-	 * Returns the content of the article without any HTML tags. Used as basis for text-searches.
-	 * @return
-	 */
-	public String getPlainText()
-	{
-		return (String) get("PlainText");
+		setPlainText();
 	}
 	
 	public String getTitle()
@@ -43,9 +43,38 @@ public final class Article extends DataBean
 	public void setTitle(String title)
 	{
 		set("Title", title);
+		setPlainText();
+	}
+	
+	private void setPlainText()
+	{
+		String html = getHTML();
+		String title = getTitle();
+		
+		StringBuilder bld = new StringBuilder();
+		if (title!=null)
+		{
+			bld.append(title);
+			bld.append(". ");
+		}
+		if (html!=null)
+		{
+			bld.append(Util.htmlToText(html));
+		}
+		set("PlainText", bld.toString());
 	}
 	
 	public String getSummary()
+	{
+		String summary = getSummaryRaw();
+		if (Util.isEmpty(summary))
+		{
+			summary = Util.htmlToText(getHTML());
+			summary = Util.getTextAbstract(summary, Article.MAXSIZE_SUMMARY);
+		}
+		return summary;
+	}
+	public String getSummaryRaw()
 	{
 		return (String) get("Summary");
 	}
@@ -143,5 +172,27 @@ public final class Article extends DataBean
 	public void setPriority(int priority)
 	{
 		set("Priority", priority);
+	}
+	
+	public String getYouTubeVideoID()
+	{
+		return (String) get("YouTube");
+	}
+	public void setYouTubeVideoID(String youTubeVideID)
+	{
+		set("YouTube", youTubeVideID);
+	}
+	
+	/**
+	 * Indicates if this article was created by a crawler. In this case, it will not be editable by the content manager.
+	 * @return
+	 */
+	public boolean isByCrawler()
+	{
+		return (Boolean) get("ByCrawler", false);
+	}
+	public void setByCrawler(boolean byCrawler)
+	{
+		set("ByCrawler", byCrawler);
 	}
 }

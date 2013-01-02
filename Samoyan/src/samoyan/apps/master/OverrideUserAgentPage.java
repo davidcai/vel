@@ -1,8 +1,11 @@
 package samoyan.apps.master;
 
+import java.util.UUID;
+
 import samoyan.controls.TwoColFormControl;
 import samoyan.core.ParameterMap;
 import samoyan.core.Util;
+import samoyan.database.AuthToken;
 import samoyan.database.AuthTokenStore;
 import samoyan.servlet.RequestContext;
 import samoyan.servlet.UserAgent;
@@ -21,7 +24,7 @@ public class OverrideUserAgentPage extends WebPage
 			validateParameterString("ua", 1, -1);
 			validateParameterInteger("w", 64, 4096);
 			validateParameterInteger("h", 64, 4096);
-			validateParameterInteger("p", 1, 2);
+			validateParameterDecimal("p", 1F, 2F);
 		}
 	}
 
@@ -45,7 +48,7 @@ public class OverrideUserAgentPage extends WebPage
 			String ua = getParameterString("ua");
 			Integer width = getParameterInteger("w");			
 			Integer height = getParameterInteger("h");
-			Integer pixelRatio = getParameterInteger("p");
+			Float pixelRatio = getParameterDecimal("p");
 			
 			setCookie(RequestContext.COOKIE_OVERRIDE_USER_AGENT, Util.urlEncode(ua));
 			if (width!=null && height!=null && width>=64 && height>=64 && pixelRatio>=1)
@@ -61,7 +64,9 @@ public class OverrideUserAgentPage extends WebPage
 		// Create auth token for new user agent and set as cookie
 		if (ctx.getUserID()!=null)
 		{
-			setCookie(RequestContext.COOKIE_AUTH, AuthTokenStore.getInstance().createAuthToken(ctx.getUserID(), null, false).toString());
+			AuthToken oldToken = AuthTokenStore.getInstance().load(UUID.fromString(ctx.getCookie(RequestContext.COOKIE_AUTH)));
+			UUID authToken = AuthTokenStore.getInstance().createAuthToken(ctx.getUserID(), null, false, oldToken.getApplePushToken());
+			setCookie(RequestContext.COOKIE_AUTH, authToken.toString());
 		}
 		
 		// Refresh rendering according to new cookies
@@ -97,9 +102,10 @@ public class OverrideUserAgentPage extends WebPage
 			"Android HTC ADR6400L", "Mozilla/5.0 (Linux; U; Android 2.3.4; en-us; ADR6400L 4G Build/GRJ22) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1", "369", "554", "1",
 			"BlackBerry 9700", "BlackBerry9700/5.0.0.714 Profile/MIDP-2.1 Configuration/CLDC-1.1 VendorID/100", "480", "360", "1",
 			"New iPad", "Mozilla/5.0 (iPad; CPU OS 5_1_1 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1 Mobile/9B206 Safari/7534.48.3", "768", "1024", "2",
+			"Galaxy S II", "Mozilla/5.0 (Linux; Android 4.1.1; SPH-D710 Build/JRO03L) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19", "480", "800", "1.5",
 			"Galaxy S III", "Mozilla/5.0 (Linux; U; Android 4.0.4; en-us; SAMSUNG-SGH-I747 Build/IMM76D) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30", "1280", "720", "2"
 		};
-
+		
 		ParameterMap params = new ParameterMap();
 		for (int i=0; i<presets.length; i+=5)
 		{			
@@ -112,7 +118,14 @@ public class OverrideUserAgentPage extends WebPage
 			write("</a>");
 			write("<br>");
 		}
-				
+			
+		float ratio = ua.getPixelRatio();
+		if (ua.isAppleTouch() || ua.isMacOSX())
+		{
+			// Apple already divides the reported number of pixels by the pixel ratio.
+			ratio = 1;
+		}
+		
 		// Custom form
 		write("<h2>");
 		writeEncode(getString("master:OverrideUserAgent.Custom"));
@@ -125,11 +138,11 @@ public class OverrideUserAgentPage extends WebPage
 		twoCol.writeRow(getString("master:OverrideUserAgent.UserAgent"));
 		twoCol.writeTextInput("ua", ua.getString(), 60, 256);
 		twoCol.writeRow(getString("master:OverrideUserAgent.Width"));
-		twoCol.writeTextInput("w", ua.getScreenWidth(), 3, 5);
+		twoCol.writeTextInput("w", Math.round( ua.getScreenWidth() * ratio ), 3, 5);
 		twoCol.writeRow(getString("master:OverrideUserAgent.Height"));
-		twoCol.writeTextInput("h", ua.getScreenHeight(), 3, 5);
+		twoCol.writeTextInput("h", Math.round(ua.getScreenHeight() * ratio ), 3, 5);
 		twoCol.writeRow(getString("master:OverrideUserAgent.PixelRatio"));
-		twoCol.writeTextInput("p", ua.getPixelRatio(), 1, 1);
+		twoCol.writeTextInput("p", ua.getPixelRatio(), 1, 3);
 		
 		twoCol.render();
 		

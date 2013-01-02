@@ -167,9 +167,9 @@ public final class User extends DataBean
 	{
 		return (String) get("PhoneVerifyCode");
 	}
-	public void setPhoneVerificationCode(String mobile)
+	public void setPhoneVerificationCode(String code)
 	{
-		set("PhoneVerifyCode", mobile);
+		set("PhoneVerifyCode", code);
 	}
 	
 	public String getMobile()
@@ -192,9 +192,9 @@ public final class User extends DataBean
 	{
 		return (String) get("MobileVerifyCode");
 	}
-	public void setMobileVerificationCode(String mobile)
+	public void setMobileVerificationCode(String code)
 	{
-		set("MobileVerifyCode", mobile);
+		set("MobileVerifyCode", code);
 	}
 
 	public String getTwitter()

@@ -1675,26 +1675,27 @@ public final class Util
 	    return data;
 	}
 	
-	public static void shutdownAndAwaitTermination(ExecutorService exec)
+	public static void shutdownNowAndAwaitTermination(ExecutorService exec)
 	{
 		if (exec==null) return;
-		
-		// Disable new tasks from being submitted
-		exec.shutdown();
+				
 		try
 		{
-			// Wait a while for existing tasks to terminate
-			if (!exec.awaitTermination(60, TimeUnit.SECONDS))
-			{
+//			// Disable new tasks from being submitted
+//			exec.shutdown();
+//
+//			// Wait a while for existing tasks to terminate
+//			if (!exec.awaitTermination(60, TimeUnit.SECONDS))
+//			{
 				// Cancel currently executing tasks
 				exec.shutdownNow();
 				
 				// Wait a while for tasks to respond to being cancelled
-				if (!exec.awaitTermination(60, TimeUnit.SECONDS))
+				if (!exec.awaitTermination(20, TimeUnit.SECONDS))
 				{
 					Debug.logln("ExecutorService did not terminate");
 				}
-			}
+//			}
 		}
 		catch (InterruptedException ie)
 		{

@@ -1,5 +1,6 @@
 package baby.pages.content;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -119,8 +120,6 @@ public final class EditChecklistPage extends BabyPage
 
 	private void populateTimelineCombo(SelectInputControl select)
 	{
-		select.addOption("", 0);
-
 		select.addOption(getString("content:EditChecklist.Preconception"), Stage.preconception().toInteger());
 		for (int i=1; i<=40; i++)
 		{
@@ -187,6 +186,8 @@ public final class EditChecklistPage extends BabyPage
 		
 		this.checklist.setTimelineFrom(getParameterInteger("from"));
 		this.checklist.setTimelineTo(getParameterInteger("to"));
+		
+		this.checklist.setUpdatedDate(new Date());
 		
 		ChecklistStore.getInstance().save(this.checklist);
 		

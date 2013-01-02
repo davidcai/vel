@@ -152,9 +152,15 @@ public final class ImageStore
 		}
 	}
 	
-	public Image loadAndResize(UUID imgID, String size, int pixelRatio) throws Exception
+	public Image loadAndResize(UUID imgID, String size, float pixelRatio) throws Exception
 	{
-		String cacheKey = "img:" + imgID.toString() + "." + size + "X" + pixelRatio;
+		String pixelRatioStr = String.valueOf(pixelRatio);
+		if (pixelRatioStr.endsWith(".0"))
+		{
+			pixelRatioStr = pixelRatioStr.substring(0, pixelRatioStr.length()-2);
+		}
+				
+		String cacheKey = "img:" + imgID.toString() + "." + size + "X" + pixelRatioStr;
 		if (size.equalsIgnoreCase(Image.SIZE_FULL)==false)
 		{
 			UUID cachedID = (UUID) Cache.get(cacheKey);
@@ -167,7 +173,7 @@ public final class ImageStore
 			Query q = new Query();
 			try
 			{
-				ResultSet rs = q.select("SELECT ID FROM Images WHERE OriginalID=? AND Size=?", new ParameterList(imgID).plus(size + "X" + pixelRatio));
+				ResultSet rs = q.select("SELECT ID FROM Images WHERE OriginalID=? AND Size=?", new ParameterList(imgID).plus(size + "X" + pixelRatioStr));
 				if (rs.next())
 				{
 					UUID resizedID = Util.bytesToUUID(rs.getBytes("ID"));
@@ -211,8 +217,8 @@ public final class ImageStore
 		Image processed = new Image(jai);
 		processed.setOriginalID(imgID);
 		processed.setLinkedID(imgID);
-		processed.setSize(size + "X" + pixelRatio);
-		processed.setName(size + "X" + pixelRatio);
+		processed.setSize(size + "X" + pixelRatioStr);
+		processed.setName(size + "X" + pixelRatioStr);
 		processed.setVersion(img.getVersion());
 		save(processed);
 		

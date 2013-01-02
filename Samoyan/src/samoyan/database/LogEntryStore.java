@@ -95,7 +95,7 @@ public final class LogEntryStore extends DataBeanStore<LogEntry>
 	 */
 	public static void terminate()
 	{
-		Util.shutdownAndAwaitTermination(executor);
+		Util.shutdownNowAndAwaitTermination(executor);
 		executor = null;
 
 		// Write remaining queued entries

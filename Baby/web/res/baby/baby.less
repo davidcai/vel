@@ -19,6 +19,10 @@
 	display: none;
 }
 
+.SmartPhone .PaddedPageContent {
+	padding: 0.5em;
+}
+
 .ChecklistOverdue {
 	background-color: @color-error;
 	color: @color-background;
@@ -49,14 +53,14 @@ UL.Journal {
 
 	LI {
 		display: block;
-		padding: 1em 0 0;
+		margin: 1em 0 0;
 		
 		A {
 			text-decoration: none;
 		}
 		
 		.EntryPhoto IMG {
-			padding: 0.5em 0 0;
+			margin: 0.5em 0 0;
 		}
 	}
 }
@@ -201,17 +205,80 @@ TABLE.PhotoGrid TD {
 	}
 }
 
-.CalendarBadges{
- 	font-size: 0.72em;
- 	line-height: 1.8;
+//
+// Articles
+//
+
+.ArticleList {
+	IMG {
+		border: solid 1px @color-text-light;
+		padding: 2px;
+	}
 }
+.Article {
+	IMG {
+		border: solid 1px @color-text-light;
+		padding: 2px;
+	}
+	TABLE {
+		width: 100%;
+	}
+	TH {
+		background-color: @color-negative-background;
+		color: @color-negative-text;
+		font-weight: normal;
+		padding: 2px;
+	}
+	TD {
+		background-color: @color-background-dark;
+		padding: 2px;
+	}
+	.Subsection {
+		background-color: @color-secondary-accent;
+		color: @color-background;
+		padding: 1px 5px;
+		margin-bottom: 0.5em;
+		text-align: center;
+	}
+}
+.SmartPhone .Article {
+	TH, TD {
+		font: @font-small;
+		padding: 1px;
+	}
+}
+
+.SmartPhone H2.SectionTitle {
+	text-align: center;
+}
+
+//
+// Big Calendar
+//
+
+.SmartPhone {
+
+	.BigCalendar {
+		width: 100%;
+		
+		TD.Day > * {
+			display: inline-block;
+			min-height: 45px;
+			
+			&:hover {
+				color: @color-text;
+				background-color: transparent;
+			}
+		}
+	}
+}
+
 .CalendarBadge {
 	display: inline-block;
 	width: 16px;
 	height: 16px;
    
 	&.Photo {
-	
 		background: transparent url("picture.png") no-repeat center center;
 	}
 	&.Text {
@@ -231,35 +298,10 @@ TABLE.PhotoGrid TD {
 	}
 }
 
-.BigCalendarContainer {
-	clear: both;
-	overflow: hidden;
-}
-.BigCalendar, 
-.BigCalendarLegend {
-	float: left;
-}
-.BigCalendarLegend {
-	padding-left: 3em;
-	line-height: 2;
-	
-	.CalendarBadge {
-		background-position: left center;
-		padding-right: 2em;
-	}
-}
-BODY.SmartPhone {
-	.BigCalendar, 
-	.BigCalendarLegend {
-		float: none;
-	}
-	.BigCalendarLegend {
-		padding-top: 1em;
-		padding-left: 1em;
-	}
-}
-
+//
 // Home page
+//
+
 BODY[uri="/"].Computer {
 	H1 {
 		display: none;
@@ -285,5 +327,15 @@ BODY[uri="/"].SmartPhone {
 		background-color: @color-background-dark;
 		padding: 5px 0px;
 		margin: 10px 0px;
+	}
+}
+
+//
+// AppointmentListPage
+//
+
+BODY[uri="/info/appointments/list"] {
+	.PreviousAppointments .WideLinks {
+		background-color: lighten(@color-text-light, 35%);
 	}
 }

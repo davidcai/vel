@@ -30,7 +30,7 @@ public class UserGroupListPage extends AdminPage
 
 		// Create new
 		new LinkToolbarControl(this)
-			.addLink(	getString("admin:UserGroupList.CreateNewGroup"), getPageURL(UserGroupPage.COMMAND), "icons/basic1/pencil_16.png")
+			.addLink(	getString("admin:UserGroupList.CreateNewGroup"), getPageURL(UserGroupPage.COMMAND), "icons/standard/pencil-16.png")
 			.render();
 		
 		if (all.size()==0)

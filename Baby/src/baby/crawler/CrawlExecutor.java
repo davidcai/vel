@@ -24,8 +24,8 @@ public final class CrawlExecutor
 	
 	public static void term()
 	{
-		Util.shutdownAndAwaitTermination(delayedExecutor);
-		Util.shutdownAndAwaitTermination(executor);
+		Util.shutdownNowAndAwaitTermination(delayedExecutor);
+		Util.shutdownNowAndAwaitTermination(executor);
 	}
 	
 	public static void submit(Callable<Void> crawler)

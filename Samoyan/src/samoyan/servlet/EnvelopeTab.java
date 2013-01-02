@@ -23,13 +23,13 @@ public class EnvelopeTab
 		return null;
 	}
 	
-	public String getLabel(WebPage outputPage)
+	public String getLabel(WebPage outputPage) throws Exception
 	{
 		return null;
 	}
 	
-	public String getIcon(WebPage outputPage)
+	public String getIcon(WebPage outputPage) throws Exception
 	{
-		return Util.isEmpty(getCommand())? null : "tab-default.png";
+		return Util.isEmpty(getCommand())? null : "icons/standard/gold-star-48.png";
 	}	
 }

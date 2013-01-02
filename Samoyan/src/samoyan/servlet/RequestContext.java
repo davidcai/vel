@@ -23,6 +23,7 @@ public final class RequestContext implements Cloneable
 	public final static String PARAM_COMMAND = "_command_";
 	public final static String PARAM_AUTH = "_auth_";
 	public final static String PARAM_SAVED = "_saved_";
+	public final static String PARAM_APPLE_PUSH_TOKEN = "_apn_";
 
 	private String channel = "";
 	private String ip = "";
@@ -431,11 +432,11 @@ public final class RequestContext implements Cloneable
 	{
 		if (this.userAgent==null)
 		{
-			this.userAgent = UserAgent.createInstance("", 0, 0, 1);
+			this.userAgent = UserAgent.createInstance("", 0, 0, 1F);
 		}
 		return this.userAgent;
 	}
-	public void setUserAgent(String userAgentString, int screenWidth, int screenHeight, int pixelRatio)
+	public void setUserAgent(String userAgentString, int screenWidth, int screenHeight, float pixelRatio)
 	{
 		this.userAgent = UserAgent.createInstance(userAgentString, screenWidth, screenHeight, pixelRatio);
 	}

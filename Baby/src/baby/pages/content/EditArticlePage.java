@@ -2,11 +2,13 @@ package baby.pages.content;
 
 import java.util.Date;
 
+import samoyan.controls.ImageControl;
 import samoyan.controls.SelectInputControl;
 import samoyan.controls.TwoColFormControl;
 import samoyan.core.ParameterMap;
 import samoyan.core.Util;
 import samoyan.servlet.RequestContext;
+import samoyan.servlet.UserAgent;
 import samoyan.servlet.exc.RedirectException;
 import samoyan.servlet.exc.WebFormException;
 import baby.app.BabyConsts;
@@ -47,7 +49,51 @@ public final class EditArticlePage extends BabyPage
 	
 	@Override
 	public void renderHTML() throws Exception
-	{	
+	{
+		if (this.article.isByCrawler())
+		{
+			renderReadOnly();
+		}
+		else
+		{
+			renderEditable();
+		}
+	}
+	
+	private void renderReadOnly() throws Exception
+	{
+		UserAgent ua = getContext().getUserAgent();
+
+		write("<div class=Article>");
+				
+		if (!Util.isEmpty(this.article.getYouTubeVideoID()))
+		{
+			write("<div align=center>");
+			int width = 600;
+			if (width > ua.getScreenWidth())
+			{
+				width = ua.getScreenWidth() - 10;
+			}
+			int height = width * 2 / 3;
+			writeYouTubeVideo(this.article.getYouTubeVideoID(), width, height);
+			write("</div><br>");
+		}
+		
+		if (this.article.getPhoto()!=null)
+		{
+			new ImageControl(this)
+				.img(this.article.getPhoto(), getContext().getUserAgent().isSmartPhone()? BabyConsts.IMAGESIZE_BOX_150X150 : BabyConsts.IMAGESIZE_BOX_400X400)
+				.setAttribute("align", "right")
+				.render();
+		}
+		
+		write(this.article.getHTML());
+		
+		write("</div>");
+	}
+	
+	private void renderEditable() throws Exception
+	{
 		writeFormOpen();
 		
 		TwoColFormControl twoCol = new TwoColFormControl(this);
@@ -56,13 +102,16 @@ public final class EditArticlePage extends BabyPage
 		twoCol.writeTextInput("title", this.article.getTitle(), 80, Article.MAXSIZE_TITLE);
 		
 		twoCol.writeRow(getString("content:EditArticle.Summary"));
-		twoCol.writeTextAreaInput("summary", this.article.getSummary(), 80, 2, Article.MAXSIZE_SUMMARY);
+		twoCol.writeTextAreaInput("summary", this.article.getSummaryRaw(), 80, 2, Article.MAXSIZE_SUMMARY);
 
 		twoCol.writeRow(getString("content:EditArticle.Body"));
 		twoCol.writeRichEditField("body", this.article.getHTML(), 80, 10);
 
 		twoCol.writeRow(getString("content:EditArticle.Image"));
 		twoCol.writeImageInput("image", this.article.getPhoto());
+
+		twoCol.writeRow(getString("content:EditArticle.YouTube"));
+		twoCol.writeTextInput("youtube", this.article.getYouTubeVideoID(), 20, Article.MAXSIZE_YOUTUBE);
 
 		twoCol.writeRow(getString("content:EditArticle.Options"));
 		twoCol.writeCheckbox("pinned", getString("content:EditArticle.Pinned"), this.article.getPriority()>0);
@@ -71,6 +120,7 @@ public final class EditArticlePage extends BabyPage
 		SelectInputControl select = new SelectInputControl(twoCol, "section");
 		select.setInitialValue(this.article.getSection());
 		select.addOption(BabyConsts.SECTION_INFO, BabyConsts.SECTION_INFO);
+		select.addOption(BabyConsts.SECTION_RESOURCE, BabyConsts.SECTION_RESOURCE);
 		for (String s : BabyConsts.SECTIONS_APPOINTMENT)
 		{
 			select.addOption(s,s);
@@ -96,6 +146,12 @@ public final class EditArticlePage extends BabyPage
 		to.setInitialValue(this.article.getTimelineTo());
 		to.render();
 
+		twoCol.writeRow(getString("content:EditArticle.Region"));
+		twoCol.writeTypeAheadInput("region", this.article.getRegion(), this.article.getRegion(), 40, Article.MAXSIZE_REGION, getPageURL(RegionTypeAhead.COMMAND));
+		
+		twoCol.writeRow(getString("content:EditArticle.MedicalCenter"));
+		twoCol.writeTypeAheadInput("medicalcenter", this.article.getMedicalCenter(), this.article.getMedicalCenter(), 40, Article.MAXSIZE_REGION, getPageURL(MedicalCenterTypeAhead.COMMAND));
+
 		twoCol.render();
 
 		write("<br>");
@@ -108,8 +164,6 @@ public final class EditArticlePage extends BabyPage
 	
 	private void populateTimelineCombo(SelectInputControl select)
 	{
-		select.addOption("", 0);
-
 		select.addOption(getString("content:EditArticle.Preconception"), Stage.preconception().toInteger());
 		for (int i=1; i<=40; i++)
 		{
@@ -124,6 +178,11 @@ public final class EditArticlePage extends BabyPage
 	@Override
 	public void validate() throws Exception
 	{
+		if (this.article.isByCrawler())
+		{
+			throw new WebFormException(getString("content:EditArticle.ReadOnly"));
+		}
+		
 		validateParameterString("title", 1, Article.MAXSIZE_TITLE);
 		validateParameterString("summary", 0, Article.MAXSIZE_SUMMARY);
 		
@@ -173,7 +232,11 @@ public final class EditArticlePage extends BabyPage
 		this.article.setTimelineTo(getParameterInteger("to"));
 		
 		this.article.setUpdatedDate(new Date());
+		this.article.setYouTubeVideoID(getParameterString("youtube"));
 		
+		this.article.setRegion(getParameterString("region"));
+		this.article.setMedicalCenter(getParameterString("medicalcenter"));
+
 		ArticleStore.getInstance().save(this.article);
 		
 		// For now, redirect to self

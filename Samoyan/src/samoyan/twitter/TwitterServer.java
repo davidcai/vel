@@ -91,7 +91,7 @@ public class TwitterServer implements TwitterListener
 	
 	public static void terminate()
 	{
-		Util.shutdownAndAwaitTermination(instance.executor);
+		Util.shutdownNowAndAwaitTermination(instance.executor);
 		instance.executor = null;
 		
 		instance.disconnect();

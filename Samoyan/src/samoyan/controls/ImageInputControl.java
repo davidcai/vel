@@ -13,11 +13,13 @@ public class ImageInputControl
 	private WebPage outputPage;
 	private String name;
 	private Image initialValue;
+	private boolean showThumbnail;
 
 	public ImageInputControl(WebPage outputPage, String name)
 	{
 		this.outputPage = outputPage;
 		this.name = name;
+		this.showThumbnail = true;
 		
 		this.initialValue = null;
 	}
@@ -30,6 +32,16 @@ public class ImageInputControl
 	public Image getInitialValue()
 	{
 		return this.initialValue;
+	}
+	
+	public ImageInputControl showThumbnail(boolean b)
+	{
+		this.showThumbnail = b;
+		return this;
+	}
+	public boolean isShowThumbnail()
+	{
+		return this.showThumbnail;
 	}
 	
 	public void render()
@@ -88,45 +100,51 @@ public class ImageInputControl
 		out.write("<table class=\"State");
 		out.writeEncode(state.substring(0, 1).toUpperCase(Locale.US));
 		out.writeEncode(state.substring(1));
-		out.write(" ImageUploader\"><tr><td rowspan=2 class=Images>");
+		out.write(" ImageUploader\"><tr>");
 		
 		// Images
-		String error = "";
-		if (out.isFormException(this.name))
+		if (this.showThumbnail)
 		{
-			error = " Error";
-		}
-		out.write("<img class=\"Empty");
-		out.write(error);
-		out.write("\" src=\"");
-		out.write(out.getResourceURL("imgupload-empty.png"));
-		out.write("\">");
-		if (this.initialValue!=null)
-		{
-			out.write("<img class=\"Current");
+			out.write("<td rowspan=2 class=Images>");
+			
+			String error = "";
+			if (out.isFormException(this.name))
+			{
+				error = " Error";
+			}
+			out.write("<img class=\"Empty");
 			out.write(error);
 			out.write("\" src=\"");
-			out.write(out.getImageURL(this.initialValue, Image.SIZE_THUMBNAIL, null));
+			out.write(out.getResourceURL("icons/imgupload/empty.png"));
 			out.write("\">");
-		}
-		if (canUploadNew)
-		{
-			out.write("<img class=\"New");
-			out.write(error);
-			out.write("\" src=\"");
-			out.write(out.getResourceURL("imgupload-new.png"));
-			out.write("\">");
-		}
-		if (state.equals("uploaded"))
-		{
-			out.write("<img class=\"Uploaded");
-			out.write(error);
-			out.write("\" src=\"");
-			out.write(out.getResourceURL("imgupload-new.png"));
-			out.write("\">");
+			if (this.initialValue!=null)
+			{
+				out.write("<img class=\"Current");
+				out.write(error);
+				out.write("\" src=\"");
+				out.write(out.getImageURL(this.initialValue, Image.SIZE_THUMBNAIL, null));
+				out.write("\">");
+			}
+			if (canUploadNew)
+			{
+				out.write("<img class=\"New");
+				out.write(error);
+				out.write("\" src=\"");
+				out.write(out.getResourceURL("icons/imgupload/new.png"));
+				out.write("\">");
+			}
+			if (state.equals("uploaded"))
+			{
+				out.write("<img class=\"Uploaded");
+				out.write(error);
+				out.write("\" src=\"");
+				out.write(out.getResourceURL("icons/imgupload/new.png"));
+				out.write("\">");
+			}
+			out.write("</td>");
 		}
 		
-		out.write("</td><td class=Descs valign=top>");
+		out.write("<td class=Descs valign=top>");
 		
 		// Descriptions
 		out.write("<span class=Empty>");
@@ -138,7 +156,14 @@ public class ImageInputControl
 			out.write(this.initialValue.getWidth());
 			out.write(" x ");
 			out.write(this.initialValue.getHeight());
-			out.write("<br>");
+			if (this.showThumbnail)
+			{
+				out.write("<br>");
+			}
+			else
+			{
+				out.write(" ");
+			}
 			out.write(this.initialValue.getLengthBytes() / 1024);
 			out.write(" KB");
 			out.write("</span>");
@@ -172,7 +197,12 @@ public class ImageInputControl
 			out.write("</span>");
 		}
 		
-		out.write("</td></tr><tr><td valign=bottom class=Actions>");
+		out.write("</td>");
+		if (this.showThumbnail)
+		{
+			out.write("</tr><tr>");
+		}
+		out.write("<td valign=bottom class=Actions>");
 		
 		// Actions
 		if (canUploadNew)
@@ -230,7 +260,7 @@ public class ImageInputControl
 //		if (!canUploadNew)
 //		{
 //			out.write("<table><tr><td>");
-//			out.writeImage("icons/basic1/warning_16.png", getString("controls:ImageUploader.UnsupportedDevice"));
+//			out.writeImage("icons/standard/warning-16.png", getString("controls:ImageUploader.UnsupportedDevice"));
 //			out.write("</td><td><small>");
 //			out.writeEncode(getString("controls:ImageUploader.UnsupportedDevice"));
 //			out.write("</small></td></tr></table>");

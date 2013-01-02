@@ -8,6 +8,12 @@ package baby.pages.master;
 public final class LessStylesheetPage extends samoyan.apps.master.LessStylesheetPage
 {
 	@Override
+	protected void renderPrologue() throws Exception
+	{
+		writeLESSVar("color-secondary-accent", "#929fd1"); // Healthy Beginnings purple
+	}
+	
+	@Override
 	protected String getFontNormal()
 	{
 		if (getContext().getUserAgent().isSmartPhone())

@@ -8,11 +8,12 @@ import mind.pages.patient.PatientPage;
 import mind.pages.patient.coaching.DrugInfoPage;
 import mind.pages.patient.coaching.DrugInteractionPage;
 import mind.tasks.GenerateNewDosesRecurringTask;
+import samoyan.controls.ButtonInputControl;
 import samoyan.controls.ViewTableControl;
 import samoyan.core.ParameterMap;
 import samoyan.core.Util;
+import samoyan.database.PermissionStore;
 import samoyan.servlet.RequestContext;
-import samoyan.servlet.Setup;
 import samoyan.servlet.exc.RedirectException;
 import samoyan.tasks.TaskManager;
 
@@ -27,6 +28,7 @@ public class PrescriptionListPage extends PatientPage
 		Patient patient = PatientStore.getInstance().loadByUserID(ctx.getUserID());
 		
 		boolean wake = false;
+		boolean demo = PermissionStore.getInstance().isUserGrantedPermission(ctx.getUserID(), "Demo");
 		
 		for (String prmName : getContext().getParameterNamesThatStartWith("chk_"))
 		{
@@ -41,7 +43,7 @@ public class PrescriptionListPage extends PatientPage
 			{
 				PrescriptionStore.getInstance().remove(rxID);
 			}
-			else if (Setup.isDebug() && isParameter("trigger"))
+			else if (demo && isParameter("trigger"))
 			{
 				rx.setNextDoseDate(new Date());
 				PrescriptionStore.getInstance().save(rx);
@@ -70,16 +72,24 @@ public class PrescriptionListPage extends PatientPage
 	{
 		// Load prescriptions for this user
 		RequestContext ctx = getContext();
+		boolean phone = ctx.getUserAgent().isSmartPhone();
 		Patient patient = PatientStore.getInstance().loadByUserID(ctx.getUserID());
 		List<UUID> rxIDs = PrescriptionStore.getInstance().getByPatientID(patient.getID());
 		
 		// Add
+		if (phone)
+		{
+			write("<div class=NoShow>");
+		}
 		writeFormOpen("GET", EditPrescriptionPage.COMMAND);
 //		write("<table width=\"100%\"><tr valign=middle><td width=\"1%\">");
 		writeTypeAheadInput("drug", null, null, 16, Drug.MAXSIZE_NAME, getPageURL(DrugChooserTypeAhead.COMMAND));
 //		write("</td><td width=\"1%\">");
 		write(" ");
-		writeButton(getString("controls:Button.Add"));
+		new ButtonInputControl(this, null)
+			.setValue(phone? "+" : getString("controls:Button.Add"))
+			.setMobileHotAction(true)
+			.render();
 //		write("</td>");
 //		if (rxIDs.size()>0 && !ctx.getUserAgent().isSmartPhone())
 //		{
@@ -96,6 +106,10 @@ public class PrescriptionListPage extends PatientPage
 //		write("</tr></table>");
 		writeFormClose();
 		write("<br>");
+		if (phone)
+		{
+			write("</div>");
+		}
 
 		if (rxIDs.size()==0)
 		{
@@ -291,11 +305,14 @@ public class PrescriptionListPage extends PatientPage
 		
 		write("<br>");
 		writeRemoveButton("delete");
-		if (Setup.isDebug())
+		
+		// Trigger button for demos
+		if (PermissionStore.getInstance().isUserGrantedPermission(ctx.getUserID(), "Demo"))
 		{
 			write("&nbsp;");
 			writeButton("trigger", getString("mind:RxList.TriggerNow"));
 		}
+		
 		writeFormClose();
 	}
 }

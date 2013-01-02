@@ -55,7 +55,7 @@ public class FacilitiesPage extends ElertPage
 		new LinkToolbarControl(this)
 			.addLink(	getString("govern:Facilities.CreateNew"),
 						getPageURL(FacilityPage.COMMAND, new ParameterMap(FacilityPage.PARAM_SERVICE_AREA_ID, this.area.getID().toString())),
-						"icons/basic1/pencil_16.png")
+						"icons/standard/pencil-16.png")
 			.render();
 
 		writeFormOpen();

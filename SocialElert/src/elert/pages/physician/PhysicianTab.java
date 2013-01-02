@@ -31,7 +31,7 @@ public class PhysicianTab extends EnvelopeTab
 	}
 
 	@Override
-	public String getIcon(WebPage outputPage)
+	public String getIcon(WebPage outputPage) throws Exception
 	{
 		// TODO: Add icon for the Physician tab
 		return super.getIcon(outputPage);

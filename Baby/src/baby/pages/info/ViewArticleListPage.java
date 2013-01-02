@@ -3,12 +3,9 @@ package baby.pages.info;
 import java.util.List;
 import java.util.UUID;
 
-import samoyan.core.ParameterMap;
-import samoyan.core.Util;
-import samoyan.database.Image;
 import baby.app.BabyConsts;
+import baby.controls.ArticleListControl;
 import baby.controls.TimelineControl;
-import baby.database.Article;
 import baby.database.ArticleStore;
 import baby.database.Mother;
 import baby.database.MotherStore;
@@ -30,6 +27,8 @@ public class ViewArticleListPage extends BabyPage
 	@Override
 	public void renderHTML() throws Exception
 	{
+		boolean phone = getContext().getUserAgent().isSmartPhone();
+
 		// Figure out the stage and its range (high, low)
 		Mother mother = MotherStore.getInstance().loadByUserID(getContext().getUserID());
 		int low = 0;
@@ -64,42 +63,6 @@ public class ViewArticleListPage extends BabyPage
 		write("</td></tr></table><br>");
 		
 		// Render articles
-		write("<table width=\"100%\"><col width=\"1%\"><col width=\"99%\">");
-		for (UUID articleID : articleIDs)
-		{
-			Article article = ArticleStore.getInstance().load(articleID);
-			String url = getPageURL(ViewArticlePage.COMMAND, new ParameterMap(ViewArticlePage.PARAM_ID, article.getID().toString()));
-			
-			write("<tr><td>");
-			if (article.getPhoto()!=null)
-			{
-				writeImage(article.getPhoto(), Image.SIZE_THUMBNAIL, article.getTitle(), url);
-			}
-			else
-			{
-				writeImage("baby/article-thumbnail.png", article.getTitle(), url);
-			}
-			write("</td><td>");
-			writeLink(article.getTitle(), url);
-			if (!Util.isEmpty(article.getSubSection()))
-			{
-				write(" <span class=Faded>(");
-				writeEncode(article.getSubSection());
-				write(")</span>");
-			}
-			String summary = article.getSummary();
-			if (Util.isEmpty(summary))
-			{
-				summary = article.getPlainText();
-			}
-			if (!Util.isEmpty(summary))
-			{
-				write("<br>");
-				writeEncode(Util.getTextAbstract(summary, Article.MAXSIZE_SUMMARY));
-			}
-			write("</td></tr>");
-			write("<tr><td colspan=2>&nbsp;</td></tr>");
-		}
-		write("</table>");
+		new ArticleListControl(this, articleIDs).showSummary(!phone).render();
 	}
 }

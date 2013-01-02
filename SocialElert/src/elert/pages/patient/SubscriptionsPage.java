@@ -38,7 +38,7 @@ public class SubscriptionsPage extends ElertPage
 		write("<br><br>");
 
 		new LinkToolbarControl(this)
-			.addLink(getString("patient:Subscriptions.SubscribeNew"), getPageURL(NewSubscriptionWizardPage.COMMAND), "icons/basic1/pencil_16.png")
+			.addLink(getString("patient:Subscriptions.SubscribeNew"), getPageURL(NewSubscriptionWizardPage.COMMAND), "icons/standard/pencil-16.png")
 			.render();
 		
 		// List current subscriptions here

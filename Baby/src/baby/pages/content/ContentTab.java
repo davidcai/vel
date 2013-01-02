@@ -11,11 +11,11 @@ public class ContentTab extends EnvelopeTab
 	public NavTreeControl getNavTree(WebPage outputPage) throws Exception
 	{
 		NavTreeControl navCtrl = new NavTreeControl(outputPage);
-		navCtrl.addHeader(outputPage.getString("content:Nav.Articles"));
+		navCtrl.addHeader(outputPage.getString("content:Nav.Content"));
 		navCtrl.addPage(ArticleListPage.COMMAND, null);
-		navCtrl.addPage(ResourceListPage.COMMAND, null);
 		navCtrl.addPage(MeasureListPage.COMMAND, null);
 		navCtrl.addPage(ChecklistListPage.COMMAND, null);
+		navCtrl.addPage(DeleteAllPage.COMMAND, null);
 		
 		return navCtrl;
 	}

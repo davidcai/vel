@@ -33,7 +33,7 @@ public class BabyStore extends DataBeanStore<Baby>
 
 		td.defineCol("UserID", UUID.class).invariant().ownedBy("Users");
 		td.defineCol("Name", String.class);
-		td.defineCol("Male", Boolean.class);
+		td.defineCol("Gender", String.class);
 		
 		return td;
 	}

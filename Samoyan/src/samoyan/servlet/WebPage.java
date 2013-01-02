@@ -305,7 +305,7 @@ public class WebPage
 	}
 	public boolean isFormException(String fieldName)
 	{
-		return getFormException()!=null && getFormException().getFields().contains(fieldName);
+		return fieldName!=null && getFormException()!=null && getFormException().getFields().contains(fieldName);
 	}
 	
 	public boolean isCommitted()
@@ -500,17 +500,6 @@ public class WebPage
 		write(getResourceURL(cssFileName));
 		write("?v=");
 		write(getContext().getUserAgent().hashCode() + Controller.getStartTime()/1000L);
-// For Demo 2012-07-09
-//if (isParameter("kpbg"))
-//{
-//	write("&kpbg=");
-//	write(Util.urlEncode(getParameterString("kpbg")));
-//}
-//if (isParameter("kpax"))
-//{
-//	write("&kpax=");
-//	write(Util.urlEncode(getParameterString("kpax")));
-//}
 		write("\">");
 	}
 	public void writeIncludeJS(String jsFileName)
@@ -2017,7 +2006,7 @@ public class WebPage
 			{
 				this.renderSimpleHTML();
 			}
-			else if (channel.equals(Channel.SMS) || channel.equals(Channel.TWITTER))
+			else if (channel.equals(Channel.SMS) || channel.equals(Channel.APPLE_PUSH) || channel.equals(Channel.TWITTER))
 			{
 				this.renderShortText();
 			}

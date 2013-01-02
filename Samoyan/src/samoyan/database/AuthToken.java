@@ -9,6 +9,7 @@ import samoyan.servlet.Setup;
 public final class AuthToken extends DataBean
 {
 	public final static int MAXSIZE_SIGNATURE = 64; // 64 characters to hold 32 bytes of SHA-256 hash in hex
+	public final static int MAXSIZE_APPLE_PUSH_TOKEN = 32;
 	
 	public AuthToken()
 	{
@@ -83,5 +84,15 @@ public final class AuthToken extends DataBean
 				// Should not happen
 			}
 		}
+	}
+	
+	public String getApplePushToken()
+	{
+		byte[] bytes = (byte[]) get("ApplePushToken");
+		return bytes==null? null : Util.byteArrayToHexString(bytes);
+	}
+	public void setApplePushToken(String token)
+	{
+		set("ApplePushToken", token==null? null : Util.hexStringToByteArray(token));
 	}
 }

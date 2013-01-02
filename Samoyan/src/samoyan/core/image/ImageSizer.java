@@ -11,5 +11,5 @@ public interface ImageSizer
 	 * @return The processed image, typically <code>src</code> after manipulation.
 	 * @throws Exception
 	 */
-	public JaiImage process(JaiImage src, int pixelRatio) throws Exception;
+	public JaiImage process(JaiImage src, float pixelRatio) throws Exception;
 }

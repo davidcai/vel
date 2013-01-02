@@ -1,5 +1,7 @@
 package samoyan.apps.master;
 
+import java.util.UUID;
+
 import samoyan.controls.TwoColFormControl;
 import samoyan.core.BCrypt;
 import samoyan.core.Util;
@@ -75,7 +77,8 @@ public class InitPasswordPage extends WebPage
 		UserStore.getInstance().save(this.user);
 		
 		// Create auth token and set as cookie
-		setCookie(RequestContext.COOKIE_AUTH, AuthTokenStore.getInstance().createAuthToken(this.user.getID(), getContext().getUserAgent().getString(), false).toString());
+		UUID authToken = AuthTokenStore.getInstance().createAuthToken(this.user.getID(), getContext().getUserAgent().getString(), false, getParameterString(RequestContext.PARAM_APPLE_PUSH_TOKEN));
+		setCookie(RequestContext.COOKIE_AUTH, authToken.toString());
 
 		// Log the event
 		LoginOKLogEntry log = new LoginOKLogEntry();
@@ -165,6 +168,9 @@ public class InitPasswordPage extends WebPage
 		writeHiddenInput(PARAM_LOGINNAME, null);
 		writeHiddenInput(PARAM_BCRYPTED_USER_ID, null);
 		
+		// Will be filled by PhoneGap wrapper with the Apple Push Notification token
+		writeHiddenInput(RequestContext.PARAM_APPLE_PUSH_TOKEN, "");
+
 		writeFormClose();
 
 //		// Neat caps script

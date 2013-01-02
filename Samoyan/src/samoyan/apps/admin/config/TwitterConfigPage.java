@@ -11,6 +11,7 @@ import samoyan.servlet.exc.RedirectException;
 public class TwitterConfigPage extends AdminPage
 {
 	public final static String COMMAND = AdminPage.COMMAND + "/twitter-config";
+	
 	@Override
 	public void validate() throws Exception
 	{
@@ -76,9 +77,9 @@ public class TwitterConfigPage extends AdminPage
 		twoCol.writeTextInput("oauth.accessToken", fed.getTwitterOAuthAccessToken(), 60, -1);
 		twoCol.writeRow(getString("admin:TwitterConfig.AccessTokenSecret"));
 		twoCol.writeTextInput("oauth.accessTokenSecret",  fed.getTwitterOAuthAccessTokenSecret(), 60, -1);
-		twoCol.writeSpaceRow();
 
 		twoCol.render();
+		write("<br>");
 		writeSaveButton(fed);
 		
 		writeFormClose();

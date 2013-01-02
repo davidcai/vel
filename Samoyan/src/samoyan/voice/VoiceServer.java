@@ -78,7 +78,7 @@ public class VoiceServer
 		{
 			webParams.putAll(params);
 		}
-		webParams.put(RequestContext.PARAM_AUTH, AuthTokenStore.getInstance().createAuthToken(userID, null, false).toString());
+		webParams.put(RequestContext.PARAM_AUTH, AuthTokenStore.getInstance().createAuthToken(userID, null, false, null).toString());
 		webParams.put("xmloutput", "true");
 
 		WebBrowser web = new WebBrowser();

@@ -1,35 +1,62 @@
+SAMOYAN:
+
 automatic cached query using DatabeanStore.cachedQuery(). clear all on remove and store.
 Need smarter cache indexing. allowing multiple keys for invalidation. using naming convention with x|y|z.
   convention for db: Table.ColA=ValA|Table.ColB=ValB|Table.ColC=* . Clear on Save (for dirty columns) and Remove (must load object for that).
   see http://code.google.com/p/concurrentlinkedhashmap/
   see http://code.google.com/p/guava-libraries/
-
+- leverage CSS3 transitions for animation effects on (e.g.) mouseover.
+  see www.w3schools.com/css3/css3_transitions.asp
+  see http://www.mobilerevamp.org/2011/07/02/ios-devices-and-page-transitions/
 = Simplify alert timeline.
   - eliminate concept of delay
   - screen to let user choose channels per notif.
   - let admin define defaults per notif type.
   - somehow need to get list of notif types with titles.
+= Leverage foreign keys with optionally ON DELETE CASCADE to keep references in DB.
+  create the FK's in controller startup
+  remove the DB events (onBeforeSave, etc.)
+  see http://stackoverflow.com/questions/6260688/sql-server-cascade-delete
+  MAY NOT WORK because when deleting beans, we also need to clear caches
+  Also not a good idea if wanting to support BigData databases
+- leverage HTML application cache (manifest)
+- alert admin before APN or Tomcat's certificates expire
+= APPLE PUSH:
+  - alert timeline page, contact info page: for apple notifs, "enable" link to go to a page that explains how to download the app, and enable notifications.
+    do not link directly to the app store.
+  - BADGE#: figure out how to calculate badge number.
+    need to push new "badge" notif when badge# changes in backend.
+    need to keep "open" status on notifs/events.
+- Make DB layer compatible with BigData db. http://cassandra.apache.org/
+
+BABY
 
 ? refactor package names to match UI.
   also COMMAND consts in BabyPage
   also .properties file names
 
 = margin on smartphone ui
-= (02) min-height on body area to prevent tabbar from popping to top when editing field. see info articles when no results.
-= (01) on mobile, title to say "Article" or "Resource", and print article title as H2
-= (03) don't show fully complete checklists if preference is to show only in progress
-- (00) Design logo: iPhone webclip icons + splash images for all device sizes.
-= (05) External links under Resources, should open in new window
-= (06) auto-check "remember me on this device" on smartphone
-= (07) Can't save Babies due to null in gender.
-= (1) Implement Search page to search over Info articles, resources.
-  need to mirror content of articles as plain text (without the HTML tags)
-  use free text search when possible, default to %q% if exception thrown
-= (2) import
-  - support for importing checklists as well: turn UL into checkitems. anything before it as description.
-  - detect TYPE(article/checklist) FROM/TO/SECTION/SUBSECTION values inside the page. Do not import if not present.
-  - option to clear all articles/resources/checklists from DB
-  - auto-import from WEB-INF directory on system load. Use path as src and override existing. run in another thread. put in crawler module.
+= double login problem. asked to login again when opening as app on ios. can it be due to chrome private mode?
+- ArticleListControl:
+  ? don't show HR divider on Computer ui
+
+= Content:
+  = send new content to Andi. need to extract from XL, unlock.
+  = sample youtube videos of tours of facilities. search for "kaiser permanente maternity tour" on youtube
+
+(0)
+= Journal:
+  - UI of Journal list
+    - better rendering of items in list, with >
+    - more results with AJAX
+  - edit screen of journal entry (without measures for now)
+  - reduce image size to 50x50 on mobile. also in Article list.
+    create standard thumbnail sizes: 50x50 and 32x32 in samoyan
+
++ change TabBar icon according to mom's phase: preconception / pregnancy / pediatrics
++ all articles from healthy beginnings, have banner at top of page when reading the article.
+  purple bar with "Healthy Beginnings" as caption. see original PDF.
+  similarly to "healthy kids", etc.
 
 - Master root page when logged in:
   - Link to Help pages
@@ -38,19 +65,10 @@ Need smarter cache indexing. allowing multiple keys for invalidation. using nami
   - If emergency, call 911...
   - Contact us page
 
-- leverage CSS3 transitions for animation effects on (e.g.) mouseover.
-  see www.w3schools.com/css3/css3_transitions.asp
-  see http://www.mobilerevamp.org/2011/07/02/ios-devices-and-page-transitions/
-
-Content:
-- Run UTF8 conversion
-- Install Notepad++ for Andi
-= (4) Figure out what to do with TABLEs
-
 = GoBACK:
   = when pushing on stack, check history.length. if same as during prev push, may indicate that the browser's back button was pressed.
-    pop the stack until current window.location.pathname == top of stack (typically 1 if back pressed) instead of pushing on top of it
-    not necessarily correct. history.length can remain the same if pressed back, then forward.
+    clear back stack if history.size hasn't changed?
+    not necessarily correct. history.length can remain the same if pressed back, then click on link to navigate forward again.
   = GoBackPage: need to redirect to SELF if BACK stack is empty. when can this happen? after clearing BACK stack? 
     GoBackOrSaveRedirectException
     SaveRedirectException
@@ -59,53 +77,42 @@ Content:
     - when doing a GoBack redirection, redirect to that URL instead of to the GoBack page.
       - pass param to the page to pop the stack accordingly. _backpop_ or similar.
   - use Back functionality in profile pages
-= Redo iPhone UI:
+= Mobile UI:
   - support for ... MORE in tab bar if there are too many tabs
   = MENU item:
-    + to show only when there's no BACK button on the left, instead of the <- icon.
     - show login/logout/register/help/copyright/terms links in nav bar.
     - MENU button to work like in Gmail/FB apps: slide the body to the left, reveal menu underneath.
     - different bg color for navbar
     - navbar style to be like WideLinkGroupControl.
-    + on click, show/hide ACTION button area
-  + HOT ACTION BUTTON
-    + button control to support "defaultAction" property (true by default). If false, render as input=type=button rather than type=submit
-    + Button.setMobileHotAction(true/false)
-    + Buttons to forward clicks to real buttons by #id, or redirect to URL (link)
-      x hide real buttons when they have equivalent hot buttons
-    + Render elements into the #hotSection DIV (use JS to copy)
-    + perform automatically for Save buttons
   _ Mobile HotAction area (top-right corner buttons) to support search input box: widen on focus
-  - need place for Settings/profile link. Also in web UI. See facebook's dropdown corner menu.
   - detect orientation change, set class on BODY tag. in iOS, do same trick a scrollTo to recalc width of fixed elements.
 
 PHASE II:
 
-- checklists from earlier stages (preconception, pregnancy): show as faded.
-= Integrate the "Birth plan". It's a document the mother should fill out and send to her doctor.
+_ checklists from earlier stages (preconception, pregnancy): show as faded.
+- Integrate the "Birth plan". It's a document the mother should fill out and send to her doctor.
   can be done electronically, or printed/mailed to doctor.
-- ArticleStore: caching for all queries. Clear after save/remove.
+- ArticleStore: caching for all queries/searches. Clear after save/remove.
   warm up cache on system load: load all articles/checklists to memory
 - kick counter tool:
   - integrate into measures (link to the tool)
   - better design
   - May need to redo because kicks are counted on several min basis. (how long to reach 10 kicks)
-= iPhone native notifs
 = Appointment reminders - send notif
 _ Horizontal navigation (tab):
   ? render tabs upside down
   - set Fixed to top. need solid bg. Padding at bottom should not be fixed.
   - error message to show below navigation
+_ Profile page to choose BabyBlue or BabyPink colorset.
+  need to store cssVersion on user object and use it when including CSS.
 
 DAVID:
-- compressed "upload only" version of image upload control: don't show thumbnail, don't show "upload new", size.
-  allow to pass in the imagesize spec string for the thumbnail. Can then make it 32x32.
-- fix "res/icons" folder. Keep only important icons. Rename them and org in "/icons/tools" folder. remove all other icons.
-  need various sizes: 16, 24, 32, 48 with X2 for all
-- organize tab icons into "/icons/tabs". size to be 48 with X2
+= Merge appointments into Calendar
+  - Calendar page: list/day/month views like in "pink pad".
+= Link measures with Journal entries
+  = journal page: cleanup look, show image+text+measures
 = print capability of the journal. or export to PDF.
   design "notebook" style for journal. lines, margins, etc.
-- check/refine printed messages when no results (journal entries, gallery, articles, checklists, etc.)
 - separate Day and TimeOfDay input controls to return Day and TimeOfDay
   - drop downs when not supported natively.
   - allow setting step for TimeOfDay (1min, 5min, 15min, 30min, 60min)
@@ -113,10 +120,6 @@ DAVID:
   - getParameterDay, getParameterTimeOfDay
   - getParameterDayAndTime("day", "time", tz) to return Date
   - in appointments, use Day+TimeOfDay controls instead of custom dropdowns. print time zone.
-+ validate use of timezones, esp. with mother.getEstimatedPregnancyStage
-? Use the ControlArray for the BabiesPage to add/remove babies.
-- Calendar page: list/day/month views like in "pink pad".
-
 
 
 FUTURE IDEAS:
@@ -129,6 +132,7 @@ FUTURE IDEAS:
 - Tool for calculating time between contractions
 
 INTERNAL MESSAGING:
+
 + InternalMessages table: id, subject, fromUserID, toUserID, date created, read flag, important flag, content (html), attachments, threadID.
 + Compose new msg page.
   + typeahed for users
@@ -156,11 +160,3 @@ INTERNAL MESSAGING:
 - Internal msg to be added as channel to timeline.
 - Where to place link to inbox?
 
-= Leverage foreign keys with optionally ON DELETE CASCADE to keep references in DB.
-  create the FK's in controller startup
-  remove the DB events (onBeforeSave, etc.)
-  see http://stackoverflow.com/questions/6260688/sql-server-cascade-delete
-  MAY NOT WORK because when deleting beans, we also need to clear caches
-
- leverage HTML application cache (manifest)
- 

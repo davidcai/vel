@@ -10,9 +10,9 @@ import samoyan.controls.DataTableControl;
 import samoyan.controls.LinkToolbarControl;
 import samoyan.core.CollectionsEx;
 import samoyan.core.ParameterMap;
+import samoyan.core.Util;
 import samoyan.servlet.exc.RedirectException;
 
-import baby.app.BabyConsts;
 import baby.database.Article;
 import baby.database.ArticleStore;
 import baby.database.Stage;
@@ -22,23 +22,65 @@ public final class ArticleListPage extends BabyPage
 {
 	public final static String COMMAND = BabyPage.COMMAND_CONTENT + "/articles";
 
+	public final static String PARAM_SECTION = "section";
+	
 	@Override
 	public String getTitle() throws Exception
 	{
-		return getString("content:Articles.Title");
+		String section = getParameterString(PARAM_SECTION);
+		if (section==null)
+		{
+			return getString("content:Articles.Title");
+		}
+		else
+		{
+			return section;
+		}
+
 	}
 	
 	@Override
 	public void renderHTML() throws Exception
 	{
+		String section = getParameterString(PARAM_SECTION);
+		if (section==null)
+		{
+			renderSections();
+		}
+		else
+		{
+			renderSection(section);
+		}
+	}
+	
+	private void renderSections() throws Exception
+	{
 		// Toolbar
 		new LinkToolbarControl(this)
-			.addLink(getString("content:Articles.NewArticle"), getPageURL(EditArticlePage.COMMAND), "icons/basic1/pencil_16.png")
-			.addLink(getString("content:Articles.ImportArticles"), getPageURL(ImportArticlePage.COMMAND), "icons/basic2/box_16.png")
+			.addLink(getString("content:Articles.NewArticle"), getPageURL(EditArticlePage.COMMAND), "icons/standard/pencil-16.png")
+			.addLink(getString("content:Articles.ImportArticles"), getPageURL(ImportArticlePage.COMMAND), "icons/standard/cardboard-box-16.png")
+			.addLink(getString("content:Articles.Crawler"), getPageURL(KPOrgCrawlerPage.COMMAND), "icons/standard/lady-bug-16.png")
 			.render();
 
+		List<String> sections = ArticleStore.getInstance().getSections();
+		for (String s : sections)
+		{
+			int count = ArticleStore.getInstance().queryBySection(s).size();
+			writeLink(s, getPageURL(getContext().getCommand(), new ParameterMap(PARAM_SECTION, s)));
+			write(" <span class=Faded>(");
+			writeEncodeLong(count);
+			write(")</span><br>");
+		}
+		if (sections.size()==0)
+		{
+			writeEncode(getString("content:Articles.NoResults"));
+		}
+	}
+	
+	private void renderSection(String section) throws Exception
+	{
 		// Load all articles
-		List<UUID> articleIDs = ArticleStore.getInstance().queryBySection(BabyConsts.SECTION_INFO);
+		List<UUID> articleIDs = ArticleStore.getInstance().queryBySection(section);
 		List<Article> articles = new ArrayList<Article>(articleIDs.size());
 		for (UUID id : articleIDs)
 		{
@@ -93,9 +135,10 @@ public final class ArticleListPage extends BabyPage
 				{
 					column("").width(1); // checkbox
 					column("").width(1); // pinned?
+					column("").width(1); // crawled?
 					column("").width(1); // image?
 					column(getString("content:Articles.ArticleTitle"));
-					column(getString("content:Articles.Section")).width(15);
+					column(getString("content:Articles.SubSection"));
 				}
 	
 				@Override
@@ -107,20 +150,29 @@ public final class ArticleListPage extends BabyPage
 					cell();
 					if (article.getPriority()>0)
 					{
-						writeImage("icons/basic1/label_16.png", getString("content:Articles.Pinned"));
+						writeImage("icons/standard/pin-16.png", getString("content:Articles.Pinned"));
 					}
 					
 					cell();
+					if (article.isByCrawler())
+					{
+						writeImage("icons/standard/lady-bug-16.png", getString("content:Articles.Crawled"));
+					}
+
+					cell();
 					if (article.getPhoto()!=null)
 					{
-						writeImage("icons/basic2/photo_16.png", getString("content:Articles.Photo"));
+						writeImage("icons/standard/photo-16.png", getString("content:Articles.Photo"));
 					}
 
 					cell();
 					writeLink(article.getTitle(), getPageURL(EditArticlePage.COMMAND, new ParameterMap(EditArticlePage.PARAM_ID, article.getID().toString())));
 
 					cell();
-					writeEncode(article.getSection());
+					if (!Util.isEmpty(article.getSubSection()))
+					{
+						writeEncode(article.getSubSection());
+					}
 				}
 			}
 			.setPageSize(group.size()) // No paging

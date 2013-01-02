@@ -40,7 +40,7 @@ public final class ContentHomePage extends BabyPage
 		
 		// Checklists
 		twoCol.writeRow(getString("content:Home.Checklists"));
-		twoCol.writeEncodeLong(ChecklistStore.getInstance().getAll().size());
+		twoCol.writeEncodeLong(ChecklistStore.getInstance().getAllStandard().size());
 		
 		twoCol.writeSpaceRow();
 

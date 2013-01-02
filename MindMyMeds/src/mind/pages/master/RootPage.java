@@ -11,7 +11,7 @@ import samoyan.servlet.WebPage;
 public class RootPage extends WebPage
 {
 	public final static String COMMAND = "";
-	
+		
 	@Override
 	public void renderHTML() throws Exception
 	{
@@ -29,8 +29,7 @@ public class RootPage extends WebPage
 //			email.setContent("text/html", "<html><head><style type='text/css'>#zRED{color:red;}</style></head><body>This is <span id=zRED>Running</span> another <span style='color:blue;'>test</span>. www.kp.org/testlink . RSVP.</body></html>");
 //			EmailServer.send(email);
 //		}
-				
-		
+			
 		String appTitle = Setup.getAppTitle(getLocale());
 		String appOwner = Setup.getAppOwner(getLocale());
 		write("<div align=center>");
