@@ -27,7 +27,7 @@ public class AppointmentsListPage extends AppointmentsBasePage
 		// Upcoming appointments ordered by ascending dates
 		//
 		
-		write("<h2 class=\"SectionTitle\">");
+		write("<h2>");
 		writeEncode(getString("information:AppointmentsList.Upcoming"));
 		write("</h2>");
 		
@@ -38,11 +38,13 @@ public class AppointmentsListPage extends AppointmentsBasePage
 		writeList(appointmentIDs);
 		write("</div>");
 		
+		write("<br>");
+		
 		//
 		// Previous appointments ordered by descending dates
 		//
 		
-		write("<h2 class=\"SectionTitle\">");
+		write("<h2>");
 		writeEncode(getString("information:AppointmentsList.Previous"));
 		write("</h2>");
 		
@@ -62,8 +64,7 @@ public class AppointmentsListPage extends AppointmentsBasePage
 			Calendar calToday = Calendar.getInstance(getTimeZone(), getLocale());
 			calToday = clearHours(calToday);
 			
-//			DateFormat dfDay = DateFormatEx.getSimpleInstance("EEEE", getLocale(), getTimeZone());
-//			DateFormat dfDate = DateFormatEx.getLongDateInstance(getLocale(), getTimeZone());
+			DateFormat dfDate = DateFormatEx.getDateInstance(getLocale(), getTimeZone());
 			DateFormat dfTime = DateFormatEx.getTimeInstance(getLocale(), getTimeZone());
 			
 			WideLinkGroupControl wlg = new WideLinkGroupControl(this);
@@ -72,10 +73,13 @@ public class AppointmentsListPage extends AppointmentsBasePage
 				Appointment appointment = AppointmentStore.getInstance().load(appointmentID);
 				cal.setTime(appointment.getDateTime());
 				
+				String weekDay = getDescriptiveWeekDay(cal);
+				String date = (weekDay == null) ? dfDate.format(appointment.getDateTime()) : weekDay;
+				String time = dfTime.format(appointment.getDateTime());
+				
 				wlg.addLink()
 					.setTitle(appointment.getDescription())
-					.setValue(dfTime.format(appointment.getDateTime()))
-					.setExtra(getDescriptiveDate(cal))
+					.setValue(getString("information:AppointmentsList.DateTime", date, time))
 					.setURL(getAppointmentPageURL(appointment.getID()));
 			}
 			wlg.render();

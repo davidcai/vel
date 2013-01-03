@@ -50,11 +50,16 @@ public class AppointmentsBasePage extends BabyPage
 		}
 	}
 	
-	protected String getDescriptiveDate(Calendar cal)
+	/**
+	 * Returns a string representing the name of the day, e.g. Today, Tomorrow, Thursday, and Sunday. 
+	 * Returns null if the date is 7-day later than today.
+	 *  
+	 * @param cal
+	 * @return
+	 */
+	protected String getDescriptiveWeekDay(Calendar cal)
 	{
-		StringBuilder sb = new StringBuilder();
-		DateFormat dfDay = DateFormatEx.getSimpleInstance("EEEE", getLocale(), getTimeZone());
-		DateFormat dfDate = DateFormatEx.getMediumDateInstance(getLocale(), getTimeZone());
+		String weekDay = null;
 		
 		cal = clearHours(cal);
 		Date dt = cal.getTime();
@@ -65,8 +70,7 @@ public class AppointmentsBasePage extends BabyPage
 		if (cal.equals(calToday))
 		{
 			// Today
-			sb.append(getString("information:AppointmentsBase.Today"));
-			sb.append(getString("information:AppointmentsBase.Comma"));
+			weekDay = getString("information:AppointmentsBase.Today");
 		}
 		else
 		{
@@ -74,8 +78,7 @@ public class AppointmentsBasePage extends BabyPage
 			if (cal.equals(calToday)) 
 			{
 				// Tomorrow
-				sb.append(getString("information:AppointmentsBase.Tomorrow"));
-				sb.append(getString("information:AppointmentsBase.Comma"));
+				weekDay = getString("information:AppointmentsBase.Tomorrow");
 			}
 			else
 			{
@@ -83,13 +86,28 @@ public class AppointmentsBasePage extends BabyPage
 				if (cal.after(calToday) == false)
 				{
 					// Day within a week
-					sb.append(dfDay.format(dt));
-					sb.append(getString("information:AppointmentsBase.Comma"));
+					DateFormat dfDay = DateFormatEx.getSimpleInstance("EEE", getLocale(), getTimeZone());
+					weekDay = dfDay.format(dt);
 				}
 			}
 		}
 		
-		sb.append(dfDate.format(dt));
+		return weekDay;
+	}
+	
+	protected String getDescriptiveDate(Calendar cal)
+	{
+		StringBuilder sb = new StringBuilder();
+		
+		String weekDay = getDescriptiveWeekDay(cal);
+		if (weekDay != null)
+		{
+			sb.append(weekDay);
+			sb.append(getString("information:AppointmentsBase.Comma"));
+		}
+		
+		DateFormat dfDate = DateFormatEx.getMediumDateInstance(getLocale(), getTimeZone());
+		sb.append(dfDate.format(cal.getTime()));
 		
 		return sb.toString();
 	}
