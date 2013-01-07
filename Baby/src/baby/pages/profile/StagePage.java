@@ -6,7 +6,7 @@ import java.util.Date;
 import samoyan.apps.profile.ProfilePage;
 import samoyan.core.TimeZoneEx;
 import samoyan.servlet.Setup;
-import samoyan.servlet.exc.GoBackRedirectException;
+import samoyan.servlet.exc.AfterCommitRedirectException;
 import samoyan.servlet.exc.WebFormException;
 import baby.database.Mother;
 import baby.database.MotherStore;
@@ -171,6 +171,6 @@ public final class StagePage extends BabyPage
 		
 		// Redirect to parent
 		progressGuidedSetup();
-		throw new GoBackRedirectException();
+		throw new AfterCommitRedirectException();
 	}
 }

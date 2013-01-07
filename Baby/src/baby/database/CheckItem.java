@@ -6,7 +6,7 @@ import samoyan.database.DataBean;
 
 public final class CheckItem extends DataBean
 {
-	public static final int MAXSIZE_TEXT = 256;
+	public static final int MAXSIZE_TEXT = 512;
 	
 	public String getText()
 	{

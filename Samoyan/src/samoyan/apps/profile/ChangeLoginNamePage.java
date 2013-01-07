@@ -8,7 +8,7 @@ import samoyan.database.UserStore;
 import samoyan.notif.Notifier;
 import samoyan.servlet.Channel;
 import samoyan.servlet.RequestContext;
-import samoyan.servlet.exc.RedirectException;
+import samoyan.servlet.exc.AfterCommitRedirectException;
 import samoyan.servlet.exc.WebFormException;
 
 public class ChangeLoginNamePage extends ProfilePage
@@ -65,7 +65,7 @@ public class ChangeLoginNamePage extends ProfilePage
 		}
 		
 		// Redirect to self in order to clear form submission
-		throw new RedirectException(getContext().getCommand(), new ParameterMap(RequestContext.PARAM_SAVED, "")); // getString("profile:ChangeLoginName.Confirmation")));
+		throw new AfterCommitRedirectException();
 	}
 	
 	@Override

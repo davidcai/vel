@@ -17,6 +17,7 @@ public class InfoTab extends EnvelopeTab
 		navCtrl.addHeader(outputPage.getString("information:Nav.ToDo"));
 		navCtrl.addPage(ChecklistPage.COMMAND, null);
 		navCtrl.addPage(AppointmentsListPage.COMMAND, null);
+		navCtrl.addPage(CalendarPage.COMMAND, null);
 		
 		navCtrl.addHeader(outputPage.getString("information:Nav.Articles"));
 		navCtrl.addPage(ViewArticleListPage.COMMAND, null);

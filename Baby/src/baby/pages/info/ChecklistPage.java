@@ -117,7 +117,6 @@ public final class ChecklistPage extends BabyPage
 			.showCompleted(showAll)
 			.showDueDate(false)
 			.render();
-		write("<br>");
 		
 		// Add
 		writeFormOpen();
@@ -136,7 +135,6 @@ public final class ChecklistPage extends BabyPage
 		for (UUID checklistID : checklistIDs)
 		{
 			new ChecklistControl(this, userID, checklistID).showCompleted(showAll).render();
-			write("<br>");
 		}
 	}
 		

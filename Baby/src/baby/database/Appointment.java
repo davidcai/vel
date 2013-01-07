@@ -11,6 +11,11 @@ public class Appointment extends DataBean
 	public static final int MAXSIZE_DESCRIPTION = 64;
 	public static final int MAXSIZE_TYPE = 64;
 
+	public Appointment()
+	{
+		init("DateTime", new Date());
+	}
+	
 	public UUID getUserID()
 	{
 		return (UUID) get("UserID");
@@ -51,44 +56,44 @@ public class Appointment extends DataBean
 		set("DateTime", dateTime);
 	}
 
-	public boolean isRemindMeOneDayBefore()
+	public boolean isReminderOneDay()
 	{
-		return (Boolean) get("RemindMeOneDayBefore", false);
+		return (Boolean) get("ReminderOneDay", false);
 	}
 
-	public void setRemindMeOneDayBefore(boolean remindMeOneDayBefore)
+	public void setReminderOneDay(boolean b)
 	{
-		set("RemindMeOneDayBefore", remindMeOneDayBefore);
+		set("ReminderOneDay", b);
 	}
 
-	public boolean isRemindMeFourHoursBefore()
+	public boolean isReminderTwoDays()
 	{
-		return (Boolean) get("RemindMeFourHoursBefore", false);
+		return (Boolean) get("ReminderTwoDays", false);
 	}
 
-	public void setRemindMeFourHoursBefore(boolean remindMeFourHoursBefore)
+	public void setReminderTwoDays(boolean b)
 	{
-		set("RemindMeFourHoursBefore", remindMeFourHoursBefore);
+		set("ReminderTwoDays", b);
 	}
 
-	public boolean isRemindMeTwoHoursBefore()
+	public boolean isReminderTwoHours()
 	{
-		return (Boolean) get("RemindMeTwoHoursBefore", false);
+		return (Boolean) get("ReminderTwoHours", false);
 	}
 
-	public void setRemindMeTwoHoursBefore(boolean remindMeTwoHoursBefore)
+	public void setReminderTwoHours(boolean b)
 	{
-		set("RemindMeTwoHoursBefore", remindMeTwoHoursBefore);
+		set("ReminderTwoHours", b);
 	}
 
-	public boolean isRemindMeOneHourBefore()
+	public boolean isReminderOneHour()
 	{
-		return (Boolean) get("RemindMeOneHourBefore", false);
+		return (Boolean) get("ReminderOneHour", false);
 	}
 
-	public void setRemindMeOneHourBefore(boolean remindMeOneHourBefore)
+	public void setReminderOneHour(boolean b)
 	{
-		set("RemindMeOneHourBefore", remindMeOneHourBefore);
+		set("ReminderOneHour", b);
 	}
 
 	public String getAskMyDoctor()

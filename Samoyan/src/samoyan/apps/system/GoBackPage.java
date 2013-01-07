@@ -9,7 +9,7 @@ public class GoBackPage extends WebPage
 	@Override
 	public void renderHTML() throws Exception
 	{
-		write("<script type=\"text/javascript\">backPopAndRedirect(null);</script>");
+		write("<script type=\"text/javascript\">backPop();backPopAndRedirect(null);</script>");
 	}
 
 	@Override

@@ -18,7 +18,6 @@ import baby.pages.info.InfoTab;
 import baby.pages.journey.JourneyTab;
 import baby.pages.master.MasterTab;
 import baby.pages.profile.BabyProfileTab;
-import baby.pages.scrapbook.ScrapbookTab;
 
 public class BabyEnvelopePage extends EnvelopePage
 {
@@ -26,7 +25,7 @@ public class BabyEnvelopePage extends EnvelopePage
 	private static EnvelopeTab adminTab = new AdminTab();
 	private static EnvelopeTab contentTab = new ContentTab();
 	private static EnvelopeTab infoTab = new InfoTab();
-	private static EnvelopeTab scrapbookTab = new ScrapbookTab();
+//	private static EnvelopeTab scrapbookTab = new ScrapbookTab();
 	private static EnvelopeTab journeyTab = new JourneyTab();
 	private static EnvelopeTab profileTab = new BabyProfileTab();
 //	private static EnvelopeTab messagingTab = new MessagingTab();
@@ -37,9 +36,15 @@ public class BabyEnvelopePage extends EnvelopePage
 	{
 		RequestContext ctx = getContext();
 		User user = UserStore.getInstance().load(ctx.getUserID());
+		boolean phone = ctx.getUserAgent().isSmartPhone();
 		
 		List<EnvelopeTab> result = new ArrayList<EnvelopeTab>(6);
-		result.add(masterTab);
+		if (!phone || user==null)
+		{
+			// We do not show the master tab on a mobile device when the user is logged in
+			result.add(masterTab);
+		}
+		
 		if (user!=null)
 		{
 			boolean admin = PermissionStore.getInstance().isUserGrantedPermission(user.getID(), Permission.SYSTEM_ADMINISTRATION);
@@ -61,7 +66,7 @@ public class BabyEnvelopePage extends EnvelopePage
 			else
 			{
 				result.add(infoTab);
-				result.add(scrapbookTab);
+//				result.add(scrapbookTab);
 				result.add(journeyTab);
 	//			result.add(messagingTab); // !$! Testing only
 				result.add(profileTab);
@@ -79,7 +84,7 @@ public class BabyEnvelopePage extends EnvelopePage
 		MetaTagControl ctrl = new MetaTagControl(this);
 		ctrl.appleTouchIcon(false, "baby/apple-touch-icon-114.png", "baby/apple-touch-icon-144.png");
 		ctrl.appleTouchStartupImage(
-			"baby/iphone-splash-320x480.png",
+			"baby/iphone-splash-320x460.png",
 			"baby/iphone-splash-640x920.png",
 			"baby/iphone-splash-640x1096.png",
 			"baby/ipad-splash-768x1004.png",

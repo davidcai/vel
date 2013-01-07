@@ -5,7 +5,7 @@ import samoyan.core.Util;
 import samoyan.database.User;
 import samoyan.database.UserStore;
 import samoyan.servlet.RequestContext;
-import samoyan.servlet.exc.RedirectException;
+import samoyan.servlet.exc.AfterCommitRedirectException;
 import samoyan.servlet.exc.WebFormException;
 
 public class EmailPage extends ProfilePage
@@ -53,8 +53,8 @@ public class EmailPage extends ProfilePage
 		// Support guided setup
 		progressGuidedSetup();
 
-		// Go back to the contact info page
-		throw new RedirectException(ContactInfoPage.COMMAND, null);
+		// Redirect
+		throw new AfterCommitRedirectException();
 	}
 	
 	@Override

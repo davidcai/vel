@@ -169,7 +169,7 @@ public class ChecklistControl
 			}
 		out.write("</td></tr></table>");
 
-		out.write("<table id='");
+		out.write("<table class=Checkitems id='");
 		out.writeEncode(checklistID.toString());
 		out.write("'");
 		if (collapsed)
@@ -188,11 +188,16 @@ public class ChecklistControl
 			
 			out.write("<tr><td>");
 			new CheckboxInputControl(this.out, "chk_" + checkitemID.toString())
-				.setLabel(checkitem.getText())
+				.setLabel(null)
 				.setInitialValue(checked)
 				.setAttribute("onclick", "postCheckItem(this);")
+				.setAttribute("id", "ci" + checkitem.getID().toString())
 				.render();
-//			out.writeCheckbox("chk_" + checkitemID.toString(), checkitem.getText(), checked);
+			out.write("</td><td><label for=\"ci");
+			out.writeEncode(checkitem.getID().toString());
+			out.write("\">");
+			out.writeEncode(checkitem.getText());
+			out.write("</label>");
 			out.write("</td></tr>");
 		}
 				

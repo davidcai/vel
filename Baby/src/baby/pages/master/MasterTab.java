@@ -53,7 +53,16 @@ public class MasterTab extends EnvelopeTab
 	{
 		if (outputPage.getContext().getUserAgent().isSmartPhone())
 		{
-			return "baby/tab-home.png";
+			if (outputPage.getContext().getUserID()==null)
+			{
+				// Wide logo
+				return "baby/corner-logo-60.png";
+			}
+			else
+			{
+				// Square logo
+				return "baby/tab-home.png";
+			}
 		}
 		else
 		{

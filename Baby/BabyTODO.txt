@@ -28,55 +28,16 @@ Need smarter cache indexing. allowing multiple keys for invalidation. using nami
     need to push new "badge" notif when badge# changes in backend.
     need to keep "open" status on notifs/events.
 - Make DB layer compatible with BigData db. http://cassandra.apache.org/
-
-BABY
-
-? refactor package names to match UI.
-  also COMMAND consts in BabyPage
-  also .properties file names
-
-= margin on smartphone ui
-= double login problem. asked to login again when opening as app on ios. can it be due to chrome private mode?
-- ArticleListControl:
-  ? don't show HR divider on Computer ui
-
-= Content:
-  = send new content to Andi. need to extract from XL, unlock.
-  = sample youtube videos of tours of facilities. search for "kaiser permanente maternity tour" on youtube
-
-(0)
-= Journal:
-  - UI of Journal list
-    - better rendering of items in list, with >
-    - more results with AJAX
-  - edit screen of journal entry (without measures for now)
-  - reduce image size to 50x50 on mobile. also in Article list.
-    create standard thumbnail sizes: 50x50 and 32x32 in samoyan
-
-+ change TabBar icon according to mom's phase: preconception / pregnancy / pediatrics
-+ all articles from healthy beginnings, have banner at top of page when reading the article.
-  purple bar with "Healthy Beginnings" as caption. see original PDF.
-  similarly to "healthy kids", etc.
-
-- Master root page when logged in:
-  - Link to Help pages
-  - About the app
-  - Copyright/terms
-  - If emergency, call 911...
-  - Contact us page
-
 = GoBACK:
+  = Improve goback redirection: GoBack page with JS is slow and flickers
+    - always post the top of the stack in a _goback_ param.
+      must be done after pushing, popping; after DOM is ready.
+    - when doing a GoBack redirection, redirect to that URL instead of to the GoBack page.
+      - pass param to the page to prevent it being pushed on the stack again. pop the stack accordingly. _backpop_ or similar.
   = when pushing on stack, check history.length. if same as during prev push, may indicate that the browser's back button was pressed.
     clear back stack if history.size hasn't changed?
     not necessarily correct. history.length can remain the same if pressed back, then click on link to navigate forward again.
-  = GoBackPage: need to redirect to SELF if BACK stack is empty. when can this happen? after clearing BACK stack? 
-    GoBackOrSaveRedirectException
-    SaveRedirectException
-  = Improve goback redirection: page with JS is slow and flickers
-    - always post the top of the stack in a _back_ param.
-    - when doing a GoBack redirection, redirect to that URL instead of to the GoBack page.
-      - pass param to the page to pop the stack accordingly. _backpop_ or similar.
-  - use Back functionality in profile pages
+  ? GoBackPage: need to redirect to SELF if BACK stack is empty. when can this happen? after clearing BACK stack? 
 = Mobile UI:
   - support for ... MORE in tab bar if there are too many tabs
   = MENU item:
@@ -86,6 +47,90 @@ BABY
     - navbar style to be like WideLinkGroupControl.
   _ Mobile HotAction area (top-right corner buttons) to support search input box: widen on focus
   - detect orientation change, set class on BODY tag. in iOS, do same trick a scrollTo to recalc width of fixed elements.
+
+BABY
+
+? refactor package names to match UI.
+  also COMMAND consts in BabyPage
+  also .properties file names
+
+= margin on smartphone ui.
+- ArticleListControl:
+  ? don't show HR divider on Computer ui
+= slider control for timeline instead of dropdown
+= Content:
+  = send new content to Andi. need to extract from XL, unlock.
+  = sample youtube videos of tours of facilities. search for "kaiser permanente maternity tour" on youtube
+= notifs:
+  = check iPhone app + push notifs
+  = alert timeline to allow user to choose channels, but no delay
+= enable all channels on PROD
+= (1) setup XCo API key on PROD
+= buy mybabyandi.* domains
+= Journal:
+  - UI of Journal list
+    - better rendering of items in list, widelinkgroup with >
+    - more results with AJAX
+  - edit screen of journal entry (without measures for now)
+  - reduce image size to 50x50 on mobile. also in Article list.
+    create standard thumbnail sizes: 50x50 and 32x32 in samoyan
+- create system ConsoldiatedProfilePage, also for MMM and eLert.
+- simplify registration
+=? GoBack login in appointments: use AfterCommitRedirect
+= (0) Check GoBack on MyElert. in profile pages. getting forced to re-login.
+= galaxy asking for http://mybaby.veloxicom.com/apple-touch-icon-precomposed.png and http://mybaby.veloxicom.com/apple-touch-icon.png
+  and repeating on every request if not found.
+= requests for resources/images are not logged. esp if not found.
+= Figure out how to redirect to error page, but only for HTML requests. esp for 500 and 404.
+= Appointment view page:
+  - can have checklists and articles that need to be displayed.
++ remove the apptbase page.
+  x create control for "new appt" control.
++ merge view/Edit appt into one class
+  + remove condition on URL for mobile
+
+Erica's feedback:
++ calendar to be a separate menu entry
+  keep the "new appt" option in calendar screen.
++ CHECKLISTS: align paragraph, more space between bullets.
++ when hiding fully-completed checklists, there's extra space (BR?)
++ Appointments: always show "Monday, 2/24/2013 2:30 PM"
+  on mobile, always show time: "Mon 2/24 10:30 PM"
++ Master tab
+  + Remove the home page tab icon when logged in on mobile. keep on desktop ui.
+  + check that system works without master tab.
+  + show wider logo when not logged in for master tab.
+  + master root to redirect to info root on mobile, if logged in.
++ remove underlines from links
+= calendar to include also checklist deadlines (David)
+= CONSIDER: Add a new TODO item from calendar, with date.
+  personal checkitems to have due date.
+= TODOs: Show first sentence only, Have "more" link to expand description.
+= Redo home page according to design
+
+- UI design / ask Erica:
+  - calendar control is a bit of an overkill for only showing appointments. maybe it's better to show only in list view.
+    - show icons of journal entries (text, img, measure) in calendar?
+      but calendar is now tied to appointments with + button
+  - list view of calendar: wasteful in vertical space for day headers. unlikely to have more than one appointment per day.
+    we changed it to be more compact
+  - square logo design on various backgrounds (also for app icon).
+  - journal entry list UI on desktop. How to render?
+  - View appointment page: layout is very bare. Add labels?
+  - how to render checklists:
+    - fade out or hide if from previous stage?
+    - overdue/complete flags
+  - What do you want to see on the Master ROOT page when logged in?
+  - smaller thumbnails in lists on mobile?
+  - change "My schedule" label -> "My appointments" ?
+
+- Master root page when logged in:
+  - Link to Help pages
+  - About the app
+  - Copyright/terms
+  - If emergency, call 911...
+  - Contact us page
+
 
 PHASE II:
 
@@ -98,17 +143,13 @@ _ checklists from earlier stages (preconception, pregnancy): show as faded.
   - integrate into measures (link to the tool)
   - better design
   - May need to redo because kicks are counted on several min basis. (how long to reach 10 kicks)
-= Appointment reminders - send notif
 _ Horizontal navigation (tab):
-  ? render tabs upside down
   - set Fixed to top. need solid bg. Padding at bottom should not be fixed.
   - error message to show below navigation
 _ Profile page to choose BabyBlue or BabyPink colorset.
   need to store cssVersion on user object and use it when including CSS.
 
 DAVID:
-= Merge appointments into Calendar
-  - Calendar page: list/day/month views like in "pink pad".
 = Link measures with Journal entries
   = journal page: cleanup look, show image+text+measures
 = print capability of the journal. or export to PDF.

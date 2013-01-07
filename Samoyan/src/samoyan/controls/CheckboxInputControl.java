@@ -1,5 +1,6 @@
 package samoyan.controls;
 
+import samoyan.core.Util;
 import samoyan.servlet.WebPage;
 
 public class CheckboxInputControl extends InputControl
@@ -42,7 +43,7 @@ public class CheckboxInputControl extends InputControl
 
 		// Create unique ID for checkbox control, if it has a label attached
 		String id = getID();
-		if (id==null && this.label!=null)
+		if (id==null && !Util.isEmpty(this.label))
 		{
 			String index = out.getEphemeral("checkbox");
 			if (index==null)
@@ -85,7 +86,7 @@ public class CheckboxInputControl extends InputControl
 			write("</span>");
 		}
 
-		if (this.label!=null)
+		if (!Util.isEmpty(this.label))
 		{
 			write("<label for=\"");
 			writeEncode(id);

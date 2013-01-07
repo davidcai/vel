@@ -35,10 +35,10 @@ import baby.pages.content.MeasureListPage;
 import baby.pages.content.MeasurePage;
 import baby.pages.content.MedicalCenterTypeAhead;
 import baby.pages.content.RegionTypeAhead;
-import baby.pages.info.AppointmentPage;
-import baby.pages.info.AppointmentsCalendarPage;
+import baby.pages.info.AppointmentReminderNotif;
 import baby.pages.info.AppointmentsChoicePage;
 import baby.pages.info.AppointmentsListPage;
+import baby.pages.info.CalendarPage;
 import baby.pages.info.ChecklistAjaxPage;
 import baby.pages.info.ChecklistPage;
 import baby.pages.info.EditAppointmentPage;
@@ -47,7 +47,12 @@ import baby.pages.info.SearchPage;
 import baby.pages.info.ViewArticleListPage;
 import baby.pages.info.ViewArticlePage;
 import baby.pages.info.ViewResourceListPage;
+import baby.pages.journey.ChartsPage;
+import baby.pages.journey.GalleryPage;
+import baby.pages.journey.JournalEntryPage;
+import baby.pages.journey.JournalPage;
 import baby.pages.journey.JourneyHomePage;
+import baby.pages.journey.PhotoPage;
 import baby.pages.master.LessStylesheetPage;
 import baby.pages.master.LoginPage;
 import baby.pages.master.RootPage;
@@ -57,13 +62,6 @@ import baby.pages.profile.ConsolidatedProfilePage;
 import baby.pages.profile.MedicalCenterPage;
 import baby.pages.profile.StagePage;
 import baby.pages.profile.UnitsPage;
-import baby.pages.scrapbook.ChartsPage;
-import baby.pages.scrapbook.GalleryPage;
-import baby.pages.scrapbook.JournalEntryPage;
-import baby.pages.scrapbook.JournalPage;
-import baby.pages.scrapbook.KickCounterPage;
-import baby.pages.scrapbook.PhotoPage;
-import baby.pages.scrapbook.ScrapbookHomePage;
 import baby.tasks.CrawlResourcesRecurringTask;
 
 public class BabyController extends Controller
@@ -93,6 +91,7 @@ public class BabyController extends Controller
 		
 		// Images
 		ImageStore.getInstance().bindSizer(BabyConsts.IMAGESIZE_THUMB_150X150, new LargestCropSizer(150, 150));
+		ImageStore.getInstance().bindSizer(BabyConsts.IMAGESIZE_THUMB_50X50, new LargestCropSizer(50, 50));
 		ImageStore.getInstance().bindSizer(BabyConsts.IMAGESIZE_BOX_800X800, new ShrinkToFitSizer(800, 800));
 		ImageStore.getInstance().bindSizer(BabyConsts.IMAGESIZE_BOX_400X400, new ShrinkToFitSizer(400, 400));
 		ImageStore.getInstance().bindSizer(BabyConsts.IMAGESIZE_BOX_150X150, new ShrinkToFitSizer(150, 150));
@@ -112,23 +111,27 @@ public class BabyController extends Controller
 		Dispatcher.bindPage(ChecklistPage.COMMAND, 				ChecklistPage.class);
 		Dispatcher.bindPage(ChecklistAjaxPage.COMMAND, 			ChecklistAjaxPage.class);
 		Dispatcher.bindPage(AppointmentsListPage.COMMAND, 		AppointmentsListPage.class);
-		Dispatcher.bindPage(AppointmentsCalendarPage.COMMAND, 	AppointmentsCalendarPage.class);
+		Dispatcher.bindPage(CalendarPage.COMMAND, 				CalendarPage.class);
 		Dispatcher.bindPage(AppointmentsChoicePage.COMMAND, 	AppointmentsChoicePage.class);
-		Dispatcher.bindPage(AppointmentPage.COMMAND, 			AppointmentPage.class);
 		Dispatcher.bindPage(EditAppointmentPage.COMMAND, 		EditAppointmentPage.class);
+		Dispatcher.bindPage(AppointmentReminderNotif.COMMAND, 	AppointmentReminderNotif.class);
 		
-		// Scrapbook
-		Dispatcher.bindPage(ScrapbookHomePage.COMMAND, 			ScrapbookHomePage.class);
-		Dispatcher.bindPage(JournalPage.COMMAND, 				JournalPage.class);
-		Dispatcher.bindPage(JournalEntryPage.COMMAND, 			JournalEntryPage.class);
-		Dispatcher.bindPage(GalleryPage.COMMAND, 				GalleryPage.class);
-		Dispatcher.bindPage(PhotoPage.COMMAND, 					PhotoPage.class);
-		Dispatcher.bindPage(ChartsPage.COMMAND, 				ChartsPage.class);
-		Dispatcher.bindPage(KickCounterPage.COMMAND, 			KickCounterPage.class);
+//		// Scrapbook
+//		Dispatcher.bindPage(ScrapbookHomePage.COMMAND, 			ScrapbookHomePage.class);
+//		Dispatcher.bindPage(JournalPage.COMMAND, 				JournalPage.class);
+//		Dispatcher.bindPage(JournalEntryPage.COMMAND, 			JournalEntryPage.class);
+//		Dispatcher.bindPage(GalleryPage.COMMAND, 				GalleryPage.class);
+//		Dispatcher.bindPage(PhotoPage.COMMAND, 					PhotoPage.class);
+//		Dispatcher.bindPage(ChartsPage.COMMAND, 				ChartsPage.class);
+//		Dispatcher.bindPage(KickCounterPage.COMMAND, 			KickCounterPage.class);
 		
 		// Journey
 		Dispatcher.bindPage(JourneyHomePage.COMMAND, 			JourneyHomePage.class);
-		Dispatcher.bindPage(baby.pages.journey.JournalPage.COMMAND, 				baby.pages.journey.JournalPage.class);
+		Dispatcher.bindPage(JournalPage.COMMAND, 				JournalPage.class);
+		Dispatcher.bindPage(GalleryPage.COMMAND, 				GalleryPage.class);
+		Dispatcher.bindPage(ChartsPage.COMMAND, 				ChartsPage.class);
+		Dispatcher.bindPage(PhotoPage.COMMAND, 					PhotoPage.class);
+		Dispatcher.bindPage(JournalEntryPage.COMMAND, 			JournalEntryPage.class);
 		
 		// Content
 		Dispatcher.bindPage(ContentHomePage.COMMAND, 			ContentHomePage.class);

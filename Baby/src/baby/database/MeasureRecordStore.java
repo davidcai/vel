@@ -82,7 +82,7 @@ public class MeasureRecordStore extends DataBeanStore<MeasureRecord>
 	 */
 	public List<UUID> getByJournalEntryID(UUID journalEntryID) throws Exception
 	{
-		return Query.queryListUUID("SELECT ID FROM MeasureRecords WHERE JournalEntryID=? ORDER BY CreateDate DESC",
+		return Query.queryListUUID("SELECT ID FROM MeasureRecords WHERE JournalEntryID=? ORDER BY CreatedDate DESC",
 			new ParameterList(journalEntryID));
 	}
 }

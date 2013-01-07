@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import samoyan.controls.WideLinkGroupControl;
+import samoyan.core.ParameterMap;
 import samoyan.core.Util;
 import samoyan.servlet.RequestContext;
 import baby.database.BabyStore;
@@ -34,6 +35,10 @@ public class InformationHomePage extends BabyPage
 			.setURL(getPageURL(AppointmentsListPage.COMMAND));
 		
 		wlg.addLink()
+			.setTitle(getString("information:Calendar.Title"))
+			.setURL(getPageURL(CalendarPage.COMMAND));
+
+		wlg.addLink()
 			.setTitle(getString("information:Articles.Title"))
 			.setURL(getPageURL(ViewArticleListPage.COMMAND));
 
@@ -41,7 +46,7 @@ public class InformationHomePage extends BabyPage
 			.setTitle(getString("information:Resources.Title"))
 			.setURL(getPageURL(ViewResourceListPage.COMMAND));
 
-		// !$! Temp code, should not be here. Appointments should be linked with Calendar
+		// !$! Temp code, should not be here.
 		wlg.addLink()
 			.setTitle(getString("information:Search.Title"))
 			.setURL(getPageURL(SearchPage.COMMAND));
@@ -117,13 +122,13 @@ public class InformationHomePage extends BabyPage
 		if (stage.isPreconception())
 		{
 			write("<small>");
-			writeLink(getString("information:Home.AreYouPregnant"), getPageURL(StagePage.COMMAND));
+			writeLink(getString("information:Home.AreYouPregnant"), getPageURL(StagePage.COMMAND, new ParameterMap(RequestContext.PARAM_GO_BACK_ON_SAVE, "")));
 			write("</small><br><br>");
 		}
 		else if (stage.isPregnancy() && stage.getPregnancyWeek()>=35)
 		{
 			write("<small>");
-			writeLink(getString("information:Home.DidYouGiveBirth"), getPageURL(StagePage.COMMAND));
+			writeLink(getString("information:Home.DidYouGiveBirth"), getPageURL(StagePage.COMMAND, new ParameterMap(RequestContext.PARAM_GO_BACK_ON_SAVE, "")));
 			write("</small><br><br>");
 		}
 		

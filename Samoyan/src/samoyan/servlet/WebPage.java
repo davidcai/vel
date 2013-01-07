@@ -634,15 +634,19 @@ public class WebPage
 			command = getContext().getCommand();
 		}
 
-		write("<form method=");
+		write("<form method=\"");
 		write(method);
-		write(" action=\"");
+		write("\" action=\"");
 		write(getPageURL(https, command, null));
-		write("\" accept-charset=\"UTF-8\" autocomplete=off>");
+		write("\" accept-charset=\"UTF-8\" autocomplete=\"off\">");
 		if (method.equalsIgnoreCase("POST"))
 		{
 			writeHiddenInput(RequestContext.PARAM_CHARSET, "");
 			writeHiddenInput(RequestContext.PARAM_SESSION, getContext().getSessionID().toString());
+			if (command.equalsIgnoreCase(getContext().getCommand()))
+			{
+				writeHiddenInput(RequestContext.PARAM_GO_BACK_ON_SAVE, null);
+			}
 		}
 	}
 	

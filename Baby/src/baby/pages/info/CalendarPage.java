@@ -5,15 +5,18 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import samoyan.controls.ButtonInputControl;
+import samoyan.controls.LinkToolbarControl;
+
 import baby.controls.BadgedCalendarControl;
 import baby.controls.BadgedCalendarControl.Badge;
 import baby.database.Appointment;
 import baby.database.AppointmentStore;
 import baby.pages.BabyPage;
 
-public class AppointmentsCalendarPage extends AppointmentsBasePage
+public class CalendarPage extends BabyPage
 {
-	public final static String COMMAND = BabyPage.COMMAND_INFORMATION + "/appointments/calendar";
+	public final static String COMMAND = BabyPage.COMMAND_INFORMATION + "/calendar";
 	
 	public final static String PARAM_YYYY = "y";
 	public final static String PARAM_MM = "m";
@@ -22,8 +25,23 @@ public class AppointmentsCalendarPage extends AppointmentsBasePage
 	@Override
 	public void renderHTML() throws Exception
 	{
-		writeTabs();
-		writeAddButton();
+		// Add button
+		if (getContext().getUserAgent().isSmartPhone())
+		{
+			writeFormOpen("GET", EditAppointmentPage.COMMAND);
+			new ButtonInputControl(this, null)
+				.setValue(getString("information:Calendar.AddHotButton"))
+				.setMobileHotAction(true)
+				.setAttribute("class", "NoShow")
+				.render();
+			writeFormClose();
+		}
+		else
+		{
+			new LinkToolbarControl(this)
+				.addLink(getString("information:Calendar.AddLink"), getPageURL(EditAppointmentPage.COMMAND), "icons/standard/pencil-16.png")
+				.render();
+		}
 		
 		// Get base date
 		Calendar cal = Calendar.getInstance(getTimeZone(), getLocale());
@@ -96,6 +114,6 @@ public class AppointmentsCalendarPage extends AppointmentsBasePage
 	@Override
 	public String getTitle() throws Exception
 	{
-		return getString("information:AppointmentsCalendar.Title");
+		return getString("information:Calendar.Title");
 	}
 }

@@ -6,10 +6,17 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
+import samoyan.controls.ButtonInputControl;
 import samoyan.controls.SelectInputControl;
 import samoyan.controls.TwoColFormControl;
 import samoyan.core.ParameterMap;
+import samoyan.core.Util;
+import samoyan.database.Notification;
+import samoyan.database.NotificationStore;
+import samoyan.notif.Notifier;
+import samoyan.servlet.Channel;
 import samoyan.servlet.UserAgent;
+import samoyan.servlet.exc.PageNotFoundException;
 import samoyan.servlet.exc.RedirectException;
 import samoyan.servlet.exc.WebFormException;
 import baby.app.BabyConsts;
@@ -19,22 +26,44 @@ import baby.pages.BabyPage;
 
 public class EditAppointmentPage extends BabyPage
 {
-	public final static String COMMAND = BabyPage.COMMAND_INFORMATION + "/appointment/edit";
+	public final static String COMMAND = BabyPage.COMMAND_INFORMATION + "/appointment";
 	
 	public final static String PARAM_ID = "id";
-	public final static String PARAM_DESC = "desc";
-	public final static String PARAM_TYPE = "type";
-	public final static String PARAM_DATE_YEAR = "y";
-	public final static String PARAM_DATE_MON = "m";
-	public final static String PARAM_DATE_DAY = "d";
-	public final static String PARAM_DATE_TIME = "t";
-	public final static String PARAM_ASKMYDOCTOR = "askdr";
-//	public final static String PARAM_REMINDME_ONE_DAY_BEFORE = "remind1d";
-//	public final static String PARAM_REMINDME_FOUR_HOURS_BEFORE = "remind4h";
-//	public final static String PARAM_REMINDME_TWO_HOURS_BEFORE = "remind2h";
-//	public final static String PARAM_REMINDME_ONE_HOUR_BEFORE = "remind1h";
-	public final static String PARAM_SAVE = "save";
-	public final static String PARAM_REMOVE = "remove";
+	public final static String PARAM_EDIT = "edit";
+	
+	private final static String PARAM_DESC = "desc";
+	private final static String PARAM_TYPE = "type";
+	private final static String PARAM_DATE_YEAR = "y";
+	private final static String PARAM_DATE_MON = "m";
+	private final static String PARAM_DATE_DAY = "d";
+	private final static String PARAM_DATE_TIME = "t";
+	private final static String PARAM_ASKMYDOCTOR = "askdr";
+	private final static String PARAM_REMINDER_ONE_DAY = "remind1d";
+	private final static String PARAM_REMINDER_TWO_DAYS = "remind2d";
+	private final static String PARAM_REMINDER_TWO_HOURS = "remind2h";
+	private final static String PARAM_REMINDER_ONE_HOUR = "remind1h";
+	private final static String PARAM_SAVE = "save";
+	private final static String PARAM_REMOVE = "remove";
+	
+	private Appointment appt;
+	private boolean readOnly;
+	
+	@Override
+	public void init() throws Exception
+	{
+		this.appt = AppointmentStore.getInstance().open(getParameterUUID(PARAM_ID));
+		if (this.appt==null)
+		{
+			this.appt = new Appointment();
+		}
+		else if (this.appt.getUserID().equals(getContext().getUserID())==false)
+		{
+			// Security check: make sure that appt is owned by this user
+			throw new PageNotFoundException();
+		}
+		
+		this.readOnly = (getContext().getUserAgent().isSmartPhone() && !isParameter(PARAM_EDIT));
+	}
 	
 	@Override
 	public void validate() throws Exception
@@ -52,22 +81,49 @@ public class EditAppointmentPage extends BabyPage
 	
 	@Override
 	public void commit() throws Exception
-	{
-		Appointment appointment = getEditingAppointment();
-		
+	{		
 		if (isParameter(PARAM_SAVE))
 		{
 			// Copy user inputs into the current appointment and save it
-			appointment.setUserID(getContext().getUserID());
-			appointment.setDescription(getParameterString(PARAM_DESC));
-			appointment.setType(getParameterString(PARAM_TYPE));
-			appointment.setDateTime(getParameterDateTime());
-//			appointment.setRemindMeOneDayBefore(isParameter(PARAM_REMINDME_ONE_DAY_BEFORE));
-//			appointment.setRemindMeFourHoursBefore(isParameter(PARAM_REMINDME_FOUR_HOURS_BEFORE));
-//			appointment.setRemindMeTwoHoursBefore(isParameter(PARAM_REMINDME_TWO_HOURS_BEFORE));
-//			appointment.setRemindMeOneHourBefore(isParameter(PARAM_REMINDME_ONE_HOUR_BEFORE));
-			appointment.setAskMyDoctor(getParameterString(PARAM_ASKMYDOCTOR));
-			AppointmentStore.getInstance().save(appointment);
+			this.appt.setUserID(getContext().getUserID());
+			this.appt.setDescription(getParameterString(PARAM_DESC));
+			this.appt.setType(getParameterString(PARAM_TYPE));
+			this.appt.setDateTime(getParameterDateTime());
+			this.appt.setReminderOneDay(isParameter(PARAM_REMINDER_ONE_DAY));
+			this.appt.setReminderTwoDays(isParameter(PARAM_REMINDER_TWO_DAYS));
+			this.appt.setReminderOneHour(isParameter(PARAM_REMINDER_ONE_HOUR));
+			this.appt.setReminderTwoHours(isParameter(PARAM_REMINDER_TWO_HOURS));
+			this.appt.setAskMyDoctor(getParameterString(PARAM_ASKMYDOCTOR));
+			AppointmentStore.getInstance().save(this.appt);
+			
+			// Delete unsent reminders for this appointment
+			// We use the appointment ID as the eventID
+			for (UUID notifID : NotificationStore.getInstance().getByEventID(this.appt.getID()))
+			{
+				Notification notif = NotificationStore.getInstance().load(notifID);
+				if (notif.getStatusCode()==Notification.STATUS_UNSENT)
+				{
+					NotificationStore.getInstance().remove(notifID);
+				}
+			}
+			
+			// Schedule reminders
+			if (this.appt.isReminderOneHour())
+			{
+				scheduleReminder(Calendar.HOUR_OF_DAY, 1);
+			}
+			if (this.appt.isReminderTwoHours())
+			{
+				scheduleReminder(Calendar.HOUR_OF_DAY, 2);
+			}
+			if (this.appt.isReminderOneDay())
+			{
+				scheduleReminder(Calendar.DATE, 1);
+			}
+			if (this.appt.isReminderTwoDays())
+			{
+				scheduleReminder(Calendar.DATE, 2);
+			}
 			
 //			if (getContext().getUserAgent().isSmartPhone())
 //			{
@@ -76,13 +132,28 @@ public class EditAppointmentPage extends BabyPage
 //					new ParameterMap(PARAM_SAVE, "").plus(AppointmentPage.PARAM_ID, appointment.getID().toString()));
 //			}
 			
-			throw new RedirectException(AppointmentsListPage.COMMAND, new ParameterMap(PARAM_SAVE, ""));
+			throw new RedirectException(AppointmentsListPage.COMMAND, null);
 		}
 		else if (isParameter(PARAM_REMOVE))
 		{
-			AppointmentStore.getInstance().remove(appointment.getID());
+			AppointmentStore.getInstance().remove(this.appt.getID());
 			
-			throw new RedirectException(AppointmentsListPage.COMMAND, new ParameterMap(PARAM_REMOVE, ""));
+			throw new RedirectException(AppointmentsListPage.COMMAND, null);
+		}
+	}
+	
+	private void scheduleReminder(int field, int amount) throws Exception
+	{
+		Calendar when = Calendar.getInstance(getTimeZone(), getLocale());
+		when.setTime(this.appt.getDateTime());
+		when.add(field, -amount);
+		if (when.getTimeInMillis() > System.currentTimeMillis())
+		{
+			for (String channel : Channel.getPush())
+			{
+				// We use the appointment ID as the eventID
+				Notifier.send(channel, when.getTime(), this.appt.getUserID(), this.appt.getID(), AppointmentReminderNotif.COMMAND, new ParameterMap(AppointmentReminderNotif.PARAM_ID, appt.getID()));
+			}
 		}
 	}
 	
@@ -113,32 +184,68 @@ public class EditAppointmentPage extends BabyPage
 		return date;
 	}
 	
-	private Appointment getEditingAppointment() throws Exception
-	{
-		Appointment appointment = null;
-		if (isParameterNotEmpty(PARAM_ID))
-		{
-			UUID id = getParameterUUID(PARAM_ID);
-			appointment = AppointmentStore.getInstance().open(id);
-		}
-		if (appointment == null)
-		{
-			appointment = new Appointment();
-			
-			// Set to today
-			appointment.setDateTime(Calendar.getInstance(getTimeZone()).getTime());
-		}
-		
-		return appointment;
-	}
-	
 	@Override
 	public void renderHTML() throws Exception
 	{
-		write("<div class=\"PaddedPageContent\">");
+		if (this.readOnly)
+		{
+			renderViewOnly();
+		}
+		else
+		{
+			renderEditForm();
+		}
+	}
+	
+	private void renderViewOnly() throws Exception
+	{
+		// Date
+		write("<h2>");
+		writeEncode(this.appt.getDescription());
+		write("</h2>");
 		
-		Appointment appointment = getEditingAppointment();
+		TwoColFormControl twoCol = new TwoColFormControl(this);
 		
+		// Type
+		twoCol.writeSpaceRow();
+		twoCol.writeRow(getString("information:EditAppointment.Type"));
+		twoCol.writeEncode(this.appt.getType());
+		
+		// Time
+		twoCol.writeSpaceRow();
+		twoCol.writeRow(getString("information:EditAppointment.DateTime"));
+		twoCol.writeEncodeDateTime(this.appt.getDateTime());
+				
+		// Ask doctor
+		if (!Util.isEmpty(this.appt.getAskMyDoctor()))
+		{
+			twoCol.writeSpaceRow();
+			twoCol.writeRow(getString("information:EditAppointment.AskMyDoctor"));
+			twoCol.writeEncode(this.appt.getAskMyDoctor());
+		}
+		
+		twoCol.render();
+
+		// Edit button
+		if (getContext().getUserAgent().isSmartPhone() == false)
+		{
+			write("<br>");
+		}
+		
+		writeFormOpen("GET", getContext().getCommand());
+		new ButtonInputControl(this, null)
+			.setValue(getString("information:EditAppointment.Edit"))
+			.setMobileHotAction(true)
+			.setAttribute("class", getContext().getUserAgent().isSmartPhone() ? "NoShow" : null)
+			.render();
+		writeHiddenInput(PARAM_ID, this.appt.getID().toString());
+		writeHiddenInput(PARAM_EDIT, "");
+		
+		writeFormClose();
+	}
+
+	private void renderEditForm() throws Exception
+	{
 		UserAgent ua = getContext().getUserAgent();
 		if (ua.isSmartPhone() == false)
 		{
@@ -152,12 +259,12 @@ public class EditAppointmentPage extends BabyPage
 		
 		// Description
 		twoCol.writeRow(getString("information:EditAppointment.Description"));
-		twoCol.writeTextInput(PARAM_DESC, appointment.getDescription(), 40, Appointment.MAXSIZE_DESCRIPTION);
+		twoCol.writeTextInput(PARAM_DESC, this.appt.getDescription(), 40, Appointment.MAXSIZE_DESCRIPTION);
 		
 		// Type
 		twoCol.writeRow(getString("information:EditAppointment.Type"));
 		SelectInputControl select = new SelectInputControl(twoCol, PARAM_TYPE);
-		select.setInitialValue(appointment.getType());
+		select.setInitialValue(this.appt.getType());
 		for (String s : BabyConsts.SECTIONS_APPOINTMENT)
 		{
 			select.addOption(s,s);
@@ -165,42 +272,38 @@ public class EditAppointmentPage extends BabyPage
 		select.render();
 		
 		// DateTime
-		writeDateTime(twoCol, appointment.getDateTime());
+		writeDateTime(twoCol, this.appt.getDateTime());
 		
-//		// Remind me
-//		twoCol.writeRow(getString("information:EditAppointment.RemindMe"));
-//		twoCol.writeCheckbox(PARAM_REMINDME_ONE_DAY_BEFORE, getString("information:EditAppointment.OneDayBefore"), appointment.isRemindMeOneDayBefore());
-//		twoCol.write("&nbsp;");
-//		twoCol.writeCheckbox(PARAM_REMINDME_FOUR_HOURS_BEFORE, getString("information:EditAppointment.FourHoursBefore"), appointment.isRemindMeFourHoursBefore());
-//		twoCol.write("&nbsp;");
-//		twoCol.writeCheckbox(PARAM_REMINDME_TWO_HOURS_BEFORE, getString("information:EditAppointment.TwoHoursBefore"), appointment.isRemindMeTwoHoursBefore());
-//		twoCol.write("&nbsp;");
-//		twoCol.writeCheckbox(PARAM_REMINDME_ONE_HOUR_BEFORE, getString("information:EditAppointment.OneHourBefore"), appointment.isRemindMeOneHourBefore());
+		// Remind me
+		twoCol.writeRow(getString("information:EditAppointment.RemindMe"));
+		twoCol.writeCheckbox(PARAM_REMINDER_ONE_HOUR, getString("information:EditAppointment.OneHourBefore"), this.appt.isReminderOneHour());
+		twoCol.write("&nbsp;");
+		twoCol.writeCheckbox(PARAM_REMINDER_TWO_HOURS, getString("information:EditAppointment.TwoHoursBefore"), this.appt.isReminderTwoHours());
+		twoCol.write("&nbsp;");
+		twoCol.writeCheckbox(PARAM_REMINDER_ONE_DAY, getString("information:EditAppointment.OneDayBefore"), this.appt.isReminderOneDay());
+		twoCol.write("&nbsp;");
+		twoCol.writeCheckbox(PARAM_REMINDER_TWO_DAYS, getString("information:EditAppointment.TwoDaysBefore"), this.appt.isReminderTwoDays());
 		
 		// Ask my doctor
 		twoCol.writeRow(getString("information:EditAppointment.AskMyDoctor"));
-		twoCol.writeTextAreaInput(PARAM_ASKMYDOCTOR, appointment.getAskMyDoctor(), 70, 5, 0);
+		twoCol.writeTextAreaInput(PARAM_ASKMYDOCTOR, this.appt.getAskMyDoctor(), 70, 5, 0);
 		
 		twoCol.render();
 		
 		// Postbacks
-		if (isParameterNotEmpty(PARAM_ID))
-		{
-			writeHiddenInput(PARAM_ID, getParameterString(PARAM_ID));
-		}
+		writeHiddenInput(PARAM_ID, null);
+		writeHiddenInput(PARAM_EDIT, null);
 		
 		// Buttons and links
 		write("<br>");
-		writeSaveButton(PARAM_SAVE, appointment);
-		if (appointment.isSaved())
+		writeSaveButton(PARAM_SAVE, this.appt);
+		if (this.appt.isSaved())
 		{
 			write("&nbsp;");
 			writeRemoveButton(PARAM_REMOVE);
 		}
 		
 		writeFormClose();
-		
-		write("</div>");
 	}
 	
 	private void writeDateTime(TwoColFormControl twoCol, Date datetime)

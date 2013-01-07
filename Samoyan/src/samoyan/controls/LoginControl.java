@@ -42,7 +42,7 @@ public class LoginControl
 
 	public void render() throws Exception
 	{
-		out.writeFormOpen("POST", LoginPage.COMMAND);
+		out.writeFormOpen(true, "POST", LoginPage.COMMAND);
 				
 		// Prompt
 		if (this.prompt)

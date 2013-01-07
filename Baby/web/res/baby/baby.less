@@ -1,8 +1,8 @@
 // ---------- Mixins ----------
 .border-radius (@radius) {
-	border-radius: @radius;
-	-moz-border-radius: @radius;
+	   -moz-border-radius: @radius;
 	-webkit-border-radius: @radius;
+	        border-radius: @radius;
 }
 .background-gradient-top (@from, @to) {
 	background-color: @from;
@@ -13,14 +13,26 @@
 	filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr=@from 0%, EndColorStr=@to 100%)";
 	background-image: linear-gradient(top, @from 0%, @to 100%);
 }
-
-// ---------- Baby ----------
-.SmartPhone #footer {
-	display: none;
+.transition (@prop, @duration) {
+     -moz-transition: @prop @duration;
+       -o-transition: @prop @duration;
+  -webkit-transition: @prop @duration;
+          transition: @prop @duration;
 }
 
-.SmartPhone .PaddedPageContent {
-	padding: 0.5em;
+// ---------- Baby ----------
+
+A {
+	text-decoration: none;
+}
+
+// Don't highlight the home tab on mobile
+.SmartPhone .TabBar TD.Current.Home {
+	background: none;
+}
+
+.SmartPhone #footer {
+	display: none;
 }
 
 .ChecklistOverdue {
@@ -173,6 +185,7 @@ TABLE.PhotoGrid TD {
 }
 
 .Checklist {
+	margin-bottom: 1.4em;
 	B {
 		color: @color-accent;
 	}
@@ -202,6 +215,9 @@ TABLE.PhotoGrid TD {
 	> TABLE:last-child {
 		padding-top: 2px;
 		padding-left: 20px;
+	}
+	.Checkitems TD {
+		padding-top: 0.25em;
 	}
 }
 
@@ -323,5 +339,31 @@ BODY[uri="/"].SmartPhone {
 		background-color: @color-background-dark;
 		padding: 5px 0px;
 		margin: 10px 0px;
+	}
+}
+
+//
+// Journal page
+//
+
+BODY[uri="/journey/journal"] {
+	#NewJournalEntryPanel {
+		overflow: hidden;
+		height: 0;
+		.transition(height, 0.5s);
+		
+		&.Expanded {
+			height: 145px;
+		}
+	}
+	
+	.WideLinks > A {
+		& > IMG {
+			float: left;
+			margin-right: 0.5em;
+		}
+		& > .Title {
+			font-weight: normal;
+		}
 	}
 }

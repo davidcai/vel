@@ -38,10 +38,11 @@ public class AppointmentStore extends DataBeanStore<Appointment>
 		td.defineCol("Type", String.class).size(0, Appointment.MAXSIZE_TYPE);
 		td.defineCol("DateTime", Date.class);
 		
-		td.defineProp("RemindMeOneDayBefore", Boolean.class);
-		td.defineProp("RemindMeFourHoursBefore", Boolean.class);
-		td.defineProp("RemindMeTwoHoursBefore", Boolean.class);
-		td.defineProp("RemindMeOneHourBefore", Boolean.class);
+		td.defineProp("ReminderOneHour", Boolean.class);
+		td.defineProp("ReminderTwoHours", Boolean.class);
+		td.defineProp("ReminderOneDay", Boolean.class);
+		td.defineProp("ReminderTwoDays", Boolean.class);
+		
 		td.defineProp("AskMyDoctor", String.class);
 		
 		return td;

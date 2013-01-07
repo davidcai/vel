@@ -1,9 +1,7 @@
 package baby.pages.profile;
 
 import samoyan.apps.profile.ProfilePage;
-import samoyan.core.ParameterMap;
-import samoyan.servlet.RequestContext;
-import samoyan.servlet.exc.RedirectException;
+import samoyan.servlet.exc.AfterCommitRedirectException;
 import baby.database.Mother;
 import baby.database.MotherStore;
 import baby.pages.BabyPage;
@@ -43,6 +41,6 @@ public final class UnitsPage extends BabyPage
 		mother.setMetric(getParameterString("metric").equalsIgnoreCase("1"));
 		MotherStore.getInstance().save(mother);
 		
-		throw new RedirectException(getContext().getCommand(), new ParameterMap(RequestContext.PARAM_SAVED, ""));
+		throw new AfterCommitRedirectException();
 	}
 }

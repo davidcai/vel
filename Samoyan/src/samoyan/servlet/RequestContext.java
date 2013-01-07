@@ -24,6 +24,7 @@ public final class RequestContext implements Cloneable
 	public final static String PARAM_AUTH = "_auth_";
 	public final static String PARAM_SAVED = "_saved_";
 	public final static String PARAM_APPLE_PUSH_TOKEN = "_apn_";
+	public final static String PARAM_GO_BACK_ON_SAVE = "_gobackonsave_";
 
 	private String channel = "";
 	private String ip = "";

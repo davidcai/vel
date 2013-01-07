@@ -303,7 +303,11 @@ public class EnvelopePage extends WebPage
 		}
 
 		// Render the nav bar of the current tab
-		getCurrentTab().getNavTree(this).render();
+		EnvelopeTab currentTab = getCurrentTab();
+		if (currentTab!=null)
+		{
+			currentTab.getNavTree(this).render();
+		}
 	}
 	
 	protected final EnvelopeTab getCurrentTab() throws Exception

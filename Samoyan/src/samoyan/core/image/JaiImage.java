@@ -821,21 +821,30 @@ public final class JaiImage implements Cloneable
 //		}
 		
 		// Scale by the remainder
-		if (xModifier<SUBSAMPLE_THREASHOLD || yModifier<SUBSAMPLE_THREASHOLD)
+		boolean macOS = System.getProperty("os.name").toLowerCase().indexOf("mac")>=0;
+		if (!macOS && (xModifier<SUBSAMPLE_THREASHOLD || yModifier<SUBSAMPLE_THREASHOLD))
 		{
 			// Subsample produces good results if resizing to under 50%, otherwise it produces pixelation.
 			// Subsample is slow because it is not using acceleation (see JaiImage.init)
 			// Note: should not enter here if using phased scaling
+			// subsample does not work on iOS
 			subsample(xModifier, yModifier);
 		}
-		else if (xModifier!=1D || yModifier!=1D)
+		else
 		{
 			// Scale produces good results when scaling to any size 50% or larger
 			// Scale is inefficient due to need to dump to disk due to memory overusage (see JaiImage.scale)
 			scale((float) xModifier, (float) yModifier);
 		}
 	}
-		
+	
+	/**
+	 * Warning: in MacOS, calling this method will result in subsequent calls to getAsBufferedImage to fail with
+	 * "Out of bounds" exception. As a workaround, call {@link #scale(float, float)} instead.
+	 * @param xModifier
+	 * @param yModifier
+	 * @throws IOException
+	 */
 	public void subsample(double xModifier, double yModifier) throws IOException
 	{
 		RenderingHints hints = new RenderingHints(JAI.KEY_BORDER_EXTENDER, BorderExtender.createInstance(BorderExtender.BORDER_COPY));

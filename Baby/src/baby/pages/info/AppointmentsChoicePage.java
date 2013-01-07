@@ -8,14 +8,15 @@ import java.util.UUID;
 
 import samoyan.controls.WideLinkGroupControl;
 import samoyan.core.DateFormatEx;
+import samoyan.core.ParameterMap;
 import samoyan.servlet.exc.RedirectException;
 import baby.database.Appointment;
 import baby.database.AppointmentStore;
 import baby.pages.BabyPage;
 
-public class AppointmentsChoicePage extends AppointmentsBasePage
+public class AppointmentsChoicePage extends BabyPage
 {
-	public final static String COMMAND = BabyPage.COMMAND_INFORMATION + "/appointments/choice";
+	public final static String COMMAND = BabyPage.COMMAND_INFORMATION + "/day-appointments";
 	
 	public final static String PARAM_YYYY = "y";
 	public final static String PARAM_MM = "m";
@@ -55,15 +56,13 @@ public class AppointmentsChoicePage extends AppointmentsBasePage
 		// Redirect to the appointment page if only one appointment exists for the day
 		if (appointmentIDs.size() == 1)
 		{
-			throw new RedirectException(getAppointmentPageCommand(), getAppointmentPageParams(appointmentIDs.get(0)));
+			throw new RedirectException(EditAppointmentPage.COMMAND, new ParameterMap(EditAppointmentPage.PARAM_ID, appointmentIDs.get(0)));
 		}
-		
-		write("<div class=\"PaddedPageContent\">");
-		
+				
 		// Date
 		write("<h2>");
 		cal.set(yyyy, mm - 1, dd, 0, 0, 0);
-		writeEncode(getDescriptiveDate(cal));
+		writeEncodeDate(cal.getTime());
 		write("</h2>");
 		
 		// List
@@ -78,10 +77,13 @@ public class AppointmentsChoicePage extends AppointmentsBasePage
 			for (UUID appointmentID : appointmentIDs)
 			{
 				Appointment appointment = AppointmentStore.getInstance().load(appointmentID);
+
+				String url = getPageURL(EditAppointmentPage.COMMAND, new ParameterMap(EditAppointmentPage.PARAM_ID, appointmentID.toString()));
+
 				wlg.addLink()
 					.setTitle(appointment.getDescription())
 					.setValue(dfTime.format(appointment.getDateTime()))
-					.setURL(getAppointmentPageURL(appointment.getID()));
+					.setURL(url);
 			}
 			wlg.render();
 		}
@@ -89,8 +91,6 @@ public class AppointmentsChoicePage extends AppointmentsBasePage
 		{
 			writeEncode(getString("information:AppointmentsChoice.NoAppointment"));
 		}
-		
-		write("</div>");
 	}
 
 	@Override

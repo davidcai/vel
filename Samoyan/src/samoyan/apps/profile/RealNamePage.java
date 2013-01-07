@@ -2,12 +2,10 @@ package samoyan.apps.profile;
 
 import samoyan.controls.TextInputControl;
 import samoyan.controls.TwoColFormControl;
-import samoyan.core.ParameterMap;
 import samoyan.database.User;
 import samoyan.database.UserStore;
-import samoyan.servlet.RequestContext;
 import samoyan.servlet.Setup;
-import samoyan.servlet.exc.RedirectException;
+import samoyan.servlet.exc.AfterCommitRedirectException;
 
 public class RealNamePage extends ProfilePage
 {
@@ -61,6 +59,6 @@ public class RealNamePage extends ProfilePage
 		user.setName(getParameterString("name"));
 		UserStore.getInstance().save(user);
 		
-		throw new RedirectException(getContext().getCommand(), new ParameterMap(RequestContext.PARAM_SAVED, ""));
+		throw new AfterCommitRedirectException();
 	}
 }

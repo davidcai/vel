@@ -34,6 +34,6 @@ public class RemindersTab extends EnvelopeTab
 	@Override
 	public String getIcon(WebPage outputPage)
 	{
-		return "mind/tab-reminders.png";
+		return "icons/standard/alarm-clock-48.png";
 	}
 }

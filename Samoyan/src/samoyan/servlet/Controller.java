@@ -11,7 +11,6 @@ import javax.servlet.http.*;
 
 import samoyan.apps.admin.AdminApp;
 import samoyan.apps.guidedsetup.GuidedSetupApp;
-import samoyan.apps.master.ErrorPage;
 import samoyan.apps.master.LoginPage;
 import samoyan.apps.master.MasterApp;
 import samoyan.apps.messaging.MessagingApp;
@@ -957,37 +956,18 @@ public class Controller extends HttpServlet
 
 	private void outputException(HttpServletRequest request, HttpServletResponse response, int httpCode, String httpTitle, Throwable exc) throws IOException
 	{
-		if (Setup.isDebug())
+		// Print exception
+		response.setStatus(httpCode);
+		response.setContentType("text/plain");
+
+		PrintWriter wrt = response.getWriter();
+		wrt.write(String.valueOf(httpCode) + " " + httpTitle);
+		if (exc!=null && Setup.isDebug())
 		{
-			// Print exception
-			response.setStatus(httpCode);
-			response.setContentType("text/plain");
-	
-			PrintWriter wrt = response.getWriter();
-			wrt.write(String.valueOf(httpCode) + " " + httpTitle);
-			if (exc!=null && Setup.isDebug())
-			{
-				wrt.write("\r\n\r\n");
-				wrt.write(Util.exceptionDesc(exc));
-			}
-			wrt.flush();
+			wrt.write("\r\n\r\n");
+			wrt.write(Util.exceptionDesc(exc));
 		}
-		else
-		{
-			// Redirect to error page
-			String url;
-			if (exc instanceof HttpException)
-			{
-				HttpException httpExc = (HttpException) exc;
-				url = UrlGenerator.getPageURL(request.isSecure(), null, ErrorPage.COMMAND + "/" + httpExc.getHttpCode(), null);
-			}
-			else
-			{
-				url = UrlGenerator.getPageURL(request.isSecure(), null, ErrorPage.COMMAND, null);
-			}
-			response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
-			response.setHeader("Location", url);
-		}
+		wrt.flush();
 	}
 	
 	private void serviceInternal(RequestContext ctx, HttpServletRequest request, HttpServletResponse response) throws Exception
@@ -1067,8 +1047,32 @@ public class Controller extends HttpServlet
 			{
 				LogEntryStore.log(new RenderHTMLLogEntry(httpExc.getHttpCode(), renderDuration, 0, 0));
 			}
-			throw httpExc;
+//			if (Setup.isDebug()==false &&
+//				(httpExc instanceof PageNotFoundException || httpExc instanceof UnavailableException))
+//			{
+//				// Redirect to a user-friendly error page
+//				throw new RedirectException(ErrorPage.COMMAND + "/" + httpExc.getHttpCode(), null);
+//			}
+//			else
+			{
+				throw httpExc;
+			}
 		}
+//		catch (Throwable genErr)
+//		{
+//			// Log the event
+//			if (Setup.isDebug()==false)
+//			{
+//				LogEntryStore.log(genErr);
+//
+//				// Redirect to a user-friendly error page
+//				throw new RedirectException(ErrorPage.COMMAND + "/" + HttpServletResponse.SC_INTERNAL_SERVER_ERROR, null);
+//			}
+//			else
+//			{
+//				throw genErr;
+//			}
+//		}
 		finally
 		{
 			setCacheHeaders(request, response, page.isCacheable());
@@ -1182,12 +1186,12 @@ public class Controller extends HttpServlet
 			content = page.getContent();
 		}
 		
-// Debug
-if (Setup.isDebug() && ctx.getChannel().equalsIgnoreCase(Channel.VOICE))
-{
-	String vxml = page.getContentAsString();
-	Debug.logln(vxml);
-}
+//// Debug
+//if (Setup.isDebug() && ctx.getChannel().equalsIgnoreCase(Channel.VOICE))
+//{
+//	String vxml = page.getContentAsString();
+//	Debug.logln(vxml);
+//}
 
 		boolean gzipCompress = isGzipCompress(ctx, mimeType);
 		int len = outputBytes(	content,

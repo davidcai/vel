@@ -1,6 +1,7 @@
 package samoyan.apps.profile;
 
 import samoyan.controls.TwoColFormControl;
+import samoyan.core.ParameterMap;
 import samoyan.core.Util;
 import samoyan.database.MobileCarrier;
 import samoyan.database.MobileCarrierStore;
@@ -26,8 +27,8 @@ public class ContactInfoPage extends ProfilePage
 	{
 		RequestContext ctx = getContext();
 		User user = UserStore.getInstance().load(ctx.getUserID());
-
 		Server fed = ServerStore.getInstance().loadFederation();
+		ParameterMap goBackParams = new ParameterMap(RequestContext.PARAM_GO_BACK_ON_SAVE, "");
 
 		writeFormOpen();
 		
@@ -42,7 +43,7 @@ public class ContactInfoPage extends ProfilePage
 		twoCol.writeRow(getString("profile:ContactInfo.Email"));
 		twoCol.writeEncode(user.getEmail());
 		twoCol.write(" <small>");
-		twoCol.writeLink(getString("profile:ContactInfo.Edit"), getPageURL(EmailPage.COMMAND));
+		twoCol.writeLink(getString("profile:ContactInfo.Edit"), getPageURL(EmailPage.COMMAND, goBackParams));
 		twoCol.write("</small>");
 
 		// Mobile
@@ -68,7 +69,7 @@ public class ContactInfoPage extends ProfilePage
 				twoCol.write("</span>");
 			}
 			twoCol.write(" <small>");
-			twoCol.writeLink(getString("profile:ContactInfo.Edit"), getPageURL(MobilePage.COMMAND));
+			twoCol.writeLink(getString("profile:ContactInfo.Edit"), getPageURL(MobilePage.COMMAND, goBackParams));
 			twoCol.write("</small>");
 		}
 		
@@ -88,7 +89,7 @@ public class ContactInfoPage extends ProfilePage
 				twoCol.write("</span>");
 			}			
 			twoCol.write(" <small>");
-			twoCol.writeLink(getString("profile:ContactInfo.Edit"), getPageURL(PhonePage.COMMAND));
+			twoCol.writeLink(getString("profile:ContactInfo.Edit"), getPageURL(PhonePage.COMMAND, goBackParams));
 			twoCol.write("</small>");
 		}
 		
@@ -141,7 +142,7 @@ public class ContactInfoPage extends ProfilePage
 				twoCol.write("</span>");
 			}			
 			twoCol.write(" <small>");
-			twoCol.writeLink(getString("profile:ContactInfo.Edit"), getPageURL(TwitterPage.COMMAND));
+			twoCol.writeLink(getString("profile:ContactInfo.Edit"), getPageURL(TwitterPage.COMMAND, goBackParams));
 			twoCol.write("</small>");
 		}
 

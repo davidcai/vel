@@ -1,13 +1,12 @@
 package samoyan.apps.profile;
 
 import samoyan.controls.TwoColFormControl;
-import samoyan.core.ParameterMap;
 import samoyan.database.User;
 import samoyan.database.UserStore;
 import samoyan.notif.Notifier;
 import samoyan.servlet.Channel;
 import samoyan.servlet.RequestContext;
-import samoyan.servlet.exc.RedirectException;
+import samoyan.servlet.exc.AfterCommitRedirectException;
 import samoyan.servlet.exc.WebFormException;
 
 public class ChangePasswordPage extends ProfilePage
@@ -69,9 +68,7 @@ public class ChangePasswordPage extends ProfilePage
 		Notifier.send(Channel.EMAIL, null, user.getID(), null, PasswordChangedNotif.COMMAND, null);
 		
 		// Redirect to self in order to clear form submission
-		throw new RedirectException(getContext().getCommand(), new ParameterMap(RequestContext.PARAM_SAVED, "")); // getString("profile:ChangePassword.Confirmation")));
-		
-//		throw new GoBackRedirectException();
+		throw new AfterCommitRedirectException();
 	}
 
 	@Override

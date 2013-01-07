@@ -66,6 +66,6 @@ public class CoachingTab extends EnvelopeTab
 	@Override
 	public String getIcon(WebPage outputPage)
 	{
-		return "mind/tab-coaching.png";
+		return "icons/standard/chat-bubbles-48.png";
 	}
 }

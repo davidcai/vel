@@ -18,6 +18,7 @@ import samoyan.controls.ButtonInputControl;
 import samoyan.controls.WideLinkGroupControl;
 import samoyan.controls.WideLinkGroupControl.WideLink;
 import samoyan.core.Day;
+import samoyan.core.ParameterMap;
 import samoyan.core.TimeZoneEx;
 import samoyan.core.Util;
 import samoyan.database.MobileCarrier;
@@ -57,7 +58,8 @@ public final class ConsolidatedProfilePage extends BabyPage
 		Mother mother = MotherStore.getInstance().loadByUserID(userID);
 		User user = UserStore.getInstance().load(userID);
 		Server fed = ServerStore.getInstance().loadFederation();
-				
+		ParameterMap goBackParams = new ParameterMap(RequestContext.PARAM_GO_BACK_ON_SAVE, "");
+		
 		// - - -
 
 		write("<h2>");
@@ -69,7 +71,7 @@ public final class ConsolidatedProfilePage extends BabyPage
 		// Stage
 		WideLink wl = wlg.addLink()
 			.setTitle(getString("babyprofile:Consolidated.Stage"))
-			.setURL(getPageURL(StagePage.COMMAND));
+			.setURL(getPageURL(StagePage.COMMAND, goBackParams));
 		if (mother.getDueDate()!=null)
 		{
 			wl.setValue(getString("babyprofile:Consolidated.Pregnancy", gmtToLocalTimeZone(mother.getDueDate())));
@@ -117,13 +119,13 @@ public final class ConsolidatedProfilePage extends BabyPage
 		wlg.addLink()
 			.setTitle(getString("babyprofile:Consolidated.Babies", babyIDs.size()))
 			.setValue(names)
-			.setURL(getPageURL(BabiesPage.COMMAND));
+			.setURL(getPageURL(BabiesPage.COMMAND, goBackParams));
 					
 		// Medical center
 		wlg.addLink()
 			.setTitle(getString("babyprofile:Consolidated.MedicalCenter"))
 			.setValue(!Util.isEmpty(mother.getMedicalCenter()) ? mother.getMedicalCenter() : getString("babyprofile:Consolidated.EmptyField"))
-			.setURL(getPageURL(MedicalCenterPage.COMMAND));
+			.setURL(getPageURL(MedicalCenterPage.COMMAND, goBackParams));
 		
 		wlg.render();
 
@@ -139,26 +141,26 @@ public final class ConsolidatedProfilePage extends BabyPage
 		wlg.addLink()
 			.setTitle(getString("babyprofile:Consolidated.Name"))
 			.setValue(!Util.isEmpty(user.getName()) ? user.getName() : getString("babyprofile:Consolidated.EmptyField"))
-			.setURL(getPageURL(RealNamePage.COMMAND));
+			.setURL(getPageURL(RealNamePage.COMMAND, goBackParams));
 		
 		// Login name
 		wlg.addLink()
 			.setTitle(getString("babyprofile:Consolidated.LoginName"))
 			.setValue(user.getLoginName())
-			.setURL(getPageURL(ChangeLoginNamePage.COMMAND));
+			.setURL(getPageURL(ChangeLoginNamePage.COMMAND, goBackParams));
 		
 		// Password
 		wlg.addLink()
 			.setTitle(getString("babyprofile:Consolidated.Password"))
 			.setValue("********")
-			.setURL(getPageURL(ChangePasswordPage.COMMAND));
+			.setURL(getPageURL(ChangePasswordPage.COMMAND, goBackParams));
 
 		
 		// Email
 		wlg.addLink()
 			.setTitle(getString("babyprofile:Consolidated.Email"))
 			.setValue(user.getEmail())
-			.setURL(getPageURL(EmailPage.COMMAND));
+			.setURL(getPageURL(EmailPage.COMMAND, goBackParams));
 		
 		// Mobile
 		if (fed.isChannelEnabled(Channel.SMS))
@@ -181,7 +183,7 @@ public final class ConsolidatedProfilePage extends BabyPage
 			wlg.addLink()
 				.setTitle(getString("babyprofile:Consolidated.Mobile"))
 				.setValue(val)
-				.setURL(getPageURL(MobilePage.COMMAND));
+				.setURL(getPageURL(MobilePage.COMMAND, goBackParams));
 		}
 		
 		// Phone
@@ -206,7 +208,7 @@ public final class ConsolidatedProfilePage extends BabyPage
 		wlg.addLink()
 			.setTitle(getString("babyprofile:Consolidated.Units"))
 			.setValue(mother.isMetric()==false ? getString("babyprofile:Consolidated.Imperial") : getString("babyprofile:Consolidated.Metric"))
-			.setURL(getPageURL(UnitsPage.COMMAND));
+			.setURL(getPageURL(UnitsPage.COMMAND, goBackParams));
 
 		// Time zone
 		TimeZone tz = user.getTimeZone();
@@ -217,7 +219,7 @@ public final class ConsolidatedProfilePage extends BabyPage
 		wlg.addLink()
 			.setTitle(getString("babyprofile:Consolidated.TimeZone"))
 			.setValue(tz.getDisplayName(getLocale()))
-			.setURL(getPageURL(TimeZonePage.COMMAND));
+			.setURL(getPageURL(TimeZonePage.COMMAND, goBackParams));
 
 		wlg.render();
 		

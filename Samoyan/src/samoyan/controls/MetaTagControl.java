@@ -114,7 +114,7 @@ public class MetaTagControl
 	public void appleTouchIcon(boolean precomposed, String image114x114, String image144x144)
 	{
 		UserAgent ua = outputPage.getContext().getUserAgent();
-		if (ua.isAppleTouch())
+		if (ua.isAppleTouch() || ua.isAndroid()) // Also Android asks for this icon
 		{
 			if (ua.getPixelRatio()==2)
 			{
@@ -280,7 +280,8 @@ public class MetaTagControl
 	
 	public void disableMicrosoftSmartTags()
 	{
-		if (outputPage.getContext().getUserAgent().isMSIE())
+		UserAgent ua = outputPage.getContext().getUserAgent();
+		if (ua.isMSIE())
 		{
 			buffer.append("<meta name=MSSmartTagsPreventParsing content=true>");
 		}
@@ -293,7 +294,8 @@ public class MetaTagControl
 	
 	public void viewportNoScale()
 	{
-		if (outputPage.getContext().getUserAgent().isSmartPhone())
+		UserAgent ua = outputPage.getContext().getUserAgent();
+		if (ua.isSmartPhone())
 		{
 			buffer.append("<meta name=\"viewport\" content=\"width=device-width,initial-scale=1.0,user-scalable=no\" />");
 		}
@@ -305,7 +307,8 @@ public class MetaTagControl
 	 */
 	public void appleMobileWebAppCapable()
 	{
-		if (outputPage.getContext().getUserAgent().isAppleTouch())
+		UserAgent ua = outputPage.getContext().getUserAgent();
+		if (ua.isAppleTouch())
 		{
 			buffer.append("<meta name=\"apple-mobile-web-app-capable\" content=\"yes\">");
 		}
@@ -317,7 +320,8 @@ public class MetaTagControl
 	 */
 	public void appleMobileWebAppStatusBarStyleBlack()
 	{
-		if (outputPage.getContext().getUserAgent().isAppleTouch())
+		UserAgent ua = outputPage.getContext().getUserAgent();
+		if (ua.isAppleTouch())
 		{
 			buffer.append("<meta name=\"apple-mobile-web-app-status-bar-style\" content=\"black\">");
 		}

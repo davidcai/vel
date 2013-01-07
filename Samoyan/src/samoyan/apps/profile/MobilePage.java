@@ -24,7 +24,7 @@ import samoyan.servlet.RequestContext;
 import samoyan.servlet.Setup;
 import samoyan.servlet.UrlGenerator;
 import samoyan.servlet.exc.PageNotFoundException;
-import samoyan.servlet.exc.RedirectException;
+import samoyan.servlet.exc.AfterCommitRedirectException;
 import samoyan.servlet.exc.WebFormException;
 import samoyan.sms.SmsMessage;
 import samoyan.sms.SmsServer;
@@ -359,7 +359,7 @@ public class MobilePage extends ProfilePage
 			progressGuidedSetup();
 
 			// Go back to the contact info page
-			throw new RedirectException(ContactInfoPage.COMMAND, null);
+			throw new AfterCommitRedirectException();
 		}
 		
 		else if (isParameter("clear"))
@@ -372,7 +372,7 @@ public class MobilePage extends ProfilePage
 			progressGuidedSetup();
 
 			// Go back to the contact info page
-			throw new RedirectException(ContactInfoPage.COMMAND, null);
+			throw new AfterCommitRedirectException();
 		}
 	}
 

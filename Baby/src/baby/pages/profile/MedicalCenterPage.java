@@ -5,7 +5,7 @@ import java.util.List;
 import samoyan.apps.profile.ProfilePage;
 import samoyan.core.Util;
 import samoyan.servlet.Setup;
-import samoyan.servlet.exc.GoBackRedirectException;
+import samoyan.servlet.exc.AfterCommitRedirectException;
 
 import baby.database.ArticleStore;
 import baby.database.Mother;
@@ -105,6 +105,6 @@ public class MedicalCenterPage extends BabyPage
 		
 		// Redirect to parent
 		progressGuidedSetup();
-		throw new GoBackRedirectException();
+		throw new AfterCommitRedirectException();
 	}
 }

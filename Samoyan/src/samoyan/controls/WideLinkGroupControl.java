@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import samoyan.core.Util;
+import samoyan.database.Image;
 import samoyan.servlet.WebPage;
 
 /**
@@ -19,6 +20,10 @@ public class WideLinkGroupControl
 		private String value;
 		private String extra;
 		private String resourceImage;
+		private Image image;
+		private String imageSizeSpec;
+		private String imageAltText;
+		private String imageURL;
 		private String url;
 		
 		private WideLink() {}
@@ -64,6 +69,39 @@ public class WideLinkGroupControl
 		public WideLink setResourceImage(String resourceImage)
 		{
 			this.resourceImage = resourceImage;
+			return this;
+		}
+		
+		public Image getImage()
+		{
+			return image;
+		}
+		
+		public WideLink setImage(Image image)
+		{
+			this.image = image;
+			return this;
+		}
+		
+		public String getImageSizeSpec()
+		{
+			return imageSizeSpec;
+		}
+
+		public WideLink setImageSizeSpec(String imageSizeSpec)
+		{
+			this.imageSizeSpec = imageSizeSpec;
+			return this;
+		}
+
+		public String getImageAltText()
+		{
+			return imageAltText;
+		}
+
+		public WideLink setImageAltText(String imageAltText)
+		{
+			this.imageAltText = imageAltText;
 			return this;
 		}
 
@@ -121,9 +159,15 @@ public class WideLinkGroupControl
 				out.write("<div>");
 			}
 			
-			// Image
-			if (!Util.isEmpty(wl.getResourceImage()))
+			// Image triumphs over resource image
+			if (wl.getImage() != null)
 			{
+				// Image
+				out.writeImage(wl.getImage(), wl.getImageSizeSpec(), wl.getImageAltText(), null);
+			}
+			else if (!Util.isEmpty(wl.getResourceImage()))
+			{
+				// Resource image
 				out.writeImage(wl.getResourceImage(), wl.getTitle());
 			}
 			

@@ -1,5 +1,6 @@
 package baby.pages.master;
 
+import baby.pages.info.InformationHomePage;
 import samoyan.apps.master.JoinPage;
 import samoyan.controls.ImageControl;
 import samoyan.controls.LoginControl;
@@ -17,13 +18,14 @@ import samoyan.servlet.exc.RedirectException;
 public class RootPage extends WebPage
 {
 	public final static String COMMAND = "";
-	
+		
 	@Override
 	public void renderHTML() throws Exception
 	{
 		RequestContext ctx = getContext();
 		User user = UserStore.getInstance().load(ctx.getUserID());
 		boolean phone = ctx.getUserAgent().isSmartPhone();
+		
 		String appTitle = Setup.getAppTitle(getLocale());
 		String appOwner = Setup.getAppOwner(getLocale());
 		Server fed = ServerStore.getInstance().loadFederation();
@@ -32,6 +34,12 @@ public class RootPage extends WebPage
 		{
 			// Redirect to GuidedSetup
 			throw new RedirectException(UrlGenerator.COMMAND_SETUP, null);
+		}
+		if (user!=null && phone)
+		{
+			// On smart phone, we redirect to the InformationHomePage if the user is logged in
+			// because we don't have the master tab.
+			throw new RedirectException(InformationHomePage.COMMAND, null);
 		}
 		
 		if (!phone)
@@ -129,9 +137,11 @@ public class RootPage extends WebPage
 		return Setup.getAppTitle(getLocale());
 	}
 
-//	@Override
-//	public boolean isSecureSocket() throws Exception
-//	{
-//		return getContext().isSecureSocket();
-//	}
+	@Override
+	public boolean isSecureSocket() throws Exception
+	{
+		// iOS has problems posting from HTTP to HTTPS when running as app,
+		// so we use HTTPS when the login form is rendered.
+		return getContext().getUserAgent().isIOS() && getContext().getUserID()==null;
+	}
 }

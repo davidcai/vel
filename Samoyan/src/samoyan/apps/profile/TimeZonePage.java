@@ -3,13 +3,11 @@ package samoyan.apps.profile;
 import java.util.TimeZone;
 
 import samoyan.apps.profile.ProfilePage;
-import samoyan.core.ParameterMap;
 import samoyan.core.TimeZoneEx;
 import samoyan.core.Util;
 import samoyan.database.User;
 import samoyan.database.UserStore;
-import samoyan.servlet.RequestContext;
-import samoyan.servlet.exc.RedirectException;
+import samoyan.servlet.exc.AfterCommitRedirectException;
 import samoyan.servlet.exc.WebFormException;
 
 public class TimeZonePage extends ProfilePage
@@ -102,6 +100,6 @@ public class TimeZonePage extends ProfilePage
 		user.setTimeZone(TimeZone.getTimeZone(getParameterString("tz")));
 		UserStore.getInstance().save(user);
 		
-		throw new RedirectException(getContext().getCommand(), new ParameterMap(RequestContext.PARAM_SAVED, ""));
+		throw new AfterCommitRedirectException();
 	}
 }

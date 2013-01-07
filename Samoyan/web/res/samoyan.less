@@ -26,9 +26,9 @@
 	box-sizing: @box; -moz-box-sizing: @box; -ms-box-sizing: @box; -webkit-box-sizing: @box;
 }
 .border-radius (@radius) {
-	border-radius: @radius;
-	-moz-border-radius: @radius;
+	   -moz-border-radius: @radius;
 	-webkit-border-radius: @radius;
+	        border-radius: @radius;
 }
 .scale (@magnitude) {
     -moz-transform: scale(@magnitude);
@@ -50,6 +50,12 @@
 	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, @from 0%), color-stop(1, @to 100%));
 	filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr=@from 0%, EndColorStr=@to 100%)";
 	background-image: linear-gradient(top, @from 0%, @to 100%);
+}
+.transition (@prop, @duration) {
+     -moz-transition: @prop @duration;
+       -o-transition: @prop @duration;
+  -webkit-transition: @prop @duration;
+          transition: @prop @duration;
 }
 
 // ---------- Basic tags ----------
@@ -355,6 +361,7 @@ DIV.InfoMessage {
 	> A {
 		display: block;
 		background: url("navtree-right-arrow.png") center right no-repeat;
+		background-size: 16px 16px;
 		padding: 0.5em 25px 0.5em 0.5em;
 		text-decoration: none;
 		color: inherit;
@@ -536,7 +543,8 @@ DIV.InfoMessage {
 .CtrlArr {
 	.RemoveBtn {
 		padding: 2px 0px 0px 18px;
-		background: url("ctrlarr-remove.png") no-repeat left center;
+		background: url("icons/standard/minusmark-16.png") no-repeat left center;
+		background-size: 16px 16px;
 		cursor: hand; cursor: pointer;
 		visibility: hidden;
 		font: @font-small;
@@ -549,7 +557,8 @@ DIV.InfoMessage {
 	}
 	.AddBtn {
 		padding: 2px 0px 0px 18px;
-		background: url("ctrlarr-add.png") no-repeat left center;
+		background: url("icons/standard/plusmark-16.png") no-repeat left center;
+		background-size: 16px 16px;
 		cursor: hand; cursor: pointer;
 		font: @font-small;
 		margin-bottom: 2px;

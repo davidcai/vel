@@ -12,24 +12,36 @@ public class ParameterMap extends HashMap<String, String>
 	public ParameterMap(Map<String, String> map)
 	{
 		super();
-		super.putAll(map);
+		if (map!=null)
+		{
+			super.putAll(map);
+		}
 	}
 
 	public ParameterMap(String n, Object v)
 	{
 		super();
-		super.put(n, v.toString());
+		if (n!=null && v!=null)
+		{
+			super.put(n, v.toString());
+		}
 	}
 	
 	public ParameterMap plus(String n, Object v)
 	{
-		super.put(n, v.toString());
+		if (n!=null && v!=null)
+		{
+			super.put(n, v.toString());
+		}
 		return this;
 	}
 	
 	public ParameterMap plus(Map<String, String> map)
 	{
-		super.putAll(map);
+		if (map!=null)
+		{
+			super.putAll(map);
+		}
 		return this;
 	}
 }

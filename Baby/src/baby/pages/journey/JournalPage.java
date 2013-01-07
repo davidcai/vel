@@ -1,29 +1,33 @@
 package baby.pages.journey;
 
 import java.text.DateFormat;
-import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
+import samoyan.controls.ButtonInputControl;
+import samoyan.controls.LinkToolbarControl;
 import samoyan.controls.TabControl;
+import samoyan.controls.WideLinkGroupControl;
+import samoyan.controls.WideLinkGroupControl.WideLink;
 import samoyan.core.DateFormatEx;
 import samoyan.core.ParameterMap;
-import samoyan.core.Util;
 import samoyan.database.Image;
-import samoyan.servlet.RequestContext;
-import baby.database.BabyStore;
+import baby.app.BabyConsts;
 import baby.database.JournalEntry;
 import baby.database.JournalEntryStore;
-import baby.database.Mother;
-import baby.database.MotherStore;
-import baby.database.Stage;
+import baby.database.Measure;
+import baby.database.MeasureRecord;
+import baby.database.MeasureRecordStore;
+import baby.database.MeasureStore;
 import baby.pages.BabyPage;
-import baby.pages.scrapbook.JournalEntryPage;
-import baby.pages.scrapbook.PhotoPage;
 
 public class JournalPage extends BabyPage
 {
 	public final static String COMMAND = BabyPage.COMMAND_JOURNEY + "/journal";
+	
+	private final static String PARAM_POST = "post";
 
 	@Override
 	public void renderHTML() throws Exception
@@ -33,124 +37,133 @@ public class JournalPage extends BabyPage
 		{
 			new TabControl(this)
 				.addTab(JournalPage.COMMAND, getString("journey:Journal.Title"), getPageURL(JournalPage.COMMAND))
-//				.addTab(ChartsPage.COMMAND, getString("scrapbook:Charts.Title"), getPageURL(ChartsPage.COMMAND))
-//				.addTab(GalleryPage.COMMAND, getString("scrapbook:Gallery.Title"), getPageURL(GalleryPage.COMMAND))
+				.addTab(ChartsPage.COMMAND, getString("journey:Charts.Title"), getPageURL(ChartsPage.COMMAND))
+				.addTab(GalleryPage.COMMAND, getString("journey:Gallery.Title"), getPageURL(GalleryPage.COMMAND))
 				.setCurrentTab(getContext().getCommand())
 				.setStyleButton()
 				.setAlignStretch()
 				.render();
 		}
 		
-		writeStageInfo();
-		
-		List<UUID> entryIDs = JournalEntryStore.getInstance().getByUserID(getContext().getUserID());
-		if (entryIDs.isEmpty() == false)
+		// Add button
+		if (getContext().getUserAgent().isSmartPhone())
 		{
-			write("<ul class=\"Journal\">");
-
-			DateFormat dfDateTime = DateFormatEx.getDateTimeInstance(getLocale(), getTimeZone());
-
-			for (UUID entryID : entryIDs)
-			{
-				JournalEntry entry = JournalEntryStore.getInstance().load(entryID);
-
-				write("<li>");
-
-				write("<div class=\"EntryCreated\">");
-				writeLink(
-						dfDateTime.format(entry.getCreated()),
-						getPageURL(JournalEntryPage.COMMAND,
-								new ParameterMap(JournalEntryPage.PARAM_ID, entryID.toString())));
-				write("</div>");
-
-				if (Util.isEmpty(entry.getText()) == false)
-				{
-					write("<div class=\"EntryText\">");
-					writeEncode(entry.getText());
-					write("</div>");
-				}
-
-				if (entry.getPhoto() != null)
-				{
-					write("<div class=\"EntryPhoto\">");
-					write("<a href=\"");
-					writeEncode(getPageURL(PhotoPage.COMMAND, new ParameterMap(PhotoPage.PARAM_ID, entry.getID().toString())));
-					write("\">");
-					writeImage(entry.getPhoto(), Image.SIZE_THUMBNAIL, null, null);
-					write("</a>");
-					write("</div>");
-				}
-
-				write("</li>");
-			}
-
-			write("</ul>");
+			writeFormOpen("GET", JournalEntryPage.COMMAND);
+			new ButtonInputControl(this, JournalEntryPage.PARAM_EDIT)
+				.setValue(getString("journey:Journal.AddHotButton"))
+				.setMobileHotAction(true)
+				.setAttribute("class", "NoShow")
+				.render();
+			writeFormClose();
 		}
 		else
 		{
-			write("<div class=\"PaddedPageContent\">");
-			writeEncode(getString("journey:Journal.NoEntry"));
-			write("</div>");
-		}
-	}
-
-	private void writeStageInfo() throws Exception
-	{
-		RequestContext ctx = getContext();
-		Mother mother = MotherStore.getInstance().loadByUserID(ctx.getUserID());
-		Stage stage = mother.getPregnancyStage();
-		Date now = new Date();
-
-		// Stage status
-		String status = null;
-		if (stage.isPreconception())
-		{
-			status = getString("journey:Journal.StatusPreconception");
-		}
-		else if (stage.isPregnancy())
-		{
-			Date due = mother.getDueDate();
-			long days = (due.getTime() - now.getTime()) / (24L*60L*60L*1000L) + 1;
-			if (days<=1L)
-			{
-				// Overdue
-				status = getString("journey:Journal.StatusImminent");
-			}
-			else
-			{
-				status = getString("journey:Journal.StatusPregnancy", stage.getPregnancyWeek(), days);
-			}
-		}
-		else if (stage.isInfancy())
-		{
-			String names = null;
-			List<UUID> babyIDs = BabyStore.getInstance().getAtLeastOneBaby(ctx.getUserID());
-			if (babyIDs.size()==1)
-			{
-				names = BabyStore.getInstance().load(babyIDs.get(0)).getName();
-			}
-			if (Util.isEmpty(names))
-			{
-				names = getString("journey:Journal.BabyCountName." + (babyIDs.size()<=8 ? babyIDs.size() : "N"));
-			}
-			
-			Date birth = mother.getBirthDate();
-			long weeks = (now.getTime() - birth.getTime()) / (7L*24L*60L*60L*1000L) + 1;
-			if (weeks<=18)
-			{
-				status = getString("journey:Journal.StatusInfancyWeeks", names, babyIDs.size(), weeks);
-			}
-			else
-			{
-				status = getString("journey:Journal.StatusInfancyMonths", names, babyIDs.size(), stage.getInfancyMonth());
-			}
+			new LinkToolbarControl(this)
+				.addLink(getString("journey:Journal.AddLink"), getPageURL(JournalEntryPage.COMMAND), "icons/standard/pencil-16.png")
+				.render();
 		}
 		
-		write("<div align=center>");
-		write("<h2>");
-		writeEncode(status);
-		write("</h2>");
-		write("</div>");
+//		writeFormOpen();
+//		
+//		new TextInputControl(this, "NewJournalEntryPlaceHolder")
+//			.setSize(80)
+//			.setMaxLength(JournalEntry.MAXSIZE_TEXT)
+//			.setPlaceholder(getString("journey:Journal.WhatIsOnYourMind"))
+//			.setAutoFocus(false)
+//			.setID("NewJournalEntryPlaceHolder")
+//			.render();
+//		
+//		write("<div id=\"NewJournalEntryPanel\">");
+//		new TextAreaInputControl(this, "text")
+//			.setRows(3).setCols(80)
+//			.setMaxLength(JournalEntry.MAXSIZE_TEXT)
+//			.setPlaceholder(getString("journey:Journal.WhatIsOnYourMind"))
+//			.render();
+//		write("<br>");
+//		new ImageInputControl(this, "photo").showThumbnail(false).render();
+//		write("<br>");
+//		writeButton(PARAM_POST, getString("journey:Journal.Post"));
+//		write("</div>"); //-- #NewJournalEntryPanel
+//		
+//		writeFormClose();
+//		write("<br>");
+		
+		// Entries
+		List<UUID> entryIDs = JournalEntryStore.getInstance().getByUserID(getContext().getUserID());
+		if (entryIDs.isEmpty() == false)
+		{
+			DateFormat dfDate = DateFormatEx.getMiniDateInstance(getLocale(), getTimeZone());
+			
+			WideLinkGroupControl wlg = new WideLinkGroupControl(this);
+			for (UUID entryID : entryIDs)
+			{
+				JournalEntry entry = JournalEntryStore.getInstance().load(entryID);
+				
+				WideLink wl = wlg.addLink()
+					.setTitle(entry.getText())
+					.setValue(dfDate.format(entry.getCreated()))
+					.setURL(getPageURL(JournalEntryPage.COMMAND, 
+						new ParameterMap(JournalEntryPage.PARAM_ID, entryID.toString())));
+
+				// Photo
+				if (entry.isHasPhoto())
+				{
+					Image photo = entry.getPhoto();
+					if (photo != null)
+					{
+						wl.setImage(photo).setImageSizeSpec(BabyConsts.IMAGESIZE_THUMB_50X50);
+					}
+				}
+
+				// Measure records
+				List<UUID> recordIDs = MeasureRecordStore.getInstance().getByJournalEntryID(entryID);
+				if (recordIDs.isEmpty() == false)
+				{
+					Set<UUID> measureIDs = new LinkedHashSet<UUID>();
+					for (UUID recordID : recordIDs)
+					{
+						MeasureRecord record = MeasureRecordStore.getInstance().load(recordID);
+						measureIDs.add(record.getMeasureID());
+					}
+					
+					StringBuilder sb = new StringBuilder(getString("journey:Journal.MeasureRecords"));
+					int i = 0;
+					for (UUID measureID : measureIDs)
+					{
+						Measure measure = MeasureStore.getInstance().load(measureID);
+						
+						if (i > 0)
+						{
+							if (i < measureIDs.size() - 1)
+							{
+								sb.append(getString("journey:Journal.Comma"));
+							}
+							else
+							{
+								if (i > 1)
+								{
+									sb.append(getString("journey:Journal.Comma"));
+								}
+								sb.append(getString("journey:Journal.And"));
+							}
+						}
+						
+						sb.append(measure.getLabel());
+						
+						i++;
+					}
+					
+					wl.setExtra(sb.toString());
+				}
+			}
+			wlg.render();
+		}
+		else
+		{
+			writeEncode(getString("journey:Journal.NoEntry"));
+		}
+		
+		writeIncludeJS("baby/journal.js");
 	}
 
 	@Override

@@ -6,7 +6,7 @@ import java.util.UUID;
 import samoyan.apps.profile.ProfilePage;
 import samoyan.controls.ControlArray;
 import samoyan.controls.TextInputControl;
-import samoyan.servlet.exc.GoBackRedirectException;
+import samoyan.servlet.exc.AfterCommitRedirectException;
 import baby.database.Baby;
 import baby.database.BabyStore;
 import baby.pages.BabyPage;
@@ -67,7 +67,7 @@ public class BabiesPage extends BabyPage
 		BabyStore.getInstance().removeMany(oldIDs);
 		
 		// Redirect to parent
-		throw new GoBackRedirectException();
+		throw new AfterCommitRedirectException();
 	}
 	
 	@Override

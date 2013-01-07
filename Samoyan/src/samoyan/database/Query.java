@@ -135,6 +135,7 @@ public final class Query
 //				}
 //				else
 //				if (end-start>=SLOW_QUERY_THREASHOLD)
+				if (sql.indexOf("LogEntries")<0 && sql.indexOf("LogTypes")<0)
 				{
 					Debug.logln("DB " + (end-start) + "ms " + sql);
 				}
@@ -240,6 +241,7 @@ public final class Query
 //				}
 //				else
 //				if (end-start>=SLOW_QUERY_THREASHOLD)
+				if (sql.indexOf("LogEntries")<0 && sql.indexOf("LogTypes")<0)
 				{
 					Debug.logln("DB " + (end-start) + "ms " + sql);
 				}

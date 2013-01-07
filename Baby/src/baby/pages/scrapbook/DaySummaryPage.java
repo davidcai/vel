@@ -35,7 +35,7 @@ import baby.database.Mother;
 import baby.database.MotherStore;
 import baby.database.Stage;
 import baby.pages.BabyPage;
-import baby.pages.info.AppointmentPage;
+import baby.pages.info.EditAppointmentPage;
 
 public class DaySummaryPage extends BabyPage
 {
@@ -240,7 +240,7 @@ public class DaySummaryPage extends BabyPage
 				
 				write("<td>");
 				String caption = getString("information:EditAppointment.DescAndType", appointment.getDescription(), appointment.getType());
-				writeLink(caption, getPageURL(AppointmentPage.COMMAND, new ParameterMap(AppointmentPage.PARAM_ID, appointment.getID().toString())));
+				writeLink(caption, getPageURL(EditAppointmentPage.COMMAND, new ParameterMap(EditAppointmentPage.PARAM_ID, appointment.getID().toString())));
 				write("</td>");
 				
 				write("</tr>");
