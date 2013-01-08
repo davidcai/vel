@@ -357,13 +357,26 @@ BODY[uri="/journey/journal"] {
 		}
 	}
 	
-	.WideLinks > A {
-		& > IMG {
-			float: left;
-			margin-right: 0.5em;
+	#EntriesList {
+	
+		.Date {
+			padding: 0.7em 0.5em;
+			font-weight: bold;
+			color: @color-accent;
+			.background-gradient-top(lighten(@color-negative-background, 40%), lighten(@color-negative-background, 35%));
 		}
-		& > .Title {
-			font-weight: normal;
+		.Date:first-child {
+			border-top: 1px solid @color-text-light;
+		}
+	
+		.WideLinks > A {
+			& > IMG {
+				float: left;
+				margin-right: 0.5em;
+			}
+			& > .Title {
+				font-weight: normal;
+			}
 		}
 	}
 }

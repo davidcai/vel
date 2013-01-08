@@ -25,6 +25,7 @@ public class WideLinkGroupControl
 		private String imageAltText;
 		private String imageURL;
 		private String url;
+		private String cssClass;
 		
 		private WideLink() {}
 
@@ -115,6 +116,17 @@ public class WideLinkGroupControl
 			this.url = url;
 			return this;
 		}
+		
+		public String getCSSClass()
+		{
+			return cssClass;
+		}
+		
+		public WideLink setCSSClass(String cssClass)
+		{
+			this.cssClass = cssClass;
+			return this;
+		}
 	}
 
 	private WebPage out;
@@ -152,12 +164,21 @@ public class WideLinkGroupControl
 			{
 				out.write("<a href=\"");
 				out.writeEncode(wl.getURL());
-				out.write("\">");
+				out.write("\"");
 			}
 			else
 			{
-				out.write("<div>");
+				out.write("<div");
 			}
+			
+			// CSS class
+			if (!Util.isEmpty(wl.getCSSClass()))
+			{
+				out.write(" class=\"");
+				out.writeEncode(wl.getCSSClass());
+				out.write("\"");
+			}
+			out.write(">");
 			
 			// Image triumphs over resource image
 			if (wl.getImage() != null)

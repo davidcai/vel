@@ -15,8 +15,8 @@ public class ChartsPage extends BabyPage
 		{
 			new TabControl(this)
 				.addTab(JournalPage.COMMAND, getString("journey:Journal.Title"), getPageURL(JournalPage.COMMAND))
-				.addTab(ChartsPage.COMMAND, getString("journey:Charts.Title"), getPageURL(ChartsPage.COMMAND))
 				.addTab(GalleryPage.COMMAND, getString("journey:Gallery.Title"), getPageURL(GalleryPage.COMMAND))
+				.addTab(ChartsPage.COMMAND, getString("journey:Charts.Title"), getPageURL(ChartsPage.COMMAND))
 				.setCurrentTab(getContext().getCommand())
 				.setStyleButton()
 				.setAlignStretch()

@@ -195,6 +195,17 @@ public class Day implements Comparable<Day>
 			return false;
 		}
 	}
+	
+	@Override
+	public int hashCode()
+	{
+		int hash = 1;
+		hash = 37 * hash + Integer.valueOf(this.year).hashCode();
+		hash = 37 * hash + Integer.valueOf(this.month).hashCode();
+		hash = 37 * hash + Integer.valueOf(this.day).hashCode();
+		
+		return hash;
+	}
 
 	/**
 	 * Return number of days between two days.

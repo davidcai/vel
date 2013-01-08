@@ -2,14 +2,15 @@ package baby.pages.journey;
 
 import java.util.Calendar;
 
-import samoyan.controls.ButtonInputControl;
 import samoyan.controls.ImageInputControl;
 import samoyan.controls.TextAreaInputControl;
+import samoyan.core.ParameterMap;
 import samoyan.database.Image;
 import samoyan.servlet.UserAgent;
 import samoyan.servlet.exc.PageNotFoundException;
 import samoyan.servlet.exc.RedirectException;
 import samoyan.servlet.exc.WebFormException;
+import baby.app.BabyConsts;
 import baby.database.JournalEntry;
 import baby.database.JournalEntryStore;
 import baby.pages.BabyPage;
@@ -27,7 +28,6 @@ public class JournalEntryPage extends BabyPage
 	private final static String PARAM_REMOVE = "remove";
 	
 	private JournalEntry entry;
-	private boolean readOnly;
 	
 	@Override
 	public void init() throws Exception
@@ -42,8 +42,6 @@ public class JournalEntryPage extends BabyPage
 			// Security check: make sure that entry is owned by this user
 			throw new PageNotFoundException();
 		}
-		
-		this.readOnly = (getContext().getUserAgent().isSmartPhone() && isParameter(PARAM_EDIT) == false);
 	}
 	
 	@Override
@@ -64,55 +62,30 @@ public class JournalEntryPage extends BabyPage
 	@Override
 	public void commit() throws Exception
 	{
-		this.entry.setUserID(getContext().getUserID());
-		this.entry.setText(getParameterString(PARAM_TEXT));
-		
-		Image photo = getParameterImage(PARAM_PHOTO);
-		this.entry.setHasPhoto(photo != null);
-		this.entry.setPhoto(photo);
-		
-		this.entry.setCreated(Calendar.getInstance(getTimeZone()).getTime());
+		if (isParameter(PARAM_SAVE))
+		{
+			this.entry.setUserID(getContext().getUserID());
+			this.entry.setText(getParameterString(PARAM_TEXT));
+			
+			Image photo = getParameterImage(PARAM_PHOTO);
+			this.entry.setHasPhoto(photo != null);
+			this.entry.setPhoto(photo);
+			
+			this.entry.setCreated(Calendar.getInstance(getTimeZone()).getTime());
+	
+			JournalEntryStore.getInstance().save(this.entry);
+		}
+		else if (isParameter(PARAM_REMOVE) && this.entry.isSaved())
+		{
+			JournalEntryStore.getInstance().remove(this.entry.getID());
+		}
 
-		JournalEntryStore.getInstance().save(this.entry);
-
-		// Redirect to itself
+		// Redirect to Journal page
 		throw new RedirectException(JournalPage.COMMAND, null);
 	}
 	
 	@Override
 	public void renderHTML() throws Exception
-	{
-		if (this.readOnly)
-		{
-			renderViewOnly();
-		}
-		else
-		{
-			renderEditForm();
-		}
-	}
-	
-	private void renderViewOnly() throws Exception
-	{
-		// Edit button
-		if (getContext().getUserAgent().isSmartPhone() == false)
-		{
-			write("<br>");
-		}
-		
-		writeFormOpen("GET", getContext().getCommand());
-		new ButtonInputControl(this, null)
-			.setValue(getString("journey:JournalEntry.Edit"))
-			.setMobileHotAction(true)
-			.setAttribute("class", getContext().getUserAgent().isSmartPhone() ? "NoShow" : null)
-			.render();
-		writeHiddenInput(PARAM_ID, this.entry.getID().toString());
-		writeHiddenInput(PARAM_EDIT, "");
-		
-		writeFormClose();
-	}
-	
-	private void renderEditForm() throws Exception
 	{
 		UserAgent ua = getContext().getUserAgent();
 		if (ua.isSmartPhone() == false)
@@ -123,6 +96,17 @@ public class JournalEntryPage extends BabyPage
 		
 		writeFormOpen();
 		
+		// Photo preview
+		if (this.entry.isHasPhoto())
+		{
+			writeImage(this.entry.getPhoto(), BabyConsts.IMAGESIZE_BOX_400X400, null, 
+				getPageURL(PhotoPage.COMMAND, new ParameterMap(PhotoPage.PARAM_ID, this.entry.getID().toString())));
+			write("<br>");
+			new ImageInputControl(this, "photo").showThumbnail(false).setInitialValue(this.entry.getPhoto()).render();
+			write("<br>");
+		}
+		
+		// Text
 		new TextAreaInputControl(this, "text")
 			.setRows(3).setCols(80)
 			.setMaxLength(JournalEntry.MAXSIZE_TEXT)
@@ -130,7 +114,12 @@ public class JournalEntryPage extends BabyPage
 			.setInitialValue(this.entry.getText())
 			.render();
 		write("<br>");
-		new ImageInputControl(this, "photo").showThumbnail(false).render();
+		
+		// Image uploader
+		if (this.entry.isHasPhoto() == false)
+		{
+			new ImageInputControl(this, "photo").showThumbnail(false).setInitialValue(this.entry.getPhoto()).render();
+		}
 		
 		// Postbacks
 		writeHiddenInput(PARAM_ID, null);
