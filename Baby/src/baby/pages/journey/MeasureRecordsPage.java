@@ -184,15 +184,7 @@ public class MeasureRecordsPage extends BabyPage
 			// Unit system defined in mother's profile always triumph over record's unit system.
 			rec.setMetric(this.mom.isMetric());
 			
-			if (rec.getValue() == null)
-			{
-				// If the record value is null, delete the record from DB.
-				MeasureRecordStore.getInstance().remove(rec.getID());
-			}
-			else
-			{
-				MeasureRecordStore.getInstance().save(rec);
-			}
+			MeasureRecordStore.getInstance().save(rec);
 		}
 	}
 	

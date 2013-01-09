@@ -9,10 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import samoyan.controls.ImageInputControl;
+import samoyan.controls.ButtonInputControl;
+import samoyan.controls.LinkToolbarControl;
 import samoyan.controls.TabControl;
-import samoyan.controls.TextAreaInputControl;
-import samoyan.controls.TextInputControl;
 import samoyan.controls.WideLinkGroupControl;
 import samoyan.controls.WideLinkGroupControl.WideLink;
 import samoyan.core.DateFormatEx;
@@ -25,6 +24,7 @@ import baby.app.BabyConsts;
 import baby.database.JournalEntry;
 import baby.database.JournalEntryStore;
 import baby.database.MeasureRecord;
+import baby.database.MeasureRecordStore;
 import baby.pages.BabyPage;
 
 public class JournalPage extends BabyPage
@@ -84,61 +84,63 @@ public class JournalPage extends BabyPage
 				.render();
 		}
 		
-//		// Add button
-//		if (getContext().getUserAgent().isSmartPhone())
-//		{
-//			writeFormOpen("GET", JournalEntryPage.COMMAND);
-//			new ButtonInputControl(this, JournalEntryPage.PARAM_EDIT)
-//				.setValue(getString("journey:Journal.AddHotButton"))
-//				.setMobileHotAction(true)
-//				.setAttribute("class", "NoShow")
-//				.render();
-//			writeFormClose();
-//		}
-//		else
-//		{
-//			new LinkToolbarControl(this)
-//				.addLink(getString("journey:Journal.AddLink"), getPageURL(JournalEntryPage.COMMAND), "icons/standard/pencil-16.png")
-//				.render();
-//		}
-		
-		writeFormOpen();
-		
-		new TextInputControl(this, "NewJournalEntryPlaceHolder")
-			.setSize(80)
-			.setMaxLength(JournalEntry.MAXSIZE_TEXT)
-			.setPlaceholder(getString("journey:Journal.WhatIsOnYourMind"))
-			.setAutoFocus(false)
-			.setID("NewJournalEntryPlaceHolder")
-			.render();
-		
-		write("<div id=\"NewJournalEntryPanel\"");
-		if (isParameter(PARAM_POST))
+		// Add button
+		if (getContext().getUserAgent().isSmartPhone())
 		{
-			write(" class=\"Expanded\"");
+			writeFormOpen("GET", JournalEntryPage.COMMAND);
+			new ButtonInputControl(this, JournalEntryPage.PARAM_EDIT)
+				.setValue(getString("journey:Journal.AddHotButton"))
+				.setMobileHotAction(true)
+				.setAttribute("class", "NoShow")
+				.render();
+			writeFormClose();
 		}
-		write(">");
-		new TextAreaInputControl(this, "text")
-			.setRows(3).setCols(80)
-			.setMaxLength(JournalEntry.MAXSIZE_TEXT)
-			.setPlaceholder(getString("journey:Journal.WhatIsOnYourMind"))
-			.render();
-		write("<br>");
-		new ImageInputControl(this, "photo").showThumbnail(false).render();
-		write("<br>");
-		writeButton(PARAM_POST, getString("journey:Journal.Post"));
-		write("</div>"); //-- #NewJournalEntryPanel
+		else
+		{
+			new LinkToolbarControl(this)
+				.addLink(getString("journey:Journal.AddLink"), getPageURL(JournalEntryPage.COMMAND), "icons/standard/pencil-16.png")
+				.render();
+		}
 		
-		writeFormClose();
-		write("<br>");
+//		writeFormOpen();
+//		
+//		new TextInputControl(this, "NewJournalEntryPlaceHolder")
+//			.setSize(80)
+//			.setMaxLength(JournalEntry.MAXSIZE_TEXT)
+//			.setPlaceholder(getString("journey:Journal.WhatIsOnYourMind"))
+//			.setAutoFocus(false)
+//			.setID("NewJournalEntryPlaceHolder")
+//			.render();
+//		
+//		write("<div id=\"NewJournalEntryPanel\"");
+//		if (isParameter(PARAM_POST))
+//		{
+//			write(" class=\"Expanded\"");
+//		}
+//		write(">");
+//		new TextAreaInputControl(this, "text")
+//			.setRows(3).setCols(80)
+//			.setMaxLength(JournalEntry.MAXSIZE_TEXT)
+//			.setPlaceholder(getString("journey:Journal.WhatIsOnYourMind"))
+//			.render();
+//		write("<br>");
+//		new ImageInputControl(this, "photo").showThumbnail(false).render();
+//		write("<br>");
+//		writeButton(PARAM_POST, getString("journey:Journal.Post"));
+//		write("</div>"); //-- #NewJournalEntryPanel
+//		
+//		writeFormClose();
+//		write("<br>");
 		
 		// Entries
-		List<UUID> entryIDs = JournalEntryStore.getInstance().getByUserID(getContext().getUserID());
-		if (entryIDs.isEmpty() == false)
+		UUID userID = getContext().getUserID();
+		List<UUID> entryIDs = JournalEntryStore.getInstance().getByUserID(userID);
+		List<UUID> recordIDs = MeasureRecordStore.getInstance().getByUserID(userID);
+		if (entryIDs.isEmpty() == false || recordIDs.isEmpty() == false)
 		{
 			write("<div id=\"EntriesList\">");
 			
-			// Group entries by dates
+			// Group entries by dates. Entries include journal entries and measure records. 
 			Map<Day, List<Object>> entriesByDates = new LinkedHashMap<Day, List<Object>>();
 			for (UUID entryID : entryIDs)
 			{
@@ -153,6 +155,22 @@ public class JournalPage extends BabyPage
 				}
 				entries.add(entry);
 			}
+			for (UUID recordID : recordIDs)
+			{
+				MeasureRecord rec = MeasureRecordStore.getInstance().load(recordID);
+				if (rec.getValue() != null)
+				{
+					Day day = new Day(getTimeZone(), rec.getCreatedDate());
+					
+					List<Object> entries = entriesByDates.get(day);
+					if (entries == null)
+					{
+						entries = new ArrayList<Object>();
+						entriesByDates.put(day, entries);
+					}
+					entries.add(rec);
+				}
+			}
 			
 			Day today = new Day(getTimeZone(), new Date());
 			boolean phone = getContext().getUserAgent().isSmartPhone();
@@ -162,10 +180,7 @@ public class JournalPage extends BabyPage
 			for (Day day : entriesByDates.keySet())
 			{
 				// Date header
-				Calendar cal = Calendar.getInstance(getTimeZone(), getLocale());
-				cal.set(Calendar.YEAR, day.getYear());
-				cal.set(Calendar.MONTH, day.getMonth() - 1);
-				cal.set(Calendar.DATE, day.getDay());
+				Date date = day.getMidDay(getTimeZone(), 0, 0, 0);
 				
 				StringBuilder dateStr = new StringBuilder();
 				if (day.equals(today))
@@ -174,10 +189,10 @@ public class JournalPage extends BabyPage
 				}
 				else
 				{
-					dateStr.append(dfDow.format(cal.getTime()));
+					dateStr.append(dfDow.format(date));
 				}
 				dateStr.append(getString("journey:Journal.Comma"));
-				dateStr.append(dfDate.format(cal.getTime()));
+				dateStr.append(dfDate.format(date));
 				
 				write("<div class=\"Date\">");
 				writeEncode(dateStr.toString());

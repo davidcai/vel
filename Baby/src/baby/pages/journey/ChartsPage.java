@@ -220,12 +220,15 @@ public class ChartsPage extends BabyPage
 				mapGraphs.put(key, graph);
 			}
 			
-			// For the same date, always use the latest measure values
-			Day day = new Day(getTimeZone(), rec.getCreatedDate());
-			MeasureRecord prevRec = graph.getRows().get(day);
-			if (prevRec == null || rec.getCreatedDate().after(prevRec.getCreatedDate()))
+			if (rec.getValue() != null)
 			{
-				graph.getRows().put(day, rec);
+				// For the same date, always use the latest measure values
+				Day day = new Day(getTimeZone(), rec.getCreatedDate());
+				MeasureRecord prevRec = graph.getRows().get(day);
+				if (prevRec == null || rec.getCreatedDate().after(prevRec.getCreatedDate()))
+				{
+					graph.getRows().put(day, rec);
+				}				
 			}
 		}
 		
