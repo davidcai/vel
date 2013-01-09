@@ -53,8 +53,13 @@ BABY
 ? refactor package names to match UI.
   also COMMAND consts in BabyPage
   also .properties file names
+  also uri filters in bottom of baby.less (for hiding navbar)
 
 = margin on smartphone ui.
+  > * {margin: 0px 5px}
+  .FullWidth {margin: 0px 0px}
+  TABLE.NoPadding > TBODY > TR > TD {padding: 0px;}
+  #page {padding: 0px;} but H1 {padding-top: 15px;}
 - ArticleListControl:
   ? don't show HR divider on Computer ui
 = slider control for timeline instead of dropdown
@@ -64,9 +69,8 @@ BABY
 = notifs:
   = check iPhone app + push notifs
   = alert timeline to allow user to choose channels, but no delay
-= enable all channels on PROD
-= (1) setup XCo API key on PROD
-= buy mybabyandi.* domains
+= enable all channels on PROD. email is currently disabled, and enabled on my dev system
+= mybabyandi.com expires Feb 8. Try to grab if not renewed, otherwise, contact for purchase.
 = Journal:
   - UI of Journal list
     - better rendering of items in list, widelinkgroup with >
@@ -75,38 +79,30 @@ BABY
   - reduce image size to 50x50 on mobile. also in Article list.
     create standard thumbnail sizes: 50x50 and 32x32 in samoyan
 - create system ConsoldiatedProfilePage, also for MMM and eLert.
-- simplify registration
-=? GoBack login in appointments: use AfterCommitRedirect
-= (0) Check GoBack on MyElert. in profile pages. getting forced to re-login.
+= simplify registration, esp for mobile. ask for email, password only.
+  create username from email address, and send email with it to user.
+  general setting: simple self-registration, full self-registration, by invitation only
+  in simple registration, do not allow signing up for multiple accounts on same email address.
+  also need to check when changing email addresses in email form.
+  also change title in login control to "Email" from login ID.
+  also hide the "Rename account" page.
 = galaxy asking for http://mybaby.veloxicom.com/apple-touch-icon-precomposed.png and http://mybaby.veloxicom.com/apple-touch-icon.png
   and repeating on every request if not found.
-= requests for resources/images are not logged. esp if not found.
-= Figure out how to redirect to error page, but only for HTML requests. esp for 500 and 404.
-= Appointment view page:
-  - can have checklists and articles that need to be displayed.
-+ remove the apptbase page.
-  x create control for "new appt" control.
-+ merge view/Edit appt into one class
-  + remove condition on URL for mobile
+  debug with david.
+- Figure out how to redirect to error page, but only for HTML requests. esp for 500 and 404.
+- MyElert mobile. getting logged out without a reason. check why!
+  happens with debug=false, ssl=true and only on demo.veloxicom.com. and only with chrome emulation (not with actual iphone)
+  check all usage of debug related to session management or cookies.
+= server won't shutdown quickly sometimes. added debug statements to controller.terminate. Deploy on all projects, and check logs.
+-? ServerStore.fed() and .local() to reload once per 1 second, otherwise use local cache.
+  can then move more settings into fed (cookie exp, debug, session, etc.)
 
-Erica's feedback:
-+ calendar to be a separate menu entry
-  keep the "new appt" option in calendar screen.
-+ CHECKLISTS: align paragraph, more space between bullets.
-+ when hiding fully-completed checklists, there's extra space (BR?)
-+ Appointments: always show "Monday, 2/24/2013 2:30 PM"
-  on mobile, always show time: "Mon 2/24 10:30 PM"
-+ Master tab
-  + Remove the home page tab icon when logged in on mobile. keep on desktop ui.
-  + check that system works without master tab.
-  + show wider logo when not logged in for master tab.
-  + master root to redirect to info root on mobile, if logged in.
-+ remove underlines from links
-= calendar to include also checklist deadlines (David)
-= CONSIDER: Add a new TODO item from calendar, with date.
+Erica's feedback Jan 4:
+- NTH: Add a new TODO item from calendar, with date.
   personal checkitems to have due date.
-= TODOs: Show first sentence only, Have "more" link to expand description.
-= Redo home page according to design
+- Evaluate two-tier top-level nav bar rather than vertical nav bar.
+=? hide navigation bar on desktop, for non-admin tabs
+  widen main body to full width, have tab control for journey tab
 
 - UI design / ask Erica:
   - calendar control is a bit of an overkill for only showing appointments. maybe it's better to show only in list view.
@@ -124,7 +120,7 @@ Erica's feedback:
   - smaller thumbnails in lists on mobile?
   - change "My schedule" label -> "My appointments" ?
 
-- Master root page when logged in:
+? Master root page when logged in:
   - Link to Help pages
   - About the app
   - Copyright/terms
@@ -146,10 +142,10 @@ _ checklists from earlier stages (preconception, pregnancy): show as faded.
 _ Horizontal navigation (tab):
   - set Fixed to top. need solid bg. Padding at bottom should not be fixed.
   - error message to show below navigation
-_ Profile page to choose BabyBlue or BabyPink colorset.
-  need to store cssVersion on user object and use it when including CSS.
 
 DAVID:
+= Appointment view/edit page should show the relevant (based on type and timeline) checklists and articles
+= Calendar to include icons marking checklist deadlines.
 = Link measures with Journal entries
   = journal page: cleanup look, show image+text+measures
 = print capability of the journal. or export to PDF.

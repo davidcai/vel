@@ -191,13 +191,31 @@ public class ChecklistControl
 				.setLabel(null)
 				.setInitialValue(checked)
 				.setAttribute("onclick", "postCheckItem(this);")
-				.setAttribute("id", "ci" + checkitem.getID().toString())
+//				.setAttribute("id", "ci" + checkitem.getID().toString())
 				.render();
-			out.write("</td><td><label for=\"ci");
-			out.writeEncode(checkitem.getID().toString());
-			out.write("\">");
-			out.writeEncode(checkitem.getText());
-			out.write("</label>");
+			out.write("</td><td>");
+//			out.write("<label for=\"ci");
+//			out.writeEncode(checkitem.getID().toString());
+//			out.write("\">");
+			int p = checkitem.getText().indexOf(". ");
+			if (p<0)
+			{
+				out.writeEncode(checkitem.getText());
+			}
+			else
+			{
+				out.writeEncode(checkitem.getText().substring(0, p+2));
+				
+				if (!Util.isEmpty(checkitem.getText().substring(p+2)))
+				{
+					out.write("<span class=MoreLink onclick=\"expandCheckItem(this);\">");
+					out.writeEncode(out.getString("baby:ChecklistCtrl.More"));
+					out.write("</span><span class=NoShow>");
+					out.writeEncode(checkitem.getText().substring(p+2));
+					out.write("</span>");
+				}
+			}
+//			out.write("</label>");
 			out.write("</td></tr>");
 		}
 				
@@ -228,6 +246,9 @@ public class ChecklistControl
 				out.write("?sid=");
 				out.writeEncode(ctx.getSessionID());
 				out.write("&cmd=toggle&chk=' + $img.attr('target') + '&val=' + $img.hasClass('Collapsed'));");
+			out.write("}");
+			out.write("function expandCheckItem(more){");
+			out.write("$(more).hide().next().removeClass(\"NoShow\");");
 			out.write("}");
 			out.write("</script>");
 		}

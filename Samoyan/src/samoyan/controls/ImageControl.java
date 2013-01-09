@@ -60,15 +60,8 @@ public class ImageControl extends TagControl
 		float ratio = out.getContext().getUserAgent().getPixelRatio();
 		Image resized = ImageStore.getInstance().loadAndResize(image.getID(), sizeSpec, ratio);
 		
-		if (this.width<=0)
-		{
-			this.width = Math.round( resized.getWidth() / ratio );
-		}
-		if (this.height<=0)
-		{
-			this.height = Math.round( resized.getHeight() / ratio );
-		}
-		
+		this.width = Math.round( resized.getWidth() / ratio );
+		this.height = Math.round( resized.getHeight() / ratio );		
 		this.image = image;
 		this.size = sizeSpec;
 		
@@ -98,14 +91,8 @@ public class ImageControl extends TagControl
 			Cache.insert("res.dim:" + resourceFileName, rect);
 		}
 		
-		if (this.width<=0)
-		{
-			this.width = rect.width;
-		}
-		if (this.height<=0)
-		{
-			this.height = rect.height;
-		}
+		this.width = rect.width;
+		this.height = rect.height;
 		
 		this.resName = resourceFileName;
 		
@@ -141,22 +128,22 @@ public class ImageControl extends TagControl
 		super.setAttribute("alt", this.altText);
 		if (this.overrideHeight<=0 && this.overrideWidth<=0)
 		{
-			if (this.width>0)
+			if (this.width>0 && super.getAttribute("width")==null)
 			{
 				super.setAttribute("width", String.valueOf(this.width));
 			}
-			if (this.height>0)
+			if (this.height>0 && super.getAttribute("height")==null)
 			{
 				super.setAttribute("height", String.valueOf(this.height));
 			}
 		}
 		else
 		{
-			if (this.overrideWidth>0)
+			if (this.overrideWidth>0 && super.getAttribute("width")==null)
 			{
 				super.setAttribute("width", String.valueOf(this.overrideWidth));
 			}
-			if (this.overrideHeight>0)
+			if (this.overrideHeight>0 && super.getAttribute("height")==null)
 			{
 				super.setAttribute("height", String.valueOf(this.overrideHeight));
 			}

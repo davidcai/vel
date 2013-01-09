@@ -23,7 +23,6 @@ public class WideLinkGroupControl
 		private Image image;
 		private String imageSizeSpec;
 		private String imageAltText;
-		private String imageURL;
 		private String url;
 		private String cssClass;
 		
@@ -78,9 +77,11 @@ public class WideLinkGroupControl
 			return image;
 		}
 		
-		public WideLink setImage(Image image)
+		public WideLink setImage(Image image, String sizeSpec, String altText)
 		{
 			this.image = image;
+			this.imageSizeSpec = sizeSpec;
+			this.imageAltText = altText;
 			return this;
 		}
 		
@@ -89,21 +90,9 @@ public class WideLinkGroupControl
 			return imageSizeSpec;
 		}
 
-		public WideLink setImageSizeSpec(String imageSizeSpec)
-		{
-			this.imageSizeSpec = imageSizeSpec;
-			return this;
-		}
-
 		public String getImageAltText()
 		{
 			return imageAltText;
-		}
-
-		public WideLink setImageAltText(String imageAltText)
-		{
-			this.imageAltText = imageAltText;
-			return this;
 		}
 
 		public String getURL()

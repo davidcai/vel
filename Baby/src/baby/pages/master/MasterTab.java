@@ -44,24 +44,25 @@ public class MasterTab extends EnvelopeTab
 	@Override
 	public String getLabel(WebPage outputPage)
 	{
-		return "";
+		return null;
 //		return Setup.getAppTitle(outputPage.getLocale());
 	}
 
 	@Override
 	public String getIcon(WebPage outputPage)
 	{
-		if (outputPage.getContext().getUserAgent().isSmartPhone())
+		RequestContext ctx = outputPage.getContext();
+		if (ctx.getUserAgent().isSmartPhone())
 		{
-			if (outputPage.getContext().getUserID()==null)
+			if (ctx.getUserID()==null)
 			{
 				// Wide logo
 				return "baby/corner-logo-60.png";
 			}
 			else
 			{
-				// Square logo
-				return "baby/tab-home.png";
+				// We do not show the master tab on a mobile device when the user is logged in
+				return null;
 			}
 		}
 		else

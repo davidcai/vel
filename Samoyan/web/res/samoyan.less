@@ -26,9 +26,9 @@
 	box-sizing: @box; -moz-box-sizing: @box; -ms-box-sizing: @box; -webkit-box-sizing: @box;
 }
 .border-radius (@radius) {
-	   -moz-border-radius: @radius;
+	-moz-border-radius: @radius;
 	-webkit-border-radius: @radius;
-	        border-radius: @radius;
+	border-radius: @radius;
 }
 .scale (@magnitude) {
     -moz-transform: scale(@magnitude);
@@ -52,10 +52,10 @@
 	background-image: linear-gradient(top, @from 0%, @to 100%);
 }
 .transition (@prop, @duration) {
-     -moz-transition: @prop @duration;
-       -o-transition: @prop @duration;
-  -webkit-transition: @prop @duration;
-          transition: @prop @duration;
+	-moz-transition: @prop @duration;
+	-o-transition: @prop @duration;
+	-webkit-transition: @prop @duration;
+	transition: @prop @duration;
 }
 
 // ---------- Basic tags ----------
@@ -717,7 +717,7 @@ DIV.InfoMessage {
 		&.Current {
 			background: url('tab-current.png') bottom center no-repeat;
 			background-size: 16px 8px;
-			&.Home {
+			&.Home, &:only-child {
 				background: none;
 			}
 		}
@@ -755,6 +755,9 @@ DIV.InfoMessage {
 	TD {
 		&.Current {
 			.Light50;
+			&:only-child {
+				background: none;
+			}
 		}
 		&.Tab {
 			border: none;
@@ -787,6 +790,9 @@ DIV.InfoMessage {
 #layout {
 	width: 100%;
 	height: 100%;
+	> TBODY > TR > TD {
+		padding: 0px;
+	}
 }
 .SmartPhone #layout {
 	height: auto;

@@ -2,6 +2,7 @@ package baby.pages.journey;
 
 import java.util.Calendar;
 
+import samoyan.controls.ImageControl;
 import samoyan.controls.ImageInputControl;
 import samoyan.controls.TextAreaInputControl;
 import samoyan.core.ParameterMap;
@@ -71,7 +72,10 @@ public class JournalEntryPage extends BabyPage
 			this.entry.setHasPhoto(photo != null);
 			this.entry.setPhoto(photo);
 			
-			this.entry.setCreated(Calendar.getInstance(getTimeZone()).getTime());
+			if (this.entry.getCreated() == null)
+			{
+				this.entry.setCreated(Calendar.getInstance(getTimeZone()).getTime());
+			}
 	
 			JournalEntryStore.getInstance().save(this.entry);
 		}
@@ -99,8 +103,12 @@ public class JournalEntryPage extends BabyPage
 		// Photo preview
 		if (this.entry.isHasPhoto())
 		{
-			writeImage(this.entry.getPhoto(), BabyConsts.IMAGESIZE_BOX_400X400, null, 
-				getPageURL(PhotoPage.COMMAND, new ParameterMap(PhotoPage.PARAM_ID, this.entry.getID().toString())));
+			new ImageControl(this)
+				.img(this.entry.getPhoto(), BabyConsts.IMAGESIZE_BOX_400X400)
+				.url(getPageURL(PhotoPage.COMMAND, new ParameterMap(PhotoPage.PARAM_ID, this.entry.getID().toString())))
+				.setAttribute("width", ua.isSmartPhone()? "100%" : null)
+				.setAttribute("height", ua.isSmartPhone()? "" : null)
+				.render();
 			write("<br>");
 			new ImageInputControl(this, "photo").showThumbnail(false).setInitialValue(this.entry.getPhoto()).render();
 			write("<br>");
@@ -110,7 +118,7 @@ public class JournalEntryPage extends BabyPage
 		new TextAreaInputControl(this, "text")
 			.setRows(3).setCols(80)
 			.setMaxLength(JournalEntry.MAXSIZE_TEXT)
-			.setPlaceholder(getString("journey:JournalEntry.WhatIsOnYourMind"))
+			.setPlaceholder(getString("journey:JournalEntry.ImageDescription"))
 			.setInitialValue(this.entry.getText())
 			.render();
 		write("<br>");

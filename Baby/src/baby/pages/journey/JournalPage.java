@@ -156,7 +156,7 @@ public class JournalPage extends BabyPage
 			
 			Day today = new Day(getTimeZone(), new Date());
 			boolean phone = getContext().getUserAgent().isSmartPhone();
-			DateFormat dfDow = DateFormatEx.getSimpleInstance(phone ? "EEE" : "EEEE','", getLocale(), getTimeZone());
+			DateFormat dfDow = DateFormatEx.getSimpleInstance(phone ? "EEE" : "EEEE", getLocale(), getTimeZone());
 			DateFormat dfDate = DateFormatEx.getLongDateInstance(getLocale(), getTimeZone());
 		
 			for (Day day : entriesByDates.keySet())
@@ -204,7 +204,7 @@ public class JournalPage extends BabyPage
 							Image photo = entry.getPhoto();
 							if (photo != null)
 							{
-								wl.setImage(photo).setImageSizeSpec(BabyConsts.IMAGESIZE_THUMB_50X50);
+								wl.setImage(photo, BabyConsts.IMAGESIZE_THUMB_50X50, entry.getText());
 								cssClass += " PhotoEntry";
 							}
 						}

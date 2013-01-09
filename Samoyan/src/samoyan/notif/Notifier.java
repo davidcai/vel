@@ -23,7 +23,6 @@ import samoyan.email.EmailListener;
 import samoyan.email.EmailMessage;
 import samoyan.email.EmailServer;
 import samoyan.servlet.Channel;
-import samoyan.servlet.Setup;
 import samoyan.sms.SmsListener;
 import samoyan.sms.SmsMessage;
 import samoyan.sms.SmsServer;
@@ -43,11 +42,11 @@ public class Notifier implements EmailListener, SmsListener, TwitterListener
 	
 	public static void init()
 	{
-		if (Setup.isDebug())
-		{
-			// Will prevent unlimited tasks from being created when debugging
-			instance.executor = Executors.newFixedThreadPool(4);
-		}
+//		if (Setup.isDebug())
+//		{
+//			// Will prevent unlimited tasks from being created when debugging
+//			instance.executor = Executors.newFixedThreadPool(4);
+//		}
 		
 		EmailServer.addListener(instance);
 		SmsServer.addListener(instance);

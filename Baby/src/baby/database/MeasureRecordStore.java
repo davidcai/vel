@@ -71,4 +71,19 @@ public class MeasureRecordStore extends DataBeanStore<MeasureRecord>
 			"SELECT ID FROM MeasureRecords WHERE UserID=? AND CreatedDate>=? AND CreatedDate<? ORDER BY CreatedDate DESC",
 			new ParameterList().plus(userID).plus(from.getTime()).plus(to.getTime()));
 	}
+	
+	/**
+	 * Gets all measure records with the same date.
+	 * 
+	 * @param userID
+	 * @param date
+	 * @return
+	 * @throws Exception
+	 */
+	public List<UUID> getByDate(UUID userID, Date date) throws Exception
+	{
+		return Query.queryListUUID(
+			"SELECT ID FROM MeasureRecords WHERE UserID=? AND CreatedDate=? ORDER BY CreatedDate DESC",
+			new ParameterList().plus(userID).plus(date.getTime()));
+	}
 }

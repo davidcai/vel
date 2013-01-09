@@ -46,7 +46,10 @@ import samoyan.notif.Notifier;
 import samoyan.servlet.exc.*;
 import samoyan.servlet.exc.UnavailableException;
 import samoyan.sms.SmsServer;
+import samoyan.syslog.RenderFileLogEntry;
 import samoyan.syslog.RenderHTMLLogEntry;
+import samoyan.syslog.RenderImageLogEntry;
+import samoyan.syslog.RenderNotFoundLogEntry;
 import samoyan.syslog.SystemShutdownLogEntry;
 import samoyan.syslog.SystemStartLogEntry;
 import samoyan.tasks.CleanTempFilesRecurringTask;
@@ -193,28 +196,40 @@ public class Controller extends HttpServlet
 			
 			// Subclass
 			this.terminate(); // Call subclass
+			System.out.println(Setup.getAppID() + " shutdown 1: " + (System.currentTimeMillis()-start));
 			
 			// Execution manager
 			TaskManager.terminateAll();
-
+			System.out.println(Setup.getAppID() + " shutdown 2: " + (System.currentTimeMillis()-start));
+			
 			// Notifier
 			Notifier.terminate();
-
+			System.out.println(Setup.getAppID() + " shutdown 3: " + (System.currentTimeMillis()-start));
+			
 			// Channel servers
 			TwitterServer.terminate();
+			System.out.println(Setup.getAppID() + " shutdown 4: " + (System.currentTimeMillis()-start));
+			
 			SmsServer.terminate();
+			System.out.println(Setup.getAppID() + " shutdown 5: " + (System.currentTimeMillis()-start));
+			
 			EmailServer.terminate();
+			System.out.println(Setup.getAppID() + " shutdown 6: " + (System.currentTimeMillis()-start));
+			
 			
 			// Log system shutdown event
 			SystemShutdownLogEntry logEvent = new SystemShutdownLogEntry(System.currentTimeMillis() - start);
 			logEvent.setTime(new Date(start));
 			LogEntryStore.log(logEvent);
+			System.out.println(Setup.getAppID() + " shutdown 7: " + (System.currentTimeMillis()-start));
 			
 			// Terminate system log
 			LogEntryStore.terminate();
-
+			System.out.println(Setup.getAppID() + " shutdown 8: " + (System.currentTimeMillis()-start));
+			
 			// Close database
 			Database.getInstance().close();			
+			System.out.println(Setup.getAppID() + " shutdown 9: " + (System.currentTimeMillis()-start));
 		}
 		catch (Exception e)
 		{
@@ -831,8 +846,8 @@ public class Controller extends HttpServlet
 			buf.append("</body></html>");
 			
 			PrintWriter wrt = response.getWriter();
-			wrt.flush();
 			wrt.write(buf.toString());
+			wrt.flush();
 		}
 		else if (fromHttps==true && redirectExc.isSecureSocket()==false && webChannel)
 		{
@@ -861,8 +876,8 @@ public class Controller extends HttpServlet
 			buf.append("</body></html>");
 			
 			PrintWriter wrt = response.getWriter();
-			wrt.flush();
 			wrt.write(buf.toString());
+			wrt.flush();
 		}
 		else
 		{
@@ -941,15 +956,16 @@ public class Controller extends HttpServlet
 				totalLen += len;
 				out.write(buffer, 0, len);
 			}
+			out.flush();
 		}
 		catch (Exception exc)
 		{
 			// Ignore. Mostly connection aborts.
 		}
-		finally
-		{
-			out.close();
-		}
+//		finally
+//		{
+//			out.close();
+//		}
 		
 		return totalLen;
 	}
@@ -972,6 +988,8 @@ public class Controller extends HttpServlet
 	
 	private void serviceInternal(RequestContext ctx, HttpServletRequest request, HttpServletResponse response) throws Exception
 	{
+		long startTime = System.currentTimeMillis();
+
 		// Safety check
 		String cmd = ctx.getCommand();
 		String cmdUpper = ctx.getCommand().toUpperCase(Locale.US);
@@ -1005,6 +1023,9 @@ public class Controller extends HttpServlet
 
 		// Request for file
 		if (serveFile(ctx, request, response)) return;
+		
+		// Log the unrecognized request
+		LogEntryStore.log(new RenderNotFoundLogEntry(System.currentTimeMillis() - startTime));
 		
 		throw new PageNotFoundException();
 	}
@@ -1267,6 +1288,9 @@ public class Controller extends HttpServlet
 	
 	private boolean serveFile(RequestContext ctx, HttpServletRequest request, HttpServletResponse response) throws Exception
 	{
+		long startTime = System.currentTimeMillis();
+		long renderDuration = 0;
+
 		String path = ctx.getCommand();
 		String mimeType = instance.getServletContext().getMimeType(path);
 		int ratio = Math.round(ctx.getUserAgent().getPixelRatio());
@@ -1307,41 +1331,59 @@ public class Controller extends HttpServlet
 			return false;
 		}
 		
+		renderDuration = System.currentTimeMillis() - startTime;
+		
+		// Deliver
 		setCacheHeaders(request, response, true);
 
 		// Not need to cache. Caching implemented by Tomcat.
-		outputBytes(stm, 0, mimeType, isGzipCompress(ctx, mimeType), response);
+		int len = outputBytes(stm, 0, mimeType, isGzipCompress(ctx, mimeType), response);
+		
+		long deliverDuration = System.currentTimeMillis() - startTime - renderDuration;
+
+		// Log
+		LogEntryStore.log(new RenderFileLogEntry(renderDuration, deliverDuration, len));
+		
 		return true;
 	}
 		
 	private boolean serveImage(RequestContext ctx, HttpServletRequest request, HttpServletResponse response) throws Exception
 	{
+		long startTime = System.currentTimeMillis();
+		long renderDuration = 0;
+
 		String cmd = ctx.getCommand(1);
 		if (cmd.equalsIgnoreCase(UrlGenerator.COMMAND_IMAGE)==false)
 		{
 			return false;
 		}
 		
+		// Fetch/render image
 		String uuidStr = ctx.getCommand(2);
 		if (!Util.isUUID(uuidStr))
 		{
-			return false;
+			throw new PageNotFoundException();
 		}
 		UUID imgID = UUID.fromString(uuidStr);
-
 		String size = ctx.getCommand(3);
-		
 		float ratio = ctx.getUserAgent().getPixelRatio();
-		
 		Image img = ImageStore.getInstance().loadAndResize(imgID, size, ratio);
 		if (img==null)
 		{
-			return false;
+			throw new PageNotFoundException();
 		}
 		
-		setCacheHeaders(request, response, true);
+		renderDuration = System.currentTimeMillis() - startTime;
 		
+		// Deliver
+		setCacheHeaders(request, response, true);
 		outputBytes(img.getBytes(), img.getMimeType(), false, response);
+
+		long deliverDuration = System.currentTimeMillis() - startTime - renderDuration;
+
+		// Log
+		LogEntryStore.log(new RenderImageLogEntry(renderDuration, deliverDuration, img.getBytes().length));
+
 		return true;
 	}
 	

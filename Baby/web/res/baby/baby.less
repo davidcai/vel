@@ -1,23 +1,14 @@
 // ---------- Mixins ----------
 .border-radius (@radius) {
-	   -moz-border-radius: @radius;
+	-moz-border-radius: @radius;
 	-webkit-border-radius: @radius;
-	        border-radius: @radius;
-}
-.background-gradient-top (@from, @to) {
-	background-color: @from;
-	background-image: -moz-linear-gradient(top, @from 0%, @to 100%);
-	background-image: -o-linear-gradient(top, @from 0%, @to 100%);
-	background-image: -webkit-linear-gradient(top, @from 0%, @to 100%);
-	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, @from 0%), color-stop(1, @to 100%));
-	filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr=@from 0%, EndColorStr=@to 100%)";
-	background-image: linear-gradient(top, @from 0%, @to 100%);
+	border-radius: @radius;
 }
 .transition (@prop, @duration) {
-     -moz-transition: @prop @duration;
-       -o-transition: @prop @duration;
-  -webkit-transition: @prop @duration;
-          transition: @prop @duration;
+	-moz-transition: @prop @duration;
+	-o-transition: @prop @duration;
+	-webkit-transition: @prop @duration;
+	transition: @prop @duration;
 }
 
 // ---------- Baby ----------
@@ -25,14 +16,10 @@
 A {
 	text-decoration: none;
 }
-
-// Don't highlight the home tab on mobile
-.SmartPhone .TabBar TD.Current.Home {
-	background: none;
-}
-
-.SmartPhone #footer {
-	display: none;
+INPUT[type="submit"],INPUT[type="button"] {
+	&:hover {
+		text-decoration: none;
+	}
 }
 
 .ChecklistOverdue {
@@ -219,6 +206,12 @@ TABLE.PhotoGrid TD {
 	.Checkitems TD {
 		padding-top: 0.25em;
 	}
+	.MoreLink {
+		color: @color-text-light;
+		font: @font-small;
+		cursor: hand;
+		cursor: pointer;
+	}
 }
 
 //
@@ -318,65 +311,128 @@ BODY[uri="/"].Computer {
 	H1 {
 		display: none;
 	}
+	#colored {
+		color: @color-background;
+		background-color: @color-accent;
+		border-top: solid 8px @color-secondary-accent;
+		border-bottom: solid 8px @color-secondary-accent;
+		> TBODY > TR > TD:first-child {
+			padding: 10px;
+		}
+	}
 	#spiel {
 		H2 {
 			font: @font-huge;
+			color: @color-background;
 		}
 		font: @font-large;
 	}
 	#loginframe {
-		.border-radius(10px);
-		border: solid 1px @color-text-light;
-		background-color: rgba(0,0,0,0.1);
-		padding: 30px 0px 15px 0px;
-		margin-top: 15px;
+		margin: 0px 30px;
+		padding: 15px;
+		background-color: @color-background;
+		color: @color-text;
+		A {
+			color: @color-link;
+			&:hover {
+				color: @color-hover;
+			}
+		}
+	}
+	#benefits TD {
+		border-right: dashed 1px @color-text-light;
+		padding: 10px;
+		&:last-child {
+			border: none;
+			padding-right: 0px;
+		}
+		&:first-child {
+			padding-left: 0px;
+		}
+	}
+	#page {
+		padding-top: 0px;
 	}
 }
 BODY[uri="/"].SmartPhone {
-	#loginframe {
-		border-top: 1px solid @color-text-light;
-		border-bottom: 1px solid @color-text-light;
-		background-color: @color-background-dark;
-		padding: 5px 0px;
-		margin: 10px 0px;
+	H2 {
+		color: @color-background;
+	}
+	#colored {
+		color: @color-background;
+		background-color: @color-accent;
+		border-top: solid 8px @color-secondary-accent;
+		border-bottom: solid 8px @color-secondary-accent;
 	}
 }
+
+#footer {
+	border-top: dotted 1px @color-background-dark;
+	margin: 15px 0px;
+	color: @color-text-light;
+	background: @color-background;
+	A {
+		color: @color-text-light;
+		&:hover {
+			color: @color-hover;
+		}
+	}
+}
+
+//
+// Navbar
+//
+
+BODY[uri="/"], BODY[uri="/join"], BODY[uri="/profile"] {
+	#navbar {
+		display: none;
+	}
+}
+BODY[uri^="/setup"] {
+	.NavTree UL UL {
+		list-style-type: decimal;
+	}
+}
+
+//BODY[uri^="/profile"].Computer,
+//BODY[uri^="/info"].Computer {
+//	#navbar {
+//		display: none;
+//	}
+//}
 
 //
 // Journal page
 //
 
-BODY[uri="/journey/journal"] {
-	#NewJournalEntryPanel {
-		overflow: hidden;
-		height: 0;
-		.transition(height, 0.5s);
-		
-		&.Expanded {
-			height: 145px;
-		}
+#NewJournalEntryPanel {
+	overflow: hidden;
+	height: 0;
+	.transition(height, 0.5s);
+	
+	&.Expanded {
+		height: 145px;
 	}
-	
-	#EntriesList {
-	
-		.Date {
-			padding: 0.7em 0.5em;
-			font-weight: bold;
-			color: @color-accent;
-			.background-gradient-top(lighten(@color-negative-background, 40%), lighten(@color-negative-background, 35%));
+}
+
+#EntriesList {
+	.Date {
+		padding: 0px 5px;
+		font: @font-small;
+		color: @color-background;
+		background-color: @color-text-light;
+	}
+	.Date:first-child {
+		border-top: 1px solid @color-text-light;
+	}
+
+	.WideLinks > A {
+		& > IMG {
+			float: left;
+			margin-right: 0.5em;
 		}
-		.Date:first-child {
-			border-top: 1px solid @color-text-light;
-		}
-	
-		.WideLinks > A {
-			& > IMG {
-				float: left;
-				margin-right: 0.5em;
-			}
-			& > .Title {
-				font-weight: normal;
-			}
+		& > .Title {
+			font-weight: normal;
 		}
 	}
 }

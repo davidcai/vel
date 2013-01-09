@@ -58,4 +58,10 @@ public class BabyProfileTab extends ProfileTab
 	{
 		return "baby/tab-profile.png";
 	}
+	
+	@Override
+	public String getLabel(WebPage outputPage)
+	{
+		return outputPage.getString("babyprofile:Nav.TabTitle");
+	}
 }

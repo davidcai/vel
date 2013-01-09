@@ -1,9 +1,11 @@
 package baby.app;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
-import samoyan.apps.guidedsetup.GuidedSetupTab;
+import samoyan.apps.master.PrivacyPage;
+import samoyan.apps.master.TermsPage;
 import samoyan.controls.MetaTagControl;
 import samoyan.database.Permission;
 import samoyan.database.PermissionStore;
@@ -12,12 +14,14 @@ import samoyan.database.UserStore;
 import samoyan.servlet.EnvelopePage;
 import samoyan.servlet.EnvelopeTab;
 import samoyan.servlet.RequestContext;
+import samoyan.servlet.Setup;
 import baby.pages.admin.AdminTab;
 import baby.pages.content.ContentTab;
 import baby.pages.info.InfoTab;
 import baby.pages.journey.JourneyTab;
 import baby.pages.master.MasterTab;
 import baby.pages.profile.BabyProfileTab;
+import baby.pages.setup.SetupTab;
 
 public class BabyEnvelopePage extends EnvelopePage
 {
@@ -29,21 +33,16 @@ public class BabyEnvelopePage extends EnvelopePage
 	private static EnvelopeTab journeyTab = new JourneyTab();
 	private static EnvelopeTab profileTab = new BabyProfileTab();
 //	private static EnvelopeTab messagingTab = new MessagingTab();
-	private static EnvelopeTab setupTab = new GuidedSetupTab();
+	private static EnvelopeTab setupTab = new SetupTab();
 	
 	@Override
 	protected List<EnvelopeTab> getTabs() throws Exception
 	{
 		RequestContext ctx = getContext();
 		User user = UserStore.getInstance().load(ctx.getUserID());
-		boolean phone = ctx.getUserAgent().isSmartPhone();
 		
 		List<EnvelopeTab> result = new ArrayList<EnvelopeTab>(6);
-		if (!phone || user==null)
-		{
-			// We do not show the master tab on a mobile device when the user is logged in
-			result.add(masterTab);
-		}
+		result.add(masterTab);
 		
 		if (user!=null)
 		{
@@ -93,38 +92,38 @@ public class BabyEnvelopePage extends EnvelopePage
 		ctrl.render();
 	}
 
-//	@Override
-//	protected void renderHTMLFooter() throws Exception
-//	{
-//		boolean smartPhone = getContext().getUserAgent().isSmartPhone();
-//		Calendar cal = Calendar.getInstance(getTimeZone());
-//
-//		String appOwner = Setup.getAppOwner(getLocale());
-//		if (!smartPhone)
-//		{
-//			write("<table width=\"100%\"><tr valign=middle><td>");
-//			writeImage("baby/footer-logo.png", appOwner, "http://www.kp.org");
-//			write("</td><td align=right>");
-//			writeEncode(getString("baby:App.Copyright", String.valueOf(cal.get(Calendar.YEAR)), appOwner));
-//			write(" | ");
-//			writeLink(getString("baby:Nav.Terms"), getPageURL(TermsPage.COMMAND));
-//			write(" | ");
-//			writeLink(getString("baby:Nav.Privacy"), getPageURL(PrivacyPage.COMMAND));
-//			write("</td></tr></table>");
-//		}
-//		else
-//		{
-//			write("<div align=center>");
-//			writeImage("baby/footer-logo.png", appOwner, "http://www.kp.org");
-//			write("<br>");
-//			writeEncode(getString("baby:App.Copyright", String.valueOf(cal.get(Calendar.YEAR)), appOwner));
-//			write("<br>");
-//			writeLink(getString("baby:Nav.Terms"), getPageURL(TermsPage.COMMAND));
-//			write(" | ");
-//			writeLink(getString("baby:Nav.Privacy"), getPageURL(PrivacyPage.COMMAND));
-//			write("</div>");
-//		}
-//	}
+	@Override
+	protected void renderHTMLFooter() throws Exception
+	{
+		boolean smartPhone = getContext().getUserAgent().isSmartPhone();
+		Calendar cal = Calendar.getInstance(getTimeZone());
+
+		String appOwner = Setup.getAppOwner(getLocale());
+		if (!smartPhone)
+		{
+			write("<table width=\"100%\"><tr valign=middle><td>");
+			writeImage("baby/kaiser-permanente-logo.png", appOwner, "http://www.kp.org");
+			write("</td><td align=right>");
+			writeEncode(getString("baby:Envelope.Copyright", String.valueOf(cal.get(Calendar.YEAR)), appOwner));
+			write(" | ");
+			writeLink(getString("baby:Envelope.Terms"), getPageURL(TermsPage.COMMAND));
+			write(" | ");
+			writeLink(getString("baby:Envelope.Privacy"), getPageURL(PrivacyPage.COMMAND));
+			write("</td></tr></table>");
+		}
+		else
+		{
+			write("<div align=center>");
+			writeImage("baby/kaiser-permanente-logo.png", appOwner, "http://www.kp.org");
+			write("<br>");
+			writeEncode(getString("baby:Envelope.Copyright", String.valueOf(cal.get(Calendar.YEAR)), appOwner));
+			write("<br>");
+			writeLink(getString("baby:Envelope.Terms"), getPageURL(TermsPage.COMMAND));
+			write(" | ");
+			writeLink(getString("baby:Envelope.Privacy"), getPageURL(PrivacyPage.COMMAND));
+			write("</div>");
+		}
+	}
 
 //	@Override
 //	protected String getApplicationLogo()
@@ -132,9 +131,9 @@ public class BabyEnvelopePage extends EnvelopePage
 //		return "baby/email-banner.png";
 //	}
 //
-//	@Override
-//	protected String getOwnerLogo()
-//	{
-//		return "baby/email-logo.png";
-//	}
+	@Override
+	protected String getOwnerLogo()
+	{
+		return "baby/kaiser-permanente-logo.png";
+	}
 }

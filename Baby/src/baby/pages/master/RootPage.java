@@ -44,32 +44,40 @@ public class RootPage extends WebPage
 		
 		if (!phone)
 		{
-			write("<table><tr><td width=\"67%\" id=spiel>");
+			write("<table id=colored><tr><td>");
 			
+			write("<div id=spiel>");
 			write("<h2>");
 			writeEncode(getString("baby:Root.Welcome", appTitle, appOwner));
 			write("</h2>");
 			write(Util.textToHtml(getString("baby:Root.Spiel", appTitle, appOwner)));
+			write("</div><br>");
+			
+			// Login
+			if (user==null)
+			{
+				write("<div id=loginframe>");
+				new LoginControl(this).showPrompt(false).render();
+				write("</div><br>");
+			}
+			
+			// Signup
 			if (user==null && fed.isOpenRegistration())
 			{
-				write("<br><br>");
 				writeFormOpen("GET", JoinPage.COMMAND);
+				write("<table><tr valign=middle><td>");
+				writeEncode(getString("baby:Root.RegisterHelp"));
+				write("</td><td>");
 				writeButton(getString("baby:Root.Register"));
+				write("</td></tr></table>");
 				writeFormClose();
 			}
 			
-			write("</td>");
+			write("</td><td>");
 			
-			if (user==null)
-			{
-				write("<td width=\"33%\">");
-				write("<div id=loginframe>");
-				new LoginControl(this).showPrompt(false).render();
-				write("</div>");
-				write("</td>");
-			}
+			writeImage("baby/decor.jpg", Setup.getAppTitle(getLocale()));
 			
-			write("</tr></table>");
+			write("</td></tr></table>");
 			write("<br>");
 			
 			write("<table id=benefits><tr>");
@@ -86,23 +94,41 @@ public class RootPage extends WebPage
 		}
 		else
 		{
+			write("<div id=colored>");
+			
+			write("<div id=spiel>");
 			write("<h2>");
 			writeEncode(getString("baby:Root.Welcome", appTitle, appOwner));
 			write("</h2>");
 			write(Util.textToHtml(getString("baby:Root.Spiel", appTitle, appOwner)));
+			write("</div>");
+			
+			write("</div><br>");
 
+			// Login
 			if (user==null)
 			{
 				write("<div id=loginframe>");
-				new LoginControl(this).render();
-				write("</div>");
+				new LoginControl(this).showPrompt(false).render();
+				write("</div><br>");
 			}
-			else
+			
+			// Signup
+			if (user==null && fed.isOpenRegistration())
 			{
-				write("<div align=center id=loginframe>");
-				new ImageControl(this).resource("baby/logo.png").render();
+				write("<div align=center>");
+				writeFormOpen("GET", JoinPage.COMMAND);
+				writeEncode(getString("baby:Root.RegisterHelp"));
+				write("<br>");
+				writeButton(getString("baby:Root.Register"));
+				writeFormClose();
 				write("</div>");
 			}
+			
+			write("<br>");
+			write("<div id=colored>");
+			new ImageControl(this).resource("baby/decor.jpg").setAttribute("width", "100%").setAttribute("height", "").render();
+			write("</div><br>");
 			
 			for (int i=1; i<=3; i++)
 			{
@@ -112,23 +138,7 @@ public class RootPage extends WebPage
 				writeEncode(getString("baby:Root.Benefit." + i, appTitle, appOwner));
 				write("<br><br>");
 			}
-		}
-		
-		// Custom CSS
-		write("<style>");
-			if (!phone)
-			{
-				// Background image on #middle
-				write("#middle{background-image:url(\"");
-				writeEncode(getResourceURL("baby/babies-background.jpg"));
-				write("\");background-position:top center;background-repeat:no-repeat;}");
-			}
-			if (ctx.getUserID()==null)
-			{
-				// Hide navbar when not logged in
-				write("#navbar{display:none;}");
-			}
-		write("</style>");
+		}		
 	}
 	
 	@Override

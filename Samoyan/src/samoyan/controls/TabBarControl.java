@@ -52,6 +52,12 @@ public class TabBarControl extends WebPage
 		write("\"><tr>");
 		for (Icon t : this.tabs)
 		{
+			if (t.image==null && Util.isEmpty(t.title))
+			{
+				// Don't show tabs without icon and text
+				continue;
+			}
+			
 			boolean homeTab = Util.isEmpty(t.command);
 			
 			write("<td class=\"Tab");

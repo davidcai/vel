@@ -63,7 +63,7 @@ public final class ConsolidatedProfilePage extends BabyPage
 		// - - -
 
 		write("<h2>");
-		writeEncode(getString("babyprofile:Consolidated.SubtitlePregnancy"));
+		writeEncode(getString("babyprofile:Nav.Pregnancy"));
 		write("</h2>");
 			
 		WideLinkGroupControl wlg = new WideLinkGroupControl(this);
@@ -108,13 +108,16 @@ public final class ConsolidatedProfilePage extends BabyPage
 				}
 			}
 		}
-		else if (babyIDs.size()<=8)
+		if (Util.isEmpty(names))
 		{
-			names = getString("babyprofile:Consolidated.BabyCountName." + babyIDs.size());
-		}
-		else
-		{
-			names = getString("babyprofile:Consolidated.BabyCountName.N", babyIDs.size());
+			if (babyIDs.size()<=8)
+			{
+				names = getString("babyprofile:Consolidated.BabyCountName." + babyIDs.size());
+			}
+			else
+			{
+				names = getString("babyprofile:Consolidated.BabyCountName.N", babyIDs.size());
+			}
 		}
 		wlg.addLink()
 			.setTitle(getString("babyprofile:Consolidated.Babies", babyIDs.size()))
@@ -132,7 +135,7 @@ public final class ConsolidatedProfilePage extends BabyPage
 		// - - -
 		
 		write("<br><h2>");
-		writeEncode(getString("babyprofile:Consolidated.SubtitleAccount"));
+		writeEncode(getString("babyprofile:Nav.Account"));
 		write("</h2>");
 			
 		wlg = new WideLinkGroupControl(this);
@@ -155,7 +158,16 @@ public final class ConsolidatedProfilePage extends BabyPage
 			.setValue("********")
 			.setURL(getPageURL(ChangePasswordPage.COMMAND, goBackParams));
 
+		wlg.render();
 		
+		// - - -
+
+		write("<br><h2>");
+		writeEncode(getString("babyprofile:Nav.ContactInfo"));
+		write("</h2>");
+
+		wlg = new WideLinkGroupControl(this);
+
 		// Email
 		wlg.addLink()
 			.setTitle(getString("babyprofile:Consolidated.Email"))
@@ -204,6 +216,16 @@ public final class ConsolidatedProfilePage extends BabyPage
 				.setURL(getPageURL(PhonePage.COMMAND));
 		}
 				
+		wlg.render();
+		
+		// - - -
+
+		write("<br><h2>");
+		writeEncode(getString("babyprofile:Nav.Preferences"));
+		write("</h2>");
+
+		wlg = new WideLinkGroupControl(this);
+
 		// Units
 		wlg.addLink()
 			.setTitle(getString("babyprofile:Consolidated.Units"))

@@ -36,7 +36,16 @@ public final class SearchPage extends BabyPage
 		if (!Util.isEmpty(q))
 		{
 			List<UUID> articleIDs = ArticleStore.getInstance().searchByText(q, mother.getRegion());
-			writeEncode(getString("information:Search.ResultsFound", articleIDs.size()));
+			
+			write("<br>");
+			if (articleIDs.size()>0)
+			{
+				writeEncode(getString("information:Search.ResultsFound", articleIDs.size()));
+			}
+			else
+			{
+				writeEncode(getString("information:Search.NoResultsFound"));
+			}
 			write("<br><br>");
 			
 			new ArticleListControl(this, articleIDs).showSummary(!phone).render();

@@ -8,6 +8,7 @@ import samoyan.controls.WideLinkGroupControl;
 import samoyan.core.ParameterMap;
 import samoyan.core.Util;
 import samoyan.servlet.RequestContext;
+import samoyan.servlet.exc.RedirectException;
 import baby.database.BabyStore;
 import baby.database.Mother;
 import baby.database.MotherStore;
@@ -22,6 +23,11 @@ public class InformationHomePage extends BabyPage
 	@Override
 	public void renderHTML() throws Exception
 	{
+		if (getContext().getUserAgent().isSmartPhone()==false)
+		{
+			throw new RedirectException(ChecklistPage.COMMAND, null);
+		}
+		
 		writeStageInfo();
 		
 		WideLinkGroupControl wlg = new WideLinkGroupControl(this);
