@@ -230,6 +230,9 @@ public class JournalPage extends BabyPage
 					{
 						MeasureRecord record = (MeasureRecord) obj;
 						
+						WideLink wl = wlg.addLink();
+						
+						wl.setCSSClass("MeasureRecord");
 					}
 				}
 				wlg.render();
