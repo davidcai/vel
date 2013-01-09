@@ -5,6 +5,7 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,7 @@ import samoyan.controls.GoogleGraph;
 import samoyan.controls.LinkToolbarControl;
 import samoyan.controls.TabControl;
 import samoyan.core.DateFormatEx;
+import samoyan.core.Day;
 import samoyan.core.Util;
 import samoyan.database.UserStore;
 import baby.database.Baby;
@@ -35,7 +37,7 @@ public class ChartsPage extends BabyPage
 	{
 		private String title;
 		private boolean forMother;
-		private Map<String, Float> rows;
+		private Map<Day, MeasureRecord> rows;
 		
 		public String getTitle()
 		{
@@ -55,11 +57,11 @@ public class ChartsPage extends BabyPage
 			this.forMother = forMother;
 		}
 
-		public Map<String, Float> getRows()
+		public Map<Day, MeasureRecord> getRows()
 		{
 			if (rows == null)
 			{
-				rows = new LinkedHashMap<String, Float>();
+				rows = new LinkedHashMap<Day, MeasureRecord>();
 			}
 			
 			return rows;
@@ -137,10 +139,14 @@ public class ChartsPage extends BabyPage
 					graph.addColumn(GoogleGraph.STRING, "");
 					graph.addColumn(GoogleGraph.NUMBER, "");
 					
-					for (String date : data.getRows().keySet())
+					DateFormat df = DateFormatEx.getMiniDateInstance(getLocale(), getTimeZone());
+					
+					for (Day day : data.getRows().keySet())
 					{
-						Float val = data.getRows().get(date);
-						graph.addRow(date, new Number[] { val });
+						MeasureRecord rec = data.getRows().get(day);
+						Float val = getMeasureRecordValue(rec);
+						Date date = day.getMidDay(getTimeZone(), 0, 0, 0);
+						graph.addRow(df.format(date), new Number[] { val });
 					}
 					
 					graph.render();
@@ -148,15 +154,16 @@ public class ChartsPage extends BabyPage
 				else
 				{
 					writeEncode(getString("journey:Charts.NotEnoughData"));
+					write("<br><br>");
 				}
-				
-				write("<br>");
 			}
 		}
 		else
 		{
 			writeEncode(getString("journey:Charts.NoRecords"));
 		}
+		
+		write("<br><br>");
 	}
 	
 
@@ -172,7 +179,6 @@ public class ChartsPage extends BabyPage
 		Map<String, GraphData> mapGraphs = new LinkedHashMap<String, GraphData>();
 		UUID userID = getContext().getUserID();
 		String momName = UserStore.getInstance().load(userID).getDisplayName();
-		DateFormat df = DateFormatEx.getMiniDateInstance(getLocale(), getTimeZone());
 		
 		for (UUID recID : sortedRecIDs)
 		{
@@ -205,24 +211,21 @@ public class ChartsPage extends BabyPage
 			GraphData graph = mapGraphs.get(key);
 			if (graph == null)
 			{
-				String unit = this.mom.isMetric() ? measure.getMetricUnit() : measure.getImperialUnit();
-				
 				graph = new GraphData();
+				
+				String unit = this.mom.isMetric() ? measure.getMetricUnit() : measure.getImperialUnit();
 				graph.setTitle(getString("journey:Charts.GraphTitle", name, measure.getLabel(), unit));
 				graph.setForMother(rec.getBabyID() == null);
 				
 				mapGraphs.put(key, graph);
 			}
 			
-			// Don't override existing value for the same date
-			String date = df.format(rec.getCreatedDate());
-			if (graph.getRows().containsKey(date) == false)
+			// For the same date, always use the latest measure values
+			Day day = new Day(getTimeZone(), rec.getCreatedDate());
+			MeasureRecord prevRec = graph.getRows().get(day);
+			if (prevRec == null || rec.getCreatedDate().after(prevRec.getCreatedDate()))
 			{
-				Float val = getMeasureRecordValue(rec);
-				if (val != null)
-				{
-					graph.getRows().put(date, val);
-				}
+				graph.getRows().put(day, rec);
 			}
 		}
 		
