@@ -17,14 +17,22 @@ import samoyan.controls.WideLinkGroupControl.WideLink;
 import samoyan.core.DateFormatEx;
 import samoyan.core.Day;
 import samoyan.core.ParameterMap;
+import samoyan.core.Util;
 import samoyan.database.Image;
+import samoyan.database.UserStore;
 import samoyan.servlet.exc.RedirectException;
 import samoyan.servlet.exc.WebFormException;
 import baby.app.BabyConsts;
+import baby.database.Baby;
+import baby.database.BabyStore;
 import baby.database.JournalEntry;
 import baby.database.JournalEntryStore;
+import baby.database.Measure;
 import baby.database.MeasureRecord;
 import baby.database.MeasureRecordStore;
+import baby.database.MeasureStore;
+import baby.database.Mother;
+import baby.database.MotherStore;
 import baby.pages.BabyPage;
 
 public class JournalPage extends BabyPage
@@ -140,7 +148,10 @@ public class JournalPage extends BabyPage
 		{
 			write("<div id=\"EntriesList\">");
 			
+			//
 			// Group entries by dates. Entries include journal entries and measure records. 
+			//
+			
 			Map<Day, List<Object>> entriesByDates = new LinkedHashMap<Day, List<Object>>();
 			for (UUID entryID : entryIDs)
 			{
@@ -172,10 +183,16 @@ public class JournalPage extends BabyPage
 				}
 			}
 			
+			//
+			// Render entries
+			//
+			
 			Day today = new Day(getTimeZone(), new Date());
 			boolean phone = getContext().getUserAgent().isSmartPhone();
 			DateFormat dfDow = DateFormatEx.getSimpleInstance(phone ? "EEE" : "EEEE", getLocale(), getTimeZone());
 			DateFormat dfDate = DateFormatEx.getLongDateInstance(getLocale(), getTimeZone());
+			Mother mom = MotherStore.getInstance().loadByUserID(userID);
+			String momName = UserStore.getInstance().load(userID).getDisplayName();
 		
 			for (Day day : entriesByDates.keySet())
 			{
@@ -200,9 +217,12 @@ public class JournalPage extends BabyPage
 				
 				// Entry list
 				WideLinkGroupControl wlg = new WideLinkGroupControl(this);
+				WideLink prevLink = null;
+				MeasureRecord prevRec = null;
 				List<Object> entries = entriesByDates.get(day);
 				for (Object obj : entries)
 				{
+					// Journal entry
 					if (obj instanceof JournalEntry)
 					{
 						JournalEntry entry = (JournalEntry) obj;
@@ -226,60 +246,65 @@ public class JournalPage extends BabyPage
 						
 						wl.setCSSClass(cssClass);
 					}
+					// Measure record
 					else if (obj instanceof MeasureRecord)
 					{
-						MeasureRecord record = (MeasureRecord) obj;
+						MeasureRecord rec = (MeasureRecord) obj;
+						Measure m = MeasureStore.getInstance().load(rec.getMeasureID());
 						
-						WideLink wl = wlg.addLink();
+						if (m != null)
+						{
+							// Person name
+							String name = null;
+							if (rec.getBabyID() != null)
+							{
+								Baby baby = BabyStore.getInstance().load(rec.getBabyID());
+								if (baby != null)
+								{
+									// Use baby's name since this record is a baby record.
+									name = Util.isEmpty(baby.getName()) ? getString("journey:Journal.Anonymous") : baby.getName();
+								}
+							}
+							else
+							{
+								name = momName;
+							}
+							
+							if (Util.isEmpty(name) == false)
+							{
+								Float val = getMeasureRecordValue(rec, mom.isMetric());
+								if (val != null)
+								{
+									String label = m.getLabel();
+									String unit = mom.isMetric() ? m.getMetricUnit() : m.getImperialUnit();
+									String title = getString("journey:Journal.MeasureRecord", label, name, val, unit);
+									
+									WideLink wl = prevLink;
+									if (prevRec == null || rec.getCreatedDate().equals(prevRec.getCreatedDate()) == false)
+									{
+										wl = wlg.addLink()
+											.setCSSClass("MeasureRecord")
+											.setURL(getPageURL(MeasureRecordsPage.COMMAND, new ParameterMap(MeasureRecordsPage.PARAM_TIMESTAMP, 
+												String.valueOf(rec.getCreatedDate().getTime()))));
+										prevLink = wl;
+									}
+									
+									wl.setTitle(Util.isEmpty(wl.getTitle()) ? title : wl.getTitle() + ", " + title);
+									
+									prevRec = rec;
+								}
+							}
+						}
 						
-						wl.setCSSClass("MeasureRecord");
-					}
-				}
+					} //-- else if (obj instanceof MeasureRecord)
+					
+				} //-- for entries
+				
 				wlg.render();
 				
-//				// Measure records
-//				List<UUID> recordIDs = MeasureRecordStore.getInstance().getByJournalEntryID(entryID);
-//				if (recordIDs.isEmpty() == false)
-//				{
-//					Set<UUID> measureIDs = new LinkedHashSet<UUID>();
-//					for (UUID recordID : recordIDs)
-//					{
-//						MeasureRecord record = MeasureRecordStore.getInstance().load(recordID);
-//						measureIDs.add(record.getMeasureID());
-//					}
-//					
-//					StringBuilder sb = new StringBuilder(getString("journey:Journal.MeasureRecords"));
-//					int i = 0;
-//					for (UUID measureID : measureIDs)
-//					{
-//						Measure measure = MeasureStore.getInstance().load(measureID);
-//						
-//						if (i > 0)
-//						{
-//							if (i < measureIDs.size() - 1)
-//							{
-//								sb.append(getString("journey:Journal.Comma"));
-//							}
-//							else
-//							{
-//								if (i > 1)
-//								{
-//									sb.append(getString("journey:Journal.Comma"));
-//								}
-//								sb.append(getString("journey:Journal.And"));
-//							}
-//						}
-//						
-//						sb.append(measure.getLabel());
-//						
-//						i++;
-//					}
-//					
-//					wl.setExtra(sb.toString());
-//				}
-			}
+			} //-- for date groups
 			
-			write("</div>"); //-- #Entries
+			write("</div>"); //-- #EntriesList
 		}
 		else
 		{
@@ -287,6 +312,35 @@ public class JournalPage extends BabyPage
 		}
 		
 		writeIncludeJS("baby/journal.js");
+	}
+	
+	/**
+	 * Gets measure record value that is normalized by the specified metric flag.
+	 * 
+	 * @param rec
+	 * @param metric
+	 * @return
+	 * @throws Exception
+	 */
+	private Float getMeasureRecordValue(MeasureRecord rec, boolean metric) throws Exception
+	{
+		Float val = rec.getValue();
+		if (val != null)
+		{
+			Measure m = MeasureStore.getInstance().load(rec.getMeasureID());
+			
+			// Convert value from record's current unit system to mother's unit system
+			if (metric && rec.isMetric() == false)
+			{
+				val = m.toMetric(val);
+			}
+			else if (metric == false && rec.isMetric())
+			{
+				val = m.toImperial(val);
+			}
+		}
+		
+		return val;
 	}
 
 	@Override

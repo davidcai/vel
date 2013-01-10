@@ -28,7 +28,7 @@ public class MeasureRecordsPage extends BabyPage
 {
 	public final static String COMMAND = BabyPage.COMMAND_JOURNEY + "/measurerecords";
 	
-	public final static String PARAM_DATE = "dt";
+	public final static String PARAM_TIMESTAMP = "t";
 	
 	private final static String PARAM_VALUE_PREFIX = "value_";
 	private final static String PARAM_ID_PREFIX = "id_";
@@ -46,7 +46,21 @@ public class MeasureRecordsPage extends BabyPage
 		UUID userID = getContext().getUserID();
 		this.mom = MotherStore.getInstance().loadByUserID(userID);
 		
-		Date date = getParameterDate(PARAM_DATE);
+		// Get date
+		Date date = null;
+		Long time = getParameterLong(PARAM_TIMESTAMP);
+		if (time != null)
+		{
+			try
+			{
+				date = new Date(time);
+			}
+			catch (Exception e)
+			{
+				date = null;
+			}
+		}
+		
 		if (date != null)
 		{
 			//
@@ -179,12 +193,19 @@ public class MeasureRecordsPage extends BabyPage
 	{
 		for (MeasureRecord rec : records)
 		{
-			rec.setValue(getParameterDecimal(getFieldKey(PARAM_VALUE_PREFIX, rec)));
-			
-			// Unit system defined in mother's profile always triumph over record's unit system.
-			rec.setMetric(this.mom.isMetric());
-			
-			MeasureRecordStore.getInstance().save(rec);
+			if (isParameter(PARAM_SAVE))
+			{
+				rec.setValue(getParameterDecimal(getFieldKey(PARAM_VALUE_PREFIX, rec)));
+				
+				// Unit system defined in mother's profile always triumph over record's unit system.
+				rec.setMetric(this.mom.isMetric());
+				
+				MeasureRecordStore.getInstance().save(rec);
+			}
+			else if (isParameter(PARAM_REMOVE))
+			{
+				MeasureRecordStore.getInstance().remove(rec.getID());
+			}
 		}
 	}
 	
@@ -203,7 +224,7 @@ public class MeasureRecordsPage extends BabyPage
 		{
 			writeFormOpen();
 			writeMeasureRecords();
-			writeHiddenInput(PARAM_DATE, getParameterString(PARAM_DATE));
+			writeHiddenInput(PARAM_TIMESTAMP, getParameterString(PARAM_TIMESTAMP));
 			write("<br>");
 			writeSaveButton(PARAM_SAVE, 
 				this.momRecords.isEmpty() ? this.babyRecords.values().iterator().next().get(0) : this.momRecords.get(0));
