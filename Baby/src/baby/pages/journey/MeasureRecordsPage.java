@@ -21,7 +21,6 @@ import baby.database.MeasureRecordStore;
 import baby.database.MeasureStore;
 import baby.database.Mother;
 import baby.database.MotherStore;
-import baby.database.Stage;
 import baby.pages.BabyPage;
 
 public class MeasureRecordsPage extends BabyPage
@@ -36,8 +35,8 @@ public class MeasureRecordsPage extends BabyPage
 	private final static String PARAM_REMOVE = "remove";
 	
 	private Mother mom;
-	private List<MeasureRecord> momRecords = new ArrayList<MeasureRecord>();
-	private Map<UUID, List<MeasureRecord>> babyRecords = new LinkedHashMap<UUID, List<MeasureRecord>>();
+	private List<MeasureRecord> momRecords;
+	private Map<UUID, List<MeasureRecord>> babyRecords;
 	private boolean newRecords;
 	
 	@Override
@@ -68,6 +67,9 @@ public class MeasureRecordsPage extends BabyPage
 			//
 			
 			this.newRecords = false;
+			
+			this.momRecords = new ArrayList<MeasureRecord>();
+			this.babyRecords = new LinkedHashMap<UUID, List<MeasureRecord>>();
 			
 			List<UUID> recordIDs = MeasureRecordStore.getInstance().getByDate(userID, date);
 			for (UUID recordID : recordIDs)
@@ -100,56 +102,10 @@ public class MeasureRecordsPage extends BabyPage
 			//
 			
 			this.newRecords = true;
-			
-			Calendar cal = Calendar.getInstance(getTimeZone(), getLocale());
-			date = cal.getTime();
-			
-			List<UUID> babyIDs = BabyStore.getInstance().getByUser(userID); // Sorted by baby names
-			
-			Stage stage = this.mom.getEstimatedPregnancyStage(date, cal.getTimeZone());
-			List<UUID> measureIDs = filterByStage(MeasureStore.getInstance().getAll(), stage);
-			for (UUID measureID : measureIDs)
-			{
-				// Mother records
-				
-				Measure m = MeasureStore.getInstance().load(measureID);
-				if (m.isForMother())
-				{
-					MeasureRecord rec = new MeasureRecord();
-					rec.setUserID(userID);
-					rec.setMeasureID(measureID);
-					rec.setCreatedDate(date);
-					
-					// By default, use the unit system defined in mother's profile
-					rec.setMetric(this.mom.isMetric());
-					
-					this.momRecords.add(rec);
-				}
-				else
-				{
-					// Duplicate measure records for each baby
-					
-					for (UUID babyID : babyIDs)
-					{
-						MeasureRecord rec = new MeasureRecord();
-						rec.setUserID(userID);
-						rec.setBabyID(babyID);
-						rec.setMeasureID(measureID);
-						rec.setCreatedDate(date);
 
-						// By default, use unit system defined in mother's profile
-						rec.setMetric(this.mom.isMetric());
-						
-						List<MeasureRecord> records = this.babyRecords.get(babyID);
-						if (records == null)
-						{
-							records = new ArrayList<MeasureRecord>();
-							this.babyRecords.put(babyID, records);
-						}
-						records.add(rec);
-					}
-				}
-			}
+			Calendar cal = Calendar.getInstance(getTimeZone(), getLocale());
+			this.momRecords = MeasureRecordsPageHelper.getInstance().createMeasureRecordsForMom(this, this.mom, cal);
+			this.babyRecords = MeasureRecordsPageHelper.getInstance().createMeasureRecordsForBabies(this, this.mom, cal);
 		}
 	}
 	
@@ -288,7 +244,7 @@ public class MeasureRecordsPage extends BabyPage
 
 		Float min = this.mom.isMetric() ? m.getMetricMin() : m.getImperialMin();
 		Float max = this.mom.isMetric() ? m.getMetricMax() : m.getImperialMax();
-		Float val = getMeasureRecordValue(rec);
+		Float val = MeasureRecordsPageHelper.getInstance().getMeasureRecordValue(rec, this.mom.isMetric());
 		
 		if (m.isForMother())
 		{
@@ -299,61 +255,6 @@ public class MeasureRecordsPage extends BabyPage
 		twoCol.write("&nbsp;");
 		twoCol.writeEncode(this.mom.isMetric() ? m.getMetricUnit() : m.getImperialUnit());
 		twoCol.writeHiddenInput(getFieldKey(PARAM_ID_PREFIX, rec), rec.getID().toString());
-	}
-	
-	/**
-	 * Gets measure record value that is normalized by mother's preferred unit system.
-	 * 
-	 * @param rec
-	 * @return
-	 * @throws Exception
-	 */
-	private Float getMeasureRecordValue(MeasureRecord rec) throws Exception
-	{
-		Float val = rec.getValue();
-		if (val != null)
-		{
-			Measure m = MeasureStore.getInstance().load(rec.getMeasureID());
-			
-			// Convert value from record's current unit system to mother's unit system
-			if (this.mom.isMetric() && rec.isMetric() == false)
-			{
-				val = m.toMetric(val);
-			}
-			else if (this.mom.isMetric() == false && rec.isMetric())
-			{
-				val = m.toImperial(val);
-			}
-		}
-		
-		return val;
-	}
-	
-	/**
-	 * Returns measures that are suitable for the specified stage.
-	 * 
-	 * @param measureIDs
-	 * @param stage
-	 * @return
-	 * @throws Exception
-	 */
-	private List<UUID> filterByStage(List<UUID> measureIDs, Stage stage) throws Exception
-	{
-		List<UUID> filteredMeasureIDs = new ArrayList<UUID>();
-		
-		for (UUID measureID : measureIDs)
-		{
-			Measure m = MeasureStore.getInstance().load(measureID);
-			
-			if ((m.isForPreconception() && stage.isPreconception()) || 
-				(m.isForPregnancy() && stage.isPregnancy()) || 
-				(m.isForInfancy() && stage.isInfancy())) 
-			{
-				filteredMeasureIDs.add(measureID);
-			}
-		}
-		
-		return filteredMeasureIDs;
 	}
 	
 	/**

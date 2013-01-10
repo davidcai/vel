@@ -1,6 +1,9 @@
 package baby.pages.journey;
 
 import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import samoyan.controls.ImageControl;
 import samoyan.controls.ImageInputControl;
@@ -14,6 +17,9 @@ import samoyan.servlet.exc.WebFormException;
 import baby.app.BabyConsts;
 import baby.database.JournalEntry;
 import baby.database.JournalEntryStore;
+import baby.database.MeasureRecord;
+import baby.database.Mother;
+import baby.database.MotherStore;
 import baby.pages.BabyPage;
 
 public class JournalEntryPage extends BabyPage
@@ -21,24 +27,33 @@ public class JournalEntryPage extends BabyPage
 	public final static String COMMAND = BabyPage.COMMAND_JOURNEY + "/journalentry";
 	
 	public final static String PARAM_ID = "id";
-	public final static String PARAM_EDIT = "edit";
 	
 	private final static String PARAM_TEXT = "text";
 	private final static String PARAM_PHOTO = "photo";
 	private final static String PARAM_SAVE = "save";
 	private final static String PARAM_REMOVE = "remove";
 	
+	private Mother mom;
 	private JournalEntry entry;
+	private List<MeasureRecord> momRecords;
+	private Map<UUID, List<MeasureRecord>> babyRecords;
 	
 	@Override
 	public void init() throws Exception
 	{
+		UUID userID = getContext().getUserID();
+		this.mom = MotherStore.getInstance().loadByUserID(userID);
+		
 		this.entry = JournalEntryStore.getInstance().open(getParameterUUID(PARAM_ID));
 		if (this.entry == null)
 		{
 			this.entry = new JournalEntry();
+			
+			Calendar cal = Calendar.getInstance(getTimeZone(), getLocale());
+			this.momRecords = MeasureRecordsPageHelper.getInstance().createMeasureRecordsForMom(this, this.mom, cal);
+			this.babyRecords = MeasureRecordsPageHelper.getInstance().createMeasureRecordsForBabies(this, this.mom, cal);
 		}
-		else if (this.entry.getUserID().equals(getContext().getUserID()) == false)
+		else if (this.entry.getUserID().equals(userID) == false)
 		{
 			// Security check: make sure that entry is owned by this user
 			throw new PageNotFoundException();
@@ -131,7 +146,13 @@ public class JournalEntryPage extends BabyPage
 		
 		// Postbacks
 		writeHiddenInput(PARAM_ID, null);
-		writeHiddenInput(PARAM_EDIT, null);
+		
+		// Measure records
+		if (this.momRecords != null || this.babyRecords != null)
+		{
+			
+		}
+		
 		
 		// Buttons and links
 		write("<br>");

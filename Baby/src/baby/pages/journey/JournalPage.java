@@ -3,10 +3,11 @@ package baby.pages.journey;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.UUID;
 
 import samoyan.controls.ButtonInputControl;
@@ -96,7 +97,7 @@ public class JournalPage extends BabyPage
 		if (getContext().getUserAgent().isSmartPhone())
 		{
 			writeFormOpen("GET", JournalEntryPage.COMMAND);
-			new ButtonInputControl(this, JournalEntryPage.PARAM_EDIT)
+			new ButtonInputControl(this, null)
 				.setValue(getString("journey:Journal.AddHotButton"))
 				.setMobileHotAction(true)
 				.setAttribute("class", "NoShow")
@@ -152,7 +153,16 @@ public class JournalPage extends BabyPage
 			// Group entries by dates. Entries include journal entries and measure records. 
 			//
 			
-			Map<Day, List<Object>> entriesByDates = new LinkedHashMap<Day, List<Object>>();
+			Map<Day, List<Object>> entriesByDates = new TreeMap<Day, List<Object>>(new Comparator<Day>()
+			{
+				@Override
+				public int compare(Day d1, Day d2)
+				{
+					return - d1.compareTo(d2);
+				}
+		
+			});
+			
 			for (UUID entryID : entryIDs)
 			{
 				JournalEntry entry = JournalEntryStore.getInstance().load(entryID);
@@ -272,7 +282,7 @@ public class JournalPage extends BabyPage
 							
 							if (Util.isEmpty(name) == false)
 							{
-								Float val = getMeasureRecordValue(rec, mom.isMetric());
+								Float val = MeasureRecordsPageHelper.getInstance().getMeasureRecordValue(rec, mom.isMetric());
 								if (val != null)
 								{
 									String label = m.getLabel();
@@ -289,11 +299,11 @@ public class JournalPage extends BabyPage
 										prevLink = wl;
 									}
 									
-									if (Util.isEmpty(wl.getTitle()) == false)
+									if (Util.isEmpty(wl.getExtra()) == false)
 									{
-										title = wl.getTitle() + (phone ? Util.textToHtml("\r\n") : ", ") + title;
+										title = wl.getExtra() + ", " + title;
 									}
-									wl.setTitle(title);
+									wl.setExtra(title);
 									
 									prevRec = rec;
 								}
@@ -316,35 +326,6 @@ public class JournalPage extends BabyPage
 		}
 		
 		writeIncludeJS("baby/journal.js");
-	}
-	
-	/**
-	 * Gets measure record value that is normalized by the specified metric flag.
-	 * 
-	 * @param rec
-	 * @param metric
-	 * @return
-	 * @throws Exception
-	 */
-	private Float getMeasureRecordValue(MeasureRecord rec, boolean metric) throws Exception
-	{
-		Float val = rec.getValue();
-		if (val != null)
-		{
-			Measure m = MeasureStore.getInstance().load(rec.getMeasureID());
-			
-			// Convert value from record's current unit system to mother's unit system
-			if (metric && rec.isMetric() == false)
-			{
-				val = m.toMetric(val);
-			}
-			else if (metric == false && rec.isMetric())
-			{
-				val = m.toImperial(val);
-			}
-		}
-		
-		return val;
 	}
 
 	@Override
