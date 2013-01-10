@@ -42,8 +42,8 @@ public final class StagePage extends BabyPage
 		write("<br><br>");
 		
 		writeFormOpen();
-		
-		write("<table>");
+				
+		write("<table class=StageChooser>");
 		
 		write("<tr valign=middle>");
 		if (!phone)
@@ -53,10 +53,14 @@ public final class StagePage extends BabyPage
 			write("</td>");
 		}
 		write("<td>");
-//		write("<big>");
-		writeRadioButton("stage", getString("babyprofile:Stage.PreconceptionDetail"), "pre", initial);
-//		write("</big>");
+		writeRadioButton("stage", null, "pre", initial);
+		write("</td><td>");
+		writeEncode(getString("babyprofile:Stage.PreconceptionDetail"));
 		write("</td></tr>");
+		
+		write("<tr><td colspan=");
+		write(phone?2:3);
+		write(">&nbsp;</td></tr>");
 		
 		write("<tr valign=middle>");
 		if (!phone)
@@ -66,11 +70,15 @@ public final class StagePage extends BabyPage
 			write("</td>");
 		}
 		write("<td>");
-//		write("<big>");
-		writeRadioButton("stage", getString("babyprofile:Stage.PregnancyDetail"), "pregnancy", initial);
+		writeRadioButton("stage", null, "pregnancy", initial);
+		if (mother.getDueDate()==null)
+		{
+			write("<br>&nbsp;"); // To align the checkbox with the label
+		}
+		write("</td><td>");
+		writeEncode(getString("babyprofile:Stage.PregnancyDetail"));
 		write(" ");
 		writeDateInput("due", mother.getDueDate());
-//		write("</big>");
 		if (mother.getDueDate()==null)
 		{
 			write("<br><span class=Faded>");
@@ -78,6 +86,10 @@ public final class StagePage extends BabyPage
 			write("</span>");
 		}
 		write("</td></tr>");
+
+		write("<tr><td colspan=");
+		write(phone?2:3);
+		write(">&nbsp;</td></tr>");
 
 		write("<tr valign=middle>");
 		if (!phone)
@@ -87,11 +99,11 @@ public final class StagePage extends BabyPage
 			write("</td>");
 		}
 		write("<td>");
-//		write("<big>");
-		writeRadioButton("stage", getString("babyprofile:Stage.InfancyDetail"), "infancy", initial);
+		writeRadioButton("stage", null, "infancy", initial);
+		write("</td><td>");
+		writeEncode(getString("babyprofile:Stage.InfancyDetail"));
 		write(" ");
 		writeDateInput("delivery", mother.getBirthDate());
-//		write("</big>");
 		write("</td></tr>");
 
 		write("</table>");

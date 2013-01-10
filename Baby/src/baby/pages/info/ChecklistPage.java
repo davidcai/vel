@@ -88,8 +88,8 @@ public final class ChecklistPage extends BabyPage
 			write(" align=center");
 		}
 		write(">");
-		writeEncode(getString("information:Checklist.View"));
-		write(" ");
+//		writeEncode(getString("information:Checklist.View"));
+//		write(" ");
 		if (showAll)
 		{
 			writeLink(getString("information:Checklist.ViewInProgress"), getPageURL(ctx.getCommand(), new ParameterMap("vu", "progress")));

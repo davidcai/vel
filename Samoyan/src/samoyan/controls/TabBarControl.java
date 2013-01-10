@@ -111,6 +111,7 @@ public class TabBarControl extends WebPage
 			
 			write("<span id=LinkHelp>");
 			writeLink(getString("controls:TabBar.Help"), getPageURL(HelpPage.COMMAND));
+			write(" | ");
 			write("</span>");
 			if (ctx.getUserID()==null)
 			{
@@ -118,12 +119,11 @@ public class TabBarControl extends WebPage
 				if (fed.isOpenRegistration())
 				{
 					write("<span id=LinkRegister>");
-					write(" | ");
 					writeLink(getString("controls:TabBar.Register"), getPageURL(JoinPage.COMMAND));
+					write(" | ");
 					write("</span>");
 				}
 				write("<span id=LinkLogin>");
-				write(" | ");
 				writeLink(getString("controls:TabBar.Login"), getPageURL(LoginPage.COMMAND));
 				write("</span>");
 			}
@@ -131,7 +131,6 @@ public class TabBarControl extends WebPage
 			{
 				User user = UserStore.getInstance().load(ctx.getUserID());
 				write("<span id=LinkLogout>");
-				write(" | ");
 				writeLink(getString("controls:TabBar.Logout", user.getLoginName()), getPageURL(LogoutPage.COMMAND));
 				write("</span>");
 			}

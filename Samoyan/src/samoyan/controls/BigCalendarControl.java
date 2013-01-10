@@ -76,6 +76,12 @@ public class BigCalendarControl extends WebPage
 		return this;
 	}
 	
+	public BigCalendarControl highlightSelectedDay(boolean b)
+	{
+		this.highlightSelectedDay = b;
+		return this;
+	}
+	
 	public void render() throws Exception
 	{
 		DateFormat df;
@@ -222,7 +228,7 @@ public class BigCalendarControl extends WebPage
 				int d = cal.get(Calendar.DAY_OF_MONTH);
 				int y = cal.get(Calendar.YEAR);
 				
-				boolean enabled = (m==mm) && isCellEnabled(y, m, d); // Call subclass for enable/disable flag
+				boolean enabled = (m==mm) && isCellEnabled(y, m+1, d); // Call subclass for enable/disable flag
 				
 				write("<td class=\"Day");
 				if (m!=mm)
@@ -233,7 +239,7 @@ public class BigCalendarControl extends WebPage
 				{
 					write(" Today");
 				}
-				String addlClasses = getCellCSSClass(y, m, d); // Call subclass for additional CSS classes
+				String addlClasses = getCellCSSClass(y, m+1, d); // Call subclass for additional CSS classes
 				if (!Util.isEmpty(addlClasses))
 				{
 					write(" ");
@@ -258,7 +264,7 @@ public class BigCalendarControl extends WebPage
 				write("</div>");
 
 				// Call subclass to render the cell's content
-				renderCell(y, m, d);
+				renderCell(y, m+1, d);
 
 				if (enabled)
 				{
@@ -285,8 +291,9 @@ public class BigCalendarControl extends WebPage
 	 * @param yyyy
 	 * @param mm
 	 * @param dd
+	 * @throws Exception 
 	 */
-	protected void renderCell(int yyyy, int mm, int dd)
+	protected void renderCell(int yyyy, int mm, int dd) throws Exception
 	{
 		// Default to nothing
 	}
@@ -298,7 +305,7 @@ public class BigCalendarControl extends WebPage
 	 * @param dd
 	 * @return A space separated list of classes, or <code>null</code>.
 	 */
-	protected String getCellCSSClass(int yyyy, int mm, int dd)
+	protected String getCellCSSClass(int yyyy, int mm, int dd) throws Exception
 	{
 		return null;
 	}
@@ -310,18 +317,8 @@ public class BigCalendarControl extends WebPage
 	 * @param dd
 	 * @return <code>false</code> to disable the cell.
 	 */
-	protected boolean isCellEnabled(int yyyy, int mm, int dd)
+	protected boolean isCellEnabled(int yyyy, int mm, int dd) throws Exception
 	{
 		return true;
-	}
-	
-	public void setHighlightSelectedDay(boolean highlightSelectedDay)
-	{
-		this.highlightSelectedDay = highlightSelectedDay;
-	}
-	
-	public boolean isHighlightSelectedDay()
-	{
-		return highlightSelectedDay;
 	}
 }

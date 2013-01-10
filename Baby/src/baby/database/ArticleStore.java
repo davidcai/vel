@@ -184,17 +184,17 @@ public final class ArticleStore extends DataBeanStore<Article>
 	
 	public List<String> getRegions() throws SQLException
 	{
-		return Query.queryListString("SELECT DISTINCT Region FROM Articles WHERE NOT Region IS NULL ORDER BY Region", null);
+		return Query.queryListString("SELECT DISTINCT Region FROM Articles WHERE NOT Region IS NULL AND NOT Region='' ORDER BY Region", null);
 	}
 	
 	public List<String> getMedicalCenters(String region) throws SQLException
 	{
-		return Query.queryListString("SELECT DISTINCT MedicalCenter FROM Articles WHERE NOT MedicalCenter IS NULL AND Region=? ORDER BY MedicalCenter ASC", new ParameterList(region));
+		return Query.queryListString("SELECT DISTINCT MedicalCenter FROM Articles WHERE NOT MedicalCenter IS NULL AND NOT MedicalCenter='' AND Region=? ORDER BY MedicalCenter ASC", new ParameterList(region));
 	}
 
 	public List<String> getMedicalCenters() throws SQLException
 	{
-		return Query.queryListString("SELECT DISTINCT MedicalCenter FROM Articles WHERE NOT MedicalCenter IS NULL ORDER BY MedicalCenter ASC", null);
+		return Query.queryListString("SELECT DISTINCT MedicalCenter FROM Articles WHERE NOT MedicalCenter IS NULL AND NOT MedicalCenter='' ORDER BY MedicalCenter ASC", null);
 	}
 
 	public List<String> getSections() throws SQLException

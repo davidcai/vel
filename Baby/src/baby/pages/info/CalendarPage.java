@@ -2,14 +2,13 @@ package baby.pages.info;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
+import samoyan.controls.BigCalendarControl;
 import samoyan.controls.ButtonInputControl;
 import samoyan.controls.LinkToolbarControl;
-
-import baby.controls.BadgedCalendarControl;
-import baby.controls.BadgedCalendarControl.Badge;
 import baby.database.Appointment;
 import baby.database.AppointmentStore;
 import baby.pages.BabyPage;
@@ -61,35 +60,47 @@ public class CalendarPage extends BabyPage
 			dd = cal.get(Calendar.DAY_OF_MONTH);
 		}
 		
-		// Calendar
-		write("<div class=\"CalendarContainer\">");
-		
-		BadgedCalendarControl calCtrl = new BadgedCalendarControl(this);
-		if (cal.get(Calendar.YEAR) != yyyy || cal.get(Calendar.MONTH) != mm - 1)
-		{
-			calCtrl.setHighlightSelectedDay(false);
-		}
-		
-		calCtrl.setDay(yyyy, mm, dd);
 		cal.set(yyyy, mm - 1, 1, 0, 0, 0);
 		cal.set(Calendar.MILLISECOND, 0);
-		
 		Date from = cal.getTime();
 		
 		cal.add(Calendar.MONTH, 1);
 		Date to = cal.getTime();
-
-		// Appointment dues
+				
+		// Appointments
+		final HashSet<Integer> apptSet = new HashSet<Integer>();
+		
 		List<UUID> appointmentIDs = AppointmentStore.getInstance().getByDate(getContext().getUserID(), from, to, true);
 		for (UUID appointmentID : appointmentIDs)
 		{
 			Appointment appointment = AppointmentStore.getInstance().load(appointmentID);
-			
-			Calendar c = Calendar.getInstance(getTimeZone());
-			c.setTime(appointment.getDateTime());
-			calCtrl.getBadges(c.get(Calendar.YEAR), c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH))
-				.add(Badge.AppointmentDue);			
+
+			cal.setTime(appointment.getDateTime());
+			apptSet.add(cal.get(Calendar.DAY_OF_MONTH));
 		}
+		
+		// Render control
+		cal.setTime(new Date()); // Now
+		final int month = mm;
+		new BigCalendarControl(this)
+		{
+			@Override
+			protected void renderCell(int yyyy, int mm, int dd) throws Exception
+			{
+				if (mm==month && apptSet.contains(dd))
+				{
+					writeImage("icons/standard/simple-clock-16.png", null);
+				}
+			}
+			@Override
+			protected boolean isCellEnabled(int yyyy, int mm, int dd)
+			{
+				return (mm==month && apptSet.contains(dd));
+			}
+		}
+		.highlightSelectedDay(cal.get(Calendar.YEAR)==yyyy && cal.get(Calendar.MONTH)==mm-1)
+		.render();
+		
 		
 //		// Delivery due
 //		Date due = mother.getDueDate(getTimeZone());
@@ -104,11 +115,6 @@ public class CalendarPage extends BabyPage
 //			calCtrl.getBadges(c.get(Calendar.YEAR), c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH))
 //				.add(Badge.DeliveryDue);		
 //		}
-		
-		calCtrl.setCommand(AppointmentsChoicePage.COMMAND, null);
-		calCtrl.render();
-		
-		write("</div>"); //-- .CalendarContainer
 	}
 	
 	@Override

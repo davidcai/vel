@@ -196,40 +196,28 @@ public class Controller extends HttpServlet
 			
 			// Subclass
 			this.terminate(); // Call subclass
-			System.out.println(Setup.getAppID() + " shutdown 1: " + (System.currentTimeMillis()-start));
 			
 			// Execution manager
 			TaskManager.terminateAll();
-			System.out.println(Setup.getAppID() + " shutdown 2: " + (System.currentTimeMillis()-start));
 			
 			// Notifier
 			Notifier.terminate();
-			System.out.println(Setup.getAppID() + " shutdown 3: " + (System.currentTimeMillis()-start));
 			
 			// Channel servers
 			TwitterServer.terminate();
-			System.out.println(Setup.getAppID() + " shutdown 4: " + (System.currentTimeMillis()-start));
-			
 			SmsServer.terminate();
-			System.out.println(Setup.getAppID() + " shutdown 5: " + (System.currentTimeMillis()-start));
-			
 			EmailServer.terminate();
-			System.out.println(Setup.getAppID() + " shutdown 6: " + (System.currentTimeMillis()-start));
-			
 			
 			// Log system shutdown event
 			SystemShutdownLogEntry logEvent = new SystemShutdownLogEntry(System.currentTimeMillis() - start);
 			logEvent.setTime(new Date(start));
 			LogEntryStore.log(logEvent);
-			System.out.println(Setup.getAppID() + " shutdown 7: " + (System.currentTimeMillis()-start));
 			
 			// Terminate system log
 			LogEntryStore.terminate();
-			System.out.println(Setup.getAppID() + " shutdown 8: " + (System.currentTimeMillis()-start));
 			
 			// Close database
 			Database.getInstance().close();			
-			System.out.println(Setup.getAppID() + " shutdown 9: " + (System.currentTimeMillis()-start));
 		}
 		catch (Exception e)
 		{

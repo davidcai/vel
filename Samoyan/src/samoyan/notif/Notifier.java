@@ -8,6 +8,7 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import samoyan.core.Debug;
@@ -34,6 +35,7 @@ public class Notifier implements EmailListener, SmsListener, TwitterListener
 {
 	private ExecutorService executor = Executors.newCachedThreadPool();
 	private ScheduledExecutorService scheduledExecutor = Executors.newScheduledThreadPool(4);
+	private ScheduledFuture<?> future;
 	
 	private static Notifier instance = new Notifier();
 	private Notifier()
@@ -52,7 +54,7 @@ public class Notifier implements EmailListener, SmsListener, TwitterListener
 		SmsServer.addListener(instance);
 		TwitterServer.addListener(instance);
 		
-		instance.scheduledExecutor.scheduleWithFixedDelay(new ScheduleFutureNotifs(), 0, ScheduleFutureNotifs.INTERVAL, TimeUnit.MILLISECONDS);
+		instance.future = instance.scheduledExecutor.scheduleWithFixedDelay(new ScheduleFutureNotifs(), 0, ScheduleFutureNotifs.INTERVAL, TimeUnit.MILLISECONDS);
 	}
 	
 	public static void terminate()
@@ -61,6 +63,7 @@ public class Notifier implements EmailListener, SmsListener, TwitterListener
 		SmsServer.removeListener(instance);
 		EmailServer.removeListener(instance);
 		
+		instance.future.cancel(true);
 		Util.shutdownNowAndAwaitTermination(instance.scheduledExecutor);
 		Util.shutdownNowAndAwaitTermination(instance.executor);
 	}

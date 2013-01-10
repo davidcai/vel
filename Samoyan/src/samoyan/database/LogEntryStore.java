@@ -5,6 +5,7 @@ import java.net.UnknownHostException;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import samoyan.core.Debug;
 import samoyan.core.ParameterList;
@@ -63,10 +64,12 @@ public final class LogEntryStore extends DataBeanStore<LogEntry>
 
 	// - - -
 
-	private static ScheduledExecutorService executor = null;
+	private static ExecutorService executor = null;
 	private static Queue<LogEntry> queue = null;
+	private static AtomicInteger queueSize = new AtomicInteger();
 	private static Map<String, String> savedTypes = new ConcurrentHashMap<String, String>();
-
+	private static final int WRITE_THRESHOLD = 64;
+	
 	/**
 	 * This task writes all queued <code>LogEntry</code>s to the database.
 	 * @author brian
@@ -87,17 +90,19 @@ public final class LogEntryStore extends DataBeanStore<LogEntry>
 	public static void start()
 	{
 		queue = new ConcurrentLinkedQueue<LogEntry>();
-		executor = Executors.newSingleThreadScheduledExecutor();
-		executor.scheduleWithFixedDelay(new SaveQueueToDatabase(), 1L, 1L, TimeUnit.MINUTES); // 1 min
+		executor = Executors.newCachedThreadPool();
 	}
 	/**
 	 * Shutdown the log engine.
 	 */
 	public static void terminate()
 	{
-		Util.shutdownNowAndAwaitTermination(executor);
-		executor = null;
-
+		if (executor!=null)
+		{
+			Util.shutdownNowAndAwaitTermination(executor);
+			executor = null;
+		}
+		
 		// Write remaining queued entries
 		saveQueue();
 	}
@@ -106,7 +111,7 @@ public final class LogEntryStore extends DataBeanStore<LogEntry>
 	{
 		// Do not process more than original queue size.
 		// Otherwise, more log entries can be added while saving, and this method might never quit.
-		int max = queue.size();
+		int max = queueSize.get();
 		
 		for (int i=0; i<max; i++)
 		{
@@ -115,6 +120,7 @@ public final class LogEntryStore extends DataBeanStore<LogEntry>
 			{
 				break;
 			}
+			queueSize.decrementAndGet();
 			
 			// Load the type of the log entry
 			LogType type = null;
@@ -203,9 +209,11 @@ public final class LogEntryStore extends DataBeanStore<LogEntry>
 	{
 		// Add the log entry to the queue
 		queue.add(log);
+		int sz = queueSize.incrementAndGet();
 		
-		if (log.getSeverity()!=LogEntry.INFO)
+		if (sz>=WRITE_THRESHOLD || log.getSeverity()!=LogEntry.INFO)
 		{
+			// Write to disk when queue size reaches threshold
 			// Immediately write warnings and errors to the database
 			executor.execute(new SaveQueueToDatabase());
 		}

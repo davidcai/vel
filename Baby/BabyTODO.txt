@@ -47,6 +47,7 @@ Need smarter cache indexing. allowing multiple keys for invalidation. using nami
     - navbar style to be like WideLinkGroupControl.
   _ Mobile HotAction area (top-right corner buttons) to support search input box: widen on focus
   - detect orientation change, set class on BODY tag. in iOS, do same trick a scrollTo to recalc width of fixed elements.
+= name all threads in pools: http://stackoverflow.com/questions/6113746/naming-threads-and-thread-pools-of-executorservice
 
 BABY
 
@@ -55,6 +56,17 @@ BABY
   also .properties file names
   also uri filters in bottom of baby.less (for hiding navbar)
 
++ server won't shutdown quickly sometimes.
+  + added debug statements to controller.terminate. Deploy on all projects, and check logs.
+  + LogEntryStore.terminate takes 20secs to terminate. Check executor termination.
+  + need to save Future and call cancel on it.
+  + change LogEntryStore delay to 15secs? or whenever queue.size gets to 100? then no need for fixed schedule.
+    use atomic increment rather than calling queue.size (which is o(n))
+    use unlimited threads for executor. otherwise can bottleneck. but must not write same elem twice.
+  + check all references to ScheduledExecutors. May be similar. esp recurring tasks.
+  + Remove test code from controller.destroy
++ UI baby
+
 = margin on smartphone ui.
   > * {margin: 0px 5px}
   .FullWidth {margin: 0px 0px}
@@ -62,23 +74,23 @@ BABY
   #page {padding: 0px;} but H1 {padding-top: 15px;}
 - ArticleListControl:
   ? don't show HR divider on Computer ui
-= slider control for timeline instead of dropdown
+= (1) slider control for timeline instead of dropdown
 = Content:
   = send new content to Andi. need to extract from XL, unlock.
   = sample youtube videos of tours of facilities. search for "kaiser permanente maternity tour" on youtube
 = notifs:
   = check iPhone app + push notifs
   = alert timeline to allow user to choose channels, but no delay
-= enable all channels on PROD. email is currently disabled, and enabled on my dev system
+= enable all channels on PROD.
 = mybabyandi.com expires Feb 8. Try to grab if not renewed, otherwise, contact for purchase.
 = Journal:
   - UI of Journal list
     - better rendering of items in list, widelinkgroup with >
-    - more results with AJAX
+    - more results with AJAX (scrolling)
   - edit screen of journal entry (without measures for now)
   - reduce image size to 50x50 on mobile. also in Article list.
     create standard thumbnail sizes: 50x50 and 32x32 in samoyan
-- create system ConsoldiatedProfilePage, also for MMM and eLert.
+- create samoyan ConsoldiatedProfilePage, also for MMM and eLert.
 = simplify registration, esp for mobile. ask for email, password only.
   create username from email address, and send email with it to user.
   general setting: simple self-registration, full self-registration, by invitation only
@@ -90,10 +102,9 @@ BABY
   and repeating on every request if not found.
   debug with david.
 - Figure out how to redirect to error page, but only for HTML requests. esp for 500 and 404.
-- MyElert mobile. getting logged out without a reason. check why!
+_ MyElert mobile. getting logged out without a reason. check why!
   happens with debug=false, ssl=true and only on demo.veloxicom.com. and only with chrome emulation (not with actual iphone)
   check all usage of debug related to session management or cookies.
-= server won't shutdown quickly sometimes. added debug statements to controller.terminate. Deploy on all projects, and check logs.
 -? ServerStore.fed() and .local() to reload once per 1 second, otherwise use local cache.
   can then move more settings into fed (cookie exp, debug, session, etc.)
 
@@ -101,8 +112,11 @@ Erica's feedback Jan 4:
 - NTH: Add a new TODO item from calendar, with date.
   personal checkitems to have due date.
 - Evaluate two-tier top-level nav bar rather than vertical nav bar.
-=? hide navigation bar on desktop, for non-admin tabs
+x hide navigation bar on desktop, for non-admin tabs
   widen main body to full width, have tab control for journey tab
+= see erica's PPT from jan8. some items waiting feedback from erica. see email for details which.
+= "Add to home screen" popup window for iphone/Android. show once. use app storage. not if cordova user-agent.
+  depends also on browser. Can be chrome on ios...
 
 - UI design / ask Erica:
   - calendar control is a bit of an overkill for only showing appointments. maybe it's better to show only in list view.
@@ -116,16 +130,6 @@ Erica's feedback Jan 4:
   - how to render checklists:
     - fade out or hide if from previous stage?
     - overdue/complete flags
-  - What do you want to see on the Master ROOT page when logged in?
-  - smaller thumbnails in lists on mobile?
-  - change "My schedule" label -> "My appointments" ?
-
-? Master root page when logged in:
-  - Link to Help pages
-  - About the app
-  - Copyright/terms
-  - If emergency, call 911...
-  - Contact us page
 
 
 PHASE II:
@@ -160,6 +164,9 @@ DAVID:
 
 
 FUTURE IDEAS:
+
+- Help pages
+- Contact us page
 
 - Promote books for sale on Amazon. Collect commission via Amazon Associates program (approx 7%)
   as simple as publishing article with link to Amazon

@@ -171,6 +171,10 @@ TABLE.PhotoGrid TD {
 	}
 }
 
+.SmartPhone .BigCalendar .Month {
+	font: @font-normal;
+}
+
 .Checklist {
 	margin-bottom: 1.4em;
 	B {
@@ -278,31 +282,6 @@ TABLE.PhotoGrid TD {
 	}
 }
 
-.CalendarBadge {
-	display: inline-block;
-	width: 16px;
-	height: 16px;
-   
-	&.Photo {
-		background: transparent url("picture.png") no-repeat center center;
-	}
-	&.Text {
-		background: transparent url("text.png") no-repeat center center;
-	}
-	&.MeasureRecord {
-		background: transparent url("measure-record.png") no-repeat center center;
-	}
-	&.ChecklistDue {
-		background: transparent url("checklist-due.png") no-repeat center center;
-	}
-	&.AppointmentDue {
-		background: transparent url("appointment-due.png") no-repeat center center;
-	}
-	&.DeliveryDue {
-		background: transparent url("delivery-due.png") no-repeat center center;
-	}
-}
-
 //
 // Home page
 //
@@ -367,16 +346,23 @@ BODY[uri="/"].SmartPhone {
 }
 
 #footer {
-	border-top: dotted 1px @color-background-dark;
-	margin: 15px 0px;
 	color: @color-text-light;
 	background: @color-background;
+}
+#footer TABLE {
+	border-top: dotted 1px @color-background-dark;
+	padding: 15px 10px;
 	A {
 		color: @color-text-light;
 		&:hover {
 			color: @color-hover;
 		}
 	}
+}
+
+// Help is currently unavailable
+#LinkHelp {
+	display: none;
 }
 
 //
@@ -393,13 +379,6 @@ BODY[uri^="/setup"] {
 		list-style-type: decimal;
 	}
 }
-
-//BODY[uri^="/profile"].Computer,
-//BODY[uri^="/info"].Computer {
-//	#navbar {
-//		display: none;
-//	}
-//}
 
 //
 // Journal page
