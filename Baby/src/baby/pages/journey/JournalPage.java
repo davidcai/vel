@@ -289,7 +289,11 @@ public class JournalPage extends BabyPage
 										prevLink = wl;
 									}
 									
-									wl.setTitle(Util.isEmpty(wl.getTitle()) ? title : wl.getTitle() + ", " + title);
+									if (Util.isEmpty(wl.getTitle()) == false)
+									{
+										title = wl.getTitle() + (phone ? Util.textToHtml("\r\n") : ", ") + title;
+									}
+									wl.setTitle(title);
 									
 									prevRec = rec;
 								}

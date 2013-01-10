@@ -263,14 +263,16 @@ public class MeasureRecordsPage extends BabyPage
 			for (UUID babyID : this.babyRecords.keySet())
 			{
 				Baby baby = BabyStore.getInstance().load(babyID);
-				
-				String name = (Util.isEmpty(baby.getName())) ? getString("journey:MeasureRecords.Anonymous") : baby.getName();
-				twoCol.writeSubtitleRow(name);
-				
-				List<MeasureRecord> records = this.babyRecords.get(babyID);
-				for (MeasureRecord rec : records)
+				if (baby != null)
 				{
-					writeMeasureRecord(rec, twoCol);
+					String name = (Util.isEmpty(baby.getName())) ? getString("journey:MeasureRecords.Anonymous") : baby.getName();
+					twoCol.writeSubtitleRow(name);
+					
+					List<MeasureRecord> records = this.babyRecords.get(babyID);
+					for (MeasureRecord rec : records)
+					{
+						writeMeasureRecord(rec, twoCol);
+					}
 				}
 			}
 		}
