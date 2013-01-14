@@ -207,9 +207,12 @@ public class JournalPage extends BabyPage
 			entry.setUserID(getContext().getUserID());
 			entry.setText(getParameterString(PARAM_TEXT));
 			
-			Image photo = getParameterImage(PARAM_PHOTO);
-			entry.setHasPhoto(photo != null);
-			entry.setPhoto(photo);
+			if (isParameterNotEmpty(PARAM_PHOTO))
+			{
+				Image photo = getParameterImage(PARAM_PHOTO);
+				entry.setHasPhoto(photo != null);
+				entry.setPhoto(photo);
+			}
 			
 			JournalEntryStore.getInstance().save(entry);
 		}
