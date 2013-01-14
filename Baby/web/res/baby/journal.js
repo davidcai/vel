@@ -1,18 +1,17 @@
 $(function() {
-	var $NewEntryPlaceHolder = $('#NewJournalEntryPlaceHolder');
-	var $NewEntryPanel = $('#NewJournalEntryPanel');
+	var $EntryPlaceholder = $('#EntryPlaceHolder');
+	var $EntryInputs = $('#EntryInputs');
 	
 	function expandNewEntryPanel() {
-		$NewEntryPlaceHolder.hide();
-		$NewEntryPanel.addClass('Expanded').find('TEXTAREA').focus();
+		$EntryPlaceholder.hide();
+		$EntryInputs.show('slow', function() {
+			$(this).find('TEXTAREA').focus();
+		});
 	}
 	
-	$NewEntryPlaceHolder.one('click', function(e) {
-		expandNewEntryPanel();
-	});
+	$EntryPlaceholder.one('click', expandNewEntryPanel);
 	
-	if ($NewEntryPanel.hasClass('Expanded')) {
-		console.log('************* ');
+	if ($EntryInputs.hasClass('Show')) {
 		expandNewEntryPanel();
 	}
 });

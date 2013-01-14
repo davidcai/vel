@@ -265,15 +265,20 @@ public class JournalPage extends BabyPage
 			.setMaxLength(JournalEntry.MAXSIZE_TEXT)
 			.setPlaceholder(getString("journey:Journal.WhatIsOnYourMind"))
 			.setAutoFocus(false)
-			.setID("NewJournalEntryPlaceHolder")
+			.setID("EntryPlaceHolder")
 			.render();
 		
-		write("<div id=\"NewJournalEntryPanel\"");
+		write("<div id=\"EntryInputs\"");
 		if (isParameter(PARAM_POST) || isParameterNotEmpty(PARAM_TIMESTAMP))
 		{
-			write(" class=\"Expanded\"");
+			write(" class=\"Show\"");
 		}
 		write(">");
+		
+		write("<div id=\"EntryInputsHelp\">");
+		writeEncode(getString("journey:Journal.Help"));
+		write("</div>");
+		write("<br>");
 		
 		// Measure records
 		writeMeasureRecords();
@@ -283,7 +288,7 @@ public class JournalPage extends BabyPage
 		new TextAreaInputControl(this, "text")
 			.setRows(3).setCols(80)
 			.setMaxLength(JournalEntry.MAXSIZE_TEXT)
-			.setPlaceholder(getString("journey:Journal.WhatIsOnYourMind"))
+			.setPlaceholder(getString("journey:Journal.Text.Placeholder"))
 			.setInitialValue(entry != null ? entry.getText() : null)
 			.render();
 		write("<br>");
@@ -296,13 +301,17 @@ public class JournalPage extends BabyPage
 		writeHiddenInput(PARAM_TIMESTAMP, getParameterString(PARAM_TIMESTAMP));
 		
 		// Buttons
-		writeButton(PARAM_POST, getString("journey:Journal.Post"));
 		if (isParameterNotEmpty(PARAM_TIMESTAMP))
 		{
+			writeButton(PARAM_POST, getString("journey:Journal.Save"));
 			write("&nbsp;");
 			writeRemoveButton(PARAM_REMOVE);
 		}
-		write("</div>"); //-- #NewJournalEntryPanel
+		else
+		{
+			writeButton(PARAM_POST, getString("journey:Journal.Post"));
+		}
+		write("</div>"); //-- #EntryInputs
 		
 		writeFormClose();
 		write("<br>");

@@ -523,13 +523,16 @@ BODY[uri^="/setup"] {
 // Journal page
 //
 
-#NewJournalEntryPanel {
-	padding-top: 0.5em;
+#EntryInputs {
 	overflow: hidden;
 	display: none;
-	
-	&.Expanded {
+		
+	&.Show {
 		display: block;
+	}
+	
+	#EntryInputsHelp {
+		white-space: nowrap;
 	}
 }
 
