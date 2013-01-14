@@ -8,7 +8,7 @@ import samoyan.database.Image;
 
 public class JournalEntry extends DataBean
 {
-	public final static int MAXSIZE_TEXT = 140;
+	public final static int MAXSIZE_TEXT = 500;
 	public final static int MAXWIDTH_PHOTO = 800;
 	public final static int MAXHEIGHT_PHOTO = 600;
 	

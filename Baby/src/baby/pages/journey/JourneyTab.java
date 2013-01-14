@@ -35,6 +35,12 @@ public class JourneyTab extends EnvelopeTab
 	@Override
 	public String getIcon(WebPage outputPage)
 	{
+		if (outputPage.getContext().getUserAgent().isSmartPhone()==false)
+		{
+			// Icon only on smartphone
+			return null;
+		}
+		
 		return "baby/tab-journey.png";
 	}
 }

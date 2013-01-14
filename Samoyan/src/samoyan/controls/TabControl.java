@@ -77,7 +77,7 @@ public class TabControl
 	
 	public void render()
 	{
-		page.write("<table cellspacing=0 cellpadding=0 class=\"TabCtrl ");
+		page.write("<table NoPadding class=\"TabCtrl ");
 		if (this.style==1)
 		{
 			page.write("ButtonStyle");

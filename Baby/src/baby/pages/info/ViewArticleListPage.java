@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import baby.app.BabyConsts;
 import baby.controls.ArticleListControl;
-import baby.controls.TimelineControl;
+import baby.controls.TimelineSliderControl;
 import baby.database.ArticleStore;
 import baby.database.Mother;
 import baby.database.MotherStore;
@@ -45,22 +45,21 @@ public class ViewArticleListPage extends BabyPage
 		if (stage==null || stage.isValid()==false)
 		{
 			stage = mother.getPregnancyStage();
-			low = TimelineControl.getLowRange(stage.toInteger());
-			high = TimelineControl.getHighRange(stage.toInteger());
+			low = TimelineSliderControl.getLowRange(stage.toInteger());
+			high = TimelineSliderControl.getHighRange(stage.toInteger());
 		}
-		
-		TimelineControl tlCtrl = new TimelineControl(this, stage, PARAM_STAGE);
-		
+				
 		List<UUID> articleIDs = ArticleStore.getInstance().queryBySectionAndTimeline(BabyConsts.SECTION_INFO, low, high);
 		
 //		writeHorizontalNav(ViewArticleListPage.COMMAND);
 
 		// Render timeline
-		write("<table><tr valign=middle><td>");
-		writeEncode(getString("information:Articles.FoundResources", articleIDs.size()));
-		write("</td><td>");
-		tlCtrl.render();
-		write("</td></tr></table><br>");
+		new TimelineSliderControl(this, stage, PARAM_STAGE).render();
+//		write("<table><tr valign=middle><td>");
+//		writeEncode(getString("information:Articles.FoundResources", articleIDs.size()));
+//		write("</td><td>");
+//		new TimelineControl(this, stage, PARAM_STAGE).render();
+//		write("</td></tr></table>");
 		
 		// Render articles
 		new ArticleListControl(this, articleIDs).showSummary(!phone).render();

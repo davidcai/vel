@@ -1672,7 +1672,7 @@ public class WebPage
 			cap = Captcha.createCaptcha();
 		}
 		
-//		write("<table cellspacing=0 cellpadding=0><tr valign=top><td>");
+//		write("<table NoPadding><tr valign=top><td>");
 		writeTextInput(name, null, cap.getText().length(), cap.getText().length());
 //		write("</td><td>&nbsp;</td><td>");
 		

@@ -67,7 +67,7 @@ public class MasterTab extends EnvelopeTab
 		}
 		else
 		{
-			return "baby/corner-logo-60.png";
+			return "baby/corner-logo-42.png";
 		}
 	}
 }

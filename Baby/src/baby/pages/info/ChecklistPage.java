@@ -10,7 +10,7 @@ import samoyan.servlet.exc.RedirectException;
 
 import baby.app.BabyConsts;
 import baby.controls.ChecklistControl;
-import baby.controls.TimelineControl;
+import baby.controls.TimelineSliderControl;
 import baby.database.CheckItem;
 import baby.database.CheckItemStore;
 import baby.database.Checklist;
@@ -54,18 +54,19 @@ public final class ChecklistPage extends BabyPage
 		if (stage==null || stage.isValid()==false)
 		{
 			stage = mother.getPregnancyStage();
-			low = TimelineControl.getLowRange(stage.toInteger());
-			high = TimelineControl.getHighRange(stage.toInteger());
+			low = TimelineSliderControl.getLowRange(stage.toInteger());
+			high = TimelineSliderControl.getHighRange(stage.toInteger());
 		}
 				
 //		writeHorizontalNav(ChecklistPage.COMMAND);
 
 		// Render timeline
-		write("<table><tr valign=middle><td>");
-		writeEncode(getString("information:Checklist.YourChecklists"));
-		write("</td><td>");
-		new TimelineControl(this, stage, PARAM_STAGE).render();
-		write("</td></tr></table><br>");
+		new TimelineSliderControl(this, stage, PARAM_STAGE).render();
+//		write("<table><tr valign=middle><td>");
+//		writeEncode(getString("information:Checklist.YourChecklists"));
+//		write("</td><td>");
+//		new TimelineControl(this, stage, PARAM_STAGE).render();
+//		write("</td></tr></table>");
 		
 		// View: in progress or all
 		if (isParameter("vu"))
@@ -108,17 +109,7 @@ public final class ChecklistPage extends BabyPage
 		}
 		write("</div><hr><br>");
 		
-		// Personal checklist
-		Checklist personalChecklist = ChecklistStore.getInstance().loadPersonalChecklist(userID);
-		new ChecklistControl(this, userID, personalChecklist.getID())
-			.overrideTitle(getString("information:Checklist.PersonalChecklist"))
-			.overrideDescription(getString("information:Checklist.PersonalChecklistDesc"))
-			.setCollapsable(false)
-			.showCompleted(showAll)
-			.showDueDate(false)
-			.render();
-		
-		// Add
+		// Add to personal checklist
 		writeFormOpen();
 		new TextInputControl(this, "add")
 			.setPlaceholder(getString("information:Checklist.AddCheckitem"))
@@ -129,7 +120,17 @@ public final class ChecklistPage extends BabyPage
 		writeButton(getString("controls:Button.Add"));
 		writeFormClose();
 		write("<br>");
-		
+
+		// Personal checklist
+		Checklist personalChecklist = ChecklistStore.getInstance().loadPersonalChecklist(userID);
+		new ChecklistControl(this, userID, personalChecklist.getID())
+			.overrideTitle(getString("information:Checklist.PersonalChecklist"))
+			.overrideDescription(getString("information:Checklist.PersonalChecklistDesc"))
+			.setCollapsable(false)
+			.showCompleted(showAll)
+			.showDueDate(false)
+			.render();
+				
 		// Common checklists
 		List<UUID> checklistIDs = ChecklistStore.getInstance().queryBySectionAndTimeline(BabyConsts.SECTION_TODO, Stage.preconception().toInteger(), high);
 		for (UUID checklistID : checklistIDs)

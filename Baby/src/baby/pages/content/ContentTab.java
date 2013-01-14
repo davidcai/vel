@@ -35,6 +35,12 @@ public class ContentTab extends EnvelopeTab
 	@Override
 	public String getIcon(WebPage outputPage)
 	{
+		if (outputPage.getContext().getUserAgent().isSmartPhone()==false)
+		{
+			// Icon only on smartphone
+			return null;
+		}
+		
 		return "baby/tab-content.png";
 	}
 }

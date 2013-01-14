@@ -37,7 +37,7 @@ public class AppointmentsListPage extends BabyPage
 		else
 		{
 			new LinkToolbarControl(this)
-				.addLink(getString("information:AppointmentsList.AddLink"), getPageURL(EditAppointmentPage.COMMAND), "icons/standard/pencil-16.png")
+				.addLink(getString("information:AppointmentsList.AddLink"), getPageURL(EditAppointmentPage.COMMAND), "icons/standard/simple-clock-16.png")
 				.render();
 		}
 

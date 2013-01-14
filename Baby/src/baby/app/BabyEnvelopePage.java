@@ -79,6 +79,7 @@ public class BabyEnvelopePage extends EnvelopePage
 	protected void renderHTMLMetaTagsAndIncludes() throws Exception
 	{
 		writeIncludeCSS("baby/baby.less");
+		writeIncludeJS("baby/baby.js");
 		
 		MetaTagControl ctrl = new MetaTagControl(this);
 		ctrl.appleTouchIcon(false, "baby/apple-touch-icon-114.png", "baby/apple-touch-icon-144.png");

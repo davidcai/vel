@@ -104,8 +104,8 @@ public class MeasureRecordsPage extends BabyPage
 			this.newRecords = true;
 
 			Calendar cal = Calendar.getInstance(getTimeZone(), getLocale());
-			this.momRecords = MeasureRecordsPageHelper.getInstance().createMeasureRecordsForMom(this, this.mom, cal);
-			this.babyRecords = MeasureRecordsPageHelper.getInstance().createMeasureRecordsForBabies(this, this.mom, cal);
+			this.momRecords = MeasureRecordsPageHelper.createMeasureRecordsForMom(this, this.mom, cal);
+			this.babyRecords = MeasureRecordsPageHelper.createMeasureRecordsForBabies(this, this.mom, cal);
 		}
 	}
 	
@@ -244,7 +244,7 @@ public class MeasureRecordsPage extends BabyPage
 
 		Float min = this.mom.isMetric() ? m.getMetricMin() : m.getImperialMin();
 		Float max = this.mom.isMetric() ? m.getMetricMax() : m.getImperialMax();
-		Float val = MeasureRecordsPageHelper.getInstance().getMeasureRecordValue(rec, this.mom.isMetric());
+		Float val = MeasureRecordsPageHelper.getMeasureRecordValue(rec, this.mom.isMetric());
 		
 		if (m.isForMother())
 		{

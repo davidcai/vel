@@ -7,11 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import samoyan.controls.TwoColFormControl;
-import samoyan.core.Util;
-import samoyan.database.UserStore;
 import samoyan.servlet.WebPage;
-import baby.database.Baby;
 import baby.database.BabyStore;
 import baby.database.Measure;
 import baby.database.MeasureRecord;
@@ -21,17 +17,6 @@ import baby.database.Stage;
 
 public class MeasureRecordsPageHelper
 {
-	private static MeasureRecordsPageHelper instance = new MeasureRecordsPageHelper();
-
-	protected MeasureRecordsPageHelper()
-	{
-	}
-
-	public final static MeasureRecordsPageHelper getInstance()
-	{
-		return instance;
-	}
-	
 	/**
 	 * Gets measure record value that is normalized by either metric or imperial unit system. 
 	 * 
@@ -40,7 +25,7 @@ public class MeasureRecordsPageHelper
 	 * @return
 	 * @throws Exception
 	 */
-	public Float getMeasureRecordValue(MeasureRecord rec, boolean metric) throws Exception
+	public static Float getMeasureRecordValue(MeasureRecord rec, boolean metric) throws Exception
 	{
 		Float val = rec.getValue();
 		if (val != null)
@@ -69,7 +54,7 @@ public class MeasureRecordsPageHelper
 	 * @return
 	 * @throws Exception
 	 */
-	public List<UUID> filterMeasuresByStage(List<UUID> measureIDs, Stage stage) throws Exception
+	public static List<UUID> filterMeasuresByStage(List<UUID> measureIDs, Stage stage) throws Exception
 	{
 		List<UUID> filteredMeasureIDs = new ArrayList<UUID>();
 		
@@ -97,7 +82,7 @@ public class MeasureRecordsPageHelper
 	 * @return
 	 * @throws Exception
 	 */
-	public List<MeasureRecord> createMeasureRecordsForMom(WebPage page, Mother mom, Calendar cal) throws Exception
+	public static List<MeasureRecord> createMeasureRecordsForMom(WebPage page, Mother mom, Calendar cal) throws Exception
 	{
 		List<MeasureRecord> records = new ArrayList<MeasureRecord>();
 		
@@ -130,7 +115,7 @@ public class MeasureRecordsPageHelper
 	 * @return
 	 * @throws Exception
 	 */
-	public Map<UUID, List<MeasureRecord>> createMeasureRecordsForBabies(WebPage page, Mother mom, Calendar cal) throws Exception
+	public static Map<UUID, List<MeasureRecord>> createMeasureRecordsForBabies(WebPage page, Mother mom, Calendar cal) throws Exception
 	{
 		Map<UUID, List<MeasureRecord>> recordsByBaby = new LinkedHashMap<UUID, List<MeasureRecord>>();
 		
@@ -163,87 +148,5 @@ public class MeasureRecordsPageHelper
 		}
 		
 		return recordsByBaby;
-	}
-	
-	public void writeMeasureRecords(WebPage page, Mother mom, 
-		List<MeasureRecord> momRecords, Map<UUID, List<MeasureRecord>> babyRecords, String paramVal, String paramID) throws Exception
-	{
-		TwoColFormControl twoCol = new TwoColFormControl(page);
-		
-		// Mother records
-		if (momRecords.isEmpty() == false)
-		{
-			twoCol.writeSubtitleRow(UserStore.getInstance().load(mom.getUserID()).getDisplayName());
-			
-			for (MeasureRecord rec : momRecords)
-			{
-				writeMeasureRecord(twoCol, rec, mom.isMetric(), paramVal, paramID);
-			}
-		}
-		
-		// Baby records
-		if (babyRecords.isEmpty() == false)
-		{
-			for (UUID babyID : babyRecords.keySet())
-			{
-				Baby baby = BabyStore.getInstance().load(babyID);
-				if (baby != null)
-				{
-					String name = (Util.isEmpty(baby.getName())) ? page.getString("journey:MeasureRecords.Anonymous") : baby.getName();
-					twoCol.writeSubtitleRow(name);
-					
-					List<MeasureRecord> records = babyRecords.get(babyID);
-					for (MeasureRecord rec : records)
-					{
-						writeMeasureRecord(twoCol, rec, mom.isMetric(), paramVal, paramID);
-					}
-				}
-			}
-		}
-		
-		twoCol.render();
-	}
-	
-	public void writeMeasureRecord(TwoColFormControl twoCol, MeasureRecord rec, boolean metric, String paramVal, String paramID) throws Exception
-	{
-		Measure m = MeasureStore.getInstance().load(rec.getMeasureID());
-		
-		twoCol.writeRow(m.getLabel());
-
-		Float min = metric ? m.getMetricMin() : m.getImperialMin();
-		Float max = metric ? m.getMetricMax() : m.getImperialMax();
-		Float val = getMeasureRecordValue(rec, metric);
-		
-		twoCol.writeDecimalInput(getMeasureRecordFieldKey(paramVal, rec), val, 16, min, max);
-		twoCol.write("&nbsp;");
-		twoCol.writeEncode(metric ? m.getMetricUnit() : m.getImperialUnit());
-		twoCol.writeHiddenInput(getMeasureRecordFieldKey(paramID, rec), rec.getID().toString());
-	}
-	
-	/**
-	 * Field key = prefix + user ID + measure ID.
-	 * 
-	 * @param prefix
-	 * @param rec
-	 * @return
-	 * @throws Exception
-	 */
-	private String getMeasureRecordFieldKey(String prefix, MeasureRecord rec) throws Exception
-	{
-		StringBuilder sb = new StringBuilder(prefix);
-		
-		Measure m = MeasureStore.getInstance().load(rec.getMeasureID());
-		if (m.isForMother())
-		{
-			sb.append(rec.getUserID().toString());
-		}
-		else
-		{
-			sb.append(rec.getBabyID().toString());
-		}
-		
-		sb.append(rec.getMeasureID());
-		
-		return sb.toString();
 	}
 }

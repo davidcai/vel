@@ -117,15 +117,17 @@ TD:first-child, TH:first-child {padding-left: 0px;}
 TD:last-child, TH:last-child {padding-right: 0px;}
 TR:first-child > TD, TR:first-child > TH {padding-top: 0px;}
 TR:last-child > TD, TR:last-child > TH {padding-bottom: 0px;}
+TABLE[NoPadding] > TBODY > TR > TD {padding:0px;}
+TABLE[NoPadding] > TBODY > TR > TH {padding:0px;}
 
 // ---------- TwoColForm ----------
-.TwoColForm 	> TBODY > TR > TH:first-child {
+.TwoColForm > TBODY > TR > TH:first-child {
 	text-align: right;
 	white-space: nowrap;
 	width: 1%;
 	color: @color-text-light;
 }
-.SmartPhone .TwoColForm 	> TBODY > TR > TH:first-child {
+.SmartPhone .TwoColForm > TBODY > TR > TH:first-child {
 	text-align: left;
 }
 
@@ -708,7 +710,7 @@ DIV.InfoMessage {
 	height: 100%;
 	width: 100%;
 	TD {
-		padding-top: 3px !important;
+		padding-top: 3px;
 		vertical-align: top;
 		text-align: center;
 		font: @font-small;
@@ -778,6 +780,7 @@ DIV.InfoMessage {
 		border-right: solid 1px rgba(0,0,0,.1);
 		&:first-child {
 			border: none;
+			padding-left: 0px;
 		}
 	}
 }
@@ -790,9 +793,6 @@ DIV.InfoMessage {
 #layout {
 	width: 100%;
 	height: 100%;
-	> TBODY > TR > TD {
-		padding: 0px;
-	}
 }
 .SmartPhone #layout {
 	height: auto;
@@ -802,7 +802,6 @@ DIV.InfoMessage {
 	height: 75px;
 	> TD {
 		height: 75px;
-		padding: 0px !important;
 	}
 	vertical-align: top;
 	color: @color-negative-text;

@@ -93,13 +93,16 @@ public abstract class TagControl
 			out.write(" class=\"");
 			for (String n : this.cssClasses)
 			{
-				if (!first)
-				{				
-					out.write(" ");
+				if (n!=null)
+				{
+					if (!first)
+					{				
+						out.write(" ");
+					}
+					first = false;
+					
+					out.writeEncode(n);
 				}
-				first = false;
-				
-				out.writeEncode(n);
 			}
 			out.write("\"");
 		}

@@ -50,8 +50,8 @@ public class JournalEntryPage extends BabyPage
 			this.entry = new JournalEntry();
 			
 			Calendar cal = Calendar.getInstance(getTimeZone(), getLocale());
-			this.momRecords = MeasureRecordsPageHelper.getInstance().createMeasureRecordsForMom(this, this.mom, cal);
-			this.babyRecords = MeasureRecordsPageHelper.getInstance().createMeasureRecordsForBabies(this, this.mom, cal);
+			this.momRecords = MeasureRecordsPageHelper.createMeasureRecordsForMom(this, this.mom, cal);
+			this.babyRecords = MeasureRecordsPageHelper.createMeasureRecordsForBabies(this, this.mom, cal);
 		}
 		else if (this.entry.getUserID().equals(userID) == false)
 		{

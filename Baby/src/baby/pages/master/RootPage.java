@@ -64,13 +64,9 @@ public class RootPage extends WebPage
 			// Signup
 			if (user==null && fed.isOpenRegistration())
 			{
-				writeFormOpen("GET", JoinPage.COMMAND);
-				write("<table><tr valign=middle><td>");
 				writeEncode(getString("baby:Root.RegisterHelp"));
-				write("</td><td>");
-				writeButton(getString("baby:Root.Register"));
-				write("</td></tr></table>");
-				writeFormClose();
+				write(" ");
+				writeLink(getString("baby:Root.Register"), getPageURL(JoinPage.COMMAND));
 			}
 			
 			write("</td><td>");

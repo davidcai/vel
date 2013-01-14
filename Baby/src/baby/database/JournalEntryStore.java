@@ -58,6 +58,20 @@ public class JournalEntryStore extends DataBeanStore<JournalEntry>
 				new ParameterList().plus(userID));
 	}
 	
+	public UUID getByDate(UUID userID, Date date) throws Exception
+	{
+		List<UUID> ids = Query.queryListUUID(
+			"SELECT ID FROM JournalEntries WHERE UserID=? AND Created=?", 
+			new ParameterList().plus(userID).plus(date.getTime()));
+		
+		if (ids.isEmpty() == false)
+		{
+			return ids.get(0);
+		}
+		
+		return null;
+	}
+	
 	public List<UUID> getByDate(UUID userID, Date from, Date to) throws Exception
 	{
 		return Query.queryListUUID(

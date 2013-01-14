@@ -5,14 +5,18 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
 
-import samoyan.controls.ButtonInputControl;
-import samoyan.controls.LinkToolbarControl;
+import samoyan.controls.DecimalInputControl;
+import samoyan.controls.ImageInputControl;
 import samoyan.controls.TabControl;
+import samoyan.controls.TextAreaInputControl;
+import samoyan.controls.TextInputControl;
+import samoyan.controls.TwoColFormControl;
 import samoyan.controls.WideLinkGroupControl;
 import samoyan.controls.WideLinkGroupControl.WideLink;
 import samoyan.core.DateFormatEx;
@@ -40,41 +44,233 @@ public class JournalPage extends BabyPage
 {
 	public final static String COMMAND = BabyPage.COMMAND_JOURNEY + "/journal";
 	
-	private final static String PARAM_POST = "post";
+	public final static String PARAM_TIMESTAMP = "t";
+	
+	private final static String PARAM_RECORD_VALUE_PREFIX = "value_";
+	private final static String PARAM_RECORD_ID_PREFIX = "id_";
 	private final static String PARAM_TEXT = "text";
 	private final static String PARAM_PHOTO = "photo";
+	private final static String PARAM_POST = "post";
+	private final static String PARAM_REMOVE = "remvoe";
+	
+	private Date date;
+	private Mother mom;
+	private List<MeasureRecord> momRecords;
+	private Map<UUID, List<MeasureRecord>> babyRecords;
+	private boolean editing;
+	
+	@Override
+	public void init() throws Exception
+	{
+		UUID userID = getContext().getUserID();
+		this.mom = MotherStore.getInstance().loadByUserID(userID);
+		
+		// Get date
+		Long time = getParameterLong(PARAM_TIMESTAMP);
+		if (time != null)
+		{
+			try
+			{
+				this.date = new Date(time);
+			}
+			catch (Exception e)
+			{
+				this.date = null;
+			}
+		}
+		
+		// Prepare measure records
+		if (this.date != null)
+		{
+			//
+			// Editing
+			//
+			
+			this.editing = true;
+			
+			this.momRecords = new ArrayList<MeasureRecord>();
+			this.babyRecords = new LinkedHashMap<UUID, List<MeasureRecord>>();
+			
+			List<UUID> recordIDs = MeasureRecordStore.getInstance().getByDate(userID, this.date);
+			for (UUID recordID : recordIDs)
+			{
+				MeasureRecord rec = MeasureRecordStore.getInstance().open(recordID);
+				Measure m = MeasureStore.getInstance().load(rec.getMeasureID());
+				if (m.isForMother())
+				{
+					// Mother records
+					this.momRecords.add(rec);
+				}
+				else
+				{
+					// Baby records
+					UUID babyID = rec.getBabyID();
+					List<MeasureRecord> records = this.babyRecords.get(babyID);
+					if (records == null)
+					{
+						records = new ArrayList<MeasureRecord>();
+						this.babyRecords.put(babyID, records);
+					}
+					records.add(rec);
+				}
+			}
+		}
+		else
+		{
+			//
+			// New
+			//
+			
+			this.editing = false;
+			
+			Calendar cal = Calendar.getInstance(getTimeZone(), getLocale());
+			this.date = cal.getTime(); 
+
+			this.momRecords = MeasureRecordsPageHelper.createMeasureRecordsForMom(this, this.mom, cal);
+			this.babyRecords = MeasureRecordsPageHelper.createMeasureRecordsForBabies(this, this.mom, cal);
+		}
+	}
+	
 	
 	@Override
 	public void validate() throws Exception
 	{
 		if (isParameter(PARAM_POST))
 		{
+			boolean hasRecParams = false;
+			List<String> recParamNames = getMeasureRecordFieldNames();
+			for (String paramName : recParamNames)
+			{
+				if (isParameterNotEmpty(paramName))
+				{
+					hasRecParams = true;
+					break;
+				}
+			}
+
+			// Show errors if text, photo, and measure records have no inputs
+			if (hasRecParams == false && 
+				isParameterNotEmpty(PARAM_TEXT) == false && 
+				getParameterImage(PARAM_PHOTO) == null)
+			{
+				String[] paramNames = recParamNames.toArray(new String[recParamNames.size() + 2]);
+				paramNames[paramNames.length - 2] = PARAM_TEXT;
+				paramNames[paramNames.length - 1] = PARAM_PHOTO;
+				throw new WebFormException(paramNames, getString("journey:Journal.NoInput"));
+			}
+
+			// Text
 			validateParameterString(PARAM_TEXT, 0, JournalEntry.MAXSIZE_TEXT);
 
-			// Show errors if both text and photo have no inputs
-			if (isParameterNotEmpty(PARAM_TEXT) == false && getParameterImage(PARAM_PHOTO) == null)
+			// Measure records
+			validateMeasureRecords(this.momRecords);
+			for (List<MeasureRecord> records : this.babyRecords.values())
 			{
-				throw new WebFormException(new String[] {PARAM_TEXT, PARAM_PHOTO}, getString("journey:Journal.NoInput"));
+				validateMeasureRecords(records);
 			}
 		}
 	}
+	
+	private List<String> getMeasureRecordFieldNames() throws Exception
+	{
+		List<String> names = new ArrayList<String>();
+		for (MeasureRecord rec : this.momRecords)
+		{
+			names.add(getFieldName(PARAM_RECORD_VALUE_PREFIX, rec));
+		}
+		for (List<MeasureRecord> records : this.babyRecords.values())
+		{
+			for (MeasureRecord rec : records)
+			{
+				names.add(getFieldName(PARAM_RECORD_VALUE_PREFIX, rec));
+			}
+		}
+		
+		return names;
+	}
+	
+	private void validateMeasureRecords(List<MeasureRecord> records) throws Exception
+	{
+		for (MeasureRecord rec : records)
+		{
+			if (isParameterNotEmpty(getFieldName(PARAM_RECORD_VALUE_PREFIX, rec)))
+			{
+				Measure m = MeasureStore.getInstance().load(rec.getMeasureID());
+				Float min = this.mom.isMetric() ? m.getMetricMin() : m.getImperialMin();
+				Float max = this.mom.isMetric() ? m.getMetricMax() : m.getImperialMax();
+				validateParameterDecimal(getFieldName(PARAM_RECORD_VALUE_PREFIX, rec), min, max);
+			}
+		}
+	}
+	
 	@Override
 	public void commit() throws Exception
 	{
-		JournalEntry entry = new JournalEntry();
-		entry.setUserID(getContext().getUserID());
-		entry.setText(getParameterString(PARAM_TEXT));
+		// Measure records
+		commitMeasureRecords(this.momRecords);
+		for (List<MeasureRecord> records : this.babyRecords.values())
+		{
+			commitMeasureRecords(records);
+		}
 		
-		Image photo = getParameterImage(PARAM_PHOTO);
-		entry.setHasPhoto(photo != null);
-		entry.setPhoto(photo);
+		// Journal entry
+		if (isParameter(PARAM_POST))
+		{
+			JournalEntry entry = null;
+			if (this.editing)
+			{
+				UUID entryID = JournalEntryStore.getInstance().getByDate(getContext().getUserID(), this.date);
+				if (entryID != null)
+				{
+					entry = JournalEntryStore.getInstance().open(entryID);
+				}
+			}
+			if (entry == null)
+			{
+				entry = new JournalEntry();
+				entry.setCreated(this.date);
+			}
+			
+			entry.setUserID(getContext().getUserID());
+			entry.setText(getParameterString(PARAM_TEXT));
+			
+			Image photo = getParameterImage(PARAM_PHOTO);
+			entry.setHasPhoto(photo != null);
+			entry.setPhoto(photo);
+			
+			JournalEntryStore.getInstance().save(entry);
+		}
+		else if (isParameter(PARAM_REMOVE) && this.editing)
+		{
+			UUID entryID = JournalEntryStore.getInstance().getByDate(getContext().getUserID(), this.date);
+			if (entryID != null)
+			{
+				JournalEntryStore.getInstance().remove(entryID);
+			}
+		}
 		
-		entry.setCreated(Calendar.getInstance(getTimeZone()).getTime());
-
-		JournalEntryStore.getInstance().save(entry);
-
 		// Redirect to itself
 		throw new RedirectException(JournalPage.COMMAND, null);
+	}
+	
+	private void commitMeasureRecords(List<MeasureRecord> records) throws Exception
+	{
+		for (MeasureRecord rec : records)
+		{
+			if (isParameter(PARAM_POST))
+			{
+				rec.setValue(getParameterDecimal(getFieldName(PARAM_RECORD_VALUE_PREFIX, rec)));
+				
+				// Unit system defined in mother's profile always triumph over record's unit system.
+				rec.setMetric(this.mom.isMetric());
+				
+				MeasureRecordStore.getInstance().save(rec);
+			}
+			else if (isParameter(PARAM_REMOVE))
+			{
+				MeasureRecordStore.getInstance().remove(rec.getID());
+			}
+		}
 	}
 
 	@Override
@@ -93,55 +289,81 @@ public class JournalPage extends BabyPage
 				.render();
 		}
 		
-		// Add button
-		if (getContext().getUserAgent().isSmartPhone())
+		JournalEntry entry = null;
+		if (this.editing)
 		{
-			writeFormOpen("GET", JournalEntryPage.COMMAND);
-			new ButtonInputControl(this, null)
-				.setValue(getString("journey:Journal.AddHotButton"))
-				.setMobileHotAction(true)
-				.setAttribute("class", "NoShow")
-				.render();
-			writeFormClose();
-		}
-		else
-		{
-			new LinkToolbarControl(this)
-				.addLink(getString("journey:Journal.AddLink"), getPageURL(JournalEntryPage.COMMAND), "icons/standard/pencil-16.png")
-				.render();
+			UUID entryID = JournalEntryStore.getInstance().getByDate(getContext().getUserID(), this.date);
+			if (entryID != null)
+			{
+				entry = JournalEntryStore.getInstance().open(entryID);
+			}
 		}
 		
-//		writeFormOpen();
-//		
-//		new TextInputControl(this, "NewJournalEntryPlaceHolder")
-//			.setSize(80)
-//			.setMaxLength(JournalEntry.MAXSIZE_TEXT)
-//			.setPlaceholder(getString("journey:Journal.WhatIsOnYourMind"))
-//			.setAutoFocus(false)
-//			.setID("NewJournalEntryPlaceHolder")
-//			.render();
-//		
-//		write("<div id=\"NewJournalEntryPanel\"");
-//		if (isParameter(PARAM_POST))
-//		{
-//			write(" class=\"Expanded\"");
-//		}
-//		write(">");
-//		new TextAreaInputControl(this, "text")
-//			.setRows(3).setCols(80)
-//			.setMaxLength(JournalEntry.MAXSIZE_TEXT)
-//			.setPlaceholder(getString("journey:Journal.WhatIsOnYourMind"))
-//			.render();
-//		write("<br>");
-//		new ImageInputControl(this, "photo").showThumbnail(false).render();
-//		write("<br>");
-//		writeButton(PARAM_POST, getString("journey:Journal.Post"));
-//		write("</div>"); //-- #NewJournalEntryPanel
-//		
-//		writeFormClose();
-//		write("<br>");
+		//
+		// Expandable input form
+		//
 		
+		writeFormOpen();
+		
+		// Placeholder
+		new TextInputControl(this, null)
+			.setSize(80)
+			.setMaxLength(JournalEntry.MAXSIZE_TEXT)
+			.setPlaceholder(getString("journey:Journal.WhatIsOnYourMind"))
+			.setAutoFocus(false)
+			.setID("NewJournalEntryPlaceHolder")
+			.render();
+		
+		write("<div id=\"NewJournalEntryPanel\"");
+		if (isParameter(PARAM_POST))
+		{
+			write(" class=\"Expanded\"");
+		}
+		write(">");
+		
+		// Measure records
+		writeMeasureRecords();
+		write("<br>");
+		
+		// Text
+		new TextAreaInputControl(this, "text")
+			.setRows(3).setCols(80)
+			.setMaxLength(JournalEntry.MAXSIZE_TEXT)
+			.setPlaceholder(getString("journey:Journal.WhatIsOnYourMind"))
+			.setInitialValue(entry != null ? entry.getText() : null)
+			.render();
+		write("<br>");
+		
+		// Photo
+		new ImageInputControl(this, "photo").showThumbnail(false).render();
+		write("<br>");
+		
+		// Postback
+		writeHiddenInput(PARAM_TIMESTAMP, getParameterString(PARAM_TIMESTAMP));
+		
+		// Buttons
+		writeButton(PARAM_POST, getString("journey:Journal.Post"));
+		if (this.editing)
+		{
+			write("&nbsp;");
+			writeRemoveButton(PARAM_REMOVE);
+		}
+		write("</div>"); //-- #NewJournalEntryPanel
+		
+		writeFormClose();
+		write("<br>");
+		
+		//
 		// Entries
+		//
+		
+		writeEntries();
+		
+		writeIncludeJS("baby/journal.js");
+	}
+	
+	private void writeEntries() throws Exception
+	{
 		UUID userID = getContext().getUserID();
 		List<UUID> entryIDs = JournalEntryStore.getInstance().getByUserID(userID);
 		List<UUID> recordIDs = MeasureRecordStore.getInstance().getByUserID(userID);
@@ -282,7 +504,7 @@ public class JournalPage extends BabyPage
 							
 							if (Util.isEmpty(name) == false)
 							{
-								Float val = MeasureRecordsPageHelper.getInstance().getMeasureRecordValue(rec, mom.isMetric());
+								Float val = MeasureRecordsPageHelper.getMeasureRecordValue(rec, mom.isMetric());
 								if (val != null)
 								{
 									String label = m.getLabel();
@@ -324,8 +546,104 @@ public class JournalPage extends BabyPage
 		{
 			writeEncode(getString("journey:Journal.NoEntry"));
 		}
+	}
+	
+	private void writeMeasureRecords() throws Exception
+	{
+		TwoColFormControl twoCol = new TwoColFormControl(this);
 		
-		writeIncludeJS("baby/journal.js");
+		// Mother records
+		if (this.momRecords.isEmpty() == false)
+		{
+			twoCol.writeRow(UserStore.getInstance().load(this.mom.getUserID()).getDisplayName());
+			
+			boolean first = true;
+			for (MeasureRecord rec : this.momRecords)
+			{
+				if (first == false)
+				{
+					twoCol.write("&nbsp;");
+				}
+				
+				writeMeasureRecord(rec, twoCol);
+				first = false;
+			}
+		}
+		
+		// Baby records
+		if (this.babyRecords.isEmpty() == false)
+		{
+			for (UUID babyID : this.babyRecords.keySet())
+			{
+				Baby baby = BabyStore.getInstance().load(babyID);
+				if (baby != null)
+				{
+					String name = (Util.isEmpty(baby.getName())) ? getString("journey:MeasureRecords.Anonymous") : baby.getName();
+					twoCol.writeRow(name);
+					
+					List<MeasureRecord> records = this.babyRecords.get(babyID);
+					boolean first = true;
+					for (MeasureRecord rec : records)
+					{
+						if (first == false)
+						{
+							twoCol.write("&nbsp;");
+						}
+						
+						writeMeasureRecord(rec, twoCol);
+						first = false;
+					}
+				}
+			}
+		}
+		
+		twoCol.render();
+	}
+	
+	private void writeMeasureRecord(MeasureRecord rec, TwoColFormControl twoCol) throws Exception
+	{
+		Measure m = MeasureStore.getInstance().load(rec.getMeasureID());
+		
+		Float min = this.mom.isMetric() ? m.getMetricMin() : m.getImperialMin();
+		Float max = this.mom.isMetric() ? m.getMetricMax() : m.getImperialMax();
+		Float val = MeasureRecordsPageHelper.getMeasureRecordValue(rec, this.mom.isMetric());
+		
+		new DecimalInputControl(twoCol, getFieldName(PARAM_RECORD_VALUE_PREFIX, rec))
+			.setMinValue(min)
+			.setMaxValue(max)
+//			.setSize(20)
+			.setPlaceholder(getString("journey:Journal.MeasureRecord.Placeholder", m.getLabel(), this.mom.isMetric() ? m.getMetricUnit() : m.getImperialUnit()))
+			.setInitialValue(val)
+			.render();
+		
+		twoCol.writeHiddenInput(getFieldName(PARAM_RECORD_ID_PREFIX, rec), rec.getID().toString());
+	}
+	
+	/**
+	 * Field key = prefix + user ID + measure ID.
+	 * 
+	 * @param prefix
+	 * @param rec
+	 * @return
+	 * @throws Exception
+	 */
+	private String getFieldName(String prefix, MeasureRecord rec) throws Exception
+	{
+		StringBuilder sb = new StringBuilder(prefix);
+		
+		Measure m = MeasureStore.getInstance().load(rec.getMeasureID());
+		if (m.isForMother())
+		{
+			sb.append(this.mom.getUserID().toString());
+		}
+		else
+		{
+			sb.append(rec.getBabyID().toString());
+		}
+		
+		sb.append(rec.getMeasureID());
+		
+		return sb.toString();
 	}
 
 	@Override

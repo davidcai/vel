@@ -1,10 +1,5 @@
 package baby.pages.master;
 
-/**
- * Colors taken from Healthy Beginnings PDF.
- * @author brian
- *
- */
 public final class LessStylesheetPage extends samoyan.apps.master.LessStylesheetPage
 {
 	@Override
@@ -22,9 +17,11 @@ public final class LessStylesheetPage extends samoyan.apps.master.LessStylesheet
 		}
 		else
 		{
-			return "12pt Arial,Sans-Serif";
+			return "12pt Helvetica Neue,Helvetica,Arial,Sans-Serif";
 		}
 	}
+	
+	@Override
 	protected String getFontSmall()
 	{
 		if (getContext().getUserAgent().isSmartPhone())
@@ -33,7 +30,33 @@ public final class LessStylesheetPage extends samoyan.apps.master.LessStylesheet
 		}
 		else
 		{
-			return "10pt Arial,Sans-Serif";
+			return "10pt Helvetica Neue,Helvetica,Arial,Sans-Serif";
+		}
+	}
+	
+	@Override
+	protected String getFontLarge()
+	{
+		if (getContext().getUserAgent().isSmartPhone())
+		{
+			return "18pt Helvetica Neue,Helvetica,Arial Narrow,Arial,Sans-Serif";
+		}
+		else
+		{
+			return "18pt Helvetica Neue,Helvetica,Arial,Sans-Serif";
+		}
+	}
+
+	@Override
+	protected String getFontHuge()
+	{
+		if (getContext().getUserAgent().isSmartPhone())
+		{
+			return "24pt Helvetica Neue,Helvetica,Arial Narrow,Arial,Sans-Serif";
+		}
+		else
+		{
+			return "24pt Helvetica Neue,Helvetica,Arial,Sans-Serif";
 		}
 	}
 

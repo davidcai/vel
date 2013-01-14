@@ -142,7 +142,8 @@ public class ChecklistControl
 					{
 						// out.write "Overdue" label, but only if the checklist is not complete
 						out.write(" ");
-						out.write("<span class=ChecklistOverdue>");
+						out.write("<span class=Overdue>");
+						out.writeImage("baby/flag-overdue.png", out.getString("baby:ChecklistCtrl.Overdue"));
 						out.writeEncode(out.getString("baby:ChecklistCtrl.Overdue"));
 						out.write("</span>");
 					}
@@ -150,7 +151,8 @@ public class ChecklistControl
 				if (incomplete==false && checkitemIDs.size()>0)
 				{
 					out.write(" ");
-					out.write("<span class=ChecklistComplete>");
+					out.write("<span class=Complete>");
+					out.writeImage("baby/flag-overdue.png", out.getString("baby:ChecklistCtrl.Complete"));
 					out.writeEncode(out.getString("baby:ChecklistCtrl.Complete"));
 					out.write("</span>");
 				}

@@ -22,21 +22,6 @@ INPUT[type="submit"],INPUT[type="button"] {
 	}
 }
 
-.ChecklistOverdue {
-	background-color: @color-error;
-	color: @color-background;
-	display: inline-block;
-	.border-radius(4px);
-	padding: 0px 5px;
-}
-.ChecklistComplete {
-	background-color: @color-accent;
-	color: @color-background;
-	display: inline-block;
-	.border-radius(4px);
-	padding: 0px 5px;
-}
-
 .PlainList {
 	list-style: none;
 	margin: 0;
@@ -216,6 +201,105 @@ TABLE.PhotoGrid TD {
 		cursor: hand;
 		cursor: pointer;
 	}
+	.Overdue {
+		color: @color-error;
+	}
+	.Complete {
+		color: @color-accent;
+	}
+}
+
+//
+// Timeline slider
+//
+
+.Slider {
+	margin-bottom: 0.5em;
+	TD {
+        padding: 0px;
+	}
+	TR.BarLabels > TD {
+        text-align:center;
+        font: @font-small;
+        padding-top: 0.6em;
+        &.Current {
+        	font-weight: bold;
+        	color: @color-accent;
+        }
+        A {
+         	color: @color-text;
+         	&:hover {
+         		color: @color-hover;
+         	}
+        }
+	}
+	TR.Bar > TD {
+        text-align:center;
+        vertical-align: center;
+
+    	&.LeftEnd {
+	        background: url("timeline-left.png") no-repeat left center;
+	        background-size: 10px 30px;
+	        width: 10px;
+	    }
+	    &.RightEnd {
+	        background: url("timeline-right.png") no-repeat right center;
+	        background-size: 10px 30px;
+	        width: 10px;
+	    }
+	    &.Stop {
+	        background: url("timeline-bg.png") repeat-x center center;
+	        background-size: 100px 30px;
+	        height: 30px;
+	    }
+	    IMG.Hide {
+	    	visibility: hidden;
+	    }
+	}
+	.Title {
+		width: 100%;
+		TD {
+			vertical-align: middle;
+			&.Prev A {
+				display: inline-block;
+				padding: 20px 0px 20px 50px;
+		        background: url("timeline-arrow-left.png") no-repeat left center;
+		        background-size: 60px 60px;
+		        &:hover {
+		        	background-image: url("timeline-arrow-left-hover.png");
+		        }
+			}
+			&.Next A {
+				display: inline-block;
+				padding: 20px 50px 20px 0px;
+		        background: url("timeline-arrow-right.png") no-repeat right center;
+		        background-size: 60px 60px;
+		        &:hover {
+		        	background-image: url("timeline-arrow-right-hover.png");
+		        }
+			}
+		}
+	}
+}
+.SmartPhone .Slider {
+	.Title {
+		TD.Prev A {
+			padding: 5px 0px 5px 20px;
+			font: @font-small;
+			background-size: 30px 30px;
+		}
+		TD.Next A {
+			padding: 5px 20px 5px 0px;
+			font: @font-small;
+			background-size: 30px 30px;
+		}
+		H2 {
+			font: @font-normal;
+		}
+	}
+	TR.BarLabels > TD {
+        font-size: 6pt;
+    }
 }
 
 //
@@ -283,6 +367,67 @@ TABLE.PhotoGrid TD {
 }
 
 //
+// TabBar
+//
+
+.Computer .TabBar {
+	.Tab {
+		vertical-align: middle;
+		.Current {
+			background-image: none;
+			background-color: @color-secondary-accent;
+			&.Home, &:only-child {
+				background: none;
+			}
+		}
+	}
+}
+
+//
+// Layout
+//
+
+#footer {
+	color: @color-text-light;
+	background: @color-background;
+}
+#footer TABLE {
+	border-top: dotted 1px @color-background-dark;
+	padding: 15px 10px;
+	A {
+		color: @color-text-light;
+		&:hover {
+			color: @color-hover;
+		}
+	}
+}
+
+.Computer {
+	#layout {
+		width: 980px;
+		margin:auto;
+	}
+	#header {
+		background-image: none;
+		height: 60px;
+		> TD {
+			height: 60px;
+			padding-left: 30px;
+			padding-right: 30px;
+		}
+	}
+	#page {
+		padding: 15px 30px;
+	}
+	.Inner {
+		width: 100%;
+	}
+	.TabBar .Links {
+		padding-top: 8px;
+	}
+}
+
+//
 // Home page
 //
 
@@ -293,21 +438,25 @@ BODY[uri="/"].Computer {
 	#colored {
 		color: @color-background;
 		background-color: @color-accent;
-		border-top: solid 8px @color-secondary-accent;
-		border-bottom: solid 8px @color-secondary-accent;
 		> TBODY > TR > TD:first-child {
-			padding: 10px;
+			padding: 10px 30px;
+		}
+		A {
+			font-weight: bold;
+			color: @color-background;
+			&:hover {
+				color: @color-hover;
+			}
 		}
 	}
 	#spiel {
 		H2 {
-			font: @font-huge;
 			color: @color-background;
+			text-transform: uppercase;
 		}
-		font: @font-large;
 	}
 	#loginframe {
-		margin: 0px 30px;
+		margin: 0px 60px 0px 0px;
 		padding: 15px;
 		background-color: @color-background;
 		color: @color-text;
@@ -328,35 +477,25 @@ BODY[uri="/"].Computer {
 		&:first-child {
 			padding-left: 0px;
 		}
+		BIG {
+			text-transform: uppercase;
+		}
 	}
 	#page {
-		padding-top: 0px;
+		padding: 0px 0px 15px 0px;
 	}
 }
 BODY[uri="/"].SmartPhone {
 	H2 {
 		color: @color-background;
+		text-transform: uppercase;
 	}
 	#colored {
 		color: @color-background;
 		background-color: @color-accent;
-		border-top: solid 8px @color-secondary-accent;
-		border-bottom: solid 8px @color-secondary-accent;
 	}
-}
-
-#footer {
-	color: @color-text-light;
-	background: @color-background;
-}
-#footer TABLE {
-	border-top: dotted 1px @color-background-dark;
-	padding: 15px 10px;
-	A {
-		color: @color-text-light;
-		&:hover {
-			color: @color-hover;
-		}
+	#benefits BIG {
+		text-transform: uppercase;
 	}
 }
 
@@ -385,12 +524,12 @@ BODY[uri^="/setup"] {
 //
 
 #NewJournalEntryPanel {
+	padding-top: 0.5em;
 	overflow: hidden;
-	height: 0;
-	.transition(height, 0.5s);
+	display: none;
 	
 	&.Expanded {
-		height: 145px;
+		display: block;
 	}
 }
 

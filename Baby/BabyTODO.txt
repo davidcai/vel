@@ -48,48 +48,9 @@ Need smarter cache indexing. allowing multiple keys for invalidation. using nami
   _ Mobile HotAction area (top-right corner buttons) to support search input box: widen on focus
   - detect orientation change, set class on BODY tag. in iOS, do same trick a scrollTo to recalc width of fixed elements.
 = name all threads in pools: http://stackoverflow.com/questions/6113746/naming-threads-and-thread-pools-of-executorservice
-
-BABY
-
-? refactor package names to match UI.
-  also COMMAND consts in BabyPage
-  also .properties file names
-  also uri filters in bottom of baby.less (for hiding navbar)
-
-+ server won't shutdown quickly sometimes.
-  + added debug statements to controller.terminate. Deploy on all projects, and check logs.
-  + LogEntryStore.terminate takes 20secs to terminate. Check executor termination.
-  + need to save Future and call cancel on it.
-  + change LogEntryStore delay to 15secs? or whenever queue.size gets to 100? then no need for fixed schedule.
-    use atomic increment rather than calling queue.size (which is o(n))
-    use unlimited threads for executor. otherwise can bottleneck. but must not write same elem twice.
-  + check all references to ScheduledExecutors. May be similar. esp recurring tasks.
-  + Remove test code from controller.destroy
-+ UI baby
-
-= margin on smartphone ui.
-  > * {margin: 0px 5px}
-  .FullWidth {margin: 0px 0px}
-  TABLE.NoPadding > TBODY > TR > TD {padding: 0px;}
-  #page {padding: 0px;} but H1 {padding-top: 15px;}
-- ArticleListControl:
-  ? don't show HR divider on Computer ui
-= (1) slider control for timeline instead of dropdown
-= Content:
-  = send new content to Andi. need to extract from XL, unlock.
-  = sample youtube videos of tours of facilities. search for "kaiser permanente maternity tour" on youtube
-= notifs:
-  = check iPhone app + push notifs
-  = alert timeline to allow user to choose channels, but no delay
-= enable all channels on PROD.
-= mybabyandi.com expires Feb 8. Try to grab if not renewed, otherwise, contact for purchase.
-= Journal:
-  - UI of Journal list
-    - better rendering of items in list, widelinkgroup with >
-    - more results with AJAX (scrolling)
-  - edit screen of journal entry (without measures for now)
-  - reduce image size to 50x50 on mobile. also in Article list.
-    create standard thumbnail sizes: 50x50 and 32x32 in samoyan
+- Figure out how to redirect to error page, but only for HTML requests. esp for 500 and 404.
+-? ServerStore.fed() and .local() to reload once per 1 second, otherwise use local cache.
+  can then move more settings into fed (cookie exp, debug, session, etc.)
 - create samoyan ConsoldiatedProfilePage, also for MMM and eLert.
 = simplify registration, esp for mobile. ask for email, password only.
   create username from email address, and send email with it to user.
@@ -98,39 +59,63 @@ BABY
   also need to check when changing email addresses in email form.
   also change title in login control to "Email" from login ID.
   also hide the "Rename account" page.
-= galaxy asking for http://mybaby.veloxicom.com/apple-touch-icon-precomposed.png and http://mybaby.veloxicom.com/apple-touch-icon.png
+- SpriteControl:
+  - accept large image, width/height
+  - set coords to show
+  - set coords to show on hover
+  - animation sequence + speed
+
+BABY
+
+? refactor package names to match UI.
+  also COMMAND consts in BabyPage
+  also .properties file names
+  also uri filters in bottom of baby.less (for hiding navbar)
+
+= margin on smartphone ui.
+  > * {margin: 0px 5px}
+  .FullWidth {margin: 0px 0px}
+  + TABLE.NoPadding > TBODY > TR > TD {padding: 0px;} - look for all occurrences of CELLSPACING and replace
+  #page {padding: 0px;} but H1 {padding-top: 15px;}
++ slider control for timeline instead of dropdown
+  + show also for preconception, but do not show bar.
+  + add arrows on top to navigate to next/prev stage
+  + better rendering for title area (blue title)
+  + fix size on mobile device.
+  + make labels clickable on desktop UI. black links.
+= Content:
+  = send new content to Andi. need to extract from XL, unlock.
+  = sample youtube videos of tours of facilities. search for "kaiser permanente maternity tour" on youtube
+= notifs:
+  = check iPhone app + push notifs
+  = alert timeline to allow user to choose channels, but no delay
+= enable all channels on PROD.
+= mybabyandi.com expires Feb 8. Try to grab if not renewed, otherwise, contact for purchase.
+= (2) galaxy asking for http://mybaby.veloxicom.com/apple-touch-icon-precomposed.png and http://mybaby.veloxicom.com/apple-touch-icon.png
   and repeating on every request if not found.
   debug with david.
-- Figure out how to redirect to error page, but only for HTML requests. esp for 500 and 404.
 _ MyElert mobile. getting logged out without a reason. check why!
   happens with debug=false, ssl=true and only on demo.veloxicom.com. and only with chrome emulation (not with actual iphone)
   check all usage of debug related to session management or cookies.
--? ServerStore.fed() and .local() to reload once per 1 second, otherwise use local cache.
-  can then move more settings into fed (cookie exp, debug, session, etc.)
 
 Erica's feedback Jan 4:
 - NTH: Add a new TODO item from calendar, with date.
   personal checkitems to have due date.
-- Evaluate two-tier top-level nav bar rather than vertical nav bar.
+x Evaluate two-tier top-level nav bar rather than vertical nav bar.
 x hide navigation bar on desktop, for non-admin tabs
   widen main body to full width, have tab control for journey tab
 = see erica's PPT from jan8. some items waiting feedback from erica. see email for details which.
+  = (0) Move "Search" functionality into Resources and Articles and run in that scope only
+  + Change Info title name to "My pregnancy". Keep same regardless of stage.
 = "Add to home screen" popup window for iphone/Android. show once. use app storage. not if cordova user-agent.
   depends also on browser. Can be chrome on ios...
-
-- UI design / ask Erica:
-  - calendar control is a bit of an overkill for only showing appointments. maybe it's better to show only in list view.
-    - show icons of journal entries (text, img, measure) in calendar?
-      but calendar is now tied to appointments with + button
-  - list view of calendar: wasteful in vertical space for day headers. unlikely to have more than one appointment per day.
-    we changed it to be more compact
-  - square logo design on various backgrounds (also for app icon).
-  - journal entry list UI on desktop. How to render?
-  - View appointment page: layout is very bare. Add labels?
-  - how to render checklists:
-    - fade out or hide if from previous stage?
-    - overdue/complete flags
-
++ flags for overdue/complete checklist
+= Redo article list based on Erica's design
+= (1) TabBar:
+  - make wider
+  - make entire area clickable when no img
+  - highlight with BG color instead of ^ arrow
+  - neat caps using css
 
 PHASE II:
 
@@ -148,6 +133,12 @@ _ Horizontal navigation (tab):
   - error message to show below navigation
 
 DAVID:
+= Journal UI:
+  - better rendering of items in list, widelinkgroup with >
+  - more results with AJAX (scrolling)
+  - edit screen of journal entry (without measures for now)
+  - reduce image size to 50x50 on mobile. also in Article list.
+    create standard thumbnail sizes: 50x50 and 32x32 in samoyan
 = Appointment view/edit page should show the relevant (based on type and timeline) checklists and articles
 = Calendar to include icons marking checklist deadlines.
 = Link measures with Journal entries
@@ -164,6 +155,8 @@ DAVID:
 
 
 FUTURE IDEAS:
+
+- Allow user to create reminder for checkitems. 
 
 - Help pages
 - Contact us page

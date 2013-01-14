@@ -38,7 +38,7 @@ public class CalendarPage extends BabyPage
 		else
 		{
 			new LinkToolbarControl(this)
-				.addLink(getString("information:Calendar.AddLink"), getPageURL(EditAppointmentPage.COMMAND), "icons/standard/pencil-16.png")
+				.addLink(getString("information:Calendar.AddLink"), getPageURL(EditAppointmentPage.COMMAND), "icons/standard/simple-clock-16.png")
 				.render();
 		}
 		
@@ -98,6 +98,7 @@ public class CalendarPage extends BabyPage
 				return (mm==month && apptSet.contains(dd));
 			}
 		}
+		.setCommand(AppointmentsChoicePage.COMMAND, null)
 		.highlightSelectedDay(cal.get(Calendar.YEAR)==yyyy && cal.get(Calendar.MONTH)==mm-1)
 		.render();
 		
