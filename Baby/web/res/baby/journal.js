@@ -4,7 +4,7 @@ $(function() {
 	
 	function expandNewEntryPanel() {
 		$EntryPlaceholder.hide();
-		$EntryInputs.show('slow', function() {
+		$EntryInputs.show('fast', function() {
 			$(this).find('TEXTAREA').focus();
 		});
 	}
