@@ -57,7 +57,6 @@ public class JournalPage extends BabyPage
 	private Mother mom;
 	private List<MeasureRecord> momRecords;
 	private Map<UUID, List<MeasureRecord>> babyRecords;
-	private boolean editing;
 	
 	@Override
 	public void init() throws Exception
@@ -86,33 +85,41 @@ public class JournalPage extends BabyPage
 			// Editing
 			//
 			
-			this.editing = true;
-			
 			this.momRecords = new ArrayList<MeasureRecord>();
 			this.babyRecords = new LinkedHashMap<UUID, List<MeasureRecord>>();
 			
 			List<UUID> recordIDs = MeasureRecordStore.getInstance().getByDate(userID, this.date);
-			for (UUID recordID : recordIDs)
+			if (recordIDs.isEmpty() == false)
 			{
-				MeasureRecord rec = MeasureRecordStore.getInstance().open(recordID);
-				Measure m = MeasureStore.getInstance().load(rec.getMeasureID());
-				if (m.isForMother())
+				for (UUID recordID : recordIDs)
 				{
-					// Mother records
-					this.momRecords.add(rec);
-				}
-				else
-				{
-					// Baby records
-					UUID babyID = rec.getBabyID();
-					List<MeasureRecord> records = this.babyRecords.get(babyID);
-					if (records == null)
+					MeasureRecord rec = MeasureRecordStore.getInstance().open(recordID);
+					Measure m = MeasureStore.getInstance().load(rec.getMeasureID());
+					if (m.isForMother())
 					{
-						records = new ArrayList<MeasureRecord>();
-						this.babyRecords.put(babyID, records);
+						// Mother records
+						this.momRecords.add(rec);
 					}
-					records.add(rec);
+					else
+					{
+						// Baby records
+						UUID babyID = rec.getBabyID();
+						List<MeasureRecord> records = this.babyRecords.get(babyID);
+						if (records == null)
+						{
+							records = new ArrayList<MeasureRecord>();
+							this.babyRecords.put(babyID, records);
+						}
+						records.add(rec);
+					}
 				}
+			}
+			else
+			{
+				Calendar cal = Calendar.getInstance(getTimeZone(), getLocale());
+				cal.setTime(this.date);
+				this.momRecords = MeasureRecordsPageHelper.createMeasureRecordsForMom(this, this.mom, cal);
+				this.babyRecords = MeasureRecordsPageHelper.createMeasureRecordsForBabies(this, this.mom, cal);
 			}
 		}
 		else
@@ -120,8 +127,6 @@ public class JournalPage extends BabyPage
 			//
 			// New
 			//
-			
-			this.editing = false;
 			
 			Calendar cal = Calendar.getInstance(getTimeZone(), getLocale());
 			this.date = cal.getTime(); 
@@ -171,6 +176,157 @@ public class JournalPage extends BabyPage
 		}
 	}
 	
+	@Override
+	public void commit() throws Exception
+	{
+		// Measure records
+		commitMeasureRecords(this.momRecords);
+		for (List<MeasureRecord> records : this.babyRecords.values())
+		{
+			commitMeasureRecords(records);
+		}
+		
+		// Journal entry
+		if (isParameter(PARAM_POST))
+		{
+			JournalEntry entry = null;
+			if (isParameterNotEmpty(PARAM_TIMESTAMP))
+			{
+				UUID entryID = JournalEntryStore.getInstance().getByDate(getContext().getUserID(), this.date);
+				if (entryID != null)
+				{
+					entry = JournalEntryStore.getInstance().open(entryID);
+				}
+			}
+			if (entry == null)
+			{
+				entry = new JournalEntry();
+				entry.setCreated(this.date);
+			}
+			
+			entry.setUserID(getContext().getUserID());
+			entry.setText(getParameterString(PARAM_TEXT));
+			
+			Image photo = getParameterImage(PARAM_PHOTO);
+			entry.setHasPhoto(photo != null);
+			entry.setPhoto(photo);
+			
+			JournalEntryStore.getInstance().save(entry);
+		}
+		else if (isParameter(PARAM_REMOVE))
+		{
+			UUID entryID = JournalEntryStore.getInstance().getByDate(getContext().getUserID(), this.date);
+			if (entryID != null)
+			{
+				JournalEntryStore.getInstance().remove(entryID);
+			}
+		}
+		
+		// Redirect to itself
+		throw new RedirectException(JournalPage.COMMAND, null);
+	}
+
+
+	@Override
+	public void renderHTML() throws Exception
+	{
+		// Horizontal nav bar
+		if (getContext().getUserAgent().isSmartPhone())
+		{
+			new TabControl(this)
+				.addTab(JournalPage.COMMAND, getString("journey:Journal.Title"), getPageURL(JournalPage.COMMAND))
+				.addTab(GalleryPage.COMMAND, getString("journey:Gallery.Title"), getPageURL(GalleryPage.COMMAND))
+				.addTab(ChartsPage.COMMAND, getString("journey:Charts.Title"), getPageURL(ChartsPage.COMMAND))
+				.setCurrentTab(getContext().getCommand())
+				.setStyleButton()
+				.setAlignStretch()
+				.render();
+		}
+		
+		JournalEntry entry = null;
+		if (isParameterNotEmpty(PARAM_TIMESTAMP))
+		{
+			UUID entryID = JournalEntryStore.getInstance().getByDate(getContext().getUserID(), this.date);
+			if (entryID != null)
+			{
+				entry = JournalEntryStore.getInstance().open(entryID);
+			}
+		}
+		
+		//
+		// Expandable input form
+		//
+		
+		writeFormOpen();
+		
+		// Placeholder
+		new TextInputControl(this, null)
+			.setSize(80)
+			.setMaxLength(JournalEntry.MAXSIZE_TEXT)
+			.setPlaceholder(getString("journey:Journal.WhatIsOnYourMind"))
+			.setAutoFocus(false)
+			.setID("NewJournalEntryPlaceHolder")
+			.render();
+		
+		write("<div id=\"NewJournalEntryPanel\"");
+		if (isParameter(PARAM_POST) || isParameterNotEmpty(PARAM_TIMESTAMP))
+		{
+			write(" class=\"Expanded\"");
+		}
+		write(">");
+		
+		// Measure records
+		writeMeasureRecords();
+		write("<br>");
+		
+		// Text
+		new TextAreaInputControl(this, "text")
+			.setRows(3).setCols(80)
+			.setMaxLength(JournalEntry.MAXSIZE_TEXT)
+			.setPlaceholder(getString("journey:Journal.WhatIsOnYourMind"))
+			.setInitialValue(entry != null ? entry.getText() : null)
+			.render();
+		write("<br>");
+		
+		// Photo
+		new ImageInputControl(this, "photo").showThumbnail(false).render();
+		write("<br>");
+		
+		// Postback
+		writeHiddenInput(PARAM_TIMESTAMP, getParameterString(PARAM_TIMESTAMP));
+		
+		// Buttons
+		writeButton(PARAM_POST, getString("journey:Journal.Post"));
+		if (isParameterNotEmpty(PARAM_TIMESTAMP))
+		{
+			write("&nbsp;");
+			writeRemoveButton(PARAM_REMOVE);
+		}
+		write("</div>"); //-- #NewJournalEntryPanel
+		
+		writeFormClose();
+		write("<br>");
+		
+		//
+		// Entries
+		//
+		
+		if (isParameterNotEmpty(PARAM_TIMESTAMP) == false)
+		{
+			writeEntries();
+		}
+		
+		writeIncludeJS("baby/journal.js");
+	}
+
+
+	@Override
+	public String getTitle() throws Exception
+	{
+		return getString("journey:Journal.Title");
+	}
+
+
 	private List<String> getMeasureRecordFieldNames() throws Exception
 	{
 		List<String> names = new ArrayList<String>();
@@ -203,56 +359,6 @@ public class JournalPage extends BabyPage
 		}
 	}
 	
-	@Override
-	public void commit() throws Exception
-	{
-		// Measure records
-		commitMeasureRecords(this.momRecords);
-		for (List<MeasureRecord> records : this.babyRecords.values())
-		{
-			commitMeasureRecords(records);
-		}
-		
-		// Journal entry
-		if (isParameter(PARAM_POST))
-		{
-			JournalEntry entry = null;
-			if (this.editing)
-			{
-				UUID entryID = JournalEntryStore.getInstance().getByDate(getContext().getUserID(), this.date);
-				if (entryID != null)
-				{
-					entry = JournalEntryStore.getInstance().open(entryID);
-				}
-			}
-			if (entry == null)
-			{
-				entry = new JournalEntry();
-				entry.setCreated(this.date);
-			}
-			
-			entry.setUserID(getContext().getUserID());
-			entry.setText(getParameterString(PARAM_TEXT));
-			
-			Image photo = getParameterImage(PARAM_PHOTO);
-			entry.setHasPhoto(photo != null);
-			entry.setPhoto(photo);
-			
-			JournalEntryStore.getInstance().save(entry);
-		}
-		else if (isParameter(PARAM_REMOVE) && this.editing)
-		{
-			UUID entryID = JournalEntryStore.getInstance().getByDate(getContext().getUserID(), this.date);
-			if (entryID != null)
-			{
-				JournalEntryStore.getInstance().remove(entryID);
-			}
-		}
-		
-		// Redirect to itself
-		throw new RedirectException(JournalPage.COMMAND, null);
-	}
-	
 	private void commitMeasureRecords(List<MeasureRecord> records) throws Exception
 	{
 		for (MeasureRecord rec : records)
@@ -273,95 +379,6 @@ public class JournalPage extends BabyPage
 		}
 	}
 
-	@Override
-	public void renderHTML() throws Exception
-	{
-		// Horizontal nav bar
-		if (getContext().getUserAgent().isSmartPhone())
-		{
-			new TabControl(this)
-				.addTab(JournalPage.COMMAND, getString("journey:Journal.Title"), getPageURL(JournalPage.COMMAND))
-				.addTab(GalleryPage.COMMAND, getString("journey:Gallery.Title"), getPageURL(GalleryPage.COMMAND))
-				.addTab(ChartsPage.COMMAND, getString("journey:Charts.Title"), getPageURL(ChartsPage.COMMAND))
-				.setCurrentTab(getContext().getCommand())
-				.setStyleButton()
-				.setAlignStretch()
-				.render();
-		}
-		
-		JournalEntry entry = null;
-		if (this.editing)
-		{
-			UUID entryID = JournalEntryStore.getInstance().getByDate(getContext().getUserID(), this.date);
-			if (entryID != null)
-			{
-				entry = JournalEntryStore.getInstance().open(entryID);
-			}
-		}
-		
-		//
-		// Expandable input form
-		//
-		
-		writeFormOpen();
-		
-		// Placeholder
-		new TextInputControl(this, null)
-			.setSize(80)
-			.setMaxLength(JournalEntry.MAXSIZE_TEXT)
-			.setPlaceholder(getString("journey:Journal.WhatIsOnYourMind"))
-			.setAutoFocus(false)
-			.setID("NewJournalEntryPlaceHolder")
-			.render();
-		
-		write("<div id=\"NewJournalEntryPanel\"");
-		if (isParameter(PARAM_POST))
-		{
-			write(" class=\"Expanded\"");
-		}
-		write(">");
-		
-		// Measure records
-		writeMeasureRecords();
-		write("<br>");
-		
-		// Text
-		new TextAreaInputControl(this, "text")
-			.setRows(3).setCols(80)
-			.setMaxLength(JournalEntry.MAXSIZE_TEXT)
-			.setPlaceholder(getString("journey:Journal.WhatIsOnYourMind"))
-			.setInitialValue(entry != null ? entry.getText() : null)
-			.render();
-		write("<br>");
-		
-		// Photo
-		new ImageInputControl(this, "photo").showThumbnail(false).render();
-		write("<br>");
-		
-		// Postback
-		writeHiddenInput(PARAM_TIMESTAMP, getParameterString(PARAM_TIMESTAMP));
-		
-		// Buttons
-		writeButton(PARAM_POST, getString("journey:Journal.Post"));
-		if (this.editing)
-		{
-			write("&nbsp;");
-			writeRemoveButton(PARAM_REMOVE);
-		}
-		write("</div>"); //-- #NewJournalEntryPanel
-		
-		writeFormClose();
-		write("<br>");
-		
-		//
-		// Entries
-		//
-		
-		writeEntries();
-		
-		writeIncludeJS("baby/journal.js");
-	}
-	
 	private void writeEntries() throws Exception
 	{
 		UUID userID = getContext().getUserID();
@@ -460,8 +477,8 @@ public class JournalPage extends BabyPage
 						JournalEntry entry = (JournalEntry) obj;
 						WideLink wl = wlg.addLink()
 								.setTitle(entry.getText())
-								.setURL(getPageURL(JournalEntryPage.COMMAND, 
-									new ParameterMap(JournalEntryPage.PARAM_ID, entry.getID().toString())));
+								.setURL(getPageURL(JournalPage.COMMAND, 
+									new ParameterMap(JournalPage.PARAM_TIMESTAMP, entry.getCreated().getTime())));
 						
 						String cssClass = "JournalEntry";
 						
@@ -516,7 +533,7 @@ public class JournalPage extends BabyPage
 									{
 										wl = wlg.addLink()
 											.setCSSClass("MeasureRecord")
-											.setURL(getPageURL(MeasureRecordsPage.COMMAND, new ParameterMap(MeasureRecordsPage.PARAM_TIMESTAMP, 
+											.setURL(getPageURL(JournalPage.COMMAND, new ParameterMap(JournalPage.PARAM_TIMESTAMP, 
 												String.valueOf(rec.getCreatedDate().getTime()))));
 										prevLink = wl;
 									}
@@ -644,11 +661,5 @@ public class JournalPage extends BabyPage
 		sb.append(rec.getMeasureID());
 		
 		return sb.toString();
-	}
-
-	@Override
-	public String getTitle() throws Exception
-	{
-		return getString("journey:Journal.Title");
 	}
 }
