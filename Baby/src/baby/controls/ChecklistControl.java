@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 import samoyan.controls.CheckboxInputControl;
+import samoyan.controls.ExpandableTextControl;
 import samoyan.controls.ImageControl;
 import samoyan.core.Util;
 import samoyan.servlet.RequestContext;
@@ -200,23 +201,7 @@ public class ChecklistControl
 //			out.writeEncode(checkitem.getID().toString());
 //			out.write("\">");
 			int p = checkitem.getText().indexOf(". ");
-			if (p<0)
-			{
-				out.writeEncode(checkitem.getText());
-			}
-			else
-			{
-				out.writeEncode(checkitem.getText().substring(0, p+2));
-				
-				if (!Util.isEmpty(checkitem.getText().substring(p+2)))
-				{
-					out.write("<span class=MoreLink onclick=\"expandCheckItem(this);\">");
-					out.writeEncode(out.getString("baby:ChecklistCtrl.More"));
-					out.write("</span><span class=NoShow>");
-					out.writeEncode(checkitem.getText().substring(p+2));
-					out.write("</span>");
-				}
-			}
+			new ExpandableTextControl(out).setText(checkitem.getText(), p<0? p : p + 1).setLabels(out.getString("baby:ChecklistCtrl.More"), out.getString("baby:ChecklistCtrl.Less")).render();
 //			out.write("</label>");
 			out.write("</td></tr>");
 		}

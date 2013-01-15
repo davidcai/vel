@@ -20,8 +20,6 @@ public class InfoTab extends EnvelopeTab
 		navCtrl.addHeader(outputPage.getString("information:Nav.Articles"));
 		navCtrl.addPage(ViewArticleListPage.COMMAND, null);
 		navCtrl.addPage(ViewResourceListPage.COMMAND, null);
-		// !$! Temp code, should not be here. Appointments should be linked with Calendar
-		navCtrl.addPage(SearchPage.COMMAND, null);
 		
 		return navCtrl;
 	}

@@ -91,7 +91,7 @@ public class MeasureRecordsPageHelper
 		List<UUID> measureIDs = filterMeasuresByStage(MeasureStore.getInstance().getAll(true), stage);
 		for (UUID measureID : measureIDs)
 		{
-			Measure m = MeasureStore.getInstance().load(measureID);
+//			Measure m = MeasureStore.getInstance().load(measureID);
 			MeasureRecord rec = new MeasureRecord();
 			rec.setUserID(userID);
 			rec.setMeasureID(measureID);

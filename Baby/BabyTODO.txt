@@ -72,17 +72,18 @@ BABY
   also .properties file names
   also uri filters in bottom of baby.less (for hiding navbar)
 
-= margin on smartphone ui.
-  > * {margin: 0px 5px}
-  .FullWidth {margin: 0px 0px}
++ galaxy asking for http://mybaby.veloxicom.com/apple-touch-icon-precomposed.png and http://mybaby.veloxicom.com/apple-touch-icon.png
+  and repeating on every request if not found.
+  debug with david.
+  catch requests to /apple-touch-icon.png and /apple-touch-icon-precomposed.png and /favicon.ico and return blank.png
+
+= (2) margin on smartphone ui.
+  - #page > * {margin: 0px 5px}
+  - .FullWidth {margin: 0px 0px}
   + TABLE.NoPadding > TBODY > TR > TD {padding: 0px;} - look for all occurrences of CELLSPACING and replace
-  #page {padding: 0px;} but H1 {padding-top: 15px;}
-+ slider control for timeline instead of dropdown
-  + show also for preconception, but do not show bar.
-  + add arrows on top to navigate to next/prev stage
-  + better rendering for title area (blue title)
-  + fix size on mobile device.
-  + make labels clickable on desktop UI. black links.
+  - #page {padding: 0px;} but H1 {padding-top: 15px;}
+  = div inside #page so width:100% works on children, esp. edit boxes
+  = no padding for #page for home page. need to stretch blue area+image
 = Content:
   = send new content to Andi. need to extract from XL, unlock.
   = sample youtube videos of tours of facilities. search for "kaiser permanente maternity tour" on youtube
@@ -91,39 +92,39 @@ BABY
   = alert timeline to allow user to choose channels, but no delay
 = enable all channels on PROD.
 = mybabyandi.com expires Feb 8. Try to grab if not renewed, otherwise, contact for purchase.
-= (2) galaxy asking for http://mybaby.veloxicom.com/apple-touch-icon-precomposed.png and http://mybaby.veloxicom.com/apple-touch-icon.png
-  and repeating on every request if not found.
-  debug with david.
 _ MyElert mobile. getting logged out without a reason. check why!
   happens with debug=false, ssl=true and only on demo.veloxicom.com. and only with chrome emulation (not with actual iphone)
   check all usage of debug related to session management or cookies.
 
 Erica's feedback Jan 4:
++ More>> <<Less expandable text control.
+  for checkitems
+= "Add to home screen" popup window for iphone/Android. show once. use app storage. not if cordova user-agent.
+  depends also on browser. Can be chrome on ios...
 - NTH: Add a new TODO item from calendar, with date.
   personal checkitems to have due date.
+= alignment of text in left margin. See PPT feedback from jan12.
++ color of Terms | Privacy links in footer in mobile
 x Evaluate two-tier top-level nav bar rather than vertical nav bar.
 x hide navigation bar on desktop, for non-admin tabs
   widen main body to full width, have tab control for journey tab
-= see erica's PPT from jan8. some items waiting feedback from erica. see email for details which.
-  = (0) Move "Search" functionality into Resources and Articles and run in that scope only
++ see erica's PPT from jan8. some items waiting feedback from erica. see email for details which.
+  + Move "Search" functionality into Resources and Articles and run in that scope only
   + Change Info title name to "My pregnancy". Keep same regardless of stage.
-= "Add to home screen" popup window for iphone/Android. show once. use app storage. not if cordova user-agent.
-  depends also on browser. Can be chrome on ios...
-+ flags for overdue/complete checklist
-= Redo article list based on Erica's design
-= (1) TabBar:
-  - make wider
-  - make entire area clickable when no img
-  - highlight with BG color instead of ^ arrow
-  - neat caps using css
++ TabBar:
+  + make wider
+  x make entire area clickable when no img
+  + highlight with BG color instead of ^ arrow
+  + neat caps using css
 
 PHASE II:
 
 _ checklists from earlier stages (preconception, pregnancy): show as faded.
 - Integrate the "Birth plan". It's a document the mother should fill out and send to her doctor.
   can be done electronically, or printed/mailed to doctor.
-- ArticleStore: caching for all queries/searches. Clear after save/remove.
-  warm up cache on system load: load all articles/checklists to memory
+- ArticleStore:
+  - caching for all queries/searches. Clear after save/remove.
+  x warm up cache on system load: load all articles/checklists to memory
 - kick counter tool:
   - integrate into measures (link to the tool)
   - better design
@@ -133,6 +134,7 @@ _ Horizontal navigation (tab):
   - error message to show below navigation
 
 DAVID:
+= Redo article list based on Erica's design
 = Journal UI:
   - better rendering of items in list, widelinkgroup with >
   - more results with AJAX (scrolling)
@@ -156,7 +158,7 @@ DAVID:
 
 FUTURE IDEAS:
 
-- Allow user to create reminder for checkitems. 
+- Allow user to create reminder for personal checkitems. 
 
 - Help pages
 - Contact us page

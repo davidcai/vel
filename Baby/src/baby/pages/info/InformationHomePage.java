@@ -52,11 +52,6 @@ public class InformationHomePage extends BabyPage
 			.setTitle(getString("information:Resources.Title"))
 			.setURL(getPageURL(ViewResourceListPage.COMMAND));
 
-		// !$! Temp code, should not be here.
-		wlg.addLink()
-			.setTitle(getString("information:Search.Title"))
-			.setURL(getPageURL(SearchPage.COMMAND));
-
 		wlg.render();
 
 		// Replace H1 with the logo

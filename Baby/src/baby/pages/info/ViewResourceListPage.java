@@ -57,10 +57,22 @@ public class ViewResourceListPage extends BabyPage
 		}
 		List<UUID> articleIDs = ArticleStore.getInstance().queryBySectionAndMedicalCenter(BabyConsts.SECTION_RESOURCE, mother.getRegion(), medCenter);
 		
+		if (!phone)
+		{
+			write("<table width=\"100%\"><tr><td>");
+		}
+		
 		// Medical center drop down
 		writeFormOpen("GET", null);
 		write("<table><tr valign=middle><td>");
-		writeEncode(getString("information:Resources.FoundResources", articleIDs.size()));
+		if (!phone)
+		{
+			writeEncode(getString("information:Resources.FoundResources", articleIDs.size()));
+		}
+		else
+		{
+			writeEncode(getString("information:Resources.FoundResourcesShort", articleIDs.size()));
+		}
 		write("</td><td>");
 		SelectInputControl select = new SelectInputControl(this, "center");
 		for (String m : medicalCenters)
@@ -70,9 +82,31 @@ public class ViewResourceListPage extends BabyPage
 		select.setInitialValue(medCenter);
 		select.setAutoSubmit(true);
 		select.render();
-		write("</td></tr></table><br>");
+		write("</td></tr></table>");
 		writeFormClose();
 		
+		if (!phone)
+		{
+			write("</td><td align=right>");
+		}
+		else
+		{
+			write("<br>");
+		}
+
+		// Search box
+		writeFormOpen("GET", SearchResourcesPage.COMMAND);
+		writeTextInput(SearchResourcesPage.PARAM_QUERY, null, 30, 128);
+		write(" ");
+		writeButton(getString("controls:Button.Search"));
+		writeFormClose();
+		
+		if (!phone)
+		{
+			write("</td></tr></table>");
+		}
+		write("<br>");
+
 		// Render resources
 		new ArticleListControl(this, articleIDs).showImages(false).showRegion(false).showSummary(!phone).render();
 		

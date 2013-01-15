@@ -372,14 +372,16 @@ TABLE.PhotoGrid TD {
 
 .Computer .TabBar {
 	.Tab {
+		width: 100px;
 		vertical-align: middle;
-		.Current {
+		&.Current {
 			background-image: none;
 			background-color: @color-secondary-accent;
 			&.Home, &:only-child {
 				background: none;
 			}
 		}
+		text-transform: capitalize;
 	}
 }
 
@@ -390,16 +392,16 @@ TABLE.PhotoGrid TD {
 #footer {
 	color: @color-text-light;
 	background: @color-background;
-}
-#footer TABLE {
-	border-top: dotted 1px @color-background-dark;
-	padding: 15px 10px;
 	A {
 		color: @color-text-light;
 		&:hover {
 			color: @color-hover;
 		}
 	}
+}
+#footer TABLE {
+	border-top: dotted 1px @color-background-dark;
+	padding: 15px 10px;
 }
 
 .Computer {

@@ -55,14 +55,17 @@ public class EditAppointmentPage extends BabyPage
 		if (this.appt==null)
 		{
 			this.appt = new Appointment();
+			this.readOnly = false;
 		}
 		else if (this.appt.getUserID().equals(getContext().getUserID())==false)
 		{
 			// Security check: make sure that appt is owned by this user
 			throw new PageNotFoundException();
 		}
-		
-		this.readOnly = (getContext().getUserAgent().isSmartPhone() && !isParameter(PARAM_EDIT));
+		else
+		{
+			this.readOnly = (getContext().getUserAgent().isSmartPhone() && !isParameter(PARAM_EDIT));
+		}
 	}
 	
 	@Override

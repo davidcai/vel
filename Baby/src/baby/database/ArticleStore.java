@@ -207,17 +207,22 @@ public final class ArticleStore extends DataBeanStore<Article>
 		return super.queryAll();
 	}
 	
-	public List<UUID> searchByText(String q, String region) throws SQLException
+	public List<UUID> searchByText(String queryStr, String section, String region) throws SQLException
 	{
 		try
 		{
 			ParameterList params = new ParameterList();
 			String sql = "SELECT p.LinkedID FROM Props AS p, Articles AS a " +
 					"WHERE a.ID=p.LinkedID AND p.Name='PlainText' AND FREETEXT(p.*, ?)";
-			params.add(q);
+			params.add(queryStr);
+			if (!Util.isEmpty(section))
+			{
+				sql += " AND a.Section=?";
+				params.add(section);
+			}
 			if (!Util.isEmpty(region))
 			{
-				sql += " AND (a.Region IS NULL OR a.Region=?)";
+				sql += " AND a.Region=?";
 				params.add(region);
 			}
 			return Query.queryListUUID(sql, params);
@@ -228,11 +233,16 @@ public final class ArticleStore extends DataBeanStore<Article>
 			ParameterList params = new ParameterList();
 			String sql = "SELECT p.LinkedID FROM Props AS p, Articles AS a " +
 					"WHERE a.ID=p.LinkedID AND p.Name='PlainText' AND (p.Val LIKE ? OR p.ValText LIKE ?)";
-			params.add("%" + q + "%");
-			params.add("%" + q + "%");
+			params.add("%" + queryStr + "%");
+			params.add("%" + queryStr + "%");
+			if (!Util.isEmpty(section))
+			{
+				sql += " AND a.Section=?";
+				params.add(section);
+			}
 			if (!Util.isEmpty(region))
 			{
-				sql += " AND (a.Region IS NULL OR a.Region=?)";
+				sql += " AND a.Region=?";
 				params.add(region);
 			}
 			return Query.queryListUUID(sql, params);

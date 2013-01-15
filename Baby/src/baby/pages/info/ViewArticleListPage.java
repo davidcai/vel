@@ -53,6 +53,22 @@ public class ViewArticleListPage extends BabyPage
 		
 //		writeHorizontalNav(ViewArticleListPage.COMMAND);
 
+		// Search box
+		if (!phone)
+		{
+			write("<div align=right>");
+		}
+		writeFormOpen("GET", SearchArticlesPage.COMMAND);
+		writeTextInput(SearchArticlesPage.PARAM_QUERY, null, 30, 128);
+		write(" ");
+		writeButton(getString("controls:Button.Search"));
+		writeFormClose();
+		if (!phone)
+		{
+			write("</div>");
+		}
+		write("<br>");
+		
 		// Render timeline
 		new TimelineSliderControl(this, stage, PARAM_STAGE).render();
 //		write("<table><tr valign=middle><td>");
@@ -60,6 +76,8 @@ public class ViewArticleListPage extends BabyPage
 //		write("</td><td>");
 //		new TimelineControl(this, stage, PARAM_STAGE).render();
 //		write("</td></tr></table>");
+		
+		write("<br>");
 		
 		// Render articles
 		new ArticleListControl(this, articleIDs).showSummary(!phone).render();
