@@ -92,6 +92,7 @@ public class BabyController extends Controller
 		
 		// Images
 		ImageStore.getInstance().bindSizer(BabyConsts.IMAGESIZE_THUMB_150X150, new LargestCropSizer(150, 150));
+		ImageStore.getInstance().bindSizer(BabyConsts.IMAGESIZE_THUMB_100X100, new LargestCropSizer(100, 100));
 		ImageStore.getInstance().bindSizer(BabyConsts.IMAGESIZE_THUMB_50X50, new LargestCropSizer(50, 50));
 		ImageStore.getInstance().bindSizer(BabyConsts.IMAGESIZE_BOX_800X800, new ShrinkToFitSizer(800, 800));
 		ImageStore.getInstance().bindSizer(BabyConsts.IMAGESIZE_BOX_400X400, new ShrinkToFitSizer(400, 400));

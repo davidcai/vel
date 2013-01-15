@@ -28,6 +28,7 @@ import samoyan.database.UserStore;
 import samoyan.servlet.exc.RedirectException;
 import samoyan.servlet.exc.WebFormException;
 import baby.app.BabyConsts;
+import baby.controls.JournalListControl;
 import baby.database.Baby;
 import baby.database.BabyStore;
 import baby.database.JournalEntry;
@@ -246,10 +247,12 @@ public class JournalPage extends BabyPage
 				.render();
 		}
 		
+		UUID userID = getContext().getUserID();
+		
 		JournalEntry entry = null;
 		if (isParameterNotEmpty(PARAM_TIMESTAMP))
 		{
-			UUID entryID = JournalEntryStore.getInstance().getByDate(getContext().getUserID(), this.date);
+			UUID entryID = JournalEntryStore.getInstance().getByDate(userID, this.date);
 			if (entryID != null)
 			{
 				entry = JournalEntryStore.getInstance().open(entryID);
@@ -325,7 +328,15 @@ public class JournalPage extends BabyPage
 		
 		if (isParameterNotEmpty(PARAM_TIMESTAMP) == false)
 		{
-			writeEntries();
+//			writeEntries();
+			
+			List<UUID> entryIDs = JournalEntryStore.getInstance().getByUserID(userID);
+			List<UUID> recordIDs = MeasureRecordStore.getInstance().getByUserID(userID);
+			
+			new JournalListControl(this)
+				.setEntryIDs(entryIDs)
+				.setRecordIDs(recordIDs)
+				.render();
 		}
 		
 		writeIncludeJS("baby/journal.js");
