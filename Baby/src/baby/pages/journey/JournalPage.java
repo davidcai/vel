@@ -320,7 +320,6 @@ public class JournalPage extends BabyPage
 		write("</div>"); //-- #EntryInputs
 		
 		writeFormClose();
-		write("<br>");
 		
 		//
 		// Entries

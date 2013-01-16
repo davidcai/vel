@@ -539,17 +539,50 @@ BODY[uri^="/setup"] {
 }
 
 .JournalList {
+	padding-top: 0.5em;
 	
 	.DateHeading {
-		background-color: gray;
+		padding: 0.8em 0 0.2em;
+		font-weight: bold;
+		color: @color-accent;
 	}
 	
 	.ListItem {
-		border: 1px solid gray;
-		padding: 1em;
+		border: 1px outset @color-text-light;
+		margin: 10px 0;
+		overflow: hidden;
+		clear: both;
+		
+		/*
+		-webkit-box-shadow:  0px 0px 3px 1px @color-text-light;
+        box-shadow:  0px 0px 3px 1px @color-text-light;
+        */
+        
+        .Photo {
+        	float: left;
+        	margin: 0.5em;
+        }
+        
+        .RecordsAndText {
+        	margin: 0.5em;
+        	
+        	.Records {
+        		margin-bottom: 0.5em;
+        	}
+        }
+	}
+}
+.SmartPhone .JournalList {
+	.DateHeading {
+		padding: 0.2em 0;
+	}
+	
+	.ListItem {
+		margin: 5px 0;
 	}
 }
 
+/*
 #EntriesList {
 	.Date {
 		padding: 0px 5px;
@@ -574,3 +607,4 @@ BODY[uri^="/setup"] {
 		}
 	}
 }
+*/

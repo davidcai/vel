@@ -344,7 +344,7 @@ public class JournalListControl
 			
 			if (first == false)
 			{
-				twoCol.write("&nbsp;");
+				twoCol.writeEncode(out.getString("journey:Journal.Comma"));
 			}
 			
 			twoCol.writeEncode(out.getString("journey:Journal.MeasureRecord", 
