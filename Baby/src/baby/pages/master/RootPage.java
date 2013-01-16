@@ -122,10 +122,10 @@ public class RootPage extends WebPage
 			}
 			
 			write("<br>");
-			write("<div id=colored>");
 			new ImageControl(this).resource("baby/decor.jpg").setAttribute("width", "100%").setAttribute("height", "").render();
-			write("</div><br>");
+			write("<br>");
 			
+			write("<div id=benefits>");
 			for (int i=1; i<=3; i++)
 			{
 				write("<big>");
@@ -134,7 +134,8 @@ public class RootPage extends WebPage
 				writeEncode(getString("baby:Root.Benefit." + i, appTitle, appOwner));
 				write("<br><br>");
 			}
-		}		
+			write("</div>");
+		}
 	}
 	
 	@Override

@@ -813,9 +813,6 @@ DIV.InfoMessage {
 
 #header {
 	height: 75px;
-	> TD {
-		height: 75px;
-	}
 	vertical-align: top;
 	color: @color-negative-text;
 	background-color: @color-negative-background;
@@ -886,11 +883,6 @@ DIV.InfoMessage {
 	bottom: -16px;
 }
 
-
-#middle {
-	padding: 0px;
-}
-
 #footer {
 	height: 60px; 
 	font: @font-small;
@@ -903,13 +895,7 @@ DIV.InfoMessage {
 		}
 	}
 	.GradientLight25;
-	> TD {
-		padding: 10px 0px;
-		height: 60px;
-	}
-}
-.SmartPhone #footer {
-	margin-top:5px;
+	padding: 10px 0px;
 }
 
 #page, #navbar {
@@ -923,16 +909,26 @@ DIV.InfoMessage {
 	}
 }
 .SmartPhone {
-	#header, #page {
+	#header {
 		width: 100%;
-		padding: 1px 1px;
+		padding: 0px 5px;
 		height: auto;
 	}
+	#page {
+		width: 100%;
+		height: auto;
+		padding: 5px 5px;
+	}
 	#navbar {
-		width: 100%;min-width:0px;
+		width: 100%;
+		min-width:0px;
 		font: @font-large;
 		height: auto;
-		padding: 5px 1px;
+		padding: 5px 5px;
+	}
+	#footer {
+		margin-top: 5px;
+		padding: 0px 5px;
 	}
 }
 #welcome {

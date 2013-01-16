@@ -72,18 +72,12 @@ BABY
   also .properties file names
   also uri filters in bottom of baby.less (for hiding navbar)
 
-+ galaxy asking for http://mybaby.veloxicom.com/apple-touch-icon-precomposed.png and http://mybaby.veloxicom.com/apple-touch-icon.png
-  and repeating on every request if not found.
-  debug with david.
-  catch requests to /apple-touch-icon.png and /apple-touch-icon-precomposed.png and /favicon.ico and return blank.png
-
-= (2) margin on smartphone ui.
-  - #page > * {margin: 0px 5px}
-  - .FullWidth {margin: 0px 0px}
-  + TABLE.NoPadding > TBODY > TR > TD {padding: 0px;} - look for all occurrences of CELLSPACING and replace
-  - #page {padding: 0px;} but H1 {padding-top: 15px;}
-  = div inside #page so width:100% works on children, esp. edit boxes
-  = no padding for #page for home page. need to stretch blue area+image
++ margin on smartphone ui.
+  x #page > * {margin: 0px 5px}
+  x .FullWidth {margin: 0px 0px}
+  x #page {padding: 0px;} but H1 {padding-top: 15px;}
+  x div inside #page so width:100% works on children, esp. edit boxes
+  + no padding for #page for home page. need to stretch blue area+image
 = Content:
   = send new content to Andi. need to extract from XL, unlock.
   = sample youtube videos of tours of facilities. search for "kaiser permanente maternity tour" on youtube
@@ -91,31 +85,20 @@ BABY
   = check iPhone app + push notifs
   = alert timeline to allow user to choose channels, but no delay
 = enable all channels on PROD.
-= mybabyandi.com expires Feb 8. Try to grab if not renewed, otherwise, contact for purchase.
+- mybabyandi.com expires Feb 8. Try to grab if not renewed, otherwise, contact for purchase.
 _ MyElert mobile. getting logged out without a reason. check why!
   happens with debug=false, ssl=true and only on demo.veloxicom.com. and only with chrome emulation (not with actual iphone)
   check all usage of debug related to session management or cookies.
+= discussion forums. provide estimate
+= Edit/remove for my personal checklist items (same as journal entries)
 
 Erica's feedback Jan 4:
-+ More>> <<Less expandable text control.
-  for checkitems
 = "Add to home screen" popup window for iphone/Android. show once. use app storage. not if cordova user-agent.
   depends also on browser. Can be chrome on ios...
+  need to detect if already added to home screen (e.g. running as web app already)
 - NTH: Add a new TODO item from calendar, with date.
   personal checkitems to have due date.
-= alignment of text in left margin. See PPT feedback from jan12.
-+ color of Terms | Privacy links in footer in mobile
-x Evaluate two-tier top-level nav bar rather than vertical nav bar.
-x hide navigation bar on desktop, for non-admin tabs
-  widen main body to full width, have tab control for journey tab
-+ see erica's PPT from jan8. some items waiting feedback from erica. see email for details which.
-  + Move "Search" functionality into Resources and Articles and run in that scope only
-  + Change Info title name to "My pregnancy". Keep same regardless of stage.
-+ TabBar:
-  + make wider
-  x make entire area clickable when no img
-  + highlight with BG color instead of ^ arrow
-  + neat caps using css
++ alignment of text in left margin. See PPT feedback from jan12.
 
 PHASE II:
 

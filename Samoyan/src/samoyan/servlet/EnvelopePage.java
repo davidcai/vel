@@ -144,7 +144,7 @@ public class EnvelopePage extends WebPage
 				if (ua.isSmartPhone()==false)
 				{
 					write("<table NoPadding id=layout>");
-					write("<tr id=header><td>");
+					write("<tr><td id=header>");
 						
 						write("<noscript><div>");
 						writeEncode(getString("common:Errors.EnableJavascript"));
@@ -155,7 +155,7 @@ public class EnvelopePage extends WebPage
 						write("</div>");
 						
 					write("</td></tr>");
-					write("<tr id=middle><td>");
+					write("<tr><td id=middle>");
 					
 						write("<table NoPadding class=Inner><tr><td id=navbar>");
 							renderHTMLNavBar(); // subclass
@@ -170,7 +170,7 @@ public class EnvelopePage extends WebPage
 						write("</td></tr></table>");
 					
 					write("</td></tr>");
-					write("<tr id=footer><td>");
+					write("<tr><td id=footer>");
 					
 						write("<div class=Inner>");
 						renderHTMLFooter(); // subclass
