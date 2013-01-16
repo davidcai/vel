@@ -382,6 +382,9 @@ TABLE.PhotoGrid TD {
 			}
 		}
 		text-transform: capitalize;
+		&.Home {
+			padding-right: 20px;
+		}
 	}
 }
 
@@ -401,7 +404,7 @@ TABLE.PhotoGrid TD {
 }
 #footer TABLE {
 	border-top: dotted 1px @color-background-dark;
-	padding: 15px 10px;
+	padding: 15px 30px;
 }
 
 .Computer {
@@ -412,13 +415,10 @@ TABLE.PhotoGrid TD {
 	#header {
 		background-image: none;
 		height: 60px;
-		> TD {
-			height: 60px;
-			padding-left: 30px;
-			padding-right: 30px;
-		}
+		padding-left: 30px;
+		padding-right: 30px;
 	}
-	#page {
+	#page, #navbar {
 		padding: 15px 30px;
 	}
 	.Inner {
@@ -469,18 +469,21 @@ BODY[uri="/"].Computer {
 			}
 		}
 	}
-	#benefits TD {
-		border-right: dashed 1px @color-text-light;
-		padding: 10px;
-		&:last-child {
-			border: none;
-			padding-right: 0px;
-		}
-		&:first-child {
-			padding-left: 0px;
-		}
-		BIG {
-			text-transform: uppercase;
+	#benefits {
+		margin: 0px 30px;
+		TD {
+			border-right: dashed 1px @color-text-light;
+			padding: 10px;
+			&:last-child {
+				border: none;
+				padding-right: 0px;
+			}
+			&:first-child {
+				padding-left: 0px;
+			}
+			BIG {
+				text-transform: uppercase;
+			}
 		}
 	}
 	#page {
@@ -495,9 +498,16 @@ BODY[uri="/"].SmartPhone {
 	#colored {
 		color: @color-background;
 		background-color: @color-accent;
+		padding: 5px;
 	}
-	#benefits BIG {
-		text-transform: uppercase;
+	#benefits {
+		margin: 0px 5px;
+		BIG {
+			text-transform: uppercase;
+		}
+	}
+	#page {
+		padding: 0px;
 	}
 }
 
@@ -548,6 +558,7 @@ BODY[uri^="/setup"] {
 	}
 	
 	.ListItem {
+		position: relative;
 		border: 1px outset @color-text-light;
 		margin: 10px 0;
 		overflow: hidden;
@@ -557,6 +568,22 @@ BODY[uri^="/setup"] {
 		-webkit-box-shadow:  0px 0px 3px 1px @color-text-light;
         box-shadow:  0px 0px 3px 1px @color-text-light;
         */
+        
+        .EditButton {
+        	position: absolute;
+        	right: 5px;
+        	top: 5px;
+        	visibility: hidden;
+        	padding: 2px;
+        	background-color: @color-background;
+        	
+        	&.Show {
+        		visibility: visible;
+        	}
+        }
+        &:hover .EditButton {
+        	visibility: visible;
+        }
         
         .Photo {
         	float: left;
@@ -579,6 +606,14 @@ BODY[uri^="/setup"] {
 	
 	.ListItem {
 		margin: 5px 0;
+		
+		&:hover .EditButton {
+			visibility: hidden;
+			
+			&.Show {
+				visibility: visible;
+			}
+		}
 	}
 }
 

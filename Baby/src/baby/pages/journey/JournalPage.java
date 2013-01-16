@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
 
+import samoyan.controls.ButtonInputControl;
 import samoyan.controls.DecimalInputControl;
 import samoyan.controls.ImageInputControl;
 import samoyan.controls.TabControl;
@@ -234,8 +235,11 @@ public class JournalPage extends BabyPage
 	@Override
 	public void renderHTML() throws Exception
 	{
+		UUID userID = getContext().getUserID();
+		boolean phone = getContext().getUserAgent().isSmartPhone();
+		
 		// Horizontal nav bar
-		if (getContext().getUserAgent().isSmartPhone())
+		if (phone)
 		{
 			new TabControl(this)
 				.addTab(JournalPage.COMMAND, getString("journey:Journal.Title"), getPageURL(JournalPage.COMMAND))
@@ -247,7 +251,20 @@ public class JournalPage extends BabyPage
 				.render();
 		}
 		
-		UUID userID = getContext().getUserID();
+		// Add button
+		if (phone && isParameter(PARAM_TIMESTAMP) == false)
+		{
+			writeFormOpen("GET", JournalPage.COMMAND);
+			new ButtonInputControl(this, null)
+				.setValue(getString("journey:Journal.Edit"))
+				.setMobileHotAction(true)
+				.setID("Edit")
+				.setAttribute("class", "NoShow")
+				.setAttribute("labeledit", getString("journey:Journal.Edit"))
+				.setAttribute("labelcancel", getString("journey:Journal.Cancel"))
+				.render();
+			writeFormClose();
+		}
 		
 		JournalEntry entry = null;
 		if (isParameterNotEmpty(PARAM_TIMESTAMP))
@@ -309,7 +326,10 @@ public class JournalPage extends BabyPage
 		// Buttons
 		if (isParameterNotEmpty(PARAM_TIMESTAMP))
 		{
-			writeButton(PARAM_POST, getString("journey:Journal.Save"));
+			new ButtonInputControl(this, PARAM_POST)
+				.setValue(getString("journey:Journal.Save"))
+				.setMobileHotAction(phone)
+				.render();
 			write("&nbsp;");
 			writeRemoveButton(PARAM_REMOVE);
 		}

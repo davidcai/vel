@@ -29,6 +29,7 @@ import baby.database.MeasureRecordStore;
 import baby.database.MeasureStore;
 import baby.database.Mother;
 import baby.database.MotherStore;
+import baby.pages.journey.JournalPage;
 import baby.pages.journey.MeasureRecordsPageHelper;
 import baby.pages.journey.PhotoPage;
 
@@ -257,6 +258,12 @@ public class JournalListControl
 				prevDay = day;
 				
 				out.write("<div class=\"ListItem\">");
+				
+				// Edit button
+				out.write("<div class=\"EditButton\">");
+				out.writeImage("baby/edit.png", out.getString("journey:Journal.Edit"), 
+					out.getPageURL(JournalPage.COMMAND, new ParameterMap(JournalPage.PARAM_TIMESTAMP, date.getTime())));
+				out.write("</div>");
 				
 				ListItem item = itemsByDate.get(date);
 				JournalEntry entry = item.getEntry();
