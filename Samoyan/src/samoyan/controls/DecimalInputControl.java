@@ -36,45 +36,26 @@ public class DecimalInputControl extends TextInputControl
 	}
 	
 	@Override
-	public void render()
+	public String getCurrentValue()
 	{
-		String v = getCurrentValue();
-		if (v != null)
+		String value = super.getCurrentValue();
+		if (value != null)
 		{
 			try
 			{
-				Float f = Float.valueOf(v);
+				Float f = Float.valueOf(value);
 				boolean hasDecimals = (Math.round(f * 1000) % 1000) != 0;
 				if (hasDecimals == false)
 				{
-					v = String.valueOf(f.intValue());
+					value = String.valueOf(f.intValue());
 				}
 			}
 			catch (Exception e)
 			{
 				// Do nothing
 			}
-			
-			setAttribute("value", v);
-		}
-		else
-		{
-			// To prevent certain IE9 problem when no initial value is set
-			// (field is cleared when pressing Submit)
-			setAttribute("value", "");
 		}
 		
-		// Autofocus
-		if (this.isAutoFocus())
-		{
-			WebPage out = this.getOutputPage();
-			if (out.getEphemeral("autofocus") == null)
-			{
-				setAttribute("autofocus", "");
-				out.setEphemeral("autofocus", "1");
-			}
-		}
-		
-		writeTag("input");
+		return value;
 	}
 }
