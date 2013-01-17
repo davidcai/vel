@@ -95,7 +95,7 @@ public class ChartsPage extends BabyPage
 		// Add button
 		if (getContext().getUserAgent().isSmartPhone())
 		{
-			writeFormOpen("GET", MeasureRecordsPage.COMMAND);
+			writeFormOpen("GET", JournalPage.COMMAND_EDIT);
 			new ButtonInputControl(this, null)
 				.setValue(getString("journey:Charts.AddHotButton"))
 				.setMobileHotAction(true)
@@ -106,7 +106,7 @@ public class ChartsPage extends BabyPage
 		else
 		{
 			new LinkToolbarControl(this)
-				.addLink(getString("journey:Charts.AddLink"), getPageURL(MeasureRecordsPage.COMMAND), "icons/standard/bar-chart-16.png")
+				.addLink(getString("journey:Charts.AddLink"), getPageURL(JournalPage.COMMAND_EDIT), "icons/standard/bar-chart-16.png")
 				.render();
 		}
 		

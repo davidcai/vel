@@ -346,7 +346,21 @@ public class JournalListControl
 		{
 			Measure m = MeasureStore.getInstance().load(rec.getMeasureID());
 			
+			String strVal = null;
 			Float val = MeasureRecordsPageHelper.getMeasureRecordValue(rec, metric);
+			if (val != null)
+			{
+				boolean hasDecimals = (Math.round(val * 1000) % 1000) != 0;
+				if (hasDecimals)
+				{
+					strVal = String.valueOf(val);
+				}
+				else
+				{
+					strVal = String.valueOf(val.intValue());
+				}
+			}
+			
 			String unit = metric ? m.getMetricUnit() : m.getImperialUnit();
 			
 			if (first == false)
@@ -355,7 +369,7 @@ public class JournalListControl
 			}
 			
 			twoCol.writeEncode(out.getString("journey:Journal.MeasureRecord", 
-				m.getLabel(), String.valueOf(val), unit));
+				m.getLabel(), strVal, unit));
 			
 			first = false;
 		}

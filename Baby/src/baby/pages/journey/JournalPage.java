@@ -47,6 +47,7 @@ public class JournalPage extends BabyPage
 	private final static String PARAM_POST = "post";
 	private final static String PARAM_REMOVE = "remvoe";
 	
+	private boolean listing;
 	private Date date;
 	private Mother mom;
 	private List<MeasureRecord> momRecords;
@@ -57,6 +58,8 @@ public class JournalPage extends BabyPage
 	{
 		UUID userID = getContext().getUserID();
 		this.mom = MotherStore.getInstance().loadByUserID(userID);
+		
+		this.listing = JournalPage.COMMAND.equals(getContext().getCommand());
 		
 		// Get date
 		Long time = getParameterLong(PARAM_TIMESTAMP);
@@ -184,13 +187,10 @@ public class JournalPage extends BabyPage
 		if (isParameter(PARAM_POST))
 		{
 			JournalEntry entry = null;
-			if (isParameterNotEmpty(PARAM_TIMESTAMP))
+			UUID entryID = JournalEntryStore.getInstance().getByDate(getContext().getUserID(), this.date);
+			if (entryID != null)
 			{
-				UUID entryID = JournalEntryStore.getInstance().getByDate(getContext().getUserID(), this.date);
-				if (entryID != null)
-				{
-					entry = JournalEntryStore.getInstance().open(entryID);
-				}
+				entry = JournalEntryStore.getInstance().open(entryID);
 			}
 			if (entry == null)
 			{
@@ -243,10 +243,10 @@ public class JournalPage extends BabyPage
 				.render();
 		}
 		
-		// Add button
-		if (phone && isParameter(PARAM_TIMESTAMP) == false)
+		// Edit mode button for smart phones
+		if (phone && this.listing)
 		{
-			writeFormOpen("GET", JournalPage.COMMAND_EDIT);
+			writeFormOpen("GET", JournalPage.COMMAND);
 			new ButtonInputControl(this, null)
 				.setValue(getString("journey:Journal.Edit"))
 				.setMobileHotAction(true)
@@ -259,13 +259,10 @@ public class JournalPage extends BabyPage
 		}
 		
 		JournalEntry entry = null;
-		if (isParameterNotEmpty(PARAM_TIMESTAMP))
+		UUID entryID = JournalEntryStore.getInstance().getByDate(userID, this.date);
+		if (entryID != null)
 		{
-			UUID entryID = JournalEntryStore.getInstance().getByDate(userID, this.date);
-			if (entryID != null)
-			{
-				entry = JournalEntryStore.getInstance().open(entryID);
-			}
+			entry = JournalEntryStore.getInstance().open(entryID);
 		}
 		
 		//
@@ -284,16 +281,19 @@ public class JournalPage extends BabyPage
 			.render();
 		
 		write("<div id=\"EntryInputs\"");
-		if (isParameter(PARAM_POST) || isParameterNotEmpty(PARAM_TIMESTAMP))
+		if (isParameter(PARAM_POST) || this.listing == false)
 		{
 			write(" class=\"Show\"");
 		}
 		write(">");
 		
-		write("<div id=\"EntryInputsHelp\">");
-		writeEncode(getString("journey:Journal.Help"));
-		write("</div>");
-		write("<br>");
+		if (phone == false)
+		{
+			write("<div id=\"EntryInputsHelp\">");
+			writeEncode(getString("journey:Journal.Help"));
+			write("</div>");
+			write("<br>");
+		}
 		
 		// Measure records
 		writeMeasureRecords();
@@ -316,7 +316,7 @@ public class JournalPage extends BabyPage
 		writeHiddenInput(PARAM_TIMESTAMP, getParameterString(PARAM_TIMESTAMP));
 		
 		// Buttons
-		if (isParameterNotEmpty(PARAM_TIMESTAMP))
+		if (this.listing == false)
 		{
 			new ButtonInputControl(this, PARAM_POST)
 				.setValue(getString("journey:Journal.Save"))
@@ -337,7 +337,7 @@ public class JournalPage extends BabyPage
 		// Entries
 		//
 		
-		if (isParameterNotEmpty(PARAM_TIMESTAMP) == false)
+		if (this.listing)
 		{
 			List<UUID> entryIDs = JournalEntryStore.getInstance().getByUserID(userID);
 			List<UUID> recordIDs = MeasureRecordStore.getInstance().getByUserID(userID);
