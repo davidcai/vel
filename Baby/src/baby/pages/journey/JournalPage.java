@@ -441,7 +441,7 @@ public class JournalPage extends BabyPage
 				Baby baby = BabyStore.getInstance().load(babyID);
 				if (baby != null)
 				{
-					String name = (Util.isEmpty(baby.getName())) ? getString("journey:MeasureRecords.Anonymous") : baby.getName();
+					String name = (Util.isEmpty(baby.getName())) ? getString("journey:Journal.Anonymous") : baby.getName();
 					twoCol.writeRow(name);
 					
 					List<MeasureRecord> records = this.babyRecords.get(babyID);
