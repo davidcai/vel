@@ -262,7 +262,7 @@ public class JournalListControl
 				// Edit button
 				out.write("<div class=\"EditButton\">");
 				out.writeImage("baby/edit.png", out.getString("journey:Journal.Edit"), 
-					out.getPageURL(JournalPage.COMMAND, new ParameterMap(JournalPage.PARAM_TIMESTAMP, date.getTime())));
+					out.getPageURL(JournalPage.COMMAND_EDIT, new ParameterMap(JournalPage.PARAM_TIMESTAMP, date.getTime())));
 				out.write("</div>");
 				
 				ListItem item = itemsByDate.get(date);

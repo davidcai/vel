@@ -1,14 +1,11 @@
 package baby.pages.journey;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.UUID;
 
 import samoyan.controls.ButtonInputControl;
@@ -18,17 +15,11 @@ import samoyan.controls.TabControl;
 import samoyan.controls.TextAreaInputControl;
 import samoyan.controls.TextInputControl;
 import samoyan.controls.TwoColFormControl;
-import samoyan.controls.WideLinkGroupControl;
-import samoyan.controls.WideLinkGroupControl.WideLink;
-import samoyan.core.DateFormatEx;
-import samoyan.core.Day;
-import samoyan.core.ParameterMap;
 import samoyan.core.Util;
 import samoyan.database.Image;
 import samoyan.database.UserStore;
 import samoyan.servlet.exc.RedirectException;
 import samoyan.servlet.exc.WebFormException;
-import baby.app.BabyConsts;
 import baby.controls.JournalListControl;
 import baby.database.Baby;
 import baby.database.BabyStore;
@@ -45,6 +36,7 @@ import baby.pages.BabyPage;
 public class JournalPage extends BabyPage
 {
 	public final static String COMMAND = BabyPage.COMMAND_JOURNEY + "/journal";
+	public final static String COMMAND_EDIT = BabyPage.COMMAND_JOURNEY + "/editjournal";
 	
 	public final static String PARAM_TIMESTAMP = "t";
 	
@@ -245,7 +237,7 @@ public class JournalPage extends BabyPage
 				.addTab(JournalPage.COMMAND, getString("journey:Journal.Title"), getPageURL(JournalPage.COMMAND))
 				.addTab(GalleryPage.COMMAND, getString("journey:Gallery.Title"), getPageURL(GalleryPage.COMMAND))
 				.addTab(ChartsPage.COMMAND, getString("journey:Charts.Title"), getPageURL(ChartsPage.COMMAND))
-				.setCurrentTab(getContext().getCommand())
+				.setCurrentTab(JournalPage.COMMAND)
 				.setStyleButton()
 				.setAlignStretch()
 				.render();
@@ -254,7 +246,7 @@ public class JournalPage extends BabyPage
 		// Add button
 		if (phone && isParameter(PARAM_TIMESTAMP) == false)
 		{
-			writeFormOpen("GET", JournalPage.COMMAND);
+			writeFormOpen("GET", JournalPage.COMMAND_EDIT);
 			new ButtonInputControl(this, null)
 				.setValue(getString("journey:Journal.Edit"))
 				.setMobileHotAction(true)
@@ -347,8 +339,6 @@ public class JournalPage extends BabyPage
 		
 		if (isParameterNotEmpty(PARAM_TIMESTAMP) == false)
 		{
-//			writeEntries();
-			
 			List<UUID> entryIDs = JournalEntryStore.getInstance().getByUserID(userID);
 			List<UUID> recordIDs = MeasureRecordStore.getInstance().getByUserID(userID);
 			
@@ -421,192 +411,6 @@ public class JournalPage extends BabyPage
 		}
 	}
 
-	private void writeEntries() throws Exception
-	{
-		UUID userID = getContext().getUserID();
-		List<UUID> entryIDs = JournalEntryStore.getInstance().getByUserID(userID);
-		List<UUID> recordIDs = MeasureRecordStore.getInstance().getByUserID(userID);
-		if (entryIDs.isEmpty() == false || recordIDs.isEmpty() == false)
-		{
-			write("<div id=\"EntriesList\">");
-			
-			//
-			// Group entries by dates. Entries include journal entries and measure records. 
-			//
-			
-			Map<Day, List<Object>> entriesByDates = new TreeMap<Day, List<Object>>(new Comparator<Day>()
-			{
-				@Override
-				public int compare(Day d1, Day d2)
-				{
-					return - d1.compareTo(d2);
-				}
-		
-			});
-			
-			for (UUID entryID : entryIDs)
-			{
-				JournalEntry entry = JournalEntryStore.getInstance().load(entryID);
-				Day day = new Day(getTimeZone(), entry.getCreated());
-				
-				List<Object> entries = entriesByDates.get(day);
-				if (entries == null)
-				{
-					entries = new ArrayList<Object>();
-					entriesByDates.put(day, entries);
-				}
-				entries.add(entry);
-			}
-			for (UUID recordID : recordIDs)
-			{
-				MeasureRecord rec = MeasureRecordStore.getInstance().load(recordID);
-				if (rec.getValue() != null)
-				{
-					Day day = new Day(getTimeZone(), rec.getCreatedDate());
-					
-					List<Object> entries = entriesByDates.get(day);
-					if (entries == null)
-					{
-						entries = new ArrayList<Object>();
-						entriesByDates.put(day, entries);
-					}
-					entries.add(rec);
-				}
-			}
-			
-			//
-			// Render entries
-			//
-			
-			Day today = new Day(getTimeZone(), new Date());
-			boolean phone = getContext().getUserAgent().isSmartPhone();
-			DateFormat dfDow = DateFormatEx.getSimpleInstance(phone ? "EEE" : "EEEE", getLocale(), getTimeZone());
-			DateFormat dfDate = DateFormatEx.getLongDateInstance(getLocale(), getTimeZone());
-			Mother mom = MotherStore.getInstance().loadByUserID(userID);
-			String momName = UserStore.getInstance().load(userID).getDisplayName();
-		
-			for (Day day : entriesByDates.keySet())
-			{
-				// Date header
-				Date date = day.getMidDay(getTimeZone(), 0, 0, 0);
-				
-				StringBuilder dateStr = new StringBuilder();
-				if (day.equals(today))
-				{
-					dateStr.append(getString("journey:Journal.Today"));
-				}
-				else
-				{
-					dateStr.append(dfDow.format(date));
-				}
-				dateStr.append(getString("journey:Journal.Comma"));
-				dateStr.append(dfDate.format(date));
-				
-				write("<div class=\"Date\">");
-				writeEncode(dateStr.toString());
-				write("</div>");
-				
-				// Entry list
-				WideLinkGroupControl wlg = new WideLinkGroupControl(this);
-				WideLink prevLink = null;
-				MeasureRecord prevRec = null;
-				List<Object> entries = entriesByDates.get(day);
-				for (Object obj : entries)
-				{
-					// Journal entry
-					if (obj instanceof JournalEntry)
-					{
-						JournalEntry entry = (JournalEntry) obj;
-						WideLink wl = wlg.addLink()
-								.setTitle(entry.getText())
-								.setURL(getPageURL(JournalPage.COMMAND, 
-									new ParameterMap(JournalPage.PARAM_TIMESTAMP, entry.getCreated().getTime())));
-						
-						String cssClass = "JournalEntry";
-						
-						// Photo
-						if (entry.isHasPhoto())
-						{
-							Image photo = entry.getPhoto();
-							if (photo != null)
-							{
-								wl.setImage(photo, BabyConsts.IMAGESIZE_THUMB_50X50, entry.getText());
-								cssClass += " PhotoEntry";
-							}
-						}
-						
-						wl.setCSSClass(cssClass);
-					}
-					// Measure record
-					else if (obj instanceof MeasureRecord)
-					{
-						MeasureRecord rec = (MeasureRecord) obj;
-						Measure m = MeasureStore.getInstance().load(rec.getMeasureID());
-						
-						if (m != null)
-						{
-							// Person name
-							String name = null;
-							if (rec.getBabyID() != null)
-							{
-								Baby baby = BabyStore.getInstance().load(rec.getBabyID());
-								if (baby != null)
-								{
-									// Use baby's name since this record is a baby record.
-									name = Util.isEmpty(baby.getName()) ? getString("journey:Journal.Anonymous") : baby.getName();
-								}
-							}
-							else
-							{
-								name = momName;
-							}
-							
-							if (Util.isEmpty(name) == false)
-							{
-								Float val = MeasureRecordsPageHelper.getMeasureRecordValue(rec, mom.isMetric());
-								if (val != null)
-								{
-									String label = m.getLabel();
-									String unit = mom.isMetric() ? m.getMetricUnit() : m.getImperialUnit();
-									String title = getString("journey:Journal.MeasureRecord", label, name, val, unit);
-									
-									WideLink wl = prevLink;
-									if (prevRec == null || rec.getCreatedDate().equals(prevRec.getCreatedDate()) == false)
-									{
-										wl = wlg.addLink()
-											.setCSSClass("MeasureRecord")
-											.setURL(getPageURL(JournalPage.COMMAND, new ParameterMap(JournalPage.PARAM_TIMESTAMP, 
-												String.valueOf(rec.getCreatedDate().getTime()))));
-										prevLink = wl;
-									}
-									
-									if (Util.isEmpty(wl.getExtra()) == false)
-									{
-										title = wl.getExtra() + ", " + title;
-									}
-									wl.setExtra(title);
-									
-									prevRec = rec;
-								}
-							}
-						}
-						
-					} //-- else if (obj instanceof MeasureRecord)
-					
-				} //-- for entries
-				
-				wlg.render();
-				
-			} //-- for date groups
-			
-			write("</div>"); //-- #EntriesList
-		}
-		else
-		{
-			writeEncode(getString("journey:Journal.NoEntry"));
-		}
-	}
-	
 	private void writeMeasureRecords() throws Exception
 	{
 		TwoColFormControl twoCol = new TwoColFormControl(this);
