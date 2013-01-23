@@ -1,11 +1,20 @@
 $(function() {
-	var $EntryPlaceholder = $('#EntryPlaceHolder');
+	var $EntryPlaceholder = $('#EntryPlaceholder');
 	var $EntryInputs = $('#EntryInputs');
 	
 	function expandNewEntryPanel() {
 		$EntryPlaceholder.hide();
 		$EntryInputs.show('fast', function() {
-			$(this).find('TEXTAREA').focus();
+			var $textFields = $('INPUT[type="text"]', this);
+			if ($textFields.length > 0) {
+				$textFields[0].focus();
+			}
+			else {
+				var $textAreas = $('TEXTAREA', this);
+				if ($textAreas.length > 0) {
+					$textAreas[0].focus();
+				}
+			}
 		});
 	}
 	

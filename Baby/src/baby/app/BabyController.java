@@ -36,7 +36,6 @@ import baby.pages.content.MeasurePage;
 import baby.pages.content.MedicalCenterTypeAhead;
 import baby.pages.content.RegionTypeAhead;
 import baby.pages.info.AppointmentReminderNotif;
-import baby.pages.info.AppointmentsChoicePage;
 import baby.pages.info.AppointmentsListPage;
 import baby.pages.info.CalendarPage;
 import baby.pages.info.ChecklistAjaxPage;
@@ -93,7 +92,7 @@ public class BabyController extends Controller
 		ImageStore.getInstance().bindSizer(BabyConsts.IMAGESIZE_THUMB_150X150, new LargestCropSizer(150, 150));
 		ImageStore.getInstance().bindSizer(BabyConsts.IMAGESIZE_THUMB_100X100, new LargestCropSizer(100, 100));
 		ImageStore.getInstance().bindSizer(BabyConsts.IMAGESIZE_THUMB_50X50, new LargestCropSizer(50, 50));
-		ImageStore.getInstance().bindSizer(BabyConsts.IMAGESIZE_BOX_800X800, new ShrinkToFitSizer(800, 800));
+		ImageStore.getInstance().bindSizer(BabyConsts.IMAGESIZE_BOX_600X600, new ShrinkToFitSizer(600, 600));
 		ImageStore.getInstance().bindSizer(BabyConsts.IMAGESIZE_BOX_400X400, new ShrinkToFitSizer(400, 400));
 		ImageStore.getInstance().bindSizer(BabyConsts.IMAGESIZE_BOX_150X150, new ShrinkToFitSizer(150, 150));
 		
@@ -114,13 +113,12 @@ public class BabyController extends Controller
 		Dispatcher.bindPage(ChecklistAjaxPage.COMMAND, 			ChecklistAjaxPage.class);
 		Dispatcher.bindPage(AppointmentsListPage.COMMAND, 		AppointmentsListPage.class);
 		Dispatcher.bindPage(CalendarPage.COMMAND, 				CalendarPage.class);
-		Dispatcher.bindPage(AppointmentsChoicePage.COMMAND, 	AppointmentsChoicePage.class);
 		Dispatcher.bindPage(EditAppointmentPage.COMMAND, 		EditAppointmentPage.class);
 		Dispatcher.bindPage(AppointmentReminderNotif.COMMAND, 	AppointmentReminderNotif.class);
 		
 //		// Scrapbook
 //		Dispatcher.bindPage(ScrapbookHomePage.COMMAND, 			ScrapbookHomePage.class);
-//		Dispatcher.bindPage(JournalPage.COMMAND, 				JournalPage.class);
+//		Dispatcher.bindPage(JournalPage.COMMAND_LIST, 				JournalPage.class);
 //		Dispatcher.bindPage(JournalEntryPage.COMMAND, 			JournalEntryPage.class);
 //		Dispatcher.bindPage(GalleryPage.COMMAND, 				GalleryPage.class);
 //		Dispatcher.bindPage(PhotoPage.COMMAND, 					PhotoPage.class);
@@ -129,8 +127,9 @@ public class BabyController extends Controller
 		
 		// Journey
 		Dispatcher.bindPage(JourneyHomePage.COMMAND, 			JourneyHomePage.class);
-		Dispatcher.bindPage(JournalPage.COMMAND, 				JournalPage.class);
+		Dispatcher.bindPage(JournalPage.COMMAND_LIST, 			JournalPage.class);
 		Dispatcher.bindPage(JournalPage.COMMAND_EDIT,			JournalPage.class);
+		Dispatcher.bindPage(JournalPage.COMMAND_RECORD,			JournalPage.class);
 		Dispatcher.bindPage(GalleryPage.COMMAND, 				GalleryPage.class);
 		Dispatcher.bindPage(ChartsPage.COMMAND, 				ChartsPage.class);
 		Dispatcher.bindPage(PhotoPage.COMMAND, 					PhotoPage.class);

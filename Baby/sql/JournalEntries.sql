@@ -11,7 +11,7 @@ GO
 CREATE TABLE [JournalEntries](
 	[ID] [binary](16) NOT NULL,
 	[UserID] [binary](16) NOT NULL, 
-	[Text] [nvarchar](500) NULL,
+	[Text] [nvarchar](512) NULL,
 	[HasPhoto] [bit] NOT NULL, 
 	[Created] [bigint] NOT NULL
 	

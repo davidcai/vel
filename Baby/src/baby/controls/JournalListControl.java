@@ -68,10 +68,10 @@ public class JournalListControl
 			}
 			return momRecords;
 		}
-		public void setMomRecords(List<MeasureRecord> momRecords)
-		{
-			this.momRecords = momRecords;
-		}
+//		public void setMomRecords(List<MeasureRecord> momRecords)
+//		{
+//			this.momRecords = momRecords;
+//		}
 
 		public Map<UUID, List<MeasureRecord>> getBabyRecords()
 		{
@@ -81,10 +81,10 @@ public class JournalListControl
 			}
 			return babyRecords;
 		}
-		public void setBabyRecords(Map<UUID, List<MeasureRecord>> babyRecords)
-		{
-			this.babyRecords = babyRecords;
-		}
+//		public void setBabyRecords(Map<UUID, List<MeasureRecord>> babyRecords)
+//		{
+//			this.babyRecords = babyRecords;
+//		}
 		
 		@Override
 		public int compareTo(ListItem that)
@@ -261,8 +261,15 @@ public class JournalListControl
 				
 				// Edit button
 				out.write("<div class=\"EditButton\">");
-				out.writeImage("baby/edit.png", out.getString("journey:Journal.Edit"), 
-					out.getPageURL(JournalPage.COMMAND_EDIT, new ParameterMap(JournalPage.PARAM_TIMESTAMP, date.getTime())));
+//				out.writeImage("baby/edit.png", out.getString("journey:Journal.Edit"), 
+//						out.getPageURL(JournalPage.COMMAND_EDIT, new ParameterMap(JournalPage.PARAM_TIMESTAMP, date.getTime())));
+				out.write("<small><a href=\"");
+				out.writeEncode(out.getPageURL(JournalPage.COMMAND_EDIT, new ParameterMap(JournalPage.PARAM_TIMESTAMP, date.getTime())));
+				out.write("\">");
+				out.writeImage("icons/standard/pencil-16.png", out.getString("journey:Journal.Edit"));
+				out.write(" ");
+				out.writeEncode(out.getString("journey:Journal.Edit"));
+				out.write("</a></small>");
 				out.write("</div>");
 				
 				ListItem item = itemsByDate.get(date);

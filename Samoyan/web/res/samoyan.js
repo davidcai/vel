@@ -73,7 +73,7 @@ $(document).ready(function()
 			})
 		});
 	}
-	if (!("autofocus" in document.createElement("INPUT")))
+	if (UserAgent.Computer && !("autofocus" in document.createElement("INPUT")))
 	{
 		$("[autofocus]").first().focus();
 	}
@@ -99,7 +99,7 @@ $(document).ready(function()
 			$(".TopBar .Tabs TABLE").show();
 			$(".Fixed").css("position", "fixed");
 		});
-//		// Hide the address bar
+//		// Hide the address bar on iPhone
 //		setTimeout(function(){
 //			window.scrollTo(0, window.pageYOffset + 1);
 //			$('body').append($('<div></div>').attr('id','iOsScrollFix').css('height','101%').css('overflow','hidden'));
@@ -129,38 +129,6 @@ $(document).ready(function()
 //			ev.preventDefault();
 //		});
 });
-
-
-//$(window).load(function()
-//{
-//	if (UserAgent.iPhone || UserAgent.iPod)
-//	{
-//		// Hide the address bar on iPhone
-//		window.setTimeout(function(){window.scrollTo(0, 1);$(window).scroll();}, 10);
-//	}
-//});
-
-//function neatCapsInput(ev)
-//{
-//	var t=$(ev.target);
-//	if (!t.attr('neatcaps') || t.attr('neatcaps').toLowerCase()!=t.val().toLowerCase())
-//	{
-//		var v=t.val();
-//		var vv="";
-//		for (var i=0;i<v.length;i++)
-//		{
-//			if (i==0 || v[i-1]==" " || v[i-1]=="\'" || v[i-1]==".")
-//			{
-//				vv+=v[i].toUpperCase();
-//			}
-//			else
-//			{
-//				vv+=v[i].toLowerCase();
-//			}
-//		}
-//		t.val(vv).attr("neatcaps", vv);
-//	}
-//}
 
 // Typeahead
 function typeaheadKeyDown(ev)

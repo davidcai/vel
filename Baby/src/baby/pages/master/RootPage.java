@@ -92,36 +92,34 @@ public class RootPage extends WebPage
 		{
 			write("<div id=colored>");
 			
-			write("<div id=spiel>");
-			write("<h2>");
-			writeEncode(getString("baby:Root.Welcome", appTitle, appOwner));
-			write("</h2>");
-			write(Util.textToHtml(getString("baby:Root.Spiel", appTitle, appOwner)));
-			write("</div>");
+				write("<div id=spiel>");
+				write("<h2>");
+				writeEncode(getString("baby:Root.Welcome", appTitle, appOwner));
+				write("</h2>");
+				write(Util.textToHtml(getString("baby:Root.Spiel", appTitle, appOwner)));
+				write("</div>");
 			
-			write("</div><br>");
+			write("</div>");
 
 			// Login
 			if (user==null)
 			{
 				write("<div id=loginframe>");
 				new LoginControl(this).showPrompt(false).render();
-				write("</div><br>");
+				write("</div>");
 			}
 			
 			// Signup
 			if (user==null && fed.isOpenRegistration())
 			{
-				write("<div align=center>");
-				writeFormOpen("GET", JoinPage.COMMAND);
+				write("<div id=registerframe>");
 				writeEncode(getString("baby:Root.RegisterHelp"));
-				write("<br>");
-				writeButton(getString("baby:Root.Register"));
-				writeFormClose();
+				write(" <b>");
+				writeLink(getString("baby:Root.Register"), getPageURL(JoinPage.COMMAND));
+				write("</b>");
 				write("</div>");
 			}
 			
-			write("<br>");
 			new ImageControl(this).resource("baby/decor.jpg").setAttribute("width", "100%").setAttribute("height", "").render();
 			write("<br>");
 			

@@ -4,17 +4,19 @@ import java.io.*;
 
 public final class PostedFileOutputStream extends OutputStream
 {
-	File file = null;
-	FileOutputStream fileStream = null;
-	long size = 0;
-	boolean inited = false;
+	public static String UPSTREAM_FILENAME = "upstream";
+	
+	private File file = null;
+	private FileOutputStream fileStream = null;
+	private long size = 0;
+	private boolean inited = false;
 	
 	private void init() throws IOException
 	{
 		if (this.inited) return;
 		
 		// Create a temporary file
-		this.file = File.createTempFile("upstream", ".tmp");
+		this.file = File.createTempFile(UPSTREAM_FILENAME, ".tmp");
 //		Debug.println("Upstream file " + this.file.getAbsolutePath() + " created");
 		
 		// Init the stream
@@ -32,11 +34,11 @@ public final class PostedFileOutputStream extends OutputStream
 			{
 				this.fileStream.close();
 			}
-			if (this.file!=null)
-			{
-				this.file.delete();
-//				Debug.println("Upstream file " + this.file.getAbsolutePath() + " deleted");
-			}
+//			if (this.file!=null)
+//			{
+//				this.file.delete();
+////				Debug.logln("Upstream file " + this.file.getAbsolutePath() + " deleted");
+//			}
 		}
 		finally
 		{

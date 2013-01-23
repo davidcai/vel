@@ -114,29 +114,53 @@ final class ImapReader implements Runnable, MessageCountListener
 		}
 		
 		this.shuttingDown = true;
-		
-		if (this.inbox!=null)
+		try
 		{
-			this.inbox.removeMessageCountListener(this);
-			this.inbox.close(true);
-			this.inbox = null;
+			if (this.inbox!=null)
+			{
+				this.inbox.removeMessageCountListener(this);
+				try
+				{
+					this.inbox.close(true);
+				}
+				catch (IllegalStateException ise)
+				{
+					// Ignore, most likely inbox is already closed
+				}
+				finally
+				{
+					this.inbox = null;
+				}
+			}
+			
+			if (this.store!=null)
+			{
+				try
+				{
+					this.store.close();
+				}
+				catch (IllegalStateException ise)
+				{
+					// Ignore, most likely inbox is already closed
+				}
+				finally
+				{
+					this.store = null;
+				}
+			}
+	
+			this.session = null;
+			
+			if (this.executor!=null)
+			{
+				Util.shutdownNowAndAwaitTermination(this.executor);
+				this.executor = null;
+			}
 		}
-		
-		if (this.store!=null)
+		finally
 		{
-			this.store.close();
-			this.store = null;
+			this.shuttingDown = false;
 		}
-
-		this.session = null;
-		
-		if (this.executor!=null)
-		{
-			Util.shutdownNowAndAwaitTermination(this.executor);
-			this.executor = null;
-		}
-		
-		this.shuttingDown = false;
 	}
 	
 	public void poll()

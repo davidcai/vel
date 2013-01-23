@@ -2,10 +2,12 @@ package samoyan.tasks;
 
 import java.io.File;
 
+import samoyan.core.image.JaiImage;
+import samoyan.servlet.PostedFileOutputStream;
 import samoyan.servlet.Setup;
 
 /**
- * Delete files from the temp folder that are older than 4 sessions.
+ * Delete files from the temp folder that are older than a session.
  * There include user uploaded file streams, image manipulation files, etc.
  * @author brian
  *
@@ -15,15 +17,20 @@ public class CleanTempFilesRecurringTask implements RecurringTask
 	@Override
 	public void work() throws Exception
 	{
-		long twoSessionsAgo = System.currentTimeMillis() - 4L*Setup.getSessionLength();
+		long sessionsAgo = System.currentTimeMillis() - Setup.getSessionLength();
 
 		File dir = new File(System.getProperty("java.io.tmpdir"));
 		File[] files = dir.listFiles();
 		for (File file : files)
 		{
-			if (file.lastModified() < twoSessionsAgo)
+			if (file.getName().startsWith(JaiImage.RENDER_IMAGE_FILENAME) ||
+				file.getName().startsWith(PostedFileOutputStream.UPSTREAM_FILENAME) ||
+				file.getName().startsWith("imageio"))
 			{
-				file.delete();
+				if (file.lastModified() < sessionsAgo)
+				{
+					file.delete();
+				}
 			}
 		}
 	}
@@ -31,6 +38,6 @@ public class CleanTempFilesRecurringTask implements RecurringTask
 	@Override
 	public long getInterval()
 	{
-		return Setup.getSessionLength();
+		return Setup.getSessionLength() / 4;
 	}
 }

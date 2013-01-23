@@ -158,6 +158,11 @@ public final class ConsolidatedProfilePage extends BabyPage
 			.setValue("********")
 			.setURL(getPageURL(ChangePasswordPage.COMMAND, goBackParams));
 
+		// Close account
+		wlg.addLink()
+			.setTitle(getString("babyprofile:Consolidated.Unsubscribe"))
+			.setURL(getPageURL(CloseAccountPage.COMMAND, goBackParams));
+
 		wlg.render();
 		
 		// - - -
@@ -248,19 +253,13 @@ public final class ConsolidatedProfilePage extends BabyPage
 		// - - -
 
 		// Logout and close account
-		write("<br>");
-//		write("<table><tr><td>");
-//		writeFormOpen("GET", LogoutPage.COMMAND);
-//		writeButton(getString("babyprofile:Consolidated.Logout"));
+//		write("<br>");
+//		writeFormOpen("GET", CloseAccountPage.COMMAND);
+//		new ButtonInputControl(this, null)
+//			.setStrong(true)
+//			.setValue(getString("babyprofile:Consolidated.Unsubscribe"))
+//			.render();
 //		writeFormClose();
-//		write("</td><td>");
-		writeFormOpen("GET", CloseAccountPage.COMMAND);
-		new ButtonInputControl(this, null)
-			.setStrong(true)
-			.setValue(getString("babyprofile:Consolidated.Unsubscribe"))
-			.render();
-		writeFormClose();
-//		write("</td></tr></table>");
 		
 		write("<div class=NoShow>");
 		writeFormOpen("GET", LogoutPage.COMMAND);

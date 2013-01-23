@@ -16,6 +16,7 @@ import samoyan.database.NotificationStore;
 import samoyan.notif.Notifier;
 import samoyan.servlet.Channel;
 import samoyan.servlet.UserAgent;
+import samoyan.servlet.exc.AfterCommitRedirectException;
 import samoyan.servlet.exc.PageNotFoundException;
 import samoyan.servlet.exc.RedirectException;
 import samoyan.servlet.exc.WebFormException;
@@ -30,12 +31,12 @@ public class EditAppointmentPage extends BabyPage
 	
 	public final static String PARAM_ID = "id";
 	public final static String PARAM_EDIT = "edit";
+	public final static String PARAM_DATE_YEAR = "y";
+	public final static String PARAM_DATE_MON = "m";
+	public final static String PARAM_DATE_DAY = "d";
 	
 	private final static String PARAM_DESC = "desc";
 	private final static String PARAM_TYPE = "type";
-	private final static String PARAM_DATE_YEAR = "y";
-	private final static String PARAM_DATE_MON = "m";
-	private final static String PARAM_DATE_DAY = "d";
 	private final static String PARAM_DATE_TIME = "t";
 	private final static String PARAM_ASKMYDOCTOR = "askdr";
 	private final static String PARAM_REMINDER_ONE_DAY = "remind1d";
@@ -135,7 +136,8 @@ public class EditAppointmentPage extends BabyPage
 //					new ParameterMap(PARAM_SAVE, "").plus(AppointmentPage.PARAM_ID, appointment.getID().toString()));
 //			}
 			
-			throw new RedirectException(AppointmentsListPage.COMMAND, null);
+//			throw new RedirectException(AppointmentsListPage.COMMAND, null);
+			throw new AfterCommitRedirectException(new ParameterMap(PARAM_ID, this.appt.getID()));
 		}
 		else if (isParameter(PARAM_REMOVE))
 		{
@@ -174,7 +176,7 @@ public class EditAppointmentPage extends BabyPage
 			int hour = time / 60;
 			int min = time % 60;
 			
-			cal.set(getParameterInteger(PARAM_DATE_YEAR), getParameterInteger(PARAM_DATE_MON), getParameterInteger(PARAM_DATE_DAY), hour, min, 0);
+			cal.set(getParameterInteger(PARAM_DATE_YEAR), getParameterInteger(PARAM_DATE_MON)-1, getParameterInteger(PARAM_DATE_DAY), hour, min, 0);
 			cal.set(Calendar.MILLISECOND, 0);
 			
 			date = cal.getTime();
@@ -329,7 +331,7 @@ public class EditAppointmentPage extends BabyPage
 		cal.set(Calendar.MILLISECOND, 0);
 		for (int i = 0; i < 12; i++)
 		{
-			mon.addOption(df.format(cal.getTime()), i);
+			mon.addOption(df.format(cal.getTime()), i+1);
 			cal.add(Calendar.MONTH, 1);
 		}
 		
@@ -367,7 +369,7 @@ public class EditAppointmentPage extends BabyPage
 		}
 
 		cal.setTime(datetime);
-		mon.setInitialValue(cal.get(Calendar.MONTH));
+		mon.setInitialValue(cal.get(Calendar.MONTH)+1);
 		day.setInitialValue(cal.get(Calendar.DAY_OF_MONTH));
 		year.setInitialValue(cal.get(Calendar.YEAR));
 		time.setInitialValue(cal.get(Calendar.HOUR_OF_DAY) * 60 + ((int) (cal.get(Calendar.MINUTE) / 30)) * 30);

@@ -6,7 +6,7 @@ public class BabyConsts
 	public final static String IMAGESIZE_THUMB_150X150 = "sq150";
 	public final static String IMAGESIZE_THUMB_100X100 = "sq100";
 	public final static String IMAGESIZE_THUMB_50X50 = "sq50";
-	public final static String IMAGESIZE_BOX_800X800 = "box800";
+	public final static String IMAGESIZE_BOX_600X600 = "box600";
 	public final static String IMAGESIZE_BOX_400X400 = "box400";
 	public final static String IMAGESIZE_BOX_150X150 = "box150";
 	

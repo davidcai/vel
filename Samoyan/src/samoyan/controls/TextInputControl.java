@@ -1,5 +1,6 @@
 package samoyan.controls;
 
+import samoyan.servlet.UserAgent;
 import samoyan.servlet.WebPage;
 
 public class TextInputControl extends InputControl
@@ -14,8 +15,9 @@ public class TextInputControl extends InputControl
 		
 		setAttribute("type", "text");
 		
-		this.maxWidth = outputPage.getContext().getUserAgent().getScreenWidth() - 16; 
-		this.autoFocus = true;
+		UserAgent ua = outputPage.getContext().getUserAgent();
+		this.maxWidth = ua.getScreenWidth() - 16; 
+		this.autoFocus = !ua.isMobile();
 	}
 
 	public TextInputControl setSize(int size)

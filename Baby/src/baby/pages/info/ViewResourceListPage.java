@@ -3,6 +3,7 @@ package baby.pages.info;
 import java.util.List;
 import java.util.UUID;
 
+import samoyan.controls.ButtonInputControl;
 import samoyan.controls.SelectInputControl;
 import samoyan.core.Util;
 import samoyan.servlet.Setup;
@@ -31,7 +32,8 @@ public class ViewResourceListPage extends BabyPage
 		boolean phone = getContext().getUserAgent().isSmartPhone();
 		Mother mother = MotherStore.getInstance().loadByUserID(getContext().getUserID());
 		List<String> medicalCenters = ArticleStore.getInstance().getMedicalCenters(mother.getRegion());
-
+		List<String> categories = ArticleStore.getInstance().getSubSections(BabyConsts.SECTION_RESOURCE);
+		
 //		writeHorizontalNav(ViewResourceListPage.COMMAND);
 
 		if (Util.isEmpty(mother.getMedicalCenter()) || medicalCenters.contains(mother.getMedicalCenter())==false)
@@ -55,14 +57,23 @@ public class ViewResourceListPage extends BabyPage
 		{
 			medCenter = mother.getMedicalCenter();
 		}
-		List<UUID> articleIDs = ArticleStore.getInstance().queryBySectionAndMedicalCenter(BabyConsts.SECTION_RESOURCE, mother.getRegion(), medCenter);
+		String category = getParameterString("category");
 		
-		if (!phone)
-		{
-			write("<table width=\"100%\"><tr><td>");
-		}
+		List<UUID> articleIDs = ArticleStore.getInstance().queryBySectionAndMedicalCenter(BabyConsts.SECTION_RESOURCE, category, mother.getRegion(), medCenter);
+
+		// Search box
+		write("<div class=ArticleSearchBox>");
+		writeFormOpen("GET", SearchResourcesPage.COMMAND);
+		writeTextInput(SearchResourcesPage.PARAM_QUERY, null, 30, 128);
+		write(" ");
+		new ButtonInputControl(this, null)
+			.setValue(getString("controls:Button.Search"))
+			.setMobileHotAction(true)
+			.render();
+		writeFormClose();
+		write("</div>");
 		
-		// Medical center drop down
+		// Medical center + sub-sections drop downs
 		writeFormOpen("GET", null);
 		write("<table><tr valign=middle><td>");
 		if (!phone)
@@ -71,7 +82,7 @@ public class ViewResourceListPage extends BabyPage
 		}
 		else
 		{
-			writeEncode(getString("information:Resources.FoundResourcesShort", articleIDs.size()));
+			writeEncode(getString("information:Resources.MedicalCenter"));
 		}
 		write("</td><td>");
 		SelectInputControl select = new SelectInputControl(this, "center");
@@ -82,33 +93,38 @@ public class ViewResourceListPage extends BabyPage
 		select.setInitialValue(medCenter);
 		select.setAutoSubmit(true);
 		select.render();
+		write("</td>");
+		if (phone)
+		{
+			write("</tr><tr valign=middle>");
+		}
+		write("<td>");
+		writeEncode(getString("information:Resources.Categories", articleIDs.size()));
+		write("</td><td>");
+		select = new SelectInputControl(this, "category");
+		select.addOption(getString("information:Resources.AllCategories"), "");
+		for (String m : categories)
+		{
+			select.addOption(m, m);
+		}
+		select.setInitialValue(category);
+		select.setAutoSubmit(true);
+		select.render();
 		write("</td></tr></table>");
 		writeFormClose();
 		
-		if (!phone)
-		{
-			write("</td><td align=right>");
-		}
-		else
-		{
-			write("<br>");
-		}
-
-		// Search box
-		writeFormOpen("GET", SearchResourcesPage.COMMAND);
-		writeTextInput(SearchResourcesPage.PARAM_QUERY, null, 30, 128);
-		write(" ");
-		writeButton(getString("controls:Button.Search"));
-		writeFormClose();
-		
-		if (!phone)
-		{
-			write("</td></tr></table>");
-		}
 		write("<br>");
 
 		// Render resources
-		new ArticleListControl(this, articleIDs).showImages(false).showRegion(false).showSummary(!phone).render();
+		if (articleIDs.size()>0)
+		{
+			new ArticleListControl(this, articleIDs).showImages(false).showRegion(false).showSummary(!phone).render();
+		}
+		else
+		{
+			writeEncode(getString("information:Resources.NoResults"));
+			write("<br>");
+		}
 		
 		// Additional resources
 		write("<br><hr><br>");

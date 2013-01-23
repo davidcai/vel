@@ -14,7 +14,6 @@ import java.util.UUID;
 import samoyan.controls.ButtonInputControl;
 import samoyan.controls.GoogleGraph;
 import samoyan.controls.LinkToolbarControl;
-import samoyan.controls.TabControl;
 import samoyan.core.DateFormatEx;
 import samoyan.core.Day;
 import samoyan.core.Util;
@@ -79,23 +78,23 @@ public class ChartsPage extends BabyPage
 	@Override
 	public void renderHTML() throws Exception
 	{
-		// Horizontal nav bar
-		if (getContext().getUserAgent().isSmartPhone())
-		{
-			new TabControl(this)
-				.addTab(JournalPage.COMMAND, getString("journey:Journal.Title"), getPageURL(JournalPage.COMMAND))
-				.addTab(GalleryPage.COMMAND, getString("journey:Gallery.Title"), getPageURL(GalleryPage.COMMAND))
-				.addTab(ChartsPage.COMMAND, getString("journey:Charts.Title"), getPageURL(ChartsPage.COMMAND))
-				.setCurrentTab(getContext().getCommand())
-				.setStyleButton()
-				.setAlignStretch()
-				.render();
-		}
+//		// Horizontal nav bar
+//		if (getContext().getUserAgent().isSmartPhone())
+//		{
+//			new TabControl(this)
+//				.addTab(JournalPage.COMMAND_LIST, getString("journey:Journal.Title"), getPageURL(JournalPage.COMMAND_LIST))
+//				.addTab(GalleryPage.COMMAND, getString("journey:Gallery.Title"), getPageURL(GalleryPage.COMMAND))
+//				.addTab(ChartsPage.COMMAND, getString("journey:Charts.Title"), getPageURL(ChartsPage.COMMAND))
+//				.setCurrentTab(getContext().getCommand())
+//				.setStyleButton()
+//				.setAlignStretch()
+//				.render();
+//		}
 		
 		// Add button
 		if (getContext().getUserAgent().isSmartPhone())
 		{
-			writeFormOpen("GET", JournalPage.COMMAND_EDIT);
+			writeFormOpen("GET", JournalPage.COMMAND_RECORD);
 			new ButtonInputControl(this, null)
 				.setValue(getString("journey:Charts.AddHotButton"))
 				.setMobileHotAction(true)
@@ -106,7 +105,7 @@ public class ChartsPage extends BabyPage
 		else
 		{
 			new LinkToolbarControl(this)
-				.addLink(getString("journey:Charts.AddLink"), getPageURL(JournalPage.COMMAND_EDIT), "icons/standard/bar-chart-16.png")
+				.addLink(getString("journey:Charts.AddLink"), getPageURL(JournalPage.COMMAND_RECORD), "icons/standard/bar-chart-16.png")
 				.render();
 		}
 		
@@ -114,6 +113,7 @@ public class ChartsPage extends BabyPage
 		// Graphs
 		//
 		
+		boolean graphRendered = false;
 		List<UUID> recIDs = MeasureRecordStore.getInstance().getByUserID(getContext().getUserID());
 		if (recIDs.isEmpty() == false)
 		{
@@ -123,13 +123,13 @@ public class ChartsPage extends BabyPage
 			List<GraphData> lstGraphData = getGraphDataList(recIDs);
 			for (GraphData data : lstGraphData)
 			{
-				write("<h2>");
-				writeEncode(data.getTitle());
-				write("</h2>");
-			
 				// Display graph only when historical data has more than two records.
 				if (data.getRows().size() > 1)
 				{
+					write("<h2>");
+					writeEncode(data.getTitle());
+					write("</h2>");
+				
 					GoogleGraph graph = new GoogleGraph(this);
 					graph.setChartType(GoogleGraph.LINE_CHART);
 					graph.setLegend(GoogleGraph.NONE);
@@ -150,17 +150,14 @@ public class ChartsPage extends BabyPage
 					}
 					
 					graph.render();
-				}
-				else
-				{
-					writeEncode(getString("journey:Charts.NotEnoughData"));
-					write("<br><br>");
+					graphRendered = true;
 				}
 			}
 		}
-		else
+
+		if (graphRendered==false)
 		{
-			writeEncode(getString("journey:Charts.NoRecords"));
+			writeEncode(getString("journey:Charts.NotEnoughData"));
 		}
 		
 		write("<br><br>");

@@ -722,7 +722,7 @@ public class Controller extends HttpServlet
 					partContent.close();
 					if (partContent.size()>0)
 					{
-						ctx.setPostedFile(partName, partContent.getFile());
+						ctx.setPostedFile(partName, new AutoDeleteFile(partContent.getFile()));
 						if (fileName!=null) ctx.setParameter(partName, fileName);
 					}
 				}

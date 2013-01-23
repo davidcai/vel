@@ -11,7 +11,6 @@ import java.util.UUID;
 import samoyan.controls.ButtonInputControl;
 import samoyan.controls.DecimalInputControl;
 import samoyan.controls.ImageInputControl;
-import samoyan.controls.TabControl;
 import samoyan.controls.TextAreaInputControl;
 import samoyan.controls.TextInputControl;
 import samoyan.controls.TwoColFormControl;
@@ -35,8 +34,9 @@ import baby.pages.BabyPage;
 
 public class JournalPage extends BabyPage
 {
-	public final static String COMMAND = BabyPage.COMMAND_JOURNEY + "/journal";
-	public final static String COMMAND_EDIT = BabyPage.COMMAND_JOURNEY + "/editjournal";
+	public final static String COMMAND_LIST = BabyPage.COMMAND_JOURNEY + "/journal";
+	public final static String COMMAND_EDIT = BabyPage.COMMAND_JOURNEY + "/edit-journal";
+	public final static String COMMAND_RECORD = BabyPage.COMMAND_JOURNEY + "/add-record";
 	
 	public final static String PARAM_TIMESTAMP = "t";
 	
@@ -47,7 +47,6 @@ public class JournalPage extends BabyPage
 	private final static String PARAM_POST = "post";
 	private final static String PARAM_REMOVE = "remvoe";
 	
-	private boolean listing;
 	private Date date;
 	private Mother mom;
 	private List<MeasureRecord> momRecords;
@@ -58,8 +57,6 @@ public class JournalPage extends BabyPage
 	{
 		UUID userID = getContext().getUserID();
 		this.mom = MotherStore.getInstance().loadByUserID(userID);
-		
-		this.listing = JournalPage.COMMAND.equals(getContext().getCommand());
 		
 		// Get date
 		Long time = getParameterLong(PARAM_TIMESTAMP);
@@ -149,20 +146,31 @@ public class JournalPage extends BabyPage
 					break;
 				}
 			}
-
-			// Show errors if text, photo, and measure records have no inputs
-			if (hasRecParams == false && 
-				isParameterNotEmpty(PARAM_TEXT) == false && 
-				getParameterImage(PARAM_PHOTO) == null)
+			
+			if (JournalPage.COMMAND_RECORD.equals(getContext().getCommand()))
 			{
-				String[] paramNames = recParamNames.toArray(new String[recParamNames.size() + 2]);
-				paramNames[paramNames.length - 2] = PARAM_TEXT;
-				paramNames[paramNames.length - 1] = PARAM_PHOTO;
-				throw new WebFormException(paramNames, getString("journey:Journal.NoInput"));
+				// For add record page, show errors if measure records have no inputs
+				if (hasRecParams == false)
+				{
+					throw new WebFormException(recParamNames, getString("journey:Journal.RequireRecord"));
+				}
 			}
+			else
+			{
+				// For list and edit pages, show errors if none of text, photo, or measure records have inputs
+				if (hasRecParams == false && 
+					isParameterNotEmpty(PARAM_TEXT) == false && 
+					getParameterImage(PARAM_PHOTO) == null)
+				{
+					String[] paramNames = recParamNames.toArray(new String[recParamNames.size() + 2]);
+					paramNames[paramNames.length - 2] = PARAM_TEXT;
+					paramNames[paramNames.length - 1] = PARAM_PHOTO;
+					throw new WebFormException(paramNames, getString("journey:Journal.RequireInput"));
+				}
 
-			// Text
-			validateParameterString(PARAM_TEXT, 0, JournalEntry.MAXSIZE_TEXT);
+				// Text
+				validateParameterString(PARAM_TEXT, 0, JournalEntry.MAXSIZE_TEXT);
+			}
 
 			// Measure records
 			validateMeasureRecords(this.momRecords);
@@ -183,44 +191,48 @@ public class JournalPage extends BabyPage
 			commitMeasureRecords(records);
 		}
 		
-		// Journal entry
-		if (isParameter(PARAM_POST))
+		// Commit journal entry only if the current page is a list or edit page
+		String cmd = getContext().getCommand();
+		if (JournalPage.COMMAND_LIST.equals(cmd) || JournalPage.COMMAND_EDIT.equals(cmd))
 		{
-			JournalEntry entry = null;
-			UUID entryID = JournalEntryStore.getInstance().getByDate(getContext().getUserID(), this.date);
-			if (entryID != null)
+			if (isParameter(PARAM_POST))
 			{
-				entry = JournalEntryStore.getInstance().open(entryID);
+				JournalEntry entry = null;
+				UUID entryID = JournalEntryStore.getInstance().getByDate(getContext().getUserID(), this.date);
+				if (entryID != null)
+				{
+					entry = JournalEntryStore.getInstance().open(entryID);
+				}
+				if (entry == null)
+				{
+					entry = new JournalEntry();
+					entry.setCreated(this.date);
+				}
+				
+				entry.setUserID(getContext().getUserID());
+				entry.setText(getParameterString(PARAM_TEXT));
+				
+				if (isParameterNotEmpty(PARAM_PHOTO))
+				{
+					Image photo = getParameterImage(PARAM_PHOTO);
+					entry.setHasPhoto(photo != null);
+					entry.setPhoto(photo);
+				}
+				
+				JournalEntryStore.getInstance().save(entry);
 			}
-			if (entry == null)
+			else if (isParameter(PARAM_REMOVE))
 			{
-				entry = new JournalEntry();
-				entry.setCreated(this.date);
-			}
-			
-			entry.setUserID(getContext().getUserID());
-			entry.setText(getParameterString(PARAM_TEXT));
-			
-			if (isParameterNotEmpty(PARAM_PHOTO))
-			{
-				Image photo = getParameterImage(PARAM_PHOTO);
-				entry.setHasPhoto(photo != null);
-				entry.setPhoto(photo);
-			}
-			
-			JournalEntryStore.getInstance().save(entry);
-		}
-		else if (isParameter(PARAM_REMOVE))
-		{
-			UUID entryID = JournalEntryStore.getInstance().getByDate(getContext().getUserID(), this.date);
-			if (entryID != null)
-			{
-				JournalEntryStore.getInstance().remove(entryID);
+				UUID entryID = JournalEntryStore.getInstance().getByDate(getContext().getUserID(), this.date);
+				if (entryID != null)
+				{
+					JournalEntryStore.getInstance().remove(entryID);
+				}
 			}
 		}
 		
 		// Redirect to itself
-		throw new RedirectException(JournalPage.COMMAND, null);
+		throw new RedirectException(JournalPage.COMMAND_LIST, null);
 	}
 
 
@@ -229,24 +241,25 @@ public class JournalPage extends BabyPage
 	{
 		UUID userID = getContext().getUserID();
 		boolean phone = getContext().getUserAgent().isSmartPhone();
+		String cmd = getContext().getCommand();
 		
-		// Horizontal nav bar
-		if (phone)
-		{
-			new TabControl(this)
-				.addTab(JournalPage.COMMAND, getString("journey:Journal.Title"), getPageURL(JournalPage.COMMAND))
-				.addTab(GalleryPage.COMMAND, getString("journey:Gallery.Title"), getPageURL(GalleryPage.COMMAND))
-				.addTab(ChartsPage.COMMAND, getString("journey:Charts.Title"), getPageURL(ChartsPage.COMMAND))
-				.setCurrentTab(JournalPage.COMMAND)
-				.setStyleButton()
-				.setAlignStretch()
-				.render();
-		}
+//		// Horizontal nav bar
+//		if (phone)
+//		{
+//			new TabControl(this)
+//				.addTab(JournalPage.COMMAND_LIST, getString("journey:Journal.Title"), getPageURL(JournalPage.COMMAND_LIST))
+//				.addTab(GalleryPage.COMMAND, getString("journey:Gallery.Title"), getPageURL(GalleryPage.COMMAND))
+//				.addTab(ChartsPage.COMMAND, getString("journey:Charts.Title"), getPageURL(ChartsPage.COMMAND))
+//				.setCurrentTab(JournalPage.COMMAND_LIST)
+//				.setStyleButton()
+//				.setAlignStretch()
+//				.render();
+//		}
 		
 		// Edit mode button for smart phones
-		if (phone && this.listing)
+		if (phone && JournalPage.COMMAND_LIST.equals(cmd))
 		{
-			writeFormOpen("GET", JournalPage.COMMAND);
+			writeFormOpen("GET", JournalPage.COMMAND_LIST);
 			new ButtonInputControl(this, null)
 				.setValue(getString("journey:Journal.Edit"))
 				.setMobileHotAction(true)
@@ -277,46 +290,43 @@ public class JournalPage extends BabyPage
 			.setMaxLength(JournalEntry.MAXSIZE_TEXT)
 			.setPlaceholder(getString("journey:Journal.WhatIsOnYourMind"))
 			.setAutoFocus(false)
-			.setID("EntryPlaceHolder")
+			.setID("EntryPlaceholder")
 			.render();
 		
+		// Show entry input fields if the request is a post, or the current page is either edit or record page
 		write("<div id=\"EntryInputs\"");
-		if (isParameter(PARAM_POST) || this.listing == false)
+		if (isParameter(PARAM_POST) || JournalPage.COMMAND_EDIT.equals(cmd) || JournalPage.COMMAND_RECORD.equals(cmd))
 		{
 			write(" class=\"Show\"");
 		}
 		write(">");
 		
-		if (phone == false)
-		{
-			write("<div id=\"EntryInputsHelp\">");
-			writeEncode(getString("journey:Journal.Help"));
-			write("</div>");
-			write("<br>");
-		}
-		
 		// Measure records
 		writeMeasureRecords();
 		write("<br>");
 		
-		// Text
-		new TextAreaInputControl(this, "text")
-			.setRows(3).setCols(80)
-			.setMaxLength(JournalEntry.MAXSIZE_TEXT)
-			.setPlaceholder(getString("journey:Journal.Text.Placeholder"))
-			.setInitialValue(entry != null ? entry.getText() : null)
-			.render();
-		write("<br>");
-		
-		// Photo
-		new ImageInputControl(this, "photo").showThumbnail(false).render();
-		write("<br>");
+		// Show text and photo fields if the current page is either list or edit pages
+		if (JournalPage.COMMAND_LIST.equals(cmd) || JournalPage.COMMAND_EDIT.equals(cmd))
+		{
+			// Text
+			new TextAreaInputControl(this, "text")
+				.setRows(3).setCols(80)
+				.setMaxLength(JournalEntry.MAXSIZE_TEXT)
+				.setPlaceholder(getString("journey:Journal.WriteSomething"))
+				.setInitialValue(entry != null ? entry.getText() : null)
+				.render();
+			write("<br>");
+			
+			// Photo
+			new ImageInputControl(this, "photo").showThumbnail(false).render();
+			write("<br>");
+		}
 		
 		// Postback
 		writeHiddenInput(PARAM_TIMESTAMP, getParameterString(PARAM_TIMESTAMP));
 		
 		// Buttons
-		if (this.listing == false)
+		if (JournalPage.COMMAND_EDIT.equals(cmd))
 		{
 			new ButtonInputControl(this, PARAM_POST)
 				.setValue(getString("journey:Journal.Save"))
@@ -337,7 +347,7 @@ public class JournalPage extends BabyPage
 		// Entries
 		//
 		
-		if (this.listing)
+		if (JournalPage.COMMAND_LIST.equals(cmd))
 		{
 			List<UUID> entryIDs = JournalEntryStore.getInstance().getByUserID(userID);
 			List<UUID> recordIDs = MeasureRecordStore.getInstance().getByUserID(userID);
@@ -474,7 +484,6 @@ public class JournalPage extends BabyPage
 		new DecimalInputControl(twoCol, getFieldName(PARAM_RECORD_VALUE_PREFIX, rec))
 			.setMinValue(min)
 			.setMaxValue(max)
-//			.setSize(20)
 			.setPlaceholder(getString("journey:Journal.MeasureRecord.Placeholder", m.getLabel(), this.mom.isMetric() ? m.getMetricUnit() : m.getImperialUnit()))
 			.setInitialValue(val)
 			.render();

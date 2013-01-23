@@ -45,7 +45,7 @@ public final class KPOrgCrawlerPage extends BabyPage
 		String medCenter = getParameterString("center");
 		if (!Util.isEmpty(medCenter) && !Util.isEmpty(region))
 		{
-			List<UUID> articleIDs = ArticleStore.getInstance().queryBySectionAndMedicalCenter(BabyConsts.SECTION_RESOURCE, region, medCenter);
+			List<UUID> articleIDs = ArticleStore.getInstance().queryBySectionAndMedicalCenter(BabyConsts.SECTION_RESOURCE, null, region, medCenter);
 			renderList(articleIDs);
 		}
 		else
@@ -117,7 +117,7 @@ public final class KPOrgCrawlerPage extends BabyPage
 				String center = centers.get(i);
 				writeLink(center, getPageURL(getContext().getCommand(), new ParameterMap("region", region).plus("center", center)));
 				
-				List<UUID> articleIDs = ArticleStore.getInstance().queryBySectionAndMedicalCenter(BabyConsts.SECTION_RESOURCE, region, center);
+				List<UUID> articleIDs = ArticleStore.getInstance().queryBySectionAndMedicalCenter(BabyConsts.SECTION_RESOURCE, null, region, center);
 				write("<span class=Faded> (" );
 				writeEncodeLong(articleIDs.size());
 				write(")</span>");

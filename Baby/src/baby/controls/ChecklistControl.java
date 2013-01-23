@@ -32,6 +32,7 @@ public class ChecklistControl
 	private boolean collapsable = true;
 	private boolean showCompleted = true;
 	private boolean showDueDate = true;
+	private boolean collapseLongText = true;
 	
 	public ChecklistControl(WebPage outputPage, UUID userID, UUID checklistID)
 	{
@@ -52,7 +53,7 @@ public class ChecklistControl
 		return this;
 	}
 		
-	public ChecklistControl setCollapsable(boolean b)
+	public ChecklistControl collapsable(boolean b)
 	{
 		this.collapsable = b;
 		return this;
@@ -67,6 +68,12 @@ public class ChecklistControl
 	public ChecklistControl showDueDate(boolean b)
 	{
 		this.showDueDate = b;
+		return this;
+	}
+
+	public ChecklistControl collapseLongText(boolean b)
+	{
+		this.collapseLongText = b;
 		return this;
 	}
 
@@ -200,8 +207,15 @@ public class ChecklistControl
 //			out.write("<label for=\"ci");
 //			out.writeEncode(checkitem.getID().toString());
 //			out.write("\">");
-			int p = checkitem.getText().indexOf(". ");
-			new ExpandableTextControl(out).setText(checkitem.getText(), p<0? p : p + 1).setLabels(out.getString("baby:ChecklistCtrl.More"), out.getString("baby:ChecklistCtrl.Less")).render();
+			if (collapseLongText)
+			{
+				int p = checkitem.getText().indexOf(". ");
+				new ExpandableTextControl(out).setText(checkitem.getText(), p<0? p : p + 1).setLabels(out.getString("baby:ChecklistCtrl.More"), out.getString("baby:ChecklistCtrl.Less")).render();
+			}
+			else
+			{
+				out.writeEncode(checkitem.getText());
+			}
 //			out.write("</label>");
 			out.write("</td></tr>");
 		}

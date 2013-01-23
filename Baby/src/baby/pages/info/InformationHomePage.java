@@ -1,20 +1,9 @@
 package baby.pages.info;
 
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-
-import samoyan.controls.WideLinkGroupControl;
-import samoyan.core.ParameterMap;
 import samoyan.core.Util;
-import samoyan.servlet.RequestContext;
 import samoyan.servlet.exc.RedirectException;
-import baby.database.BabyStore;
-import baby.database.Mother;
-import baby.database.MotherStore;
-import baby.database.Stage;
+import baby.controls.StageTitleControl;
 import baby.pages.BabyPage;
-import baby.pages.profile.StagePage;
 
 public class InformationHomePage extends BabyPage
 {
@@ -28,31 +17,53 @@ public class InformationHomePage extends BabyPage
 			throw new RedirectException(ChecklistPage.COMMAND, null);
 		}
 		
-		writeStageInfo();
+		StageTitleControl stgTtl = new StageTitleControl();
+		stgTtl.setContainer(this);
+		stgTtl.renderHTML();
 		
-		WideLinkGroupControl wlg = new WideLinkGroupControl(this);
+		write("<div class=Subtabs>");
 		
-		wlg.addLink()
-			.setTitle(getString("information:Checklist.Title"))
-			.setURL(getPageURL(ChecklistPage.COMMAND));
+		write(Util.textToHtml(getString("information:Home.Prompt")));
+		write("<br>");
 		
-		wlg.addLink()
-			.setTitle(getString("information:AppointmentsList.Title"))
-			.setURL(getPageURL(AppointmentsListPage.COMMAND));
+		String[] icons = {"baby/subtab-checklists.jpg", "baby/subtab-appointments.jpg", "baby/subtab-calendar.jpg", "baby/subtab-reading.jpg", "baby/subtab-resources.jpg"};
+		String[] labels = {"information:Checklist.Title", "information:AppointmentsList.Title", "information:Calendar.Title", "information:Articles.Title", "information:Resources.Title"};
+		String[] commands = {ChecklistPage.COMMAND, AppointmentsListPage.COMMAND, CalendarPage.COMMAND, ViewArticleListPage.COMMAND, ViewResourceListPage.COMMAND};
 		
-		wlg.addLink()
-			.setTitle(getString("information:Calendar.Title"))
-			.setURL(getPageURL(CalendarPage.COMMAND));
-
-		wlg.addLink()
-			.setTitle(getString("information:Articles.Title"))
-			.setURL(getPageURL(ViewArticleListPage.COMMAND));
-
-		wlg.addLink()
-			.setTitle(getString("information:Resources.Title"))
-			.setURL(getPageURL(ViewResourceListPage.COMMAND));
-
-		wlg.render();
+		for (int i=0; i<icons.length; i++)
+		{
+			write("<div>");
+			writeImage(icons[i], getString(labels[i]), getPageURL(commands[i]));
+			write("<br>");
+			writeEncode(getString(labels[i]));
+			write("</div>");
+		}		
+		write("<br>");
+		write("</div>");
+		
+//		WideLinkGroupControl wlg = new WideLinkGroupControl(this);
+//		
+//		wlg.addLink()
+//			.setTitle(getString("information:Checklist.Title"))
+//			.setURL(getPageURL(ChecklistPage.COMMAND));
+//		
+//		wlg.addLink()
+//			.setTitle(getString("information:AppointmentsList.Title"))
+//			.setURL(getPageURL(AppointmentsListPage.COMMAND));
+//		
+//		wlg.addLink()
+//			.setTitle(getString("information:Calendar.Title"))
+//			.setURL(getPageURL(CalendarPage.COMMAND));
+//
+//		wlg.addLink()
+//			.setTitle(getString("information:Articles.Title"))
+//			.setURL(getPageURL(ViewArticleListPage.COMMAND));
+//
+//		wlg.addLink()
+//			.setTitle(getString("information:Resources.Title"))
+//			.setURL(getPageURL(ViewResourceListPage.COMMAND));
+//
+//		wlg.render();
 
 		// Replace H1 with the logo
 		if (getContext().getUserAgent().isSmartPhone())
@@ -63,79 +74,7 @@ public class InformationHomePage extends BabyPage
 			write("\" height=25>');</script>");
 		}
 	}
-	
-	private void writeStageInfo() throws Exception
-	{
-		RequestContext ctx = getContext();
-		Mother mother = MotherStore.getInstance().loadByUserID(ctx.getUserID());
-		Stage stage = mother.getPregnancyStage();
-		Date now = new Date();
-
-		// Stage status
-		String status = null;
-		if (stage.isPreconception())
-		{
-			status = getString("information:Home.StatusPreconception");
-		}
-		else if (stage.isPregnancy())
-		{
-			Date due = mother.getDueDate();
-			long days = (due.getTime() - now.getTime()) / (24L*60L*60L*1000L) + 1;
-			if (days<=1L)
-			{
-				// Overdue
-				status = getString("information:Home.StatusImminent");
-			}
-			else
-			{
-				status = getString("information:Home.StatusPregnancy", stage.getPregnancyWeek(), days);
-			}
-		}
-		else if (stage.isInfancy())
-		{
-			String names = null;
-			List<UUID> babyIDs = BabyStore.getInstance().getAtLeastOneBaby(ctx.getUserID());
-			if (babyIDs.size()==1)
-			{
-				names = BabyStore.getInstance().load(babyIDs.get(0)).getName();
-			}
-			if (Util.isEmpty(names))
-			{
-				names = getString("information:Home.BabyCountName." + (babyIDs.size()<=8 ? babyIDs.size() : "N"));
-			}
-			
-			Date birth = mother.getBirthDate();
-			long weeks = (now.getTime() - birth.getTime()) / (7L*24L*60L*60L*1000L) + 1;
-			if (weeks<=18)
-			{
-				status = getString("information:Home.StatusInfancyWeeks", names, babyIDs.size(), weeks);
-			}
-			else
-			{
-				status = getString("information:Home.StatusInfancyMonths", names, babyIDs.size(), stage.getInfancyMonth());
-			}
-		}
-		write("<div align=center>");
 		
-		write("<h2>");
-		writeEncode(status);
-		write("</h2>");
-		if (stage.isPreconception())
-		{
-			write("<small>");
-			writeLink(getString("information:Home.AreYouPregnant"), getPageURL(StagePage.COMMAND, new ParameterMap(RequestContext.PARAM_GO_BACK_ON_SAVE, "")));
-			write("</small><br><br>");
-		}
-		else if (stage.isPregnancy() && stage.getPregnancyWeek()>=35)
-		{
-			write("<small>");
-			writeLink(getString("information:Home.DidYouGiveBirth"), getPageURL(StagePage.COMMAND, new ParameterMap(RequestContext.PARAM_GO_BACK_ON_SAVE, "")));
-			write("</small><br><br>");
-		}
-		
-		write("</div>");
-	}
-	
 	@Override
 	public String getTitle() throws Exception
 	{

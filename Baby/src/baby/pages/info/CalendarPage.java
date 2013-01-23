@@ -1,5 +1,7 @@
 package baby.pages.info;
 
+import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -9,6 +11,10 @@ import java.util.UUID;
 import samoyan.controls.BigCalendarControl;
 import samoyan.controls.ButtonInputControl;
 import samoyan.controls.LinkToolbarControl;
+import samoyan.controls.WideLinkGroupControl;
+import samoyan.core.DateFormatEx;
+import samoyan.core.Day;
+import samoyan.core.ParameterMap;
 import baby.database.Appointment;
 import baby.database.AppointmentStore;
 import baby.pages.BabyPage;
@@ -24,23 +30,8 @@ public class CalendarPage extends BabyPage
 	@Override
 	public void renderHTML() throws Exception
 	{
-		// Add button
-		if (getContext().getUserAgent().isSmartPhone())
-		{
-			writeFormOpen("GET", EditAppointmentPage.COMMAND);
-			new ButtonInputControl(this, null)
-				.setValue(getString("information:Calendar.AddHotButton"))
-				.setMobileHotAction(true)
-				.setAttribute("class", "NoShow")
-				.render();
-			writeFormClose();
-		}
-		else
-		{
-			new LinkToolbarControl(this)
-				.addLink(getString("information:Calendar.AddLink"), getPageURL(EditAppointmentPage.COMMAND), "icons/standard/simple-clock-16.png")
-				.render();
-		}
+		boolean phone = getContext().getUserAgent().isSmartPhone();
+		
 		
 		// Get base date
 		Calendar cal = Calendar.getInstance(getTimeZone(), getLocale());
@@ -67,8 +58,34 @@ public class CalendarPage extends BabyPage
 		cal.add(Calendar.MONTH, 1);
 		Date to = cal.getTime();
 				
+		Day today = new Day(yyyy, mm, dd);
+
+		// Add button
+		if (phone)
+		{
+			writeFormOpen("GET", EditAppointmentPage.COMMAND);
+			new ButtonInputControl(this, null)
+				.setValue(getString("information:Calendar.AddHotButton"))
+				.setMobileHotAction(true)
+				.setAttribute("class", "NoShow")
+				.render();
+			writeFormClose();
+		}
+		else
+		{
+			String url = getPageURL(EditAppointmentPage.COMMAND,
+									new ParameterMap(EditAppointmentPage.PARAM_DATE_YEAR, yyyy)
+									.plus(EditAppointmentPage.PARAM_DATE_MON, mm)
+									.plus(EditAppointmentPage.PARAM_DATE_DAY, dd));
+			new LinkToolbarControl(this)
+				.addLink(getString("information:Calendar.AddLink"), url, "icons/standard/simple-clock-16.png")
+				.render();
+		}
+
 		// Appointments
 		final HashSet<Integer> apptSet = new HashSet<Integer>();
+		
+		List<UUID> todaysAppointmentIDs = new ArrayList<UUID>();
 		
 		List<UUID> appointmentIDs = AppointmentStore.getInstance().getByDate(getContext().getUserID(), from, to, true);
 		for (UUID appointmentID : appointmentIDs)
@@ -77,6 +94,17 @@ public class CalendarPage extends BabyPage
 
 			cal.setTime(appointment.getDateTime());
 			apptSet.add(cal.get(Calendar.DAY_OF_MONTH));
+			
+			if (appointment.getDateTime().before(today.getDayStart(getTimeZone()))==false &&
+				appointment.getDateTime().before(today.getDayEnd(getTimeZone()))==true)
+			{
+				todaysAppointmentIDs.add(appointmentID);
+			}
+		}
+		
+		if (!phone)
+		{
+			write("<table width=\"100%\"><tr><td width=1>");
 		}
 		
 		// Render control
@@ -92,17 +120,51 @@ public class CalendarPage extends BabyPage
 					writeImage("icons/standard/simple-clock-16.png", null);
 				}
 			}
-			@Override
-			protected boolean isCellEnabled(int yyyy, int mm, int dd)
-			{
-				return (mm==month && apptSet.contains(dd));
-			}
+//			@Override
+//			protected boolean isCellEnabled(int yyyy, int mm, int dd)
+//			{
+//				return (mm==month && apptSet.contains(dd));
+//			}
 		}
-		.setCommand(AppointmentsChoicePage.COMMAND, null)
-		.highlightSelectedDay(cal.get(Calendar.YEAR)==yyyy && cal.get(Calendar.MONTH)==mm-1)
+//		.setCommand(AppointmentsChoicePage.COMMAND, null)
+//		.highlightSelectedDay(cal.get(Calendar.YEAR)==yyyy && cal.get(Calendar.MONTH)==mm-1)
 		.render();
 		
-		
+		if (!phone)
+		{
+			write("</td><td>");
+		}
+		else
+		{
+			write("<br>");
+		}
+
+		// List of appointments for selected day
+		if (todaysAppointmentIDs.isEmpty() == false)
+		{
+			DateFormat dfTime = DateFormatEx.getTimeInstance(getLocale(), getTimeZone());
+			WideLinkGroupControl wlg = new WideLinkGroupControl(this);
+			for (UUID appointmentID : todaysAppointmentIDs)
+			{
+				Appointment appointment = AppointmentStore.getInstance().load(appointmentID);
+				String url = getPageURL(EditAppointmentPage.COMMAND, new ParameterMap(EditAppointmentPage.PARAM_ID, appointmentID.toString()));
+				wlg.addLink()
+					.setTitle(appointment.getDescription())
+					.setValue(dfTime.format(appointment.getDateTime()))
+					.setURL(url);
+			}
+			wlg.render();
+		}
+		else
+		{
+			writeEncode(getString("information:Calendar.NoAppointments", today.getDayStart(getTimeZone())));
+		}
+
+		if (!phone)
+		{
+			write("</td></tr></table>");
+		}
+
 //		// Delivery due
 //		Date due = mother.getDueDate(getTimeZone());
 //		if (due == null)

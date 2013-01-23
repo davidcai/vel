@@ -82,7 +82,7 @@ public abstract class InputControl extends TagControl
 		}
 		return value;
 	}
-			
+	
 	public InputControl setDisabled(boolean b)
 	{
 		if (b)

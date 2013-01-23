@@ -44,11 +44,15 @@ public class DecimalInputControl extends TextInputControl
 			try
 			{
 				Float f = Float.valueOf(value);
-				boolean hasDecimals = (Math.round(f * 1000) % 1000) != 0;
-				if (hasDecimals == false)
+				if (((float) f.longValue()) == f)
 				{
-					value = String.valueOf(f.intValue());
+					value = String.valueOf(f.longValue());
 				}
+//				boolean hasDecimals = (Math.round(f * 1000) % 1000) != 0;
+//				if (hasDecimals == false)
+//				{
+//					value = String.valueOf(f.intValue());
+//				}
 			}
 			catch (Exception e)
 			{

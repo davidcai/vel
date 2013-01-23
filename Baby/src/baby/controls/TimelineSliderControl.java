@@ -170,26 +170,44 @@ public class TimelineSliderControl
 		out.write(2+stops);
 		out.write(" align=center>");
 		out.write("<table class=Title><tr><td align=left width=\"33%\" class=Prev>");
-			if (stage.isPregnancy())
+			String linkText = null;
+			if (phone)
 			{
-				out.writeLink(this.out.getString("baby:TimelineCtrl.PreconceptionStage"), this.out.getPageURL(this.out.getContext().getCommand(), new ParameterMap(this.stageParamName, prev)));
+				linkText = "\u00a0"; // &nbsp;
+			}
+			else if (stage.isPregnancy())
+			{
+				linkText = this.out.getString("baby:TimelineCtrl.PreconceptionStage");
 			}
 			else if (stage.isInfancy())
 			{
-				out.writeLink(this.out.getString("baby:TimelineCtrl.PregnancyStage"), this.out.getPageURL(this.out.getContext().getCommand(), new ParameterMap(this.stageParamName, prev)));
+				linkText = this.out.getString("baby:TimelineCtrl.PregnancyStage");
+			}
+			if (linkText!=null)
+			{
+				out.writeLink(linkText, this.out.getPageURL(this.out.getContext().getCommand(), new ParameterMap(this.stageParamName, prev)));
 			}
 		out.write("</td><td align=center width=\"33%\">");
 			out.write("<h2>");
 			out.writeEncode(title);
 			out.write("</h2>");
 		out.write("</td><td align=right width=\"33%\" class=Next>");
-			if (stage.isPregnancy())
+			linkText = null;
+			if (phone)
 			{
-				out.writeLink(this.out.getString("baby:TimelineCtrl.InfancyStage"), this.out.getPageURL(this.out.getContext().getCommand(), new ParameterMap(this.stageParamName, next)));
+				linkText = "\u00a0"; // &nbsp;
+			}
+			else if (stage.isPregnancy())
+			{
+				linkText = this.out.getString("baby:TimelineCtrl.InfancyStage");
 			}
 			else if (stage.isPreconception())
 			{
-				out.writeLink(this.out.getString("baby:TimelineCtrl.PregnancyStage"), this.out.getPageURL(this.out.getContext().getCommand(), new ParameterMap(this.stageParamName, next)));
+				linkText = this.out.getString("baby:TimelineCtrl.PregnancyStage");
+			}
+			if (linkText!=null)
+			{
+				out.writeLink(linkText, this.out.getPageURL(this.out.getContext().getCommand(), new ParameterMap(this.stageParamName, next)));
 			}
 		out.write("</td></tr></table>");
 		out.write("</td></tr>");
@@ -197,35 +215,38 @@ public class TimelineSliderControl
 		if (stage.isPregnancy() || stage.isInfancy())
 		{
 			// ROW 2 - labels for bar
-			out.write("<tr class=BarLabels><td></td>");
-	
-			for (int i=0; i<labels.length; i++)
+			if (!phone)
 			{
-				String shortLabel = this.out.getString("baby:TimelineCtrl."+labels[i]+"Short");
-				int low = ranges[i*2];
-				int hi = ranges[i*2+1];
-				if (low<start || hi>end) continue;
-				boolean current = stageInt>=low && stageInt<=hi;
-				
-				out.write("<td");
-				if (current)
+				out.write("<tr class=BarLabels><td></td>");
+		
+				for (int i=0; i<labels.length; i++)
 				{
-					out.write(" class=Current");
+					String shortLabel = this.out.getString("baby:TimelineCtrl."+labels[i]+"Short");
+					int low = ranges[i*2];
+					int hi = ranges[i*2+1];
+					if (low<start || hi>end) continue;
+					boolean current = stageInt>=low && stageInt<=hi;
+					
+					out.write("<td");
+					if (current)
+					{
+						out.write(" class=Current");
+					}
+					out.write(">");
+					if (phone || current)
+					{
+						out.writeEncode(shortLabel);
+					}
+					else
+					{
+						out.writeLink(shortLabel, out.getPageURL(out.getContext().getCommand(), new ParameterMap(this.stageParamName, low + "-" + hi)));
+					}
+					out.write("</td>");
 				}
-				out.write(">");
-				if (phone || current)
-				{
-					out.writeEncode(shortLabel);
-				}
-				else
-				{
-					out.writeLink(shortLabel, out.getPageURL(out.getContext().getCommand(), new ParameterMap(this.stageParamName, low + "-" + hi)));
-				}
-				out.write("</td>");
+	
+				out.write("<td></td></tr>");
 			}
-
-			out.write("<td></td></tr>");
-
+			
 			// ROW 3 - bar
 			out.write("<tr class=Bar><td class=LeftEnd></td>");
 			

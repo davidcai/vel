@@ -48,7 +48,6 @@ Need smarter cache indexing. allowing multiple keys for invalidation. using nami
   _ Mobile HotAction area (top-right corner buttons) to support search input box: widen on focus
   - detect orientation change, set class on BODY tag. in iOS, do same trick a scrollTo to recalc width of fixed elements.
 = name all threads in pools: http://stackoverflow.com/questions/6113746/naming-threads-and-thread-pools-of-executorservice
-- Figure out how to redirect to error page, but only for HTML requests. esp for 500 and 404.
 -? ServerStore.fed() and .local() to reload once per 1 second, otherwise use local cache.
   can then move more settings into fed (cookie exp, debug, session, etc.)
 - create samoyan ConsoldiatedProfilePage, also for MMM and eLert.
@@ -72,63 +71,47 @@ BABY
   also .properties file names
   also uri filters in bottom of baby.less (for hiding navbar)
 
-+ margin on smartphone ui.
-  x #page > * {margin: 0px 5px}
-  x .FullWidth {margin: 0px 0px}
-  x #page {padding: 0px;} but H1 {padding-top: 15px;}
-  x div inside #page so width:100% works on children, esp. edit boxes
-  + no padding for #page for home page. need to stretch blue area+image
-= Content:
+= (0) Content:
   = send new content to Andi. need to extract from XL, unlock.
   = sample youtube videos of tours of facilities. search for "kaiser permanente maternity tour" on youtube
-= notifs:
-  = check iPhone app + push notifs
-  = alert timeline to allow user to choose channels, but no delay
-= enable all channels on PROD.
+- notifs:
+  - check iPhone app + push notifs
+  - alert timeline to allow user to choose channels, but no delay
+= enable all channels on PROD. user friendly email address. now using gmail.
 - mybabyandi.com expires Feb 8. Try to grab if not renewed, otherwise, contact for purchase.
 _ MyElert mobile. getting logged out without a reason. check why!
   happens with debug=false, ssl=true and only on demo.veloxicom.com. and only with chrome emulation (not with actual iphone)
   check all usage of debug related to session management or cookies.
-= discussion forums. provide estimate
+- discussion forums. provide estimate
 = Edit/remove for my personal checklist items (same as journal entries)
++ Error uploading images from iPad iOS6. FileNotFound exception.
+= Figure out how to redirect to error page, but only for HTML requests. esp for 500 and 404.
+  - getting error 400 on login when cookies are disabled.
+    disable login control if no cookies header.
++ Dropdown for resources by types
++ fix kp.org crawler to include hours and phone numbers for resources.
 
-Erica's feedback Jan 4:
+Erica's input:
+= (2) Back button showing on home screen. need way to reset stack when logging in, or for particular screens.
+  after logout, after login.
++ Photo upload control for Album using image of camera. auto-upload. except IE.
 = "Add to home screen" popup window for iphone/Android. show once. use app storage. not if cordova user-agent.
   depends also on browser. Can be chrome on ios...
   need to detect if already added to home screen (e.g. running as web app already)
 - NTH: Add a new TODO item from calendar, with date.
   personal checkitems to have due date.
-+ alignment of text in left margin. See PPT feedback from jan12.
-
-PHASE II:
-
-_ checklists from earlier stages (preconception, pregnancy): show as faded.
-- Integrate the "Birth plan". It's a document the mother should fill out and send to her doctor.
-  can be done electronically, or printed/mailed to doctor.
-- ArticleStore:
-  - caching for all queries/searches. Clear after save/remove.
-  x warm up cache on system load: load all articles/checklists to memory
-- kick counter tool:
-  - integrate into measures (link to the tool)
-  - better design
-  - May need to redo because kicks are counted on several min basis. (how long to reach 10 kicks)
-_ Horizontal navigation (tab):
-  - set Fixed to top. need solid bg. Padding at bottom should not be fixed.
-  - error message to show below navigation
 
 DAVID:
-= Redo article list based on Erica's design
++ Redo article list based on Erica's design
 = Journal UI:
-  - better rendering of items in list, widelinkgroup with >
-  - more results with AJAX (scrolling)
-  - edit screen of journal entry (without measures for now)
-  - reduce image size to 50x50 on mobile. also in Article list.
-    create standard thumbnail sizes: 50x50 and 32x32 in samoyan
-= Appointment view/edit page should show the relevant (based on type and timeline) checklists and articles
-= Calendar to include icons marking checklist deadlines.
-= Link measures with Journal entries
-  = journal page: cleanup look, show image+text+measures
-= print capability of the journal. or export to PDF.
+  + better rendering of items in list, widelinkgroup with >
+  = (1) more results with AJAX (pagination)
+  + edit screen of journal entry
+= (0) New measurement page: don't show Remove button, don't show text+image edit boxes
+=? Appointment view/edit page should show the relevant (based on type and timeline) checklists and articles
+= (2) Calendar to include icons marking checklist deadlines.
+= Hover for editing journal doesn't work well on iPad (desktop UI but with touch)
+- print capability of the journal. or export to PDF.
   design "notebook" style for journal. lines, margins, etc.
 - separate Day and TimeOfDay input controls to return Day and TimeOfDay
   - drop downs when not supported natively.
@@ -138,6 +121,20 @@ DAVID:
   - getParameterDayAndTime("day", "time", tz) to return Date
   - in appointments, use Day+TimeOfDay controls instead of custom dropdowns. print time zone.
 
+PHASE II:
+
+_ checklists from earlier stages (preconception, pregnancy): show as faded.
+- Integrate the "Birth plan". It's a document the mother should fill out and send to her doctor.
+  can be done electronically, or printed/mailed to doctor.
+- ArticleStore:
+  - caching for all queries/searches. Clear after save/remove.
+- kick counter tool:
+  - integrate into measures (link to the tool)
+  - better design
+  - May need to redo because kicks are counted on several min basis. (how long to reach 10 kicks)
+_ Horizontal navigation (tab):
+  - set Fixed to top. need solid bg. Padding at bottom should not be fixed.
+  - error message to show below navigation
 
 FUTURE IDEAS:
 

@@ -1480,7 +1480,7 @@ public class WebPage
 		RequestContext ctx = getContext();
 
 		String state = ctx.getParameter("_state_" + name);
-		if (state.equals("uploaded"))
+		if (state!=null && state.equals("uploaded"))
 		{
 			// Previously uploaded image (error in form)
 			String tempFileName = ctx.getParameter("_uploaded_"+name);
@@ -1499,7 +1499,7 @@ public class WebPage
 				}
 			}
 		}
-		else if (state.equals("new"))
+		else if (state==null || state.equals("new"))
 		{
 			// Newly uploaded image
 			File file = getContext().getPostedFile(name);
@@ -1514,7 +1514,7 @@ public class WebPage
 				return img;
 			}
 		}
-		else if (state.equals("current"))
+		else if (state!=null && state.equals("current"))
 		{
 			String current = ctx.getParameter("_current_" + name);
 			if (Util.isUUID(current))

@@ -28,7 +28,9 @@ import com.sun.media.jai.codec.ForwardSeekableStream;
  * @version 1.0
  */
 public final class JaiImage implements Cloneable
-{	
+{
+	public static String RENDER_IMAGE_FILENAME = "renderimage";
+	
 	private RenderedOp op = null;
 
 	private static double[][] MATRIX_ALPHA_ONLY = {{0.0D, 0.0D, 0.0D, 1.0D, 0.0D}};
@@ -744,7 +746,7 @@ public final class JaiImage implements Cloneable
 			ext = ".png";
 		}
 		
-		File tmpFile = File.createTempFile("scaleimage", ext);
+		File tmpFile = File.createTempFile(RENDER_IMAGE_FILENAME, ext);
 		toFile(tmpFile);
 		FileSeekableStream fss = new FileSeekableStream(tmpFile);
 		this.op = JAI.create("stream", fss);
@@ -996,7 +998,7 @@ public final class JaiImage implements Cloneable
 		
 		// Hack: crop operation messes up the image coordinates.
 		// We therefore render the image to clear the operator pipeline. 
-		// This makes scale inefficient, but at least it works.
+		// This makes crop inefficient, but at least it works.
 		{
 			renderAndReload();
 		}

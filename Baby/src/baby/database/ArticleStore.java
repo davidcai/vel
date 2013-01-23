@@ -136,9 +136,35 @@ public final class ArticleStore extends DataBeanStore<Article>
 				new ParameterList(section).plus(lowStage).plus(highStage).plus(lowStage).plus(highStage).plus(lowStage).plus(highStage));
 	}
 	
-	public List<UUID> queryBySectionAndMedicalCenter(String section, String region, String medicalCenter) throws SQLException
+	public List<UUID> queryBySectionAndMedicalCenter(String section, String subsection, String region, String medicalCenter) throws SQLException
 	{
-		return Query.queryListUUID("SELECT ID FROM Articles WHERE Section=? AND Region=? AND MedicalCenter=? ORDER BY Priority DESC, Title ASC", new ParameterList(section).plus(region).plus(medicalCenter));
+		StringBuilder sql = new StringBuilder();
+		ParameterList params = new ParameterList();
+		
+		sql.append("SELECT ID FROM Articles WHERE 1=1");
+		if (!Util.isEmpty(section))
+		{
+			sql.append(" AND Section=?");
+			params.plus(section);
+		}
+		if (!Util.isEmpty(subsection))
+		{
+			sql.append(" AND SubSection=?");
+			params.plus(subsection);
+		}
+		if (!Util.isEmpty(region))
+		{
+			sql.append(" AND Region=?");
+			params.plus(region);
+		}
+		if (!Util.isEmpty(medicalCenter))
+		{
+			sql.append(" AND MedicalCenter=?");
+			params.plus(medicalCenter);
+		}
+		sql.append(" ORDER BY Priority DESC, Title ASC");
+		
+		return Query.queryListUUID(sql.toString(), params);
 	}
 	
 //	/**
@@ -200,6 +226,11 @@ public final class ArticleStore extends DataBeanStore<Article>
 	public List<String> getSections() throws SQLException
 	{
 		return Query.queryListString("SELECT DISTINCT Section FROM Articles ORDER BY Section ASC", null);
+	}
+
+	public List<String> getSubSections(String section) throws SQLException
+	{
+		return Query.queryListString("SELECT DISTINCT SubSection FROM Articles WHERE Section=? ORDER BY SubSection ASC", new ParameterList(section));
 	}
 
 	public List<UUID> getAll() throws Exception
@@ -399,4 +430,5 @@ public final class ArticleStore extends DataBeanStore<Article>
 			return null;
 		}
 	}
+
 }

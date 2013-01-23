@@ -40,10 +40,32 @@ public class ClassCrawler implements Callable<Void>
 		String html = wb.getContent();
 
 		int p = html.indexOf("wppHeaderFragment");
+		int term = html.indexOf("cmsArticleDisclaimer", p);
+		
 		p = html.indexOf("<p>", p);
 		int q = html.indexOf("</div>", p);
-		
 		String content = html.substring(p, q);
+		content += "<p><strong>Location and times: </strong></p>";
+		
+		while (true)
+		{
+			p = html.indexOf("<div dojoType=\"kpdj.Fold\" heading=\"", q);
+			if (p<0 || p>term) break;
+			p += 35;
+			q = html.indexOf("\"", p);
+			if (q<0 || q>term) break;
+			
+			content += "<p>";
+			content += html.substring(p, q);
+
+			p = html.indexOf("Directions and maps</a>", q);
+			if (p<0 || p>term) break;
+			p += 23;
+			q = html.indexOf("</div>", p);
+			if (q<0 || q>term) break;
+			
+			content += html.substring(p, q);
+		}
 		
 		// Extract the summary
 		q = content.indexOf("</p>");

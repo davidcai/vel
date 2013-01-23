@@ -103,5 +103,11 @@ public final class LessStylesheetPage extends samoyan.apps.master.LessStylesheet
 //		return "#929FD0"; // Light blue
 //		return "#B2D234"; // Lime green
 		return "#006D9D"; // KP Blue (KP approved color)
-	}	
+	}
+	
+	@Override
+	protected String getColorAccentAlert()
+	{
+		return "#841F33";
+	}
 }

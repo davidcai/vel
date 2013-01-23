@@ -120,6 +120,11 @@ public class ArticleListControl
 				{
 					out.write("<br>");
 					out.writeEncode(summary);
+					out.write(" <a class=MoreLink href=\"");
+					out.writeEncode(url);
+					out.write("\">");
+					out.writeEncode(out.getString("baby:ArticlesCtrl.MoreLink"));
+					out.write("</a>");
 				}
 			}
 			out.write("</td></tr>");

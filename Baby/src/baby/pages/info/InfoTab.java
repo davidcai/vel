@@ -33,19 +33,7 @@ public class InfoTab extends EnvelopeTab
 	@Override
 	public String getLabel(WebPage outputPage) throws Exception
 	{
-//		Stage stage = MotherStore.getInstance().loadByUserID(outputPage.getContext().getUserID()).getPregnancyStage();
-//		if (stage.isInfancy())
-//		{
-//			return outputPage.getString("information:Nav.TabTitleInfancy");
-//		}
-//		else if (stage.isPreconception())
-//		{
-//			return outputPage.getString("information:Nav.TabTitlePreconception");
-//		}
-//		else
-		{
-			return outputPage.getString("information:Nav.TabTitlePregnancy");
-		}
+		return outputPage.getString("information:Nav.TabTitle");
 	}
 
 	@Override
@@ -57,18 +45,6 @@ public class InfoTab extends EnvelopeTab
 			return null;
 		}
 		
-//		Stage stage = MotherStore.getInstance().loadByUserID(outputPage.getContext().getUserID()).getPregnancyStage();
-//		if (stage.isInfancy())
-//		{
-//			return "baby/tab-infancy.png";
-//		}
-//		else if (stage.isPreconception())
-//		{
-//			return "baby/tab-preconception.png";
-//		}
-//		else
-		{
-			return "baby/tab-pregnancy.png";
-		}
+		return "baby/tab-pregnancy.png";
 	}
 }

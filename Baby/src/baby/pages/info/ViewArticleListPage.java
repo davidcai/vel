@@ -3,6 +3,8 @@ package baby.pages.info;
 import java.util.List;
 import java.util.UUID;
 
+import samoyan.controls.ButtonInputControl;
+
 import baby.app.BabyConsts;
 import baby.controls.ArticleListControl;
 import baby.controls.TimelineSliderControl;
@@ -54,20 +56,16 @@ public class ViewArticleListPage extends BabyPage
 //		writeHorizontalNav(ViewArticleListPage.COMMAND);
 
 		// Search box
-		if (!phone)
-		{
-			write("<div align=right>");
-		}
+		write("<div class=ArticleSearchBox>");
 		writeFormOpen("GET", SearchArticlesPage.COMMAND);
 		writeTextInput(SearchArticlesPage.PARAM_QUERY, null, 30, 128);
 		write(" ");
-		writeButton(getString("controls:Button.Search"));
+		new ButtonInputControl(this, null)
+			.setValue(getString("controls:Button.Search"))
+			.setMobileHotAction(true)
+			.render();
 		writeFormClose();
-		if (!phone)
-		{
-			write("</div>");
-		}
-		write("<br>");
+		write("</div>");
 		
 		// Render timeline
 		new TimelineSliderControl(this, stage, PARAM_STAGE).render();

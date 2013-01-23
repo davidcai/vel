@@ -58,7 +58,7 @@ public class PhotoPage extends BabyPage
 		
 		UserAgent ua = getContext().getUserAgent();
 		
-		String imgSz = BabyConsts.IMAGESIZE_BOX_800X800;
+		String imgSz = BabyConsts.IMAGESIZE_BOX_600X600;
 		if (ua.getScreenWidth() <= 400)
 		{
 			imgSz = BabyConsts.IMAGESIZE_BOX_400X400;

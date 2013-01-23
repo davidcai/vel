@@ -111,6 +111,13 @@ public class LoginControl
 				out.writeTooltip(out.getString("controls:Login.KeepLogin"), out.getString("controls:Login.KeepHelp"));
 				out.write("</small>");
 			}
+			else
+			{
+				if (this.out.getContext().getUserAgent().isSmartPhone())
+				{
+					out.writeHiddenInput(LoginPage.PARAM_KEEP, "1");
+				}
+			}
 		
 		out.write("</td></tr></table>"); // Inner
 		

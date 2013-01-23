@@ -5,10 +5,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import samoyan.controls.ImageInputControl;
-import samoyan.controls.TabControl;
+import samoyan.controls.ButtonInputControl;
+import samoyan.controls.ImageControl;
 import samoyan.core.ParameterMap;
 import samoyan.database.Image;
+import samoyan.servlet.RequestContext;
 import samoyan.servlet.exc.RedirectException;
 import samoyan.servlet.exc.WebFormException;
 import baby.app.BabyConsts;
@@ -62,26 +63,50 @@ public class GalleryPage extends BabyPage
 	@Override
 	public void renderHTML() throws Exception
 	{
-		// Horizontal nav bar
-		if (getContext().getUserAgent().isSmartPhone())
+//		// Horizontal nav bar
+//		if (getContext().getUserAgent().isSmartPhone())
+//		{
+//			new TabControl(this)
+//				.addTab(JournalPage.COMMAND_LIST, getString("journey:Journal.Title"), getPageURL(JournalPage.COMMAND_LIST))
+//				.addTab(GalleryPage.COMMAND, getString("journey:Gallery.Title"), getPageURL(GalleryPage.COMMAND))
+//				.addTab(ChartsPage.COMMAND, getString("journey:Charts.Title"), getPageURL(ChartsPage.COMMAND))
+//				.setCurrentTab(getContext().getCommand())
+//				.setStyleButton()
+//				.setAlignStretch()
+//				.render();
+//		}
+		
+		RequestContext ctx = getContext();
+		boolean canUploadNew = (ctx.getUserAgent().isAppleTouch()==false ||
+				(ctx.getUserAgent().isIOS() && ctx.getUserAgent().getVersionIOS()>=6F));
+		boolean ie = ctx.getUserAgent().isMSIE();
+		if (ie==false || !canUploadNew)
 		{
-			new TabControl(this)
-				.addTab(JournalPage.COMMAND, getString("journey:Journal.Title"), getPageURL(JournalPage.COMMAND))
-				.addTab(GalleryPage.COMMAND, getString("journey:Gallery.Title"), getPageURL(GalleryPage.COMMAND))
-				.addTab(ChartsPage.COMMAND, getString("journey:Charts.Title"), getPageURL(ChartsPage.COMMAND))
-				.setCurrentTab(getContext().getCommand())
-				.setStyleButton()
-				.setAlignStretch()
-				.render();
+			write("<div class=NoShow>");
 		}
-		
 		writeFormOpen();
-		new ImageInputControl(this, "photo").showThumbnail(false).render();
-		write("<br>");
-		writeButton(PARAM_POST, getString("journey:Gallery.Post"));
+		write("<table><tr><td>");
+		write("<input type=file id=upload value=\"\" name=photo accept=\"image/*\" size=20");
+		if (ie==false)
+		{
+			// Auto-submit form
+			write(" onchange=\"$('#poster').click();\"");
+		}
+		write(">");
+//		new ImageInputControl(this, "photo").showThumbnail(false).render();
+		write("</td><td>");
+		new ButtonInputControl(this, PARAM_POST).setInitialValue(getString("journey:Gallery.Post")).setAttribute("id", "poster").render();
+//		writeButton(PARAM_POST, getString("journey:Gallery.Post"));
+		write("</td></tr></table>");
 		writeFormClose();
-		
-		write("<br>");
+		if (ie==false || !canUploadNew)
+		{
+			write("</div>");
+		}
+		else
+		{
+			write("<br>");
+		}
 		
 		// Get entries with photos
 		List<UUID> entryIDs = JournalEntryStore.getInstance().getByUserID(getContext().getUserID());
@@ -101,8 +126,8 @@ public class GalleryPage extends BabyPage
 			String imgSize = BabyConsts.IMAGESIZE_THUMB_150X150;
 			if (getContext().getUserAgent().isSmartPhone())
 			{
-				COLS = getContext().getUserAgent().getScreenWidth() / 75;
-				imgSize = Image.SIZE_THUMBNAIL;
+				COLS = getContext().getUserAgent().getScreenWidth() / 105;
+				imgSize = BabyConsts.IMAGESIZE_THUMB_100X100;
 			}
 			if (COLS>5)
 			{
@@ -110,10 +135,25 @@ public class GalleryPage extends BabyPage
 			}
 						
 			write("<table class=\"PhotoGrid\">");
+			int printed = 0;
 			
+			if (ie==false && canUploadNew)
+			{
+				// Upload icon
+				String icon = "baby/lens150.png";
+				if (getContext().getUserAgent().isSmartPhone())
+				{
+					icon = "baby/lens100.png";
+				}
+				write("<tr><td>");
+				new ImageControl(this).resource(icon).setAttribute("onclick", "$('#upload').click();").setStyleAttribute("cursor", "pointer").render();
+				write("</td>");
+				printed++;
+			}
+
 			for (int i=0; i<entries.size(); i++)
 			{
-				if (i%COLS==0)
+				if (printed%COLS==0)
 				{
 					write("<tr>");
 				}
@@ -126,15 +166,17 @@ public class GalleryPage extends BabyPage
 //				writeEncodeDate(entry.getCreated());
 
 				write("</td>");
-				if (i%COLS==COLS-1)
+				if (printed%COLS==COLS-1)
 				{
 					write("</tr>");
 				}
+				
+				printed++;
 			}
-			if (entries.size()%COLS!=0)
+			if (printed%COLS!=0)
 			{
 				write("<td colspan=");
-				write(COLS-entries.size()%COLS);
+				write(COLS-printed%COLS);
 				write(">&nbsp;</td></tr>");
 			}
 						

@@ -13,7 +13,7 @@ public class JourneyTab extends EnvelopeTab
 		NavTreeControl navCtrl = new NavTreeControl(outputPage);
 		
 		navCtrl.addHeader(outputPage.getString("journey:Nav.Journey"));
-		navCtrl.addPage(JournalPage.COMMAND, null);
+		navCtrl.addPage(JournalPage.COMMAND_LIST, null);
 		navCtrl.addPage(GalleryPage.COMMAND, null);
 		navCtrl.addPage(ChartsPage.COMMAND, null);
 		

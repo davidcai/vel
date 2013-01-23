@@ -61,12 +61,16 @@ public final class ChecklistPage extends BabyPage
 //		writeHorizontalNav(ChecklistPage.COMMAND);
 
 		// Render timeline
+		write("<table");
+		if (phone)
+		{
+			write(" width=\"100%\"");
+		}
+		write("><tr><td align=center>");
+		
 		new TimelineSliderControl(this, stage, PARAM_STAGE).render();
-//		write("<table><tr valign=middle><td>");
-//		writeEncode(getString("information:Checklist.YourChecklists"));
-//		write("</td><td>");
-//		new TimelineControl(this, stage, PARAM_STAGE).render();
-//		write("</td></tr></table>");
+
+		write("</td></tr><tr><td align=center>");
 		
 		// View: in progress or all
 		if (isParameter("vu"))
@@ -83,12 +87,6 @@ public final class ChecklistPage extends BabyPage
 			MotherStore.getInstance().save(mother);
 		}
 		boolean showAll = mother.isChecklistViewAll();
-		write("<div");
-		if (phone)
-		{
-			write(" align=center");
-		}
-		write(">");
 //		writeEncode(getString("information:Checklist.View"));
 //		write(" ");
 		if (showAll)
@@ -107,9 +105,12 @@ public final class ChecklistPage extends BabyPage
 			write(" | ");
 			writeLink(getString("information:Checklist.ViewAll"), getPageURL(ctx.getCommand(), new ParameterMap("vu", "all")));
 		}
-		write("</div><hr><br>");
+		write("<hr><br>");		
+		write("</td></tr></table>");
+		
 		
 		// Add to personal checklist
+		write("<div class=AddToChecklist>");
 		writeFormOpen();
 		new TextInputControl(this, "add")
 			.setPlaceholder(getString("information:Checklist.AddCheckitem"))
@@ -119,6 +120,7 @@ public final class ChecklistPage extends BabyPage
 		write(" ");
 		writeButton(getString("controls:Button.Add"));
 		writeFormClose();
+		write("</div>");
 		write("<br>");
 
 		// Personal checklist
@@ -126,11 +128,12 @@ public final class ChecklistPage extends BabyPage
 		new ChecklistControl(this, userID, personalChecklist.getID())
 			.overrideTitle(getString("information:Checklist.PersonalChecklist"))
 			.overrideDescription(getString("information:Checklist.PersonalChecklistDesc"))
-			.setCollapsable(false)
+			.collapsable(false)
+			.collapseLongText(false)
 			.showCompleted(showAll)
 			.showDueDate(false)
 			.render();
-				
+			
 		// Common checklists
 		List<UUID> checklistIDs = ChecklistStore.getInstance().queryBySectionAndTimeline(BabyConsts.SECTION_TODO, Stage.preconception().toInteger(), high);
 		for (UUID checklistID : checklistIDs)
