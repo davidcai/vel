@@ -63,6 +63,8 @@ Need smarter cache indexing. allowing multiple keys for invalidation. using nami
   - set coords to show
   - set coords to show on hover
   - animation sequence + speed
+= disallow uploading of large files. set limit to ? MB.
+- photo coming 90 degrees wrong way when uploaded from mobile device. Need to detect orientation when uploading image
 
 BABY
 
@@ -84,17 +86,25 @@ _ MyElert mobile. getting logged out without a reason. check why!
   check all usage of debug related to session management or cookies.
 - discussion forums. provide estimate
 = Edit/remove for my personal checklist items (same as journal entries)
-+ Error uploading images from iPad iOS6. FileNotFound exception.
 = Figure out how to redirect to error page, but only for HTML requests. esp for 500 and 404.
-  - getting error 400 on login when cookies are disabled.
+  - getting error 400 (bad request due to XSS protection) on login when cookies are disabled.
     disable login control if no cookies header.
-+ Dropdown for resources by types
-+ fix kp.org crawler to include hours and phone numbers for resources.
+= (1) checklists to include links to articles (for conditions, for handbooks, etc.)
+  - need to be able to link to article by URI (not url). A HREF="diabetes".
+  - process content and replace HREFs
+  - Need RichEdit for content items
+  - also in articles.
+- (0) camera icon in journal:
+  - allow setting icons for ImageUploadControl. also captions.
+  - also: need better hi-res images for default icons.
+- bad layout when rotating iphone (width too much)
 
 Erica's input:
-= (2) Back button showing on home screen. need way to reset stack when logging in, or for particular screens.
+= Back button showing on home screen. need way to reset stack when logging in, or for particular screens.
   after logout, after login.
-+ Photo upload control for Album using image of camera. auto-upload. except IE.
+  - keep back stack on server. pass window ID in cookie so can add/remove to correct stack.
+  - then can render correct <- or = button in top-left without JS trick
+  - can then also clear stack in init proc of page
 = "Add to home screen" popup window for iphone/Android. show once. use app storage. not if cordova user-agent.
   depends also on browser. Can be chrome on ios...
   need to detect if already added to home screen (e.g. running as web app already)
@@ -102,15 +112,22 @@ Erica's input:
   personal checkitems to have due date.
 
 DAVID:
-+ Redo article list based on Erica's design
-= Journal UI:
-  + better rendering of items in list, widelinkgroup with >
-  = (1) more results with AJAX (pagination)
-  + edit screen of journal entry
-= (0) New measurement page: don't show Remove button, don't show text+image edit boxes
-=? Appointment view/edit page should show the relevant (based on type and timeline) checklists and articles
-= (2) Calendar to include icons marking checklist deadlines.
-= Hover for editing journal doesn't work well on iPad (desktop UI but with touch)
+= (1) Journal UI:
+  = more results with AJAX (pagination)
+  = long word with no spaces in journal entry: no wrapping. CSS: word-wrap:break-word;
+  = journal entry: show first 256 chars with More>> link if necessary. Use ExpandableTextControl.
+= (0) New measurement page:
+  - don't show Remove button, don't show text+image edit boxes
+  - add date field. defaults to today
+    - always post in current time of day
+  - title should not say "journal"
+= Charts page:
+  normalization range in weight chart.
+  based on orig weight before pregnancy.
+  legend for this graph.
+=? (2) Appointment view/edit page should show the relevant (based on type and timeline) checklists and articles
+= (3) Hover for editing journal doesn't work well on iPad (desktop UI but with touch)
+= (4) Calendar to include icons marking checklist deadlines.
 - print capability of the journal. or export to PDF.
   design "notebook" style for journal. lines, margins, etc.
 - separate Day and TimeOfDay input controls to return Day and TimeOfDay

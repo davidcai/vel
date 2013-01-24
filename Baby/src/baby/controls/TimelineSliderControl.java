@@ -261,7 +261,12 @@ public class TimelineSliderControl
 				out.writeEncode(out.getPageURL(out.getContext().getCommand(), new ParameterMap(this.stageParamName, low + "-" + hi)));
 				out.write("\" style=\"width:");
 				out.write((width-20 + stops-1) / stops);
-				out.write("px\">");
+				out.write("px\"");
+				if (!phone)
+				{
+					out.write(" onclick=\"window.location.href=$(this).attr('href');\"");
+				}
+				out.write(">");
 				new ImageControl(this.out).resource("baby/timeline-thumb.png").addCssClass(stageInt>=low && stageInt<=hi?null:"Hide").render();
 				out.write("</td>");
 			}

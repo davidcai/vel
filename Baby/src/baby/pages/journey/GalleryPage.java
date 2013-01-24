@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 import samoyan.controls.ButtonInputControl;
-import samoyan.controls.ImageControl;
+import samoyan.controls.LinkToolbarControl;
 import samoyan.core.ParameterMap;
 import samoyan.database.Image;
 import samoyan.servlet.RequestContext;
@@ -80,6 +80,7 @@ public class GalleryPage extends BabyPage
 		boolean canUploadNew = (ctx.getUserAgent().isAppleTouch()==false ||
 				(ctx.getUserAgent().isIOS() && ctx.getUserAgent().getVersionIOS()>=6F));
 		boolean ie = ctx.getUserAgent().isMSIE();
+		boolean phone = ctx.getUserAgent().isSmartPhone();
 		if (ie==false || !canUploadNew)
 		{
 			write("<div class=NoShow>");
@@ -95,7 +96,7 @@ public class GalleryPage extends BabyPage
 		write(">");
 //		new ImageInputControl(this, "photo").showThumbnail(false).render();
 		write("</td><td>");
-		new ButtonInputControl(this, PARAM_POST).setInitialValue(getString("journey:Gallery.Post")).setAttribute("id", "poster").render();
+		new ButtonInputControl(this, PARAM_POST).setMobileHotAction(true).setValue(ie? getString("journey:Gallery.Post") : "+").setAttribute("id", "poster").render();
 //		writeButton(PARAM_POST, getString("journey:Gallery.Post"));
 		write("</td></tr></table>");
 		writeFormClose();
@@ -120,6 +121,17 @@ public class GalleryPage extends BabyPage
 			}
 		}
 		
+		if (ie==false && canUploadNew && !phone)
+		{
+			new LinkToolbarControl(this)
+				.addLink(getString("journey:Gallery.UploadPhoto"), "javascript:$('#upload').click();", "baby/upload-photo.png")
+				.render();
+				
+			// Upload icon
+//			new ImageControl(this).resource("baby/upload-photo.png").setAttribute("onclick", "").setStyleAttribute("cursor", "pointer").render();
+//			write("<br><br>");
+		}
+
 		if (entries.isEmpty() == false)
 		{
 			int COLS = 4;
@@ -135,25 +147,9 @@ public class GalleryPage extends BabyPage
 			}
 						
 			write("<table class=\"PhotoGrid\">");
-			int printed = 0;
-			
-			if (ie==false && canUploadNew)
-			{
-				// Upload icon
-				String icon = "baby/lens150.png";
-				if (getContext().getUserAgent().isSmartPhone())
-				{
-					icon = "baby/lens100.png";
-				}
-				write("<tr><td>");
-				new ImageControl(this).resource(icon).setAttribute("onclick", "$('#upload').click();").setStyleAttribute("cursor", "pointer").render();
-				write("</td>");
-				printed++;
-			}
-
 			for (int i=0; i<entries.size(); i++)
 			{
-				if (printed%COLS==0)
+				if (i%COLS==0)
 				{
 					write("<tr>");
 				}
@@ -166,17 +162,15 @@ public class GalleryPage extends BabyPage
 //				writeEncodeDate(entry.getCreated());
 
 				write("</td>");
-				if (printed%COLS==COLS-1)
+				if (i%COLS==COLS-1)
 				{
 					write("</tr>");
 				}
-				
-				printed++;
 			}
-			if (printed%COLS!=0)
+			if (entries.size()%COLS!=0)
 			{
 				write("<td colspan=");
-				write(COLS-printed%COLS);
+				write(COLS-entries.size()%COLS);
 				write(">&nbsp;</td></tr>");
 			}
 						

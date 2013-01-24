@@ -273,6 +273,8 @@ public class EnvelopePage extends WebPage
 //			write("<script>$('#savemsg').delay(5000).fadeOut(1000);</script>");
 		}
 			
+//		write("<script>backPrint();</script>"); // for debugging only
+		
 		// Main content
 		WebPage child = getChild();
 		if (child!=null)

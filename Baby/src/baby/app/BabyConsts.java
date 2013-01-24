@@ -18,10 +18,14 @@ public class BabyConsts
 	public final static String SECTION_INFO = "Info";
 	public final static String SECTION_RESOURCE = "Resource";
 	
+	// GYN, Genetics, Dental, Checkup, Ultrasound, Well Baby
 	public final static String SECTION_CHECKUP = "Checkup";
+	public final static String SECTION_DENTAL = "Dental";
+	public final static String SECTION_GENETICS = "Genetics";
+	public final static String SECTION_GYN = "GYN";
 	public final static String SECTION_ULTRASOUND = "Ultrasound";
 	public final static String SECTION_WELL_BABY = "Well Baby";
-	public final static String[] SECTIONS_APPOINTMENT = {SECTION_CHECKUP, SECTION_ULTRASOUND, SECTION_WELL_BABY};
+	public final static String[] SECTIONS_APPOINTMENT = {SECTION_CHECKUP, SECTION_DENTAL, SECTION_GENETICS, SECTION_GYN, SECTION_ULTRASOUND, SECTION_WELL_BABY};
 	
 	// Permissions
 	public final static String PERMISSION_CONTENT_MANAGEMENT = "Content management";

@@ -105,7 +105,7 @@ public class ChartsPage extends BabyPage
 		else
 		{
 			new LinkToolbarControl(this)
-				.addLink(getString("journey:Charts.AddLink"), getPageURL(JournalPage.COMMAND_RECORD), "icons/standard/bar-chart-16.png")
+				.addLink(getString("journey:Charts.AddLink"), getPageURL(JournalPage.COMMAND_RECORD), "icons/standard/bar-chart-24.png")
 				.render();
 		}
 		

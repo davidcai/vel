@@ -91,6 +91,8 @@ public class TypeAhead extends WebPage
 	
 	private void writeEncodeHighlight(String html, String query)
 	{
+		query = Util.htmlEncode(query); // In case there are & or > in the uery string itself
+		
 		String lcText = html.toLowerCase(getLocale());
 		String lcQ = query.toLowerCase(getLocale());
 		
