@@ -671,19 +671,16 @@ BODY[uri^="/setup"] {
 		margin: 10px 0;
 		overflow: hidden;
 		clear: both;
-		
-		/*
-		-webkit-box-shadow:  0px 0px 3px 1px @color-text-light;
-        box-shadow:  0px 0px 3px 1px @color-text-light;
-        */
         
         .EditButton {
         	position: absolute;
-        	right: 5px;
-        	top: 5px;
+        	right: 0;
+        	top: 0;
         	visibility: hidden;
-        	padding: 2px;
+        	padding: 2px 5px;
         	background-color: @color-background;
+        	border-left: 1px outset @color-background-dark;
+        	border-bottom: 1px outset @color-background-dark;
         	
         	&.Show {
         		visibility: visible;
@@ -724,30 +721,3 @@ BODY[uri^="/setup"] {
 		}
 	}
 }
-
-/*
-#EntriesList {
-	.Date {
-		padding: 0px 5px;
-		font: @font-small;
-		color: @color-background;
-		background-color: @color-text-light;
-	}
-	.Date:first-child {
-		border-top: 1px solid @color-text-light;
-	}
-
-	.WideLinks > A {
-		& > IMG {
-			float: left;
-			margin-right: 0.5em;
-		}
-		& > .Title {
-			font-weight: normal;
-		}
-		&.MeasureRecord .Extra {
-			margin: 0;
-		}
-	}
-}
-*/

@@ -5,15 +5,9 @@ $(function() {
 	function expandNewEntryPanel() {
 		$EntryPlaceholder.hide();
 		$EntryInputs.show('fast', function() {
-			var $textFields = $('INPUT[type="text"]', this);
-			if ($textFields.length > 0) {
-				$textFields[0].focus();
-			}
-			else {
-				var $textAreas = $('TEXTAREA', this);
-				if ($textAreas.length > 0) {
-					$textAreas[0].focus();
-				}
+			var $textArea = $('TEXTAREA', this);
+			if ($textArea.length > 0) {
+				$textArea[0].focus();
 			}
 		});
 	}

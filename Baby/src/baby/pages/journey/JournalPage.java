@@ -1,5 +1,7 @@
 package baby.pages.journey;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -11,6 +13,7 @@ import java.util.UUID;
 import samoyan.controls.ButtonInputControl;
 import samoyan.controls.DecimalInputControl;
 import samoyan.controls.ImageInputControl;
+import samoyan.controls.SelectInputControl;
 import samoyan.controls.TextAreaInputControl;
 import samoyan.controls.TextInputControl;
 import samoyan.controls.TwoColFormControl;
@@ -44,6 +47,9 @@ public class JournalPage extends BabyPage
 	private final static String PARAM_RECORD_ID_PREFIX = "id_";
 	private final static String PARAM_TEXT = "text";
 	private final static String PARAM_PHOTO = "photo";
+	private final static String PARAM_DATE_YEAR = "y";
+	private final static String PARAM_DATE_MON = "m";
+	private final static String PARAM_DATE_DAY = "d";
 	private final static String PARAM_POST = "post";
 	private final static String PARAM_REMOVE = "remvoe";
 	
@@ -178,17 +184,34 @@ public class JournalPage extends BabyPage
 			{
 				validateMeasureRecords(records);
 			}
+			
+			if (JournalPage.COMMAND_RECORD.equals(getContext().getCommand()))
+			{
+				// Validate date and time
+				if (getParameterDateTime() == null)
+				{
+					throw new WebFormException(new String[] { PARAM_DATE_MON, PARAM_DATE_DAY, PARAM_DATE_YEAR }, 
+						getString("journey:Journal.Record.InvalidDate"));
+				}
+			}
 		}
 	}
 	
 	@Override
 	public void commit() throws Exception
 	{
+		// Only new record page has date time parameters
+		Date date = null;
+		if (JournalPage.COMMAND_RECORD.equals(getContext().getCommand()))
+		{
+			date = getParameterDateTime();
+		}
+		
 		// Measure records
-		commitMeasureRecords(this.momRecords);
+		commitMeasureRecords(this.momRecords, date);
 		for (List<MeasureRecord> records : this.babyRecords.values())
 		{
-			commitMeasureRecords(records);
+			commitMeasureRecords(records, date);
 		}
 		
 		// Commit journal entry only if the current page is a list or edit page
@@ -361,13 +384,16 @@ public class JournalPage extends BabyPage
 		writeIncludeJS("baby/journal.js");
 	}
 
-
 	@Override
 	public String getTitle() throws Exception
 	{
+		if (JournalPage.COMMAND_RECORD.equals(getContext().getCommand())) 
+		{
+			return getString("journey:Journal.Title.AddRecord");
+		}
+		
 		return getString("journey:Journal.Title");
 	}
-
 
 	private List<String> getMeasureRecordFieldNames() throws Exception
 	{
@@ -401,7 +427,31 @@ public class JournalPage extends BabyPage
 		}
 	}
 	
-	private void commitMeasureRecords(List<MeasureRecord> records) throws Exception
+	private Date getParameterDateTime()
+	{
+		Date date = null;
+		
+		try
+		{
+			Calendar cal = Calendar.getInstance(getTimeZone(), getLocale());
+			cal.clear();
+			cal.setLenient(false);
+			
+			cal.set(getParameterInteger(PARAM_DATE_YEAR), getParameterInteger(PARAM_DATE_MON) - 1, 
+				getParameterInteger(PARAM_DATE_DAY));
+			cal.set(Calendar.MILLISECOND, 0);
+			
+			date = cal.getTime();
+		}
+		catch (Exception e)
+		{
+			date = null;
+		}
+		
+		return date;
+	}
+	
+	private void commitMeasureRecords(List<MeasureRecord> records, Date date) throws Exception
 	{
 		for (MeasureRecord rec : records)
 		{
@@ -411,6 +461,12 @@ public class JournalPage extends BabyPage
 				
 				// Unit system defined in mother's profile always triumph over record's unit system.
 				rec.setMetric(this.mom.isMetric());
+				
+				// Update the date if a date is supplied
+				if (date != null)
+				{
+					rec.setCreatedDate(date);
+				}
 				
 				MeasureRecordStore.getInstance().save(rec);
 			}
@@ -425,46 +481,132 @@ public class JournalPage extends BabyPage
 	{
 		TwoColFormControl twoCol = new TwoColFormControl(this);
 		
-		// Mother records
-		if (this.momRecords.isEmpty() == false)
+		if (JournalPage.COMMAND_RECORD.equals(getContext().getCommand()))
 		{
-			twoCol.writeRow(UserStore.getInstance().load(this.mom.getUserID()).getDisplayName());
-			
-			boolean first = true;
-			for (MeasureRecord rec : this.momRecords)
+			// Mother records
+			if (this.momRecords.isEmpty() == false)
 			{
-				if (first == false)
-				{
-					twoCol.write("&nbsp;");
-				}
+				twoCol.writeSubtitleRow(UserStore.getInstance().load(this.mom.getUserID()).getDisplayName());
 				
-				writeMeasureRecord(rec, twoCol);
-				first = false;
-			}
-		}
-		
-		// Baby records
-		if (this.babyRecords.isEmpty() == false)
-		{
-			for (UUID babyID : this.babyRecords.keySet())
-			{
-				Baby baby = BabyStore.getInstance().load(babyID);
-				if (baby != null)
+				for (MeasureRecord rec : this.momRecords)
 				{
-					String name = (Util.isEmpty(baby.getName())) ? getString("journey:Journal.Anonymous") : baby.getName();
-					twoCol.writeRow(name);
-					
-					List<MeasureRecord> records = this.babyRecords.get(babyID);
-					boolean first = true;
-					for (MeasureRecord rec : records)
+					writeMeasureRecord(rec, twoCol, true);
+				}
+			}
+			
+			// Baby records
+			if (this.babyRecords.isEmpty() == false)
+			{
+				for (UUID babyID : this.babyRecords.keySet())
+				{
+					Baby baby = BabyStore.getInstance().load(babyID);
+					if (baby != null)
 					{
-						if (first == false)
-						{
-							twoCol.write("&nbsp;");
-						}
+						String name = (Util.isEmpty(baby.getName())) ? getString("journey:Journal.Anonymous") : baby.getName();
+						twoCol.writeSubtitleRow(name);
 						
-						writeMeasureRecord(rec, twoCol);
-						first = false;
+						List<MeasureRecord> records = this.babyRecords.get(babyID);
+						for (MeasureRecord rec : records)
+						{
+							writeMeasureRecord(rec, twoCol, true);
+						}
+					}
+				}
+			}
+			
+			// Date and time. Default to today
+			twoCol.writeSpaceRow();
+			twoCol.writeRow(getString("journey:Journal.Record.DateTime"));
+			
+			Calendar calToday = Calendar.getInstance(getTimeZone(), getLocale());
+			int y = calToday.get(Calendar.YEAR);
+			int m = calToday.get(Calendar.MONTH);
+			int d = calToday.get(Calendar.DAY_OF_MONTH);
+			int h = calToday.get(Calendar.HOUR_OF_DAY);
+			
+			// Month
+			SelectInputControl mon = new SelectInputControl(twoCol, PARAM_DATE_MON);
+			DateFormat dfMon = new SimpleDateFormat(getContext().getUserAgent().isSmartPhone() ? "MMM" : "MMMM");
+			dfMon.setTimeZone(calToday.getTimeZone());
+			Calendar cal = Calendar.getInstance(getTimeZone());
+			cal.clear();
+			cal.set(y, 0, 1, 0, 0, 0);
+			cal.set(Calendar.MILLISECOND, 0);
+			for (int i = 0; i < 12; i++)
+			{
+				mon.addOption(dfMon.format(cal.getTime()), i + 1);
+				cal.add(Calendar.MONTH, 1);
+			}
+			mon.setInitialValue(m + 1);
+			mon.render();
+			
+			// Day
+			twoCol.write("&nbsp;");
+			SelectInputControl day = new SelectInputControl(twoCol, PARAM_DATE_DAY);
+			for (int i = 1; i <= 31; i++)
+			{
+				day.addOption(String.valueOf(i), i);
+			}
+			day.setInitialValue(d);
+			day.render();
+			
+			// Year
+			twoCol.write("&nbsp;");
+			SelectInputControl year = new SelectInputControl(twoCol, PARAM_DATE_YEAR);
+			for (int i = y - 1; i <= y + 1; i++)
+			{
+				year.addOption(String.valueOf(i), i);
+			}
+			year.setInitialValue(y);
+			year.render();
+			
+			// Time
+			twoCol.write("&nbsp;");
+			twoCol.writeEncodeTime(calToday.getTime());
+		}
+		else
+		{
+			// Mother records
+			if (this.momRecords.isEmpty() == false)
+			{
+				twoCol.writeRow(UserStore.getInstance().load(this.mom.getUserID()).getDisplayName());
+				
+				boolean first = true;
+				for (MeasureRecord rec : this.momRecords)
+				{
+					if (first == false)
+					{
+						twoCol.write("&nbsp;");
+					}
+					
+					writeMeasureRecord(rec, twoCol, false);
+					first = false;
+				}
+			}
+			
+			// Baby records
+			if (this.babyRecords.isEmpty() == false)
+			{
+				for (UUID babyID : this.babyRecords.keySet())
+				{
+					Baby baby = BabyStore.getInstance().load(babyID);
+					if (baby != null)
+					{
+						String name = (Util.isEmpty(baby.getName())) ? getString("journey:Journal.Anonymous") : baby.getName();
+						twoCol.writeRow(name);
+						
+						List<MeasureRecord> records = this.babyRecords.get(babyID);
+						boolean first = true;
+						for (MeasureRecord rec : records)
+						{
+							if (first == false)
+							{
+								twoCol.write("&nbsp;");
+							}
+							
+							writeMeasureRecord(rec, twoCol, false);
+							first = false;
+						}
 					}
 				}
 			}
@@ -473,7 +615,7 @@ public class JournalPage extends BabyPage
 		twoCol.render();
 	}
 	
-	private void writeMeasureRecord(MeasureRecord rec, TwoColFormControl twoCol) throws Exception
+	private void writeMeasureRecord(MeasureRecord rec, TwoColFormControl twoCol, boolean newRow) throws Exception
 	{
 		Measure m = MeasureStore.getInstance().load(rec.getMeasureID());
 		
@@ -481,12 +623,25 @@ public class JournalPage extends BabyPage
 		Float max = this.mom.isMetric() ? m.getMetricMax() : m.getImperialMax();
 		Float val = MeasureRecordsPageHelper.getMeasureRecordValue(rec, this.mom.isMetric());
 		
-		new DecimalInputControl(twoCol, getFieldName(PARAM_RECORD_VALUE_PREFIX, rec))
-			.setMinValue(min)
-			.setMaxValue(max)
-			.setPlaceholder(getString("journey:Journal.MeasureRecord.Placeholder", m.getLabel(), this.mom.isMetric() ? m.getMetricUnit() : m.getImperialUnit()))
-			.setInitialValue(val)
-			.render();
+		if (newRow)
+		{
+			// Show each measure record in a new row
+			twoCol.writeRow(m.getLabel());
+			twoCol.writeDecimalInput(getFieldName(PARAM_RECORD_VALUE_PREFIX, rec), val, 16, min, max);
+			twoCol.write("&nbsp;");
+			twoCol.writeEncode(this.mom.isMetric() ? m.getMetricUnit() : m.getImperialUnit());
+		}
+		else
+		{
+			// Show each measure record in the same row
+			new DecimalInputControl(twoCol, getFieldName(PARAM_RECORD_VALUE_PREFIX, rec))
+				.setMinValue(min)
+				.setMaxValue(max)
+				.setPlaceholder(getString("journey:Journal.MeasureRecord.Placeholder", 
+					m.getLabel(), this.mom.isMetric() ? m.getMetricUnit() : m.getImperialUnit()))
+				.setInitialValue(val)
+				.render();
+		}
 		
 		twoCol.writeHiddenInput(getFieldName(PARAM_RECORD_ID_PREFIX, rec), rec.getID().toString());
 	}
