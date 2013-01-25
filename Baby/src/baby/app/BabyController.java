@@ -49,6 +49,7 @@ import baby.pages.info.ViewArticlePage;
 import baby.pages.info.ViewResourceListPage;
 import baby.pages.journey.ChartsPage;
 import baby.pages.journey.GalleryPage;
+import baby.pages.journey.JournalAJAXPage;
 import baby.pages.journey.JournalPage;
 import baby.pages.journey.JourneyHomePage;
 import baby.pages.journey.PhotoPage;
@@ -130,6 +131,7 @@ public class BabyController extends Controller
 		Dispatcher.bindPage(JournalPage.COMMAND_LIST, 			JournalPage.class);
 		Dispatcher.bindPage(JournalPage.COMMAND_EDIT,			JournalPage.class);
 		Dispatcher.bindPage(JournalPage.COMMAND_RECORD,			JournalPage.class);
+		Dispatcher.bindPage(JournalAJAXPage.COMMAND, 			JournalAJAXPage.class);
 		Dispatcher.bindPage(GalleryPage.COMMAND, 				GalleryPage.class);
 		Dispatcher.bindPage(ChartsPage.COMMAND, 				ChartsPage.class);
 		Dispatcher.bindPage(PhotoPage.COMMAND, 					PhotoPage.class);

@@ -656,9 +656,11 @@ BODY[uri^="/setup"] {
 	}
 }
 
+#JournalListContainer {
+	margin-top: 0.5em;
+}
+
 .JournalList {
-	padding-top: 0.5em;
-	
 	.DateHeading {
 		padding: 0.8em 0 0.2em;
 		font-weight: bold;
@@ -719,5 +721,18 @@ BODY[uri^="/setup"] {
 				visibility: visible;
 			}
 		}
+	}
+}
+	
+.JournalShowMoreButton {
+	margin-top: 0.5em;
+	
+	A {
+		display: block;
+		border: 1px outset @color-background-dark;
+		color: @color-accent;
+		font-weight: bold;
+		text-align: center;
+		line-height: 2;
 	}
 }

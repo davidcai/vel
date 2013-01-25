@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.TreeMap;
 import java.util.UUID;
 
@@ -68,10 +69,6 @@ public class JournalListControl
 			}
 			return momRecords;
 		}
-//		public void setMomRecords(List<MeasureRecord> momRecords)
-//		{
-//			this.momRecords = momRecords;
-//		}
 
 		public Map<UUID, List<MeasureRecord>> getBabyRecords()
 		{
@@ -81,10 +78,6 @@ public class JournalListControl
 			}
 			return babyRecords;
 		}
-//		public void setBabyRecords(Map<UUID, List<MeasureRecord>> babyRecords)
-//		{
-//			this.babyRecords = babyRecords;
-//		}
 		
 		@Override
 		public int compareTo(ListItem that)
@@ -100,6 +93,10 @@ public class JournalListControl
 	private List<UUID> entryIDs;
 	private List<UUID> recordIDs;
 	private Map<Date, ListItem> itemsByDate;
+	private int maxSize = 5;
+	private Day from;
+	private String showMoreCommand;
+	private String fromParamName;
 	
 	public JournalListControl(WebPage out)
 	{
@@ -110,6 +107,14 @@ public class JournalListControl
 		this.out = out;
 		this.entryIDs = entryIDs;
 		this.recordIDs = recordIDs;
+	}
+	public JournalListControl(WebPage out, List<UUID> entryIDs, List<UUID> recordIDs, Day from, int maxSize)
+	{
+		this.out = out;
+		this.entryIDs = entryIDs;
+		this.recordIDs = recordIDs;
+		this.from = from;
+		this.maxSize = maxSize;
 	}
 	
 	public List<UUID> getEntryIDs()
@@ -140,6 +145,46 @@ public class JournalListControl
 		return this;
 	}
 	
+	public int getMaxSize()
+	{
+		return maxSize;
+	}
+	public JournalListControl setMaxSize(int maxSize)
+	{
+		this.maxSize = maxSize;
+		return this;
+	}
+	
+	public Day getFrom()
+	{
+		return from;
+	}
+	public JournalListControl setFrom(Day from)
+	{
+		this.from = from;
+		return this;
+	}
+	
+	public String getShowMoreCommand()
+	{
+		return showMoreCommand;
+	}
+	public JournalListControl setShowMoreCommand(String showMoreCommand)
+	{
+		this.showMoreCommand = showMoreCommand;
+		return this;
+	}
+	
+	public String getFromParamName()
+	{
+		return fromParamName;
+	}
+	public JournalListControl setFromParamName(String fromParamName)
+	{
+		this.fromParamName = fromParamName;
+		return this;
+	}
+	
 	public void render() throws Exception
 	{
 		//
@@ -151,9 +196,13 @@ public class JournalListControl
 			@Override
 			public int compare(Date d1, Date d2)
 			{
+				// Late dates come first
 				return - d1.compareTo(d2);
 			}
 		});
+		
+		TimeZone tz = out.getTimeZone();
+		Date dtFrom = (from != null ? from.getDayEnd(tz) : null);
 		
 		if ((entryIDs != null && entryIDs.isEmpty() == false) || (recordIDs != null && recordIDs.isEmpty() == false))
 		{
@@ -162,6 +211,12 @@ public class JournalListControl
 			{
 				JournalEntry entry = JournalEntryStore.getInstance().load(entryID);
 				Date date = entry.getCreated();
+				
+				// Skip dates
+				if (dtFrom != null && date.after(dtFrom))
+				{
+					continue;
+				}
 				
 				ListItem item = itemsByDate.get(date);
 				if (item == null)
@@ -177,45 +232,57 @@ public class JournalListControl
 			for (UUID recordID : recordIDs)
 			{
 				MeasureRecord rec = MeasureRecordStore.getInstance().load(recordID);
-				if (rec.getValue() != null)
+				Date date = rec.getCreatedDate();
+				
+				// Skip previous dates
+				if (dtFrom != null && date.after(dtFrom))
 				{
-					Measure m = MeasureStore.getInstance().load(rec.getMeasureID());
-					if (m != null)
+					continue;
+				}
+				
+				// Skip records w/o values
+				if (rec.getValue() == null)
+				{
+					continue;
+				}
+				
+				// Skip orphan records
+				Measure m = MeasureStore.getInstance().load(rec.getMeasureID());
+				if (m == null)
+				{
+					continue;
+				}
+				
+				ListItem item = itemsByDate.get(date);
+				if (item == null)
+				{
+					item = new ListItem();
+					itemsByDate.put(date, item);
+				}
+				item.setDate(date);
+				
+				UUID babyID = rec.getBabyID();
+				if (babyID == null)
+				{
+					// Mother
+					item.getMomRecords().add(rec);
+				}
+				else
+				{
+					// Babies
+					Baby baby = BabyStore.getInstance().load(babyID);
+					if (baby != null)
 					{
-						Date date = rec.getCreatedDate();
-						
-						ListItem item = itemsByDate.get(date);
-						if (item == null)
+						List<MeasureRecord> records = item.getBabyRecords().get(babyID);
+						if (records == null)
 						{
-							item = new ListItem();
-							itemsByDate.put(date, item);
+							records = new ArrayList<MeasureRecord>();
+							item.getBabyRecords().put(babyID, records);
 						}
-						item.setDate(date);
-						
-						UUID babyID = rec.getBabyID();
-						if (babyID == null)
-						{
-							// Mother
-							item.getMomRecords().add(rec);
-						}
-						else
-						{
-							// Babies
-							Baby baby = BabyStore.getInstance().load(babyID);
-							if (baby != null)
-							{
-								List<MeasureRecord> records = item.getBabyRecords().get(babyID);
-								if (records == null)
-								{
-									records = new ArrayList<MeasureRecord>();
-									item.getBabyRecords().put(babyID, records);
-								}
-								records.add(rec);
-							}
-						}
+						records.add(rec);
 					}
 				}
-			}
+			} //-- for
 			
 		} //-- if
 		
@@ -225,20 +292,30 @@ public class JournalListControl
 		
 		if (itemsByDate.isEmpty() == false)
 		{
-			Day today = new Day(out.getTimeZone(), new Date());
+			Day today = new Day(tz, new Date());
 			boolean phone = out.getContext().getUserAgent().isSmartPhone();
-			DateFormat dfDow = DateFormatEx.getSimpleInstance(phone ? "EEE" : "EEEE", out.getLocale(), out.getTimeZone());
-			DateFormat dfDate = DateFormatEx.getLongDateInstance(out.getLocale(), out.getTimeZone());
+			DateFormat dfDow = DateFormatEx.getSimpleInstance(phone ? "EEE" : "EEEE", out.getLocale(), tz);
+			DateFormat dfDate = DateFormatEx.getLongDateInstance(out.getLocale(), tz);
 			
 			out.write("<div class=\"JournalList\">");
 			
+			int size = 0;
 			Day prevDay = null;
+			Day nextFrom = null;
+			
 			for (Date date : itemsByDate.keySet())
 			{
 				// Date heading
-				Day day = new Day(out.getTimeZone(), date);
+				Day day = new Day(tz, date);
 				if (day.equals(prevDay) == false)
 				{
+					// Stop rendering list items if the number of items exceeds the maximum size
+					if (size >= maxSize)
+					{
+						nextFrom = day;
+						break;
+					}
+					
 					StringBuilder dateStr = new StringBuilder();
 					if (day.equals(today))
 					{
@@ -340,10 +417,49 @@ public class JournalListControl
 				
 				out.write("</div>"); //-- .ListItem
 				
+				size++;
+				
 			} //-- for
 			
 			out.write("</div>"); //-- .JournalList
-		}
+			
+			// Show more button
+			if (nextFrom != null)
+			{
+				if (showMoreCommand == null || fromParamName == null)
+				{
+					throw new IllegalStateException("showMoreCommand and fromParamName must be specified.");
+				}
+				
+				String btnID = "ShowMore-" + nextFrom.getYear() + "-" + nextFrom.getMonth() + "-" + nextFrom.getDay();
+				String url = out.getPageURL(showMoreCommand, new ParameterMap(fromParamName, nextFrom.toString()));
+				
+				out.write("<div class=\"JournalShowMoreButton\" id=\"");
+				out.write(btnID);
+				out.write("\">");
+				
+				out.write("<a href=\"javascript:void(0);\">");
+				out.writeEncode(out.getString("baby:JournalListCtrl.ShowMore"));
+				out.write("</a>");
+				
+				out.write("<script>");
+				out.write("$('#"); out.write(btnID); out.write(" A').on('click', function(e) {");
+				out.write("  e.preventDefault();");
+				out.write("  $.ajax({");
+				out.write("    url: '"); out.write(url); out.write("', ");
+				out.write("    dataType: 'html', ");
+				out.write("    context: this, ");
+				out.write("    success: function(data, textStatus, jqXHR) {");
+				out.write("      $(this).parent().replaceWith(data);"); // Replace .JournalShowMoreButton with returned HTML
+				out.write("    }"); //-- success: function
+				out.write("  });"); //-- $.ajax({
+				out.write("});"); //-- on('click', ...)
+				out.write("</script>");
+				
+				out.write("</div>"); //-- .JournalShowMoreButton
+			}
+			
+		} //-- if
 	}
 	
 	private void writeMeasureRecords(TwoColFormControl twoCol, List<MeasureRecord> records, boolean metric) throws Exception

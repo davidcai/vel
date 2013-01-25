@@ -375,10 +375,14 @@ public class JournalPage extends BabyPage
 			List<UUID> entryIDs = JournalEntryStore.getInstance().getByUserID(userID);
 			List<UUID> recordIDs = MeasureRecordStore.getInstance().getByUserID(userID);
 			
+			write("<div id=\"JournalListContainer\">");
 			new JournalListControl(this)
 				.setEntryIDs(entryIDs)
 				.setRecordIDs(recordIDs)
+				.setShowMoreCommand(JournalAJAXPage.COMMAND)
+				.setFromParamName(JournalAJAXPage.PARAM_FROM)
 				.render();
+			write("</div>");
 		}
 		
 		writeIncludeJS("baby/journal.js");
