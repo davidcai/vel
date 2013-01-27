@@ -34,6 +34,7 @@ public final class CheckItemStore extends DataBeanStore<CheckItem>
 		td.defineCol("Text", String.class).size(0, CheckItem.MAXSIZE_TEXT);
 		td.defineCol("ChecklistID", UUID.class).ownedBy("Checklists");
 		td.defineCol("OrderSeq", Integer.class);
+		td.defineCol("Link", String.class).size(0, CheckItem.MAXSIZE_LINK);
 
 		return td;
 	}

@@ -130,7 +130,8 @@ public class BabyController extends Controller
 		Dispatcher.bindPage(JourneyHomePage.COMMAND, 			JourneyHomePage.class);
 		Dispatcher.bindPage(JournalPage.COMMAND_LIST, 			JournalPage.class);
 		Dispatcher.bindPage(JournalPage.COMMAND_EDIT,			JournalPage.class);
-		Dispatcher.bindPage(JournalPage.COMMAND_RECORD,			JournalPage.class);
+		Dispatcher.bindPage(JournalPage.COMMAND_ADD_RECORD,		JournalPage.class);
+		Dispatcher.bindPage(JournalPage.COMMAND_EDIT_RECORD,	JournalPage.class);
 		Dispatcher.bindPage(JournalAJAXPage.COMMAND, 			JournalAJAXPage.class);
 		Dispatcher.bindPage(GalleryPage.COMMAND, 				GalleryPage.class);
 		Dispatcher.bindPage(ChartsPage.COMMAND, 				ChartsPage.class);

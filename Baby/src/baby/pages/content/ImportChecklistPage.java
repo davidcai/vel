@@ -70,7 +70,7 @@ public class ImportChecklistPage extends BabyPage
 	
 	private void renderFileList() throws Exception
 	{
-		writeEncode(getString("content:ChecklistArticle.ImportHelp", this.imported.size()));
+		writeEncode(getString("content:ImportChecklist.ImportHelp", this.imported.size()));
 		write("<br><br>");
 
 		write("<table>");

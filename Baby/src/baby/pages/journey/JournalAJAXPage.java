@@ -39,8 +39,6 @@ public class JournalAJAXPage extends BabyPage
 		new JournalListControl(this)
 			.setEntryIDs(entryIDs)
 			.setRecordIDs(recordIDs)
-			.setShowMoreCommand(JournalAJAXPage.COMMAND)
-			.setFromParamName(JournalAJAXPage.PARAM_FROM)
 			.setFrom(from)
 			.render();
 	}

@@ -52,8 +52,8 @@ public class LinkToolbarControl extends WebPage
 		{
 			if (!Util.isEmpty(link.icon))
 			{
-				write("<td>");
-				writeImage(link.icon, link.caption);
+				write("<td class=Image>");
+				writeImage(link.icon, link.caption, link.url);
 				write("</td>");
 			}
 

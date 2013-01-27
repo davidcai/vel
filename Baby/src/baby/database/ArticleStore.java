@@ -58,10 +58,10 @@ public final class ArticleStore extends DataBeanStore<Article>
 		td.defineCol("Region", String.class).size(0, Article.MAXSIZE_REGION);
 		td.defineCol("MedicalCenter", String.class).size(0, Article.MAXSIZE_MEDICAL_CENTER);
 		td.defineCol("Priority", Integer.class);
+		td.defineCol("ByCrawler", Boolean.class);
 
 		td.defineProp("Photo", Image.class);
 		td.defineProp("YouTube", String.class);
-		td.defineProp("ByCrawler", Boolean.class);
 
 		return td;
 	}
@@ -70,12 +70,14 @@ public final class ArticleStore extends DataBeanStore<Article>
 	
 	public Article loadBySourceURL(String url) throws Exception
 	{
+		if (url==null) return null;
 		byte[] urlHash = Util.hexStringToByteArray(Util.hashSHA256(url));
 		return loadByColumn("SourceURLHash", urlHash);
 	}
 	
 	public Article openBySourceURL(String url) throws Exception
 	{
+		if (url==null) return null;
 		byte[] urlHash = Util.hexStringToByteArray(Util.hashSHA256(url));
 		return openByColumn("SourceURLHash", urlHash);
 	}
@@ -107,13 +109,13 @@ public final class ArticleStore extends DataBeanStore<Article>
 	}
 	
 	/**
-	 * Removes articles that were last updated before the given date.
+	 * Removes articles that were created by the crawler, and last updated before the given date.
 	 * @param updatedBefore
 	 * @throws SQLException 
 	 */
-	public void removeStaleArticles(String section, Date updatedBefore) throws Exception
+	public void removeStaleCrawledArticles(String section, Date updatedBefore) throws Exception
 	{
-		removeMany( Query.queryListUUID("SELECT ID FROM Articles WHERE Section=? AND UpdatedDate<?", new ParameterList(section).plus(updatedBefore)) );
+		removeMany( Query.queryListUUID("SELECT ID FROM Articles WHERE Section=? AND UpdatedDate<? AND ByCrawler<>0", new ParameterList(section).plus(updatedBefore)) );
 	}
 	
 	public List<UUID> queryBySection(String section) throws SQLException
@@ -347,7 +349,7 @@ public final class ArticleStore extends DataBeanStore<Article>
 			jai = new JaiImage(Util.inputStreamToBytes(img));
 		}
 
-		Article article = loadBySourceURL(uri);
+		Article article = openBySourceURL(uri);
 		if (article==null)
 		{
 			article = new Article();
@@ -407,19 +409,19 @@ public final class ArticleStore extends DataBeanStore<Article>
 		s = s.toLowerCase(Locale.US);
 		if (s.startsWith("week "))
 		{
-			return Stage.pregnancy(Integer.parseInt(s.substring(5)));
+			return Stage.pregnancy(Integer.parseInt(s.substring(5).trim()));
 		}
 		else if (s.startsWith("pregnancy "))
 		{
-			return Stage.pregnancy(Integer.parseInt(s.substring(10)));
+			return Stage.pregnancy(Integer.parseInt(s.substring(10).trim()));
 		}
 		else if (s.startsWith("month "))
 		{
-			return Stage.infancy(Integer.parseInt(s.substring(5)));
+			return Stage.infancy(Integer.parseInt(s.substring(6).trim()));
 		}
 		else if (s.startsWith("infancy "))
 		{
-			return Stage.infancy(Integer.parseInt(s.substring(8)));
+			return Stage.infancy(Integer.parseInt(s.substring(8).trim()));
 		}
 		else if (s.startsWith("pre"))
 		{

@@ -66,7 +66,7 @@ public class RootCrawler implements Callable<Void>
 			@Override
 			public Void call() throws Exception
 			{
-				ArticleStore.getInstance().removeStaleArticles(BabyConsts.SECTION_RESOURCE, now);
+				ArticleStore.getInstance().removeStaleCrawledArticles(BabyConsts.SECTION_RESOURCE, now);
 				return null;
 			}
 		},

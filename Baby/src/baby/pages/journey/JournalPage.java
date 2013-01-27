@@ -12,17 +12,16 @@ import java.util.UUID;
 
 import samoyan.controls.ButtonInputControl;
 import samoyan.controls.DecimalInputControl;
-import samoyan.controls.ImageInputControl;
 import samoyan.controls.SelectInputControl;
 import samoyan.controls.TextAreaInputControl;
 import samoyan.controls.TextInputControl;
 import samoyan.controls.TwoColFormControl;
 import samoyan.core.Util;
 import samoyan.database.Image;
-import samoyan.database.UserStore;
 import samoyan.servlet.exc.RedirectException;
 import samoyan.servlet.exc.WebFormException;
 import baby.controls.JournalListControl;
+import baby.controls.SimpleImageUploadControl;
 import baby.database.Baby;
 import baby.database.BabyStore;
 import baby.database.JournalEntry;
@@ -39,7 +38,8 @@ public class JournalPage extends BabyPage
 {
 	public final static String COMMAND_LIST = BabyPage.COMMAND_JOURNEY + "/journal";
 	public final static String COMMAND_EDIT = BabyPage.COMMAND_JOURNEY + "/edit-journal";
-	public final static String COMMAND_RECORD = BabyPage.COMMAND_JOURNEY + "/add-record";
+	public final static String COMMAND_ADD_RECORD = BabyPage.COMMAND_JOURNEY + "/add-record";
+	public final static String COMMAND_EDIT_RECORD = BabyPage.COMMAND_JOURNEY + "/edit-record";
 	
 	public final static String PARAM_TIMESTAMP = "t";
 	
@@ -142,6 +142,8 @@ public class JournalPage extends BabyPage
 	{
 		if (isParameter(PARAM_POST))
 		{
+			String cmd = getContext().getCommand();
+			
 			boolean hasRecParams = false;
 			List<String> recParamNames = getMeasureRecordFieldNames();
 			for (String paramName : recParamNames)
@@ -153,9 +155,9 @@ public class JournalPage extends BabyPage
 				}
 			}
 			
-			if (JournalPage.COMMAND_RECORD.equals(getContext().getCommand()))
+			if (JournalPage.COMMAND_ADD_RECORD.equals(cmd) || JournalPage.COMMAND_EDIT_RECORD.equals(cmd))
 			{
-				// For add record page, show errors if measure records have no inputs
+				// For add/edit record page, show errors if measure records have no inputs
 				if (hasRecParams == false)
 				{
 					throw new WebFormException(recParamNames, getString("journey:Journal.RequireRecord"));
@@ -185,13 +187,22 @@ public class JournalPage extends BabyPage
 				validateMeasureRecords(records);
 			}
 			
-			if (JournalPage.COMMAND_RECORD.equals(getContext().getCommand()))
+			if (JournalPage.COMMAND_ADD_RECORD.equals(cmd))
 			{
 				// Validate date and time
-				if (getParameterDateTime() == null)
+				Date date = getParameterDateTime();
+				
+				if (date == null)
 				{
 					throw new WebFormException(new String[] { PARAM_DATE_MON, PARAM_DATE_DAY, PARAM_DATE_YEAR }, 
 						getString("journey:Journal.Record.InvalidDate"));
+				}
+				
+				Calendar calToday = Calendar.getInstance(getTimeZone());
+				if (date.after(calToday.getTime()))
+				{
+					throw new WebFormException(new String[] { PARAM_DATE_MON, PARAM_DATE_DAY, PARAM_DATE_YEAR }, 
+						getString("journey:Journal.Record.FutureDate"));
 				}
 			}
 		}
@@ -200,9 +211,11 @@ public class JournalPage extends BabyPage
 	@Override
 	public void commit() throws Exception
 	{
+		String cmd = getContext().getCommand();
+		
 		// Only new record page has date time parameters
 		Date date = null;
-		if (JournalPage.COMMAND_RECORD.equals(getContext().getCommand()))
+		if (JournalPage.COMMAND_ADD_RECORD.equals(cmd))
 		{
 			date = getParameterDateTime();
 		}
@@ -215,7 +228,6 @@ public class JournalPage extends BabyPage
 		}
 		
 		// Commit journal entry only if the current page is a list or edit page
-		String cmd = getContext().getCommand();
 		if (JournalPage.COMMAND_LIST.equals(cmd) || JournalPage.COMMAND_EDIT.equals(cmd))
 		{
 			if (isParameter(PARAM_POST))
@@ -266,19 +278,6 @@ public class JournalPage extends BabyPage
 		boolean phone = getContext().getUserAgent().isSmartPhone();
 		String cmd = getContext().getCommand();
 		
-//		// Horizontal nav bar
-//		if (phone)
-//		{
-//			new TabControl(this)
-//				.addTab(JournalPage.COMMAND_LIST, getString("journey:Journal.Title"), getPageURL(JournalPage.COMMAND_LIST))
-//				.addTab(GalleryPage.COMMAND, getString("journey:Gallery.Title"), getPageURL(GalleryPage.COMMAND))
-//				.addTab(ChartsPage.COMMAND, getString("journey:Charts.Title"), getPageURL(ChartsPage.COMMAND))
-//				.setCurrentTab(JournalPage.COMMAND_LIST)
-//				.setStyleButton()
-//				.setAlignStretch()
-//				.render();
-//		}
-		
 		// Edit mode button for smart phones
 		if (phone && JournalPage.COMMAND_LIST.equals(cmd))
 		{
@@ -316,9 +315,10 @@ public class JournalPage extends BabyPage
 			.setID("EntryPlaceholder")
 			.render();
 		
-		// Show entry input fields if the request is a post, or the current page is either edit or record page
+		// Show entry input fields if the request is a post, or the current page is edit, add record or edit record page
 		write("<div id=\"EntryInputs\"");
-		if (isParameter(PARAM_POST) || JournalPage.COMMAND_EDIT.equals(cmd) || JournalPage.COMMAND_RECORD.equals(cmd))
+		if (isParameter(PARAM_POST) || JournalPage.COMMAND_EDIT.equals(cmd) || 
+			JournalPage.COMMAND_EDIT_RECORD.equals(cmd) || JournalPage.COMMAND_ADD_RECORD.equals(cmd))
 		{
 			write(" class=\"Show\"");
 		}
@@ -341,7 +341,7 @@ public class JournalPage extends BabyPage
 			write("<br>");
 			
 			// Photo
-			new ImageInputControl(this, "photo").showThumbnail(false).render();
+			new SimpleImageUploadControl(this, "photo").render();
 			write("<br>");
 		}
 		
@@ -349,7 +349,7 @@ public class JournalPage extends BabyPage
 		writeHiddenInput(PARAM_TIMESTAMP, getParameterString(PARAM_TIMESTAMP));
 		
 		// Buttons
-		if (JournalPage.COMMAND_EDIT.equals(cmd))
+		if (JournalPage.COMMAND_EDIT.equals(cmd) || JournalPage.COMMAND_EDIT_RECORD.equals(cmd))
 		{
 			new ButtonInputControl(this, PARAM_POST)
 				.setValue(getString("journey:Journal.Save"))
@@ -379,8 +379,6 @@ public class JournalPage extends BabyPage
 			new JournalListControl(this)
 				.setEntryIDs(entryIDs)
 				.setRecordIDs(recordIDs)
-				.setShowMoreCommand(JournalAJAXPage.COMMAND)
-				.setFromParamName(JournalAJAXPage.PARAM_FROM)
 				.render();
 			write("</div>");
 		}
@@ -391,9 +389,13 @@ public class JournalPage extends BabyPage
 	@Override
 	public String getTitle() throws Exception
 	{
-		if (JournalPage.COMMAND_RECORD.equals(getContext().getCommand())) 
+		if (JournalPage.COMMAND_ADD_RECORD.equals(getContext().getCommand())) 
 		{
 			return getString("journey:Journal.Title.AddRecord");
+		}
+		else if (JournalPage.COMMAND_EDIT_RECORD.equals(getContext().getCommand())) 
+		{
+			return getString("journey:Journal.Title.EditRecord");
 		}
 		
 		return getString("journey:Journal.Title");
@@ -437,13 +439,15 @@ public class JournalPage extends BabyPage
 		
 		try
 		{
+			Calendar calToday = Calendar.getInstance(getTimeZone(), getLocale());
+			
 			Calendar cal = Calendar.getInstance(getTimeZone(), getLocale());
 			cal.clear();
 			cal.setLenient(false);
 			
-			cal.set(getParameterInteger(PARAM_DATE_YEAR), getParameterInteger(PARAM_DATE_MON) - 1, 
-				getParameterInteger(PARAM_DATE_DAY));
-			cal.set(Calendar.MILLISECOND, 0);
+			cal.set(getParameterInteger(PARAM_DATE_YEAR), getParameterInteger(PARAM_DATE_MON) - 1, getParameterInteger(PARAM_DATE_DAY), 
+				calToday.get(Calendar.HOUR_OF_DAY), calToday.get(Calendar.MINUTE), calToday.get(Calendar.SECOND));
+			cal.set(Calendar.MILLISECOND, calToday.get(Calendar.MILLISECOND));
 			
 			date = cal.getTime();
 		}
@@ -483,14 +487,19 @@ public class JournalPage extends BabyPage
 
 	private void writeMeasureRecords() throws Exception
 	{
+		String cmd = getContext().getCommand();
 		TwoColFormControl twoCol = new TwoColFormControl(this);
 		
-		if (JournalPage.COMMAND_RECORD.equals(getContext().getCommand()))
+		if (JournalPage.COMMAND_ADD_RECORD.equals(cmd) || JournalPage.COMMAND_EDIT_RECORD.equals(cmd))
 		{
+			//
+			// For edit/add record page, show each measure record in a new row
+			//
+			
 			// Mother records
 			if (this.momRecords.isEmpty() == false)
 			{
-				twoCol.writeSubtitleRow(UserStore.getInstance().load(this.mom.getUserID()).getDisplayName());
+				twoCol.writeSubtitleRow(getString("journey:Journal.Me"));
 				
 				for (MeasureRecord rec : this.momRecords)
 				{
@@ -518,62 +527,65 @@ public class JournalPage extends BabyPage
 				}
 			}
 			
-			// Date and time. Default to today
-			twoCol.writeSpaceRow();
-			twoCol.writeRow(getString("journey:Journal.Record.DateTime"));
-			
-			Calendar calToday = Calendar.getInstance(getTimeZone(), getLocale());
-			int y = calToday.get(Calendar.YEAR);
-			int m = calToday.get(Calendar.MONTH);
-			int d = calToday.get(Calendar.DAY_OF_MONTH);
-			int h = calToday.get(Calendar.HOUR_OF_DAY);
-			
-			// Month
-			SelectInputControl mon = new SelectInputControl(twoCol, PARAM_DATE_MON);
-			DateFormat dfMon = new SimpleDateFormat(getContext().getUserAgent().isSmartPhone() ? "MMM" : "MMMM");
-			dfMon.setTimeZone(calToday.getTimeZone());
-			Calendar cal = Calendar.getInstance(getTimeZone());
-			cal.clear();
-			cal.set(y, 0, 1, 0, 0, 0);
-			cal.set(Calendar.MILLISECOND, 0);
-			for (int i = 0; i < 12; i++)
+			// Display date picker only for add record page
+			if (JournalPage.COMMAND_ADD_RECORD.equals(cmd))
 			{
-				mon.addOption(dfMon.format(cal.getTime()), i + 1);
-				cal.add(Calendar.MONTH, 1);
+				// Date and time. Default to today
+				twoCol.writeSpaceRow();
+				twoCol.writeRow(getString("journey:Journal.Record.DateTime"));
+				
+				Calendar calToday = Calendar.getInstance(getTimeZone(), getLocale());
+				int y = calToday.get(Calendar.YEAR);
+				int m = calToday.get(Calendar.MONTH);
+				int d = calToday.get(Calendar.DAY_OF_MONTH);
+				
+				// Month
+				SelectInputControl mon = new SelectInputControl(twoCol, PARAM_DATE_MON);
+				DateFormat dfMon = new SimpleDateFormat(getContext().getUserAgent().isSmartPhone() ? "MMM" : "MMMM");
+				dfMon.setTimeZone(calToday.getTimeZone());
+				Calendar cal = Calendar.getInstance(getTimeZone());
+				cal.clear();
+				cal.set(y, 0, 1, 0, 0, 0);
+				cal.set(Calendar.MILLISECOND, 0);
+				for (int i = 0; i < 12; i++)
+				{
+					mon.addOption(dfMon.format(cal.getTime()), i + 1);
+					cal.add(Calendar.MONTH, 1);
+				}
+				mon.setInitialValue(m + 1);
+				mon.render();
+				
+				// Day
+				twoCol.write("&nbsp;");
+				SelectInputControl day = new SelectInputControl(twoCol, PARAM_DATE_DAY);
+				for (int i = 1; i <= 31; i++)
+				{
+					day.addOption(String.valueOf(i), i);
+				}
+				day.setInitialValue(d);
+				day.render();
+				
+				// Year
+				twoCol.write("&nbsp;");
+				SelectInputControl year = new SelectInputControl(twoCol, PARAM_DATE_YEAR);
+				for (int i = y - 2; i <= y; i++)
+				{
+					year.addOption(String.valueOf(i), i);
+				}
+				year.setInitialValue(y);
+				year.render();
 			}
-			mon.setInitialValue(m + 1);
-			mon.render();
-			
-			// Day
-			twoCol.write("&nbsp;");
-			SelectInputControl day = new SelectInputControl(twoCol, PARAM_DATE_DAY);
-			for (int i = 1; i <= 31; i++)
-			{
-				day.addOption(String.valueOf(i), i);
-			}
-			day.setInitialValue(d);
-			day.render();
-			
-			// Year
-			twoCol.write("&nbsp;");
-			SelectInputControl year = new SelectInputControl(twoCol, PARAM_DATE_YEAR);
-			for (int i = y - 1; i <= y + 1; i++)
-			{
-				year.addOption(String.valueOf(i), i);
-			}
-			year.setInitialValue(y);
-			year.render();
-			
-			// Time
-			twoCol.write("&nbsp;");
-			twoCol.writeEncodeTime(calToday.getTime());
 		}
 		else
 		{
+			//
+			// For all other pages, group measure records of one person into one row.
+			//
+			
 			// Mother records
 			if (this.momRecords.isEmpty() == false)
 			{
-				twoCol.writeRow(UserStore.getInstance().load(this.mom.getUserID()).getDisplayName());
+				twoCol.writeRow(getString("journey:Journal.Me"));
 				
 				boolean first = true;
 				for (MeasureRecord rec : this.momRecords)

@@ -10,6 +10,7 @@ public class ExpandableTextControl
 	private int initialDisplaySize;
 	private String moreAction;
 	private String lessAction;
+	private boolean encode = true;
 	
 	public ExpandableTextControl(WebPage outputPage)
 	{
@@ -20,10 +21,19 @@ public class ExpandableTextControl
 		this.lessAction = null;
 	}
 	
-	public ExpandableTextControl setText(String text, int initialDisplaySize)
+	public ExpandableTextControl setText(String text, int breakAt)
 	{
 		this.text = text;
-		this.initialDisplaySize = initialDisplaySize;
+		this.encode = true;
+		this.initialDisplaySize = breakAt;
+		return this;
+	}
+	
+	public ExpandableTextControl setHTML(String html, int breakAt)
+	{
+		this.text = html;
+		this.encode = false;
+		this.initialDisplaySize = breakAt;
 		return this;
 	}
 	
@@ -36,26 +46,52 @@ public class ExpandableTextControl
 	
 	public void render()
 	{
-		if (Util.isEmpty(this.text))
+		if (this.encode && Util.isEmpty(this.text))
 		{
 			return;
 		}
+		else if (!this.encode && Util.isEmptyHTML(this.text))
+		{
+			return;
+		}
+		
 		if (this.initialDisplaySize<=0)
 		{
-			out.writeEncode(this.text);
+			if (this.encode)
+			{
+				out.writeEncode(this.text);
+			}
+			else
+			{
+				out.write(this.text);
+			}
 			return;
 		}
 		
 		out.write("<span class=ExpandableText>");
 		
-		out.writeEncode(this.text.substring(0, this.initialDisplaySize));
+		if (this.encode)
+		{
+			out.writeEncode(this.text.substring(0, this.initialDisplaySize));
+		}
+		else
+		{
+			out.write(this.text.substring(0, this.initialDisplaySize));
+		}
 		
 		out.write("<span class=Expander onclick='$(this).hide().next().show().next().show();'> ");
 		out.writeEncode(Util.isEmpty(this.moreAction)? out.getString("controls:ExpandableText.More") : this.moreAction);
 		out.write("</span>");
 		
 		out.write("<span style='display:none'>");
-		out.writeEncode(this.text.substring(this.initialDisplaySize));
+		if (this.encode)
+		{
+			out.writeEncode(this.text.substring(this.initialDisplaySize));
+		}
+		else
+		{
+			out.write(this.text.substring(this.initialDisplaySize));
+		}
 		out.write("</span>");
 		
 		out.write("<span class=Expander style='display:none' onclick='$(this).hide().prev().hide().prev().show();'> ");

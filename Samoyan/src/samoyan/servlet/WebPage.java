@@ -1380,7 +1380,7 @@ public class WebPage
 		txt.render();
 	}
 		
-	public void writeImageInput(String name, Image initialValue)
+	public void writeImageInput(String name, Image initialValue) throws Exception
 	{
 		new ImageInputControl(this, name).setInitialValue(initialValue).render();
 	}

@@ -91,7 +91,7 @@ public final class ChecklistPage extends BabyPage
 //		write(" ");
 		if (showAll)
 		{
-			writeLink(getString("information:Checklist.ViewInProgress"), getPageURL(ctx.getCommand(), new ParameterMap("vu", "progress")));
+			writeLink(getString("information:Checklist.ViewInProgress"), getPageURL(ctx.getCommand(), new ParameterMap("vu", "progress").plus(PARAM_STAGE, ctx.getParameter(PARAM_STAGE))));
 			write(" | ");
 			write("<b>");
 			writeEncode(getString("information:Checklist.ViewAll"));
@@ -103,7 +103,7 @@ public final class ChecklistPage extends BabyPage
 			writeEncode(getString("information:Checklist.ViewInProgress"));
 			write("</b>");
 			write(" | ");
-			writeLink(getString("information:Checklist.ViewAll"), getPageURL(ctx.getCommand(), new ParameterMap("vu", "all")));
+			writeLink(getString("information:Checklist.ViewAll"), getPageURL(ctx.getCommand(), new ParameterMap("vu", "all").plus(PARAM_STAGE, ctx.getParameter(PARAM_STAGE))));
 		}
 		write("<hr><br>");		
 		write("</td></tr></table>");

@@ -60,12 +60,14 @@ public final class ChecklistStore extends DataBeanStore<Checklist>
 
 	public Checklist loadBySourceURL(String url) throws Exception
 	{
+		if (url==null) return null;
 		byte[] urlHash = Util.hexStringToByteArray(Util.hashSHA256(url));
 		return loadByColumn("SourceURLHash", urlHash);
 	}
 	
 	public Checklist openBySourceURL(String url) throws Exception
 	{
+		if (url==null) return null;
 		byte[] urlHash = Util.hexStringToByteArray(Util.hashSHA256(url));
 		return openByColumn("SourceURLHash", urlHash);
 	}
@@ -178,7 +180,7 @@ public final class ChecklistStore extends DataBeanStore<Checklist>
 		}
 		
 		// Write checklist
-		Checklist checklist = loadBySourceURL(uri);
+		Checklist checklist = openBySourceURL(uri);
 		if (checklist==null)
 		{
 			checklist = new Checklist();
@@ -200,7 +202,8 @@ public final class ChecklistStore extends DataBeanStore<Checklist>
 		save(checklist);
 		
 		// Write checkitems
-		List<String> lis = new ArrayList<String>();
+		List<String> texts = new ArrayList<String>();
+		List<String> links = new ArrayList<String>();
 		p = 0;
 		while (true)
 		{
@@ -209,7 +212,42 @@ public final class ChecklistStore extends DataBeanStore<Checklist>
 			p += 4;
 			int q = body.indexOf("</li>", p);
 			if (q<0) break;
-			lis.add(body.substring(p, q));
+			
+			String li = body.substring(p, q);
+			int xx = li.indexOf(">");
+			int yy = li.lastIndexOf("<");
+			if (xx>=0 && yy>xx)
+			{
+				texts.add(li.substring(xx+1, yy));
+				int hh = li.toLowerCase(Locale.US).indexOf("href=");
+				if (hh>=0)
+				{
+					int ws = li.indexOf(" ", hh);
+					if (ws<0 || ws>xx)
+					{
+						ws = xx;
+					}
+					String href = li.substring(hh+5, ws);
+					if (href.startsWith("\"") || href.startsWith("'"))
+					{
+						href = href.substring(1);
+					}
+					if (href.endsWith("\"") || href.endsWith("'"))
+					{
+						href = href.substring(0, href.length()-1);
+					}
+					links.add(href);
+				}
+				else
+				{
+					links.add(null);
+				}
+			}
+			else
+			{
+				texts.add(li);
+				links.add(null);
+			}
 			p = q + 5;
 		}
 
@@ -219,18 +257,18 @@ public final class ChecklistStore extends DataBeanStore<Checklist>
 			CheckItem ci = CheckItemStore.getInstance().load(id);
 			
 			boolean found = false;
-			for (int k=0; k<lis.size(); k++)
+			for (int k=0; k<texts.size(); k++)
 			{
-				if (lis.get(k).equalsIgnoreCase(ci.getText()))
+				if (texts.get(k)!=null && texts.get(k).equalsIgnoreCase(ci.getText()))
 				{
-					if (ci.getOrderSequence()!=k)
-					{
-						// Update sequence number of checkitem
-						ci = (CheckItem) ci.clone(); // Open for writing
-						ci.setOrderSequence(k);
-						CheckItemStore.getInstance().save(ci);
-					}
-					lis.set(k, null);
+					// Update checkitem
+					ci = (CheckItem) ci.clone(); // Open for writing
+					ci.setOrderSequence(k);
+					ci.setLink(links.get(k));
+					CheckItemStore.getInstance().save(ci);
+
+					texts.set(k, null);
+					links.set(k, null);
 					found = true;
 					break;
 				}
@@ -243,13 +281,14 @@ public final class ChecklistStore extends DataBeanStore<Checklist>
 			}
 		}
 		
-		for (int k=0; k<lis.size(); k++)
+		for (int k=0; k<texts.size(); k++)
 		{
-			if (lis.get(k)!=null)
+			if (texts.get(k)!=null)
 			{
 				CheckItem ci = new CheckItem();
 				ci.setChecklistID(checklist.getID());
-				ci.setText(lis.get(k));
+				ci.setText(texts.get(k));
+				ci.setLink(links.get(k));
 				ci.setOrderSequence(k);
 				CheckItemStore.getInstance().save(ci);
 			}
@@ -287,19 +326,19 @@ public final class ChecklistStore extends DataBeanStore<Checklist>
 		s = s.toLowerCase(Locale.US);
 		if (s.startsWith("week "))
 		{
-			return Stage.pregnancy(Integer.parseInt(s.substring(5)));
+			return Stage.pregnancy(Integer.parseInt(s.substring(5).trim()));
 		}
 		else if (s.startsWith("pregnancy "))
 		{
-			return Stage.pregnancy(Integer.parseInt(s.substring(10)));
+			return Stage.pregnancy(Integer.parseInt(s.substring(10).trim()));
 		}
 		else if (s.startsWith("month "))
 		{
-			return Stage.infancy(Integer.parseInt(s.substring(5)));
+			return Stage.infancy(Integer.parseInt(s.substring(6).trim()));
 		}
 		else if (s.startsWith("infancy "))
 		{
-			return Stage.infancy(Integer.parseInt(s.substring(8)));
+			return Stage.infancy(Integer.parseInt(s.substring(8).trim()));
 		}
 		else if (s.startsWith("pre"))
 		{

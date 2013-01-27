@@ -7,6 +7,7 @@ import samoyan.database.DataBean;
 public final class CheckItem extends DataBean
 {
 	public static final int MAXSIZE_TEXT = 512;
+	public static final int MAXSIZE_LINK = 512;
 	
 	public String getText()
 	{
@@ -17,6 +18,15 @@ public final class CheckItem extends DataBean
 		set("Text", desc);
 	}
 	
+	public String getLink()
+	{
+		return (String) get("Link");
+	}
+	public void setLink(String link)
+	{
+		set("Link", link);
+	}
+
 	public UUID getChecklistID()
 	{
 		return (UUID) get("ChecklistID");

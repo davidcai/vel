@@ -8,6 +8,8 @@ import java.util.UUID;
 
 import samoyan.controls.ControlArray;
 import samoyan.controls.SelectInputControl;
+import samoyan.controls.TextAreaInputControl;
+import samoyan.controls.TextInputControl;
 import samoyan.controls.TwoColFormControl;
 import samoyan.core.ParameterMap;
 import samoyan.core.Util;
@@ -60,10 +62,10 @@ public final class EditChecklistPage extends BabyPage
 		TwoColFormControl twoCol = new TwoColFormControl(this);
 		
 		twoCol.writeRow(getString("content:EditChecklist.ChecklistTitle"));
-		twoCol.writeTextInput("title", this.checklist.getTitle(), 80, Checklist.MAXSIZE_TITLE);
+		twoCol.writeTextInput("title", this.checklist.getTitle(), 70, Checklist.MAXSIZE_TITLE);
 		
 		twoCol.writeRow(getString("content:EditChecklist.Description"));
-		twoCol.writeTextAreaInput("desc", this.checklist.getDescription(), 80, 2, Checklist.MAXSIZE_DESCRIPTION);
+		twoCol.writeTextAreaInput("desc", this.checklist.getDescription(), 70, 2, Checklist.MAXSIZE_DESCRIPTION);
 		
 		twoCol.writeRow(getString("content:EditChecklist.Section"));
 		SelectInputControl select = new SelectInputControl(twoCol, "section");
@@ -103,7 +105,19 @@ public final class EditChecklistPage extends BabyPage
 			{
 				CheckItem item = CheckItemStore.getInstance().load(itemID);
 				writeHiddenInput("itemid_" + rowNum, item!=null? item.getID() : null);
-				writeTextInput("itemtext_" + rowNum, item!=null? item.getText() : null, 60, CheckItem.MAXSIZE_TEXT);
+				new TextAreaInputControl(this, "itemtext_" + rowNum)
+					.setRows(2).setCols(70)
+					.setPlaceholder(getString("content:EditChecklist.Text"))
+					.setMaxLength(CheckItem.MAXSIZE_TEXT)
+					.setInitialValue(item!=null? item.getText() : null)
+					.render();
+				write("<br>");
+				new TextInputControl(this, "itemlink_" + rowNum)
+					.setSize(70)
+					.setPlaceholder(getString("content:EditChecklist.Link"))
+					.setMaxLength(CheckItem.MAXSIZE_LINK)
+					.setInitialValue(item!=null? item.getLink() : null)
+					.render();
 			}
 		}
 		.render();
@@ -199,6 +213,7 @@ public final class EditChecklistPage extends BabyPage
 		{
 			String txt = getParameterString("itemtext_" + i);
 			if (txt==null) continue;
+			String lnk = getParameterString("itemlink_" + i);
 
 			CheckItem item;
 			UUID id = getParameterUUID("itemid_" + i);
@@ -215,6 +230,7 @@ public final class EditChecklistPage extends BabyPage
 			}
 			item.setChecklistID(this.checklist.getID());
 			item.setText(txt);
+			item.setLink(lnk);
 			item.setOrderSequence(i);
 			CheckItemStore.getInstance().save(item);
 		}

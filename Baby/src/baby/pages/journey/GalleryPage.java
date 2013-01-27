@@ -124,7 +124,7 @@ public class GalleryPage extends BabyPage
 		if (ie==false && canUploadNew && !phone)
 		{
 			new LinkToolbarControl(this)
-				.addLink(getString("journey:Gallery.UploadPhoto"), "javascript:$('#upload').click();", "baby/upload-photo.png")
+				.addLink(getString("journey:Gallery.UploadPhoto"), "javascript:$('#upload').click();", "icons/standard/photo-camera-24.png")
 				.render();
 				
 			// Upload icon

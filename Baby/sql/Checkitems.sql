@@ -12,6 +12,7 @@ CREATE TABLE [Checkitems](
 	[ChecklistID] [binary](16) NOT NULL,
 	[Text] [nvarchar](512) NOT NULL,
 	[OrderSeq] [int] NOT NULL,
+	[Link] [nvarchar](512) NULL,
  CONSTRAINT [PK_Checkitems] PRIMARY KEY NONCLUSTERED 
 (
 	[ID] ASC

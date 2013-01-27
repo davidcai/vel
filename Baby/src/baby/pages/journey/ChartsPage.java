@@ -17,7 +17,6 @@ import samoyan.controls.LinkToolbarControl;
 import samoyan.core.DateFormatEx;
 import samoyan.core.Day;
 import samoyan.core.Util;
-import samoyan.database.UserStore;
 import baby.database.Baby;
 import baby.database.BabyStore;
 import baby.database.Measure;
@@ -78,23 +77,10 @@ public class ChartsPage extends BabyPage
 	@Override
 	public void renderHTML() throws Exception
 	{
-//		// Horizontal nav bar
-//		if (getContext().getUserAgent().isSmartPhone())
-//		{
-//			new TabControl(this)
-//				.addTab(JournalPage.COMMAND_LIST, getString("journey:Journal.Title"), getPageURL(JournalPage.COMMAND_LIST))
-//				.addTab(GalleryPage.COMMAND, getString("journey:Gallery.Title"), getPageURL(GalleryPage.COMMAND))
-//				.addTab(ChartsPage.COMMAND, getString("journey:Charts.Title"), getPageURL(ChartsPage.COMMAND))
-//				.setCurrentTab(getContext().getCommand())
-//				.setStyleButton()
-//				.setAlignStretch()
-//				.render();
-//		}
-		
 		// Add button
 		if (getContext().getUserAgent().isSmartPhone())
 		{
-			writeFormOpen("GET", JournalPage.COMMAND_RECORD);
+			writeFormOpen("GET", JournalPage.COMMAND_ADD_RECORD);
 			new ButtonInputControl(this, null)
 				.setValue(getString("journey:Charts.AddHotButton"))
 				.setMobileHotAction(true)
@@ -105,7 +91,7 @@ public class ChartsPage extends BabyPage
 		else
 		{
 			new LinkToolbarControl(this)
-				.addLink(getString("journey:Charts.AddLink"), getPageURL(JournalPage.COMMAND_RECORD), "icons/standard/bar-chart-24.png")
+				.addLink(getString("journey:Charts.AddLink"), getPageURL(JournalPage.COMMAND_ADD_RECORD), "icons/standard/bar-chart-24.png")
 				.render();
 		}
 		
@@ -134,8 +120,10 @@ public class ChartsPage extends BabyPage
 					graph.setChartType(GoogleGraph.LINE_CHART);
 					graph.setLegend(GoogleGraph.NONE);
 					graph.setHeight(300);
+					graph.setWidth(650);
 					graph.getChartArea().setTop(30);
 					graph.getChartArea().setBottom(50);
+					graph.getChartArea().setRight(10);
 					graph.addColumn(GoogleGraph.STRING, "");
 					graph.addColumn(GoogleGraph.NUMBER, "");
 					
@@ -175,7 +163,7 @@ public class ChartsPage extends BabyPage
 	{
 		Map<String, GraphData> mapGraphs = new LinkedHashMap<String, GraphData>();
 		UUID userID = getContext().getUserID();
-		String momName = UserStore.getInstance().load(userID).getDisplayName();
+		String momName = getString("journey:Charts.Me");
 		
 		for (UUID recID : sortedRecIDs)
 		{

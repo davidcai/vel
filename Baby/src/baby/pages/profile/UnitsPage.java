@@ -23,6 +23,13 @@ public final class UnitsPage extends BabyPage
 		
 		writeFormOpen();
 		
+//		new SelectInputControl(this, "metric")
+//			.addOption(getString("babyprofile:Units.Imperial"), "0")
+//			.addOption(getString("babyprofile:Units.Metric"), "1")
+//			.setInitialValue(mother.isMetric()?"1":"0")
+//			.render();
+//		write("<br><br>");
+		
 		write("<table><tr><td>");
 		writeRadioButton("metric", getString("babyprofile:Units.Imperial"), "0", mother.isMetric()?"1":"0");
 		write("</td></tr><tr><td>");

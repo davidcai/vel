@@ -76,6 +76,8 @@ BABY
 = (0) Content:
   = send new content to Andi. need to extract from XL, unlock.
   = sample youtube videos of tours of facilities. search for "kaiser permanente maternity tour" on youtube
+  = add hyperlinks for preconception checklist that speaks of medical conditions.
+    may need an article that will link to all other articles.
 - notifs:
   - check iPhone app + push notifs
   - alert timeline to allow user to choose channels, but no delay
@@ -89,15 +91,11 @@ _ MyElert mobile. getting logged out without a reason. check why!
 = Figure out how to redirect to error page, but only for HTML requests. esp for 500 and 404.
   - getting error 400 (bad request due to XSS protection) on login when cookies are disabled.
     disable login control if no cookies header.
-= (1) checklists to include links to articles (for conditions, for handbooks, etc.)
-  - need to be able to link to article by URI (not url). A HREF="diabetes".
-  - process content and replace HREFs
-  - Need RichEdit for content items
-  - also in articles.
-- (0) camera icon in journal:
-  - allow setting icons for ImageUploadControl. also captions.
-  - also: need better hi-res images for default icons.
-- bad layout when rotating iphone (width too much)
+- bad layout when rotating iphone (width changes)
+= (1) interactive birth-plan / questionnaire documents.
++ double check that crawler does not delete articles that are not created by itself (check flag)
+? In "suggested reading", break articles by subsection and insert header
+
 
 Erica's input:
 = Back button showing on home screen. need way to reset stack when logging in, or for particular screens.

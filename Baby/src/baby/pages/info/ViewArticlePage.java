@@ -1,10 +1,13 @@
 package baby.pages.info;
 
+import java.util.Locale;
+
 import samoyan.controls.ImageControl;
 import samoyan.core.Util;
 import samoyan.servlet.UserAgent;
 import samoyan.servlet.exc.PageNotFoundException;
 import baby.app.BabyConsts;
+import baby.app.BabyUtil;
 import baby.database.Article;
 import baby.database.ArticleStore;
 import baby.pages.BabyPage;
@@ -94,7 +97,61 @@ public class ViewArticlePage extends BabyPage
 				.render();
 		}
 		
-		write(this.article.getHTML());
+		String html = this.article.getHTML();
+		String lcHtml = html.toLowerCase(Locale.US);
+		int p = 0;
+		while (p<html.length())
+		{
+			int q = lcHtml.indexOf("<a ", p);
+			if (q<0)
+			{
+				write(html.substring(p));
+				break;
+			}
+			else
+			{
+				int qq = lcHtml.indexOf(">", q);
+				if (qq<0)
+				{
+					write(html.substring(p));
+					break;
+				}
+				int h = lcHtml.indexOf("href=", q);
+				if (h<0)
+				{
+					write(html.substring(p, qq+1));
+				}
+				int ws = lcHtml.indexOf(" ", h);
+				if (ws<0 || ws>qq)
+				{
+					ws = qq;
+				}
+				String href = html.substring(h+5, ws);
+				if (href.startsWith("\"") || href.startsWith("'"))
+				{
+					href = href.substring(1);
+				}
+				if (href.endsWith("\"") || href.endsWith("'"))
+				{
+					href = href.substring(0, href.length()-1);
+				}
+				href = BabyUtil.resolveLink(href);
+				write(html.substring(p, h));
+				if (href!=null)
+				{
+					write("href=\"");
+					writeEncode(href);
+					write("\"");
+					if (href.startsWith("http:") || href.startsWith("https:"))
+					{
+						write(" target=_blank");
+					}
+				}
+				write(html.substring(ws, qq+1));
+				
+				p = qq+1;
+			}
+		}
 				
 		write("</div>");
 	}

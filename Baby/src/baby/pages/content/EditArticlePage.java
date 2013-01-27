@@ -152,6 +152,9 @@ public final class EditArticlePage extends BabyPage
 		twoCol.writeRow(getString("content:EditArticle.MedicalCenter"));
 		twoCol.writeTypeAheadInput("medicalcenter", this.article.getMedicalCenter(), this.article.getMedicalCenter(), 40, Article.MAXSIZE_REGION, getPageURL(MedicalCenterTypeAhead.COMMAND));
 
+		twoCol.writeRow(getString("content:EditArticle.URI"));
+		twoCol.writeTextInput("uri", this.article.getSourceURL(), 80, Article.MAXSIZE_SOURCE_URL);
+
 		twoCol.render();
 
 		write("<br>");
@@ -210,6 +213,7 @@ public final class EditArticlePage extends BabyPage
 		
 		validateParameterString("section", 1, Article.MAXSIZE_SECTION);
 		validateParameterString("subsection", 0, Article.MAXSIZE_SUBSECTION);
+		validateParameterString("uri", 0, Article.MAXSIZE_SOURCE_URL);
 	}
 	
 	@Override
@@ -236,6 +240,8 @@ public final class EditArticlePage extends BabyPage
 		
 		this.article.setRegion(getParameterString("region"));
 		this.article.setMedicalCenter(getParameterString("medicalcenter"));
+
+		this.article.setSourceURL(getParameterString("uri"));
 
 		ArticleStore.getInstance().save(this.article);
 		

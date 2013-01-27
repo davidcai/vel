@@ -12,6 +12,7 @@ import samoyan.core.Util;
 import samoyan.servlet.RequestContext;
 import samoyan.servlet.UrlGenerator;
 import samoyan.servlet.WebPage;
+import baby.app.BabyUtil;
 import baby.database.CheckItem;
 import baby.database.CheckItemStore;
 import baby.database.CheckItemUserLinkStore;
@@ -160,7 +161,7 @@ public class ChecklistControl
 				{
 					out.write(" ");
 					out.write("<span class=Complete>");
-					out.writeImage("baby/flag-overdue.png", out.getString("baby:ChecklistCtrl.Complete"));
+					out.writeImage("baby/flag-complete.png", out.getString("baby:ChecklistCtrl.Complete"));
 					out.writeEncode(out.getString("baby:ChecklistCtrl.Complete"));
 					out.write("</span>");
 				}
@@ -215,6 +216,12 @@ public class ChecklistControl
 			else
 			{
 				out.writeEncode(checkitem.getText());
+			}
+			String link = BabyUtil.resolveLink(checkitem.getLink());
+			if (!Util.isEmpty(link))
+			{
+				out.write(" ");
+				out.writeLink(out.getString("baby:ChecklistCtrl.Link"), link);
 			}
 //			out.write("</label>");
 			out.write("</td></tr>");

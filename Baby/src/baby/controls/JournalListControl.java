@@ -16,8 +16,6 @@ import samoyan.core.DateFormatEx;
 import samoyan.core.Day;
 import samoyan.core.ParameterMap;
 import samoyan.core.Util;
-import samoyan.database.User;
-import samoyan.database.UserStore;
 import samoyan.servlet.WebPage;
 import baby.app.BabyConsts;
 import baby.database.Baby;
@@ -30,6 +28,7 @@ import baby.database.MeasureRecordStore;
 import baby.database.MeasureStore;
 import baby.database.Mother;
 import baby.database.MotherStore;
+import baby.pages.journey.JournalAJAXPage;
 import baby.pages.journey.JournalPage;
 import baby.pages.journey.MeasureRecordsPageHelper;
 import baby.pages.journey.PhotoPage;
@@ -93,10 +92,8 @@ public class JournalListControl
 	private List<UUID> entryIDs;
 	private List<UUID> recordIDs;
 	private Map<Date, ListItem> itemsByDate;
-	private int maxSize = 5;
+	private int maxSize = 20;
 	private Day from;
-	private String showMoreCommand;
-	private String fromParamName;
 	
 	public JournalListControl(WebPage out)
 	{
@@ -165,26 +162,6 @@ public class JournalListControl
 		return this;
 	}
 	
-	public String getShowMoreCommand()
-	{
-		return showMoreCommand;
-	}
-	public JournalListControl setShowMoreCommand(String showMoreCommand)
-	{
-		this.showMoreCommand = showMoreCommand;
-		return this;
-	}
-	
-	public String getFromParamName()
-	{
-		return fromParamName;
-	}
-	public JournalListControl setFromParamName(String fromParamName)
-	{
-		this.fromParamName = fromParamName;
-		return this;
-	}
-	
 	public void render() throws Exception
 	{
 		//
@@ -217,6 +194,12 @@ public class JournalListControl
 				{
 					continue;
 				}
+				
+//				// Skip entries without photo and text
+//				if (entry.isHasPhoto() == false && Util.isEmpty(entry.getText()))
+//				{
+//					continue;
+//				}
 				
 				ListItem item = itemsByDate.get(date);
 				if (item == null)
@@ -336,23 +319,33 @@ public class JournalListControl
 				
 				out.write("<div class=\"ListItem\">");
 				
+				ListItem item = itemsByDate.get(date);
+				JournalEntry entry = item.getEntry();
+				List<MeasureRecord> momRecords = item.getMomRecords();
+				Map<UUID, List<MeasureRecord>> babyRecords = item.getBabyRecords();
+				
 				// Edit button
 				out.write("<div class=\"EditButton\">");
-//				out.writeImage("baby/edit.png", out.getString("journey:Journal.Edit"), 
-//						out.getPageURL(JournalPage.COMMAND_EDIT, new ParameterMap(JournalPage.PARAM_TIMESTAMP, date.getTime())));
 				out.write("<small><a href=\"");
-				out.writeEncode(out.getPageURL(JournalPage.COMMAND_EDIT, new ParameterMap(JournalPage.PARAM_TIMESTAMP, date.getTime())));
+				
+				if ((momRecords.isEmpty() == false || babyRecords.isEmpty() == false) && 
+					(entry == null || (entry.isHasPhoto() == false && Util.isEmpty(entry.getText()))))
+				{
+					// If has only measure records, go to edit measure record page
+					out.writeEncode(out.getPageURL(JournalPage.COMMAND_EDIT_RECORD, new ParameterMap(JournalPage.PARAM_TIMESTAMP, date.getTime())));
+				}
+				else
+				{
+					// Go to edit page
+					out.writeEncode(out.getPageURL(JournalPage.COMMAND_EDIT, new ParameterMap(JournalPage.PARAM_TIMESTAMP, date.getTime())));
+				}
+				
 				out.write("\">");
 				out.writeImage("icons/standard/pencil-16.png", out.getString("journey:Journal.Edit"));
 				out.write(" ");
 				out.writeEncode(out.getString("journey:Journal.Edit"));
 				out.write("</a></small>");
 				out.write("</div>");
-				
-				ListItem item = itemsByDate.get(date);
-				JournalEntry entry = item.getEntry();
-				List<MeasureRecord> momRecords = item.getMomRecords();
-				Map<UUID, List<MeasureRecord>> babyRecords = item.getBabyRecords();
 				
 				// Photo
 				if (entry != null && entry.isHasPhoto())
@@ -377,9 +370,7 @@ public class JournalListControl
 					// Mother
 					if (momRecords.isEmpty() == false)
 					{
-						User user = UserStore.getInstance().load(out.getContext().getUserID());
-						
-						twoCol.writeRow(user.getDisplayName());
+						twoCol.writeRow(out.getString("journey:Journal.Me"));
 						writeMeasureRecords(twoCol, momRecords, mom.isMetric());
 					}
 					
@@ -426,13 +417,8 @@ public class JournalListControl
 			// Show more button
 			if (nextFrom != null)
 			{
-				if (showMoreCommand == null || fromParamName == null)
-				{
-					throw new IllegalStateException("showMoreCommand and fromParamName must be specified.");
-				}
-				
 				String btnID = "ShowMore-" + nextFrom.getYear() + "-" + nextFrom.getMonth() + "-" + nextFrom.getDay();
-				String url = out.getPageURL(showMoreCommand, new ParameterMap(fromParamName, nextFrom.toString()));
+				String url = out.getPageURL(JournalAJAXPage.COMMAND, new ParameterMap(JournalAJAXPage.PARAM_FROM, nextFrom.toString()));
 				
 				out.write("<div class=\"JournalShowMoreButton\" id=\"");
 				out.write(btnID);

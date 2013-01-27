@@ -295,7 +295,7 @@ DIV.InfoMessage {
 // ---------- Image uploader ----------
 
 .ImageUploader {
-	IMG {
+	.Images IMG {
 		display:none; border: solid 1px @color-text-light; width: 78px; height: 78px; padding: 2px;
 	}
 	SPAN {
@@ -310,9 +310,9 @@ DIV.InfoMessage {
 		padding-left: 18px; padding-right: 10px;
 		background: no-repeat center left;
 		background-size: 16px 16px;
-		&[upload] {background-image: url("icons/imgupload/upload.png");}
-		&[delete] {background-image: url("icons/imgupload/delete.png");}
-		&[undo] {background-image: url("icons/imgupload/undo.png");}
+		&[upload] {background-image: url("icons/standard/plusmark-16.png");}
+		&[delete] {background-image: url("icons/standard/crossmark-16.png");}
+		&[undo] {background-image: url("icons/standard/minusmark-16.png");}
 		&:hover {text-decoration: underline; color:@color-hover;}
 		&.NoHover {
 			cursor: auto;
@@ -355,6 +355,9 @@ DIV.InfoMessage {
 	}
 	TD > A:hover {
 		text-decoration: underline;
+	}
+	TD.Image > A, TD.Image > SPAN {
+		margin-right: 0px;
 	}
 }
 
@@ -562,10 +565,13 @@ DIV.InfoMessage {
 		background-size: 16px 16px;
 		cursor: hand; cursor: pointer;
 		visibility: hidden;
-		font: @font-small;
+//		font: @font-small;
 		margin-top: 2px;
 		display: inline-block;
-		&:hover {text-decoration:underline;}
+		&:hover {
+			color: @color-hover;
+			text-decoration:underline;
+		}
 	}
 	TR:hover .RemoveBtn {
 		visibility: visible;
@@ -575,10 +581,13 @@ DIV.InfoMessage {
 		background: url("icons/standard/plusmark-16.png") no-repeat left center;
 		background-size: 16px 16px;
 		cursor: hand; cursor: pointer;
-		font: @font-small;
+//		font: @font-small;
 		margin-bottom: 2px;
 		display: inline-block;
-		&:hover {text-decoration:underline;}
+		&:hover {
+			color: @color-hover;
+			text-decoration:underline;
+		}
 	}
 }
 .Mobile .CtrlArr .RemoveBtn {
