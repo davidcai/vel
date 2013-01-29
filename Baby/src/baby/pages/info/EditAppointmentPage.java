@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import samoyan.controls.ButtonInputControl;
@@ -21,8 +22,17 @@ import samoyan.servlet.exc.PageNotFoundException;
 import samoyan.servlet.exc.RedirectException;
 import samoyan.servlet.exc.WebFormException;
 import baby.app.BabyConsts;
+import baby.controls.ChecklistControl;
+import baby.controls.TimelineSliderControl;
 import baby.database.Appointment;
 import baby.database.AppointmentStore;
+import baby.database.Article;
+import baby.database.ArticleStore;
+import baby.database.Checklist;
+import baby.database.ChecklistStore;
+import baby.database.Mother;
+import baby.database.MotherStore;
+import baby.database.Stage;
 import baby.pages.BabyPage;
 
 public class EditAppointmentPage extends BabyPage
@@ -247,6 +257,8 @@ public class EditAppointmentPage extends BabyPage
 		writeHiddenInput(PARAM_EDIT, "");
 		
 		writeFormClose();
+		
+		writeArticlesAndChecklists();
 	}
 
 	private void renderEditForm() throws Exception
@@ -309,6 +321,48 @@ public class EditAppointmentPage extends BabyPage
 		}
 		
 		writeFormClose();
+
+		writeArticlesAndChecklists();
+	}
+	
+	private void writeArticlesAndChecklists() throws Exception
+	{
+		// Related Articles
+		Mother mother = MotherStore.getInstance().loadByUserID(getContext().getUserID());
+		Stage stage = mother.getEstimatedPregnancyStage(this.appt.getDateTime(), getTimeZone());
+		int lowStage = TimelineSliderControl.getLowRange(stage.toInteger());
+		int highStage = TimelineSliderControl.getHighRange(stage.toInteger());
+		List<UUID> articleIDs = ArticleStore.getInstance().queryBySectionAndTimeline(this.appt.getType(), lowStage, highStage);
+		if (articleIDs.isEmpty() == false)
+		{
+			write("<br>");
+			write("<br>");
+			for (UUID articleID : articleIDs)
+			{
+				Article article = ArticleStore.getInstance().load(articleID);
+				
+				write("<h3>");
+				writeEncode(article.getTitle());
+				write("</h3>");
+				write(article.getHTML());
+			}
+		}
+		
+		// Related checklists
+		List<UUID> checklistIDs = ChecklistStore.getInstance().queryBySectionAndTimeline(this.appt.getType(), lowStage, highStage);
+		if (checklistIDs.isEmpty() == false)
+		{
+			write("<br>");
+			write("<br>");
+			for (UUID checklistID : checklistIDs)
+			{
+				Checklist checklist = ChecklistStore.getInstance().load(checklistID);
+				write("<h3>");
+				writeEncode(checklist.getTitle());
+				write("</h3>");
+				new ChecklistControl(this, getContext().getUserID(), checklistID).render();
+			}
+		}
 	}
 	
 	private void writeDateTime(TwoColFormControl twoCol, Date datetime)

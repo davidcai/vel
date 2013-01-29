@@ -15,8 +15,14 @@ import samoyan.controls.WideLinkGroupControl;
 import samoyan.core.DateFormatEx;
 import samoyan.core.Day;
 import samoyan.core.ParameterMap;
+import baby.controls.TimelineSliderControl;
 import baby.database.Appointment;
 import baby.database.AppointmentStore;
+import baby.database.Checklist;
+import baby.database.ChecklistStore;
+import baby.database.Mother;
+import baby.database.MotherStore;
+import baby.database.Stage;
 import baby.pages.BabyPage;
 
 public class CalendarPage extends BabyPage
@@ -102,6 +108,33 @@ public class CalendarPage extends BabyPage
 			}
 		}
 		
+		// Checklists
+		final HashSet<Integer> checklistSet = new HashSet<Integer>();
+		List<UUID> todaysChecklistIDs = new ArrayList<UUID>();
+		
+		Mother mother = MotherStore.getInstance().loadByUserID(getContext().getUserID());
+		Stage stage = mother.getPregnancyStage();
+		int lowStage = TimelineSliderControl.getLowRange(stage.toInteger());
+		int highStage = TimelineSliderControl.getHighRange(stage.toInteger());
+		List<UUID> checklistIDs = ChecklistStore.getInstance().queryByTimeline(lowStage, highStage);
+		for (UUID checklistID : checklistIDs)
+		{
+			Checklist checklist = ChecklistStore.getInstance().load(checklistID);
+			Date chklstDue = mother.calcDateOfStage(checklist.getTimelineTo(), getTimeZone());
+			
+			if (chklstDue != null && chklstDue.before(from) == false && chklstDue.before(to) == true)
+			{
+				cal.setTime(chklstDue);
+				checklistSet.add(cal.get(Calendar.DAY_OF_MONTH));
+				
+				if (chklstDue.before(today.getDayStart(getTimeZone())) == false && 
+					chklstDue.before(today.getDayEnd(getTimeZone())) == true)
+				{
+					todaysChecklistIDs.add(checklistID);
+				}
+			}
+		}
+		
 		if (!phone)
 		{
 			write("<table width=\"100%\"><tr><td width=1>");
@@ -115,9 +148,16 @@ public class CalendarPage extends BabyPage
 			@Override
 			protected void renderCell(int yyyy, int mm, int dd) throws Exception
 			{
-				if (mm==month && apptSet.contains(dd))
+				if (mm==month)
 				{
-					writeImage("icons/standard/simple-clock-16.png", null);
+					if (apptSet.contains(dd))
+					{
+						writeImage("icons/standard/simple-clock-16.png", null);
+					}
+					else if (checklistSet.contains(dd))
+					{
+						writeImage("icons/standard/checkmark-16.png", null);
+					}
 				}
 			}
 //			@Override
@@ -139,8 +179,8 @@ public class CalendarPage extends BabyPage
 			write("<br>");
 		}
 
-		// List of appointments for selected day
-		if (todaysAppointmentIDs.isEmpty() == false)
+		// List of appointments and/or checklist dues for selected day
+		if (todaysAppointmentIDs.isEmpty() == false || todaysChecklistIDs.isEmpty() == false)
 		{
 			DateFormat dfTime = DateFormatEx.getTimeInstance(getLocale(), getTimeZone());
 			WideLinkGroupControl wlg = new WideLinkGroupControl(this);
@@ -153,11 +193,20 @@ public class CalendarPage extends BabyPage
 					.setValue(dfTime.format(appointment.getDateTime()))
 					.setURL(url);
 			}
+			for (UUID checklistID : todaysChecklistIDs)
+			{
+				Checklist checklist = ChecklistStore.getInstance().load(checklistID);
+				//String url = getPageURL(EditAppointmentPage.COMMAND, new ParameterMap(EditAppointmentPage.PARAM_ID, appointmentID.toString()));
+				wlg.addLink()
+					.setTitle(checklist.getTitle())
+					.setValue(checklist.getSection());
+				//	.setURL(url);
+			}
 			wlg.render();
 		}
 		else
 		{
-			writeEncode(getString("information:Calendar.NoAppointments", today.getDayStart(getTimeZone())));
+			writeEncode(getString("information:Calendar.NoEvents", today.getDayStart(getTimeZone())));
 		}
 
 		if (!phone)
